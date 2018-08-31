@@ -1,0 +1,17 @@
+.o-list-split {}
+
+.o-list-split__item {
+  display: flex;
+  flex-flow: row;
+  justify-content: center;
+}
+
+.o-list-split__left {
+  flex: 0 1 25%;
+  padding-right: $unit-small;
+  text-align: right;
+}
+
+.o-list-split__right {
+  flex: 0 1 50%;
+}

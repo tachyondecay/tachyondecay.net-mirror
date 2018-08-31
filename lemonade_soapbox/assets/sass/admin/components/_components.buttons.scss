@@ -1,0 +1,188 @@
+/* ==========================================================================
+   #BUTTONS
+   ========================================================================== */
+
+/**
+ * This is an example component. Extend inuitcss by building your own components
+ * that make up your UI. Component classes are prefixed with a `c-`.
+ */
+
+/**
+ * 1. Allow us to style box model properties.
+ * 2. Line different sized buttons up a little nicer.
+ * 3. Make buttons inherit font styles (often necessary when styling `input`s as
+ *    buttons).
+ * 4. Reset/normalize some styles.
+ * 5. Force all button-styled elements to appear clickable.
+ */
+
+$button-colour-variations: (
+    important: $purple,
+    positive: $green,
+    danger: $red
+);
+
+
+
+.c-btn {
+    display: inline-block; /* [1] */
+    vertical-align: middle; /* [2] */
+
+    color: $white;
+    font: inherit; /* [3] */
+    font-family: $fonts--accent;
+    letter-spacing: 2px;
+    text-align: center; /* [4] */
+    text-decoration: none;
+    text-transform: uppercase;
+
+    margin: 0; /* [4] */
+    padding: $unit-tiny $unit-small;
+
+    background-color: $blue;
+    border: 1px solid $blue;
+    border-radius: $global-radius;
+    box-shadow: 0px 4px 0px 0px darken($blue, 20);
+    cursor: pointer; /* [5] */
+    transition: $global-transition;
+
+    &:hover, &:active, &:focus, &.c-btn--ghost {
+        color: saturate($blue, 20);
+        text-decoration: none;
+
+        background-color: $white;
+        background-image: none;
+        border-color: saturate($blue, 20);
+        & > span {
+            @include sprite-image($blue);
+        }
+    }
+
+    &:active {
+        box-shadow: 0px 1px 0px 0px;
+        transform: translate(0px, 5px);
+    }
+
+    & > span {
+        @include sprite-image(#ffffff);
+    }
+}
+
+
+
+
+
+/* Style variants
+   ========================================================================== */
+
+@each $name, $variant in $button-colour-variations {
+    .c-btn--#{$name} {
+        background-color: $variant;
+        border-color: $variant;
+        box-shadow: 0 4px 0 0 darken($variant, 20);
+
+        &:hover, &:active, &:focus, &.c-btn--ghost {
+            color: saturate($variant, 20);
+            border-color: saturate($variant, 20);
+
+            & > span {
+                @include sprite-image($variant);
+            }
+        }
+    }
+}
+
+
+
+/* Size variants
+   ========================================================================== */
+
+.c-btn--small {
+  padding: $unit-tiny/2 $unit-tiny;
+}
+
+.c-btn--large {
+  padding: $unit-small $unit;
+}
+
+.c-btn--micro {
+    padding: 0.2em 0.6em;
+    font-size: 0.625em;
+    box-shadow: none;
+}
+
+
+
+
+
+/* Ghost buttons
+   ========================================================================== */
+
+/**
+ * Ghost buttons have see-through backgrounds and are bordered.
+ */
+
+$btn-ghost-border-width: 2px !default;
+
+.c-btn--ghost {
+    background: none;
+    border-width: $btn-ghost-border-width;
+
+    padding: ($unit-tiny - $btn-ghost-border-width) ($unit-small - $btn-ghost-border-width);
+
+    &:hover, &:focus {
+        box-shadow: none;
+    }
+
+    &.c-btn--small {
+        padding: ($unit-tiny/2 - $btn-ghost-border-width) ($unit-tiny - $btn-ghost-border-width);
+    }
+
+    &.c-btn--large {
+        padding: ($unit-small - $btn-ghost-border-width) ($unit - $btn-ghost-border-width);
+    }
+}
+
+
+
+/* Icon on hover
+   ========================================================================== */
+
+.c-btn--hover-icon {
+    position: relative;
+
+    & > span {
+        position: absolute;
+        top: 0.5em;
+        right: 0.5em;
+
+        opacity: 0;
+        transition: opacity 0.5s, top 0.5s, right 0.5s;
+    }
+
+    &:hover, &:active, &:focus {
+        padding-left: 5px;
+        padding-right: 2em;
+
+        & > span {
+            opacity: 1;
+        }
+    }
+}
+
+
+/*
+ * Group of buttons in a row
+ */
+.c-btn-group {
+    display: inline-flex;
+    justify-content: center;
+
+    & .c-btn {
+        margin: 0 $unit-tiny;
+    }
+
+    @include mq($from: desktop) {
+        justify-content: space-around;
+    }
+}

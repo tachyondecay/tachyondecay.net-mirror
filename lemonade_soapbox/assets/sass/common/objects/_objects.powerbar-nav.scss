@@ -1,0 +1,118 @@
+/* ==========================================================================
+   #NAVIGATION POWERBAR
+   ========================================================================== */
+
+/* 
+ * Two-part horizontal navigation panel comprising a list of links and a search 
+ * object.
+ *
+ * For search object styles, see common/objects.search-box.
+ *
+ * For UI theme, see $blueprint/components.nav
+ *
+ * Mobile-first, it is a simple vertical list that can be toggled with JS.  At 
+ * $tablet size, it flips to horizontal bar.
+ *
+ * It can also support dropdown menus.
+ *
+ * 1.   The nav may need to be on top of other elements if we choose to apply a 
+ *      box-shadow.
+ */
+
+.o-powerbar {
+    z-index: 5;
+}
+
+    .o-powerbar > div {
+        align-items: stretch;
+        display: flex;
+        flex-flow: column wrap;
+        justify-content: center;
+
+        @include mq($from: tablet) {
+            align-items: flex-end;
+            flex-flow: row-reverse wrap;
+            justify-content: space-between;
+        }
+    }
+
+
+.o-powerbar-nav {
+    flex: 3;
+
+    & ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    & > ul {
+        display: flex;
+        flex-flow: column;
+
+        @include mq($from: tablet) {
+            flex-flow: row;
+            margin-right: $unit-large;
+        }
+    }
+}
+
+.o-powerbar-nav--full {
+    flex: 1;
+}
+
+
+    .o-powerbar-nav__parent-item {
+        position: relative;
+
+        & a {
+            display: block;
+        }
+
+        & > a {
+            padding: $unit-tiny $unit-tiny $unit-tiny $unit-large;
+        }
+
+        @include mq($from: tablet) {
+            & > a {
+                padding: $unit $unit-large $unit-tiny $unit;
+            }
+
+            & ul {
+                display: none;
+                position: absolute;
+                width: 100%;
+
+                /**
+                 * N.B. c-powerbar-nav__parent-item MUST specify properties to make 
+                 * this sub-list appear "above" content. Below is an example.
+
+                    background-color: darken($blue, 10);
+                    border-bottom: 10px solid desaturate(darken($blue, 20), 10);
+                    border-radius: 0 0 5px 5px / 0 0 10px 10px;
+                    box-shadow: 0 5px 5px $colour--shadow;
+
+                 **/
+            }
+
+            &:hover ul {
+                display: block;
+            }
+        }
+    }
+
+    .o-powerbar-nav__sub-item {
+        & a {
+            padding: $unit-tiny/2 $unit-tiny/2 $unit-tiny/2 $unit-large*1.5;
+        }
+
+        @include mq($from: tablet) {
+            & a {
+                padding: $unit-tiny $unit-tiny $unit-tiny $unit;
+            }
+
+            & a:hover {
+                background-color: $grey--dark;
+            }
+        }
+    }

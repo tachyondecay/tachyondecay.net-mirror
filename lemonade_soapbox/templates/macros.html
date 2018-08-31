@@ -1,0 +1,42 @@
+{% macro notifications(category_filter=[]) %}
+    {% with notify = get_flashed_messages(category_filter=category_filter, with_categories=true) %}
+    {% if notify %}
+        {%- for category, msg in notify %}
+        <div class="c-notification c-notification--dismissable c-notification--{{ category }}">{{ msg|safe }}</div>
+        {% endfor -%}
+    {% endif %}
+    {% endwith %}
+{% endmacro %}
+
+{% macro read_more(content, length=None, link=True, url=None) %}
+    {% set trimmed = content|truncate_html(length) %}
+    {{ trimmed }}
+    {% if link and trimmed|length < content|length %}
+    <p class="u-text-center"><a class="c-btn more" href="{{ url }}">Read more…</a></p>
+    {% endif %}
+{% endmacro %}
+
+{% macro render_errors(field) %}
+    {% if field.errors %}
+    <div class="c-notification c-notification--error c-notification--inline" data-for="{{ field['id'] }}">
+        {% if field.errors|length > 1 %}
+        <p class="u-margin-bottom-none">Please fix the following errors:</p>
+        <ul class="u-margin-vertical-none">
+            {% for e in field.errors %}
+            <li>{{ e }}</li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        {{ field.errors[0] }}
+        {% endif %}
+    </div>
+    {% endif %}
+{% endmacro %}
+
+{% macro render_field(field, params={}, label=None, container_class=None) %}
+    {{ field.label(label) }}
+    {{ render_errors(field) }}
+    <div class="o-form-field__input {{ container_class|default('') }} {{ "o-form-field__input--error" if field.errors }}">
+    {{ field(**params) }}
+    </div>
+{% endmacro %}

@@ -1,0 +1,19 @@
+/* ==========================================================================
+   #ICON
+   ========================================================================== */
+
+/**
+ * For images, such as avatars, that we want to align to text.
+ */
+
+
+.o-icon {
+    vertical-align: middle;
+
+    border: solid $colour--border;
+    border-width: 1px;
+}
+
+.o-icon--small {
+    height: $unit * 0.75;
+}

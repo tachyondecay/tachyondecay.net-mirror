@@ -1,0 +1,5 @@
+Hello, {{ name }}
+
+Follow the link below to sign into {{ config['BLOG_NAME'] }}. It expires in {{ config['LOGIN_TOKEN_EXPIRY']//60 }} minutes.
+
+{{ signin_link }}

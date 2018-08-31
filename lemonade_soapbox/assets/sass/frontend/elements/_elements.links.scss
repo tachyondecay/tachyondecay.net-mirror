@@ -1,0 +1,17 @@
+a {
+  color: $brown;
+  text-decoration-skip: ink;
+
+  transition: color 0.5s ease;
+
+  &:hover, &:focus {
+    color: $pink;
+  }
+
+  &:active {
+    text-shadow: 1px 1px rgba(0, 0, 0, 0.5);
+  }
+}
+
+a.more {
+}

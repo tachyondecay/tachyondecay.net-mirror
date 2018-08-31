@@ -1,0 +1,56 @@
+.c-masthead {
+  margin-bottom: $unit-large;
+  padding-top: $unit-large;
+
+  background: linear-gradient($white, transparent);
+}
+
+.c-masthead__title {
+  display: flex;
+  justify-content: center;
+
+  color: $dark-blue;
+  h1 {
+    @include font-size(48px);
+    font-weight: 700;
+    font-variant: small-caps;
+    text-align: center;
+  }
+
+  img {
+    height: 100px;
+    width: 100px;
+    margin: 0 $unit-small $unit-small;
+    vertical-align: baseline;
+
+    border: 1px solid $dark-blue;
+  }
+}
+
+.c-masthead__tagline {
+  color: $black;
+  font-style: italic;
+}
+
+.c-masthead__nav {
+  background: $light-blue;
+}
+
+  .c-masthead__nav a {
+    display: block;
+    padding: $unit-tiny $unit-small $unit-small;
+
+    color: $white;
+    @include font-size(24px);
+    font-family: $sans-serif;
+    font-variant: all-small-caps;
+    text-align: center;
+    text-decoration: none;
+
+    transition: background-color 0.5s ease-in;
+
+    &:hover, &:focus {
+      background-color: $dark-blue;
+    }
+  }
+

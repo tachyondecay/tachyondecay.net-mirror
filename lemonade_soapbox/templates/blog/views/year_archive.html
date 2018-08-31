@@ -1,0 +1,25 @@
+{% extends 'blog/layouts/master.html' %}
+
+{% block body_main %}
+{% block main_title %}
+<h1 class="c-page__title u-text-center u-text-shadow">{{ page_title }}</h1>
+{% endblock main_title %}
+
+<ol reversed="reversed" class="o-list-bare">
+	{% for month in articles|groupby('date_published.month')|sort(True, month) %}
+	<li>
+			<h2 class="u-text-center">{{ g.full_month_name[month.grouper] }}</h2>
+
+			<ol reversed="reversed" class="o-list-bare o-list-split u-margin-bottom">
+				{% for article in month.list|sort(True, attribute='date_published.day') %}
+				<li class="o-list-split__item">
+					<span class="o-list-split__left"><time datetime="{{ article.date_published.isoformat() }}">{{article.date_published.strftime('%b %d') }}</time></span>
+
+					<a class="o-list-split__right" href="{{ article.get_permalink() }}">{{ article.title }}</a>
+				</li>
+				{% endfor %}
+			</ol>
+	</li>
+	{% endfor %}
+</ol>
+{% endblock %}

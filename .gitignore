@@ -1,0 +1,12 @@
+__pycache__
+instance
+migrations
+venv
+.sass-cache
+
+*.pyc
+
+# dev
+export.py
+import.py
+sandbox.py

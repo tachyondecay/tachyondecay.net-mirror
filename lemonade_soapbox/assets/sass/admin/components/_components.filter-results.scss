@@ -1,0 +1,123 @@
+/**
+  * #FILTER-RESULTS
+  */
+
+
+.c-results {
+    // @include mq($from: desktop) {
+    //     flex-flow: row nowrap !important;
+    // }
+}
+
+.c-results__filter {
+
+    @include mq($from: desktop) {
+        border-right: 1px solid $grey;
+        max-width: 15rem;
+    }
+}
+
+    .c-results__filter > .o-grid {
+        flex-flow: column nowrap;
+
+        @include mq($from: tablet) {
+            flex-flow: row nowrap;
+            justify-content: space-between;
+        }
+
+        @include mq($from: desktop) {
+            flex-flow: column nowrap;
+            justify-content: flex-start;
+        }
+    }
+
+
+.c-filter-facet {
+}
+
+    .c-filter-facet__month-picker {
+        @include font-size(14px);
+        text-align: center;
+
+        @include mq($from: desktop) {
+            text-align: left;
+        }
+    }
+
+
+    .c-filter-facet__link {
+        display: flex;
+        flex-flow: row nowrap;
+        justify-content: space-between;
+
+        color: $black;
+        text-decoration: none;
+
+        background: none;
+        transition: none;
+
+        &:hover, &:focus, &:active {
+            margin-left: -10px;
+            padding-left: 5px;
+
+            color: $purple;
+
+            background: none;
+            border-left: 5px solid $purple;
+            transition: none;
+        }
+    }
+
+    .c-filter-facet__link--current {
+        margin-left: -10px;
+        padding-left: 5px;
+
+        color: $blue;
+        font-weight: bold;
+
+        border-left: 5px solid $blue;
+    }
+
+
+.c-results__item {
+    display: flex;
+    flex-flow: column;
+
+    border-top: 0 solid $grey;
+
+    &:nth-child(n+3) {
+        border-top-width: 1px;
+    }
+
+    &:hover {
+        border: 1px solid $purple;
+        border-radius: $global-radius;
+        box-shadow: 2px 2px 5px $colour--shadow;
+        transition: $global-transition;
+    }
+}
+
+.c-results__time {
+    margin-bottom: 0;
+
+    @include font-size(12px);
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+    .c-results__time--deleted {
+        color: $red;
+    }
+
+    .c-results__time--draft {
+        color: $grey--dark;
+    }
+
+
+.c-no-results {
+    @include font-size(24px);
+}
+
+.c-no-results__icon {
+    @include font-size(48px);
+}

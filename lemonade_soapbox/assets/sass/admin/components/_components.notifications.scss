@@ -1,0 +1,100 @@
+/* ==========================================================================
+   #NOTIFICATIONS
+   ========================================================================== */
+
+.c-notification-container {
+    background-color: $grey;
+}
+
+
+.c-notification {
+    margin-bottom: $unit;
+    padding: $unit-small;
+    padding-left: $unit-large + $unit-small;
+    position: relative;
+
+    color: $blue;
+    font-family: $fonts--sans-serif;
+    font-weight: bold;
+
+    background-color: $white;
+    border: 2px solid $blue;
+    border-radius: $global-radius;
+    box-shadow: 2px 2px 5px $colour--shadow;
+
+    &:first-child {
+        margin-top: -1*$unit;
+    }
+
+    &:before {
+        content: '';
+        position: absolute;
+        left: $unit-small;
+        top: 50%;
+        transform: translate(0,-50%);
+        @include sprite(info, $colour: $blue);
+        font-size: 32px;
+    }
+}
+
+
+.c-notification__dismiss {
+    position: absolute;
+    right: $unit-small;
+    top: 50%;
+    transform: translate(0, -50%);
+
+    cursor: pointer;
+}
+
+
+
+
+/**
+ * Notification variants in terms of colour/icon
+ */
+
+$notification-variations: (
+    important: $purple "notification",
+    success: $green "checkmark2",
+    error: $red "warning",
+    removed: $orange "bin"
+);
+
+
+@each $name, $variant in $notification-variations {
+    .c-notification--#{$name} {
+        border-color: nth($variant, 1);
+        color: nth($variant, 1);
+        
+        // box-shadow: 0 4px 0 0 darken($variant, 20);
+
+        &:before {
+            @include sprite(nth($variant, 2), $colour: nth($variant, 1));
+        }
+    }
+}
+
+
+
+/**
+ * Inline notifications for form fields, etc.
+ */
+
+.c-notification--inline {
+    padding: 0 $unit-tiny;
+
+    @include font-size(12px);
+
+    background: none;
+    border: none;
+    box-shadow: none;
+
+    &:before {
+        background-image: none;
+    }
+
+    ul > li {
+        // list-style: none;
+    }
+}

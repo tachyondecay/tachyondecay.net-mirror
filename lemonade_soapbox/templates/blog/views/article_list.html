@@ -1,0 +1,41 @@
+{% extends 'blog/layouts/master.html' %}
+{% from 'macros.html' import read_more %}
+
+{% block body_main %}
+{{ super() }}
+
+{% block main_title %}
+<h1 class="c-page__title u-text-center u-text-shadow">{{ page_title }}</h1>
+{% endblock main_title %}
+
+{% block article_list %}
+<ol class="o-list-bare c-article-archive" reversed="reversed">
+{% for article in articles %}
+    <li class="u-margin-vertical">
+        <article id="{{ article.handle }}" class="o-wrapper--text o-post o-post--excerpt">
+            <header>
+                <h2 class="o-post__title u-margin-horizontal-small u-margin-bottom-small u-text-shadow">
+                    <a class="u-no-underline" href="{{ article.get_permalink() }}">{{ article.title }}</a>
+                </h2>
+
+                {% if article.summary %}
+                <div class="o-post__summary">
+                    {{ article.summary }}
+                </div>
+                {% endif %}
+
+                <p class="o-post__details o-post__pubinfo u-margin-horizontal-small">
+                    <time datetime="{{ article.date_published.isoformat() }}">{{ article.date_published.to(config.TIMEZONE).format('dddd, MMMM D, YYYY h:mm A ZZ') }}</time>
+                </p>
+            </header>
+
+            <div class="o-post__content">
+                {{ read_more(article.body_html, url=article.get_permalink()) }}
+            </div>
+        </article>
+    </li>
+{% endfor %}
+</ol>
+{% endblock article_list %}
+
+{% endblock body_main %}

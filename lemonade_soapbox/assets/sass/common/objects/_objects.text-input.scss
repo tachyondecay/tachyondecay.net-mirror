@@ -1,0 +1,117 @@
+/*------------------------------------*\
+    #TEXT-INPUT
+\*------------------------------------*/
+
+/**
+ * Modified from @csshugs https://github.com/csshugs/objects.text-input
+ */
+
+/**
+ * Unify text-like inputs.
+ */
+
+// Predefine the variables below in order to alter and enable specific features.
+
+$text-input-padding:              $inuit-global-spacing-unit-tiny !default;
+$text-input-padding--horizontal:  $text-input-padding !default;
+$text-input-padding--vertical:    $inuit-global-spacing-unit-tiny !default;
+$text-input-padding--small:       $text-input-padding/2 !default;
+$text-input-padding--large:       $text-input-padding*2 !default;
+
+$text-input-background:           $white !default;
+$text-input-text-color:           $black !default;
+$text-input-border-width:         1px !default;
+$text-input-border-color:         $grey !default;
+$text-input-border-style:         solid !default;
+$text-input-border-radius:        $global-radius !default;
+
+
+.o-text-input,
+.o-textarea {
+    padding: $text-input-padding--vertical $text-input-padding--horizontal;
+    background-color: $text-input-background;
+    color: $text-input-text-color;
+
+    outline: 0;
+
+    @if($text-input-border-width != 0) {
+        border: $text-input-border-width $text-input-border-style $text-input-border-color;
+    }
+    @else {
+        border: 0;
+    }
+
+    @if($text-input-border-radius != 0) {
+        border-radius: $text-input-border-radius;
+    }
+
+    &:focus {
+        border-color: $purple;
+    }
+}
+
+
+
+
+
+
+/**
+ * Compressed text inputs.
+ */
+.o-text-input--small {
+    padding-left: $text-input-padding--small;
+    padding-right: $text-input-padding--small;
+}
+
+
+
+
+
+
+
+/**
+ * Tall text inputs.
+ */
+.o-text-input--large {
+    padding-left: $text-input-padding--large;
+    padding-right: $text-input-padding--large;
+}
+
+
+
+/**
+ * Text inputs that blend into the page
+ */
+.o-text-input--blend {
+    background: none;
+    border: 0;
+    border-bottom: 1px solid $blue;
+    border-radius: 0;
+    transition: $global-transition;
+
+    &:hover:not(:focus) {
+        background-color: rgba($grey--dark, 0.3);
+    }
+
+    &:focus {
+        border-bottom: 2px solid $purple;
+        padding-bottom: ($text-input-padding--vertical - 1);
+    }
+}
+
+
+
+/**
+ * Adopt the styles from text-inputs for textarea boxes.
+ */
+.o-textarea {
+    height: 5em;
+}
+
+.o-textarea--small {
+    height: 2em;
+}
+
+.o-textarea--large {
+    height: 8em;
+}

@@ -1,0 +1,31 @@
+{% from 'macros.html' import read_more %}
+<?xml version="1.0" encoding="UTF-8"?>
+
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>{{ title|default('') }}{{ config['BLOG_NAME'] }}</title>
+		<link>{{ url_for('.index', _external=True) }}</link>
+		<atom:link rel="self" href="{{ url }}" type="application/rss+xml"/>
+
+
+		<description>{{ config['BLOG_TAGLINE'] }}</description>
+
+		<lastBuildDate>{{ articles[0].date_updated.strftime('%a, %d %b %Y %H:%M:%S UT') }}</lastBuildDate>
+
+		{% for article in articles %}
+		<item>
+			<link>{{ article.get_permalink(relative=False) }}</link>
+			<guid isPermaLink="true">{{ article.get_permalink(relative=False) }}</guid>
+			<title>{{ article.title }}</title>
+
+			<pubDate>{{ article.date_published.strftime('%a, %d %b %Y %H:%M:%S UT') }}</pubDate>
+
+			<description>{{ article.summary or read_more(article.body_html, length=50, link=False)|striptags }}</description>
+
+			{% for t in article._tags|sort(attribute='handle') %}
+			<category domain="{{ url_for('.show_tag', _external=True, handle=t.handle) }}">{{ t.label }}</category>
+			{% endfor %}
+		</item>
+		{% endfor %}
+	</channel>
+</rss>

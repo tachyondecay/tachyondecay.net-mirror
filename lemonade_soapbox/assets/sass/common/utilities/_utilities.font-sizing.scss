@@ -1,0 +1,25 @@
+/* ==========================================================================
+   #FONT-SIZING
+   ========================================================================== */
+
+/**
+ *  Adjust font sizing
+ */
+
+$font-scale-factors: (
+    tiny: 0.5,
+    smaller: 0.667,
+    small: 0.889,
+    large: 1.125,
+    larger: 1.5,
+    huge: 2
+);
+
+@each $name, $factor in $font-scale-factors {
+    .u-font--#{$name} {
+        @include font-size($inuit-global-font-size * $factor);
+    }
+}
+
+
+.u-accent { font-family: $fonts--accent !important; }

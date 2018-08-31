@@ -1,0 +1,25 @@
+<nav>
+	<h1 class="u-margin-top u-aside">Blog Archive</h1>
+
+	<ol class="o-list-bare c-calendar-nav u-margin-horizontal">
+		{% for (year, month) in g.breakdown|dictsort|reverse %}
+		<li class="c-calendar-nav__item">
+			<h2 class="c-calendar-nav__year u-h5 u-margin-none">
+				<a href="{{ url_for('.year_archive', year=year) }}" title="View all posts from {{ year }}">
+					{{ year }}
+				</a>
+			</h2>
+
+			<ol class="o-list-bare o-list-inline-flex c-calendar-nav__months">
+				{% for (month_num, article_count) in month|dictsort %}
+				<li>
+					<a href="{{ url_for('.month_archive', year=year, month='{0:02d}'.format(month_num)) }}" title="View all posts from {{g.month_name[month_num] }}">
+						<span class="month-name" title="View {{ article_count }} {{ ngettext('article', 'articles', article_count) }} from {{ g.month_name[month_num] }} {{ year }}">{{ g.month_name[month_num] }}</span>
+					</a>
+				</li>
+				{% endfor %}
+			</ol>
+		</li>
+		{% endfor %}
+	</ol>
+</nav>

@@ -1,0 +1,31 @@
+{% extends 'frontend/layouts/master.html' %}
+
+{% block about_me %}{% endblock about_me %}
+
+{% block body_main %}
+<div class="o-wrapper--text">
+    <h1 class="c-page__title u-text-shadow">About Me</h1>
+
+    <img src="{{ url_for('static', filename='images/me.jpg') }}" class="u-flow-left u-img-circle" width="250" />
+
+    <p>I’m 28 years old and live in Thunder Bay, Ontario, Canada, a settler on the lands of the Anishinaabeg of Fort William First Nation and the Robinson–Superior Treaty of 1850. Currently, I teach math and English at the Lakehead Adult Education Centre, where adults can earn their Ontario Secondary School Diploma. In my spare time, I mainline books like they’re an illicit drug. I knit. Occasionally I say something interesting.</p>
+
+    <p>After I graduated from Lakehead University in 2012, I taught math and English in England for two years. Then I moved back here. If you look hard enough online, you can find a music video I shot of me dancing to Taylor Swift’s “Shake It Off” (you don’t have to look that hard).</p>
+
+{#     <img src="https://c1.staticflickr.com/1/862/28811988837_c74b87a86e_b.jpg" alt="Myself standing in front of a window, looking out at it, arms crossed" /> #}
+
+    <p>All my life I’ve been bookish, kind of nerdy. Stick around long enough, and hopefully I’ll belie the stereotype that my tall, lithe, white, glasses-wearing exterior stubbornly embodies.</p>
+
+    <p>Oh, don’t get me wrong: I am <em>super</em> nerdy. My idea of the outdoors is a good chair on my deck in which to read, cup of tea by my side; I programmed this website’s software from scratch (currently in Python with Flask!); I write a review of every book I read.</p>
+
+    <p>But part of reaching nearly 30 is the joy of adding more layers.</p>
+
+    <p>Last year I bought a house. It was the end of a major chapter in my life, the culmination of a longstanding goal. At first I wondered, having achieved the last big milestone I’d set myself, what I’d do next.</p>
+
+    <p>Turns out the end of this chapter was the start of a whole new one. I grew closer than I ever expected to a friend I’ve known for years, and now she’s in my life every single day, dynamic and daring and inspirational. And I met a new best friend, a ride-or-die friend, someone who makes me feel like I’ve spent my whole life just auditioning to be the me I am with her.</p>
+
+    <p>Friendship is very important to me. I identify as both asexual and aromantic, and although neither of these orientations precludes having a partner of any kind, that’s not something I want right now. I still want close companions, though. People who care for me. People who let me care for them. More than buying a house, last year was the year I think I found <em>it</em>.</p>
+
+    <p>So now I plan to spend as much of my life as possible enjoying it.</p>
+</div>
+{% endblock %}

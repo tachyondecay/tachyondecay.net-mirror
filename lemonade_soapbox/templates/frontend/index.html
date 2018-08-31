@@ -1,0 +1,53 @@
+{% extends 'frontend/layouts/master.html' %}
+
+{% block body_classes %}index{% endblock body_classes %}
+
+{% block page_title %}Ben Babcock{% endblock page_title %}
+
+{% block body_main %}
+
+<h1 class="u-hidden-visually">Home Page</h1>
+
+<h2 class="c-page__title">Recent Blog Posts</h2>
+
+<div class="c-results o-grid--column o-wrapper--text u-margin-horizontal-large">
+
+{% if articles %}
+    {% for article in articles %}
+    <article class="c-results__item o-grid__cell u-padding-top" id="{{ article.handle }}" data-id="{{ article.id }}">
+        <header>
+            <h1 class="u-h3 u-margin-bottom-none">
+                <a href="{{ article.get_permalink() }}" title="Edit this article">{{ article.title }}</a>
+            </h1>
+
+            <p class="o-post__details"><time datetime="{{ article.date_published.isoformat() }}">{{ article.date_published.to(config.TIMEZONE).format('MMM DD, YYYY h:mm a') }}</time></p>
+        </header>
+        <div class="o-post__summary">
+            {{ article.summary or article.body_html|truncate_html(50) }}
+        </div>
+    </article>
+    {% endfor %}
+{% else %}
+    <div class="o-grid__cell c-no-results u-margin-top u-text--centre">
+        <p><span class="c-no-results__icon i--newspaper"></span> </p>
+        <p> No articles found. </p>
+    </div>
+{% endif %}
+</div>
+{% endblock body_main %}
+
+
+{% block body_sidebar_right %}
+    <h2>Instagram</h2>
+
+    <p class="u-accent">Don’t get too excited: it’s just knitting pics.</p>
+
+    <!-- LightWidget WIDGET --><script src="https://cdn.lightwidget.com/widgets/lightwidget.js"></script><iframe src="//lightwidget.com/widgets/7dfe501604ef53f6b6d1ad007d3639f5.html" scrolling="no" allowtransparency="true" class="lightwidget-widget" style="width:100%;border:0;overflow:hidden;"></iframe>
+{% endblock body_sidebar_right %}
+
+
+{% block body_sidebar_left %}
+   <h2 class="u-hidden-visually">Twitter</h2>
+
+    <a class="twitter-timeline" data-height="1000" data-dnt="true" data-link-color="#71493f" href="https://twitter.com/tachyondecay?ref_src=twsrc%5Etfw">Tweets by tachyondecay</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> 
+{% endblock body_sidebar_left %}

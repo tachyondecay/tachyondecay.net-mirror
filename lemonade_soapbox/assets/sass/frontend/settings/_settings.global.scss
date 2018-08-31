@@ -1,0 +1,27 @@
+///* ========================================================================
+//   #GLOBAL
+//   ======================================================================== */
+
+// The global settings file contains any project-wide variables; things that
+// need to be made available to the entire codebase.
+
+// Standardise some UI treatments.
+$global-radius: 3px !default;
+$global-transition: all 300ms ease-in-out !default;
+
+$serif: "EB Garamond", Garamond, "Times New Roman", serif;
+$sans-serif: Oswald, Verdana, Arial, sans-serif;
+$fonts--accent: $sans-serif;
+
+$inuit-global-font-size: 18px;
+$inuit-global-line-height: 27px;
+
+$white: #fff;
+$black: #232323;
+$brown: #800080;
+$pink: #aa4465;
+$dark-blue: #1f5673;
+$light-blue: #60839a;
+$dark-grey: #706967;
+$light-grey: #aa9da1;
+

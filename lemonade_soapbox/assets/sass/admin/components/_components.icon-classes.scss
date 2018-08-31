@@ -1,0 +1,29 @@
+/* ==========================================================================
+   #ICON CLASSES
+   ========================================================================== */
+
+//
+// List of icons to create (I don't necessarily need all of them)
+//
+// Names come from $icons mapping.
+//
+$included-icons: ("box-add", "bin", "calendar", "checkmark", "clock", "earth", 
+                  "eye-blocked", "floppy-disk", "link", "newspaper", "new-tab", 
+                  "pencil", "spinner") !default;
+
+@each $i in $included-icons {
+    .i--#{$i} {
+        @include sprite($i);
+        margin-top: 0.1em;
+        vertical-align: text-top;
+    }
+
+    .i-before--#{$i}:before {
+        @include sprite($i);
+    }
+
+    .i-after--#{$i}:after {
+        @include sprite($i);
+    }
+}
+

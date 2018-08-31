@@ -1,0 +1,105 @@
+{% extends 'admin/layouts/master.html' %}
+{% from 'macros.html' import notifications %}
+
+{% block body_main %}
+{{ super() }}
+
+<div class="">
+<section class="o-grid--column o-grid--flip@desktop c-results u-margin">
+
+    <header class="o-grid__cell c-results__filter u-flex-1/4@desktop u-padding-horizontal u-padding-vertical-none">
+        <h1 class="u-hidden-visually">Filters</h1>
+
+        <div class="o-grid o-grid--auto">
+
+            <section class="o-grid__cell c-filter-facet u-margin-bottom-small u-flex-1/4">
+                <h2 class="u-accent u-h4 u-margin-bottom-tiny">Status</h2>
+
+                <ul class="o-list-bare c-filter-facet__list">
+                    {% for status in status_breakdown %}
+                    <li>
+                        <a href="?status={{status[0]}}" class="c-filter-facet__link {{'c-filter-facet__link--current' if current_status==status[0]}}">
+                            <span class="c-filter-facet__link-text">{{status[0]|capitalize }}</span>
+                            <span class="c-filter-facet__count">{{ status[1] }}</span>
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </section>
+
+            {% if current_status == 'published' %}
+            <section class="o-grid__cell c-filter-facet u-margin-bottom u-flex-1/2">
+                <h2 class="u-hidden-visually">Date</h2>
+
+                <div class="c-filter-facet__month-picker js-monthpicker" data-selected="{{ current_month }}"></div>
+            </section>
+            {% endif %}
+
+            <section class="o-grid__cell c-filter-facet u-flex-1/4">
+                <h2 class="u-accent u-h4 u-margin-bottom-tiny">Tags</h2>
+
+                <ul class="o-list-bare c-filter-facet__list">
+                    <li>
+                        <a href="" class="c-filter-facet__link">
+                            <span class="c-filter-facet__link-text">Tag 1</span>
+                            <span class="c-filter-facet__count">1</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="" class="c-filter-facet__link">
+                            <span class="c-filter-facet__link-text">Tag 2</span>
+                            <span class="c-filter-facet__count">1</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="" class="c-filter-facet__link">
+                            <span class="c-filter-facet__link-text">Tag 3</span>
+                            <span class="c-filter-facet__count">1</span>
+                        </a>
+                    </li>
+                    <li class="u-margin-top-small">
+                        <input type="text" placeholder="Search for tag…" class="o-text-input o-text-input--blend u-1/1 js-autocomplete" data-src="{{ url_for('api.tags_lookup') }}" />
+                    </li>
+                </ul>
+            </section>
+        </div>
+
+
+    </header>
+
+
+    <div class="o-grid__cell c-results__list u-flex-3/4@desktop u-padding-left-large">
+        <div class="o-grid--column o-grid--flip@desktop">
+
+        {% if articles %}
+            {% for article in articles %}
+            <article class="o-grid__cell c-results__item u-1/2@desktop u-padding-top" id="{{ article.handle }}" data-id="{{ article.id }}">
+                <header>
+                    <p class="c-results__time c-results__time--{{ article.status }}">
+                        {% if article.status == 'published' %}
+                        Published: <time datetime="{{ article.date_published.isoformat() }}">{{ article.date_published.to(config.TIMEZONE).format('MMM DD, YYYY h:mm a') }}</time>
+                        {% else %}
+                        Created: <time datetime="{{ article.date_created.isoformat() }}">{{ article.date_created.to(config.TIMEZONE).format('MMM DD, YYYY h:mm a') }}</time>
+                        {% endif %}
+                    </p>
+                    <h1 class="u-h3">
+                        <a href="{{ url_for('admin.edit_article', id=article.id) }}" title="Edit this article">{{ article.title }}</a>
+                    </h1>
+                </header>
+                <div class="">
+                    {{ article.body_html|truncate_html(50) }}
+                </div>
+            </article>
+            {% endfor %}
+        {% else %}
+            <div class="o-grid__cell c-no-results u-margin-top u-text--centre">
+                <p><span class="c-no-results__icon i--newspaper"></span> </p>
+                <p> No articles found. </p>
+            </div>
+        {% endif %}
+
+        </div>
+    </div>
+</section>
+</div>
+{% endblock %}

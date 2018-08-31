@@ -1,0 +1,26 @@
+<nav>
+	<h1 class="u-h2">Blog Archive</h1>
+
+	<ol class="o-list-bare breakdown-years">
+		{% for (year, month) in g.breakdown|dictsort|reverse %}
+		<li>
+			<h2 class="u-h4 year expandable">
+				<a href="{{ url_for('.year_archive', year=year) }}" title="View all posts from {{ year }}">
+					{{ year }}
+				</a>
+			</h2>
+
+			<ol class="o-list-bare breakdown-months collapsible">
+				{% for (month_num, article_count) in month|dictsort|reverse %}
+				<li>
+					<a href="{{ url_for('.month_archive', year=year, month='{0:02d}'.format(month_num)) }}" title="View all posts from {{g.month_name[month_num] }}">
+						<span class="month-name">{{ g.month_name[month_num] }}</span>
+						<span class="article-count">({{ article_count }})</span>
+					</a>
+				</li>
+				{% endfor %}
+			</ol>
+		</li>
+		{% endfor %}
+	</ol>
+</nav>

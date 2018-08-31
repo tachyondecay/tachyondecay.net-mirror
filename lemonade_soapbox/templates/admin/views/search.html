@@ -1,0 +1,78 @@
+{% extends 'admin/layouts/master.html' %}
+
+{% macro page_url(page_num) -%}
+    {{ url_for(mode, q=query_string|default(None), page=page_num) }}
+{%- endmacro %}
+
+{% block body_main %}
+    {{ super() }}
+
+<div class="o-grid--column o-grid--flip@desktop c-results u-margin">
+{% if results and articles %}
+    {% if results.pagecount > 1 %}
+    <ul class="pagination">
+        {% if results.pagenum > 1 %}
+        <li class="pagination__link pagination__link--first">
+            <a href="{{ page_url(1) }}" title="Go to first page">First</a>
+        </li>
+            {% if results.pagenum > 2 %}
+            <li class="pagination__link pagination__link--previous">
+                <a href="{{page_url(results.pagenum - 1) }}" title="Go to previous page">Previous</a>
+            </li>
+            {%endif %}
+        {% endif %}
+
+        <li class="pagination__link pagination__link--current">
+            <span>Page {{ results.pagenum }} of {{ results.pagecount }}</span>
+        </li>
+
+        {% if results.pagenum < results.pagecount %}
+            {% if results.pagenum < (results.pagecount - 1) %}
+            <li class="pagination__link pagination__link--next">
+                <a href="{{ page_url(results.pagenum + 1) }}" title="Go to next page">Next</a>
+            </li>
+            {% endif %}
+        
+        <li class="pagination__link pagination__link--last">
+            <a href="{{ page_url(results.pagecount) }}" title="Go to last page">Last</a>
+        </li>
+            
+        {% endif %}
+    </ul>
+    {%endif %}
+
+    <table class="o-table o-table--small">
+        <thead>
+            <tr>
+                <th scope="col">Title</th>
+                <th scope="col">Updated</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for article in articles %}
+            <tr class="result">
+                <td class="result__item">
+                    {%-if article.status != 'published' %}
+                    <span class="result__status result__status--{{article.status}}">{{ article.status|capitalize }}</span>
+                    {% endif -%}
+                    <a href="{{ url_for('.edit_article', id=article.id) }}">{{ article.title }}</a>
+
+                    <span class="result__summary">{{ article.summary|default(article.body_html|truncate_html(25)|striptags, true) }}</span>
+                </td>
+
+                <td class="result__date">
+                    {%- if article.status == 'published' %}
+                    {{ article.date_published.to(config['TIMEZONE']).format('MMM DD YYYY')}}
+                    {% else %}
+                    {{ article.date_created.to(config['TIMEZONE']).format('MMM DD YYYY')}}
+                    {% endif -%}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+<div class="notification results--empty">No articles found.</div>
+{% endif %}
+</div>
+{% endblock body_main %}

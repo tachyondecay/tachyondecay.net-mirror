@@ -1,0 +1,12 @@
+.c-social-media {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.c-social-media__icon {
+  display: flex;
+  max-height: $unit-large;
+  margin: $unit-tiny $unit-small;
+}

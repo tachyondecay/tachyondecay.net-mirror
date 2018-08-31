@@ -1,0 +1,40 @@
+{% from 'macros.html' import read_more %}
+<?xml version="1.0" encoding="UTF-8"?>
+
+<feed xmlns="http://www.w3.org/2005/Atom">
+	<title>{{ title|default('') }}{{ config['BLOG_NAME'] }}</title>
+	<id>{{ url_for('blog.index', _external=True) }}</id>
+	<subtitle>{{ config['BLOG_TAGLINE'] }}</subtitle>
+
+	<link rel="self" href="{{ url }}"/>
+	<link rel="alternate" href="{{ url_for('blog.index', _external=True) }}"/>
+
+	<updated>{{ articles[0].date_updated.isoformat() }}</updated>
+
+	{% for article in articles %}
+	<entry>
+		<id>{{ article.get_permalink(False) }}</id>
+		<link rel="alternate" href="{{ article.get_permalink(False) }}"/>
+		<title>{{ article.title }}</title>
+
+		<updated>{{ article.date_updated.isoformat() }}</updated>
+		<published>{{ article.date_published.isoformat() }}</published>
+
+		<author>
+			<name>{{ article.author.name }}</name>
+			{% if article.author.url != None %}<uri>{{ article.author.url }}</uri>{% endif %}
+			{% if article.author.email != None %}<email>{{ article.author.email }}</email>{% endif %}
+		</author>
+
+		<summary>{{ article.summary or read_more(article.body_html, length=50, link=False)|striptags }}</summary>
+
+		<content type="html">
+			{{ article.body_html|forceescape }}
+		</content>
+
+		{% for t in article._tags|sort(attribute='handle') %}
+		<category term="{{ t.handle }}" label="{{ t.label }}" scheme="{{ url_for('.all_tags', _external=True) }}"/>
+		{% endfor %}
+	</entry>
+	{% endfor %}
+</feed>

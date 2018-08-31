@@ -1,0 +1,55 @@
+.o-post__details {
+  font-family: $sans-serif;
+  @include font-size(14px);
+}
+
+.o-post__pubinfo {
+  color: $brown;
+  border-bottom: 1px solid $brown;
+}
+
+.o-post__tags {
+  text-align: center;
+}
+
+.o-post__content h1 {
+  margin: $unit $unit-small $unit-small;
+
+  @include font-size($inuit-font-size-h2);
+}
+
+.o-post__content h2,
+.o-post--excerpt .o-post__content h1 {
+  @include font-size($inuit-font-size-h3);
+}
+
+.o-post--excerpt .o-post__content h2 {
+  @include font-size($inuit-font-size-h4);
+}
+
+.o-post__content p {
+  margin: 0 $unit-small $unit;
+
+  .o-post--single & {
+    @include font-size(20px);
+  }
+}
+
+.o-post__content figure {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+
+  margin: $unit auto;
+
+  a:not(:last-child) {
+    margin: 0 0 $unit-small 0;
+  }
+}
+
+.o-post__summary {
+  margin: $unit-small;
+  
+  color: $dark-grey;
+  font-family: $sans-serif;
+}

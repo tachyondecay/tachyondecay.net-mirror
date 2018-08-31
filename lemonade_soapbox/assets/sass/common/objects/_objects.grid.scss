@@ -1,0 +1,204 @@
+/* ==========================================================================
+   #GRID
+   ========================================================================== */
+
+/**
+ * This plugin provides a flexbox grid for inuitcss. Support for IE9 currently
+ * prevents inuitcss from using the flexbox layout mode.
+ *
+ * Cells are full-width and will stack on top of each other by default:
+ *
+ * <div class="o-grid">
+ *   <div class="o-grid__cell">
+ *   </div>
+ *   <div class="o-grid__cell">
+ *   </div>
+ * </div>
+ *
+ * Cells will in most cases be accompanied by utility classes that divide
+ * the grid into fractions. These are provided by inuitcss:
+ *
+ * <div class="o-grid">
+ *   <div class="o-grid__cell u-1/2">
+ *   </div>
+ *   <div class="o-grid__cell u-1/2">
+ *   </div>
+ * </div>
+ *
+ * Several modifier classes are provided. For example, `o-grid--auto` will
+ * divide the space equally between all containing cells without the need
+ * for width utility classes.
+ *
+ * <div class="o-grid--auto">
+ *   <div class="o-grid__cell">
+ *   </div>
+ *   <div class="o-grid__cell">
+ *   </div>
+ * </div>
+ */
+
+// This variable is deprecated. Use $inuit-flexgrid-spacing-sizes instead.
+
+$inuit-flexgrid-gutter-width: $inuit-global-spacing-unit !default;
+
+// Specify a map of possible gutter widths. By default we use the global
+// spacing units provided by inuitcss and their conventional class
+// name suffixes (--tiny, --small, --large etc).
+
+$inuit-flexgrid-spacing-sizes: (
+    null: $inuit-flexgrid-gutter-width,
+    '--tiny': $inuit-global-spacing-unit-tiny,
+    '--small': $inuit-global-spacing-unit-small,
+    '--large': $inuit-global-spacing-unit-large,
+    '--huge': $inuit-global-spacing-unit-huge,
+    '--flush': 0,
+) !default;
+
+
+/* The grid
+   ========================================================================== */
+
+.o-grid {
+    display: flex;
+    flex-flow: row wrap;
+    list-style: none;
+    padding: 0;
+}
+
+/**
+ * 1. Cells are full-width and stack on top of each other by default.
+ */
+
+.o-grid__cell {
+    flex: 0 1 auto;
+    width: 100%; /* [1] */
+}
+
+.o-grid--column {
+    display: flex;
+    flex-flow: column wrap;
+    list-stlye: none;
+    padding: 0;
+    margin-top: -$inuit-flexgrid-gutter-width;
+
+    & > .o-grid__cell {
+        padding-left: 0;
+        padding-top: $inuit-flexgrid-gutter-width;
+    }
+}
+
+
+/* Gutters
+   ========================================================================== */
+
+/**
+ * 1. The map $inuit-flexgrid-spacing-sizes contains a `null` key which
+ *    will be our default gutter size.
+ * 2. Add a negative margin on one side only. That way we aren't required to use
+ *    a wrapper with the same amount of spacing, though it's common to do so.
+ * 3. Neutralize the left margin on `o-grid`.
+ */
+
+@each $size-namespace, $size in $inuit-flexgrid-spacing-sizes {
+    .o-grid#{$size-namespace} { /* [1] */
+        margin-left: -$size; /* [2] */
+        & > .o-grid__cell {
+            padding-left: $size; /* [3] */
+        }
+    }
+}
+
+
+/* Automatically size cells by distributing them equally
+   ========================================================================== */
+
+.o-grid--auto {
+    & > .o-grid__cell {
+        flex: 1 0 0;
+    }
+}
+
+
+/* Horizontal alignment
+   ========================================================================== */
+
+.o-grid--center {
+    justify-content: center;
+}
+
+.o-grid--right {
+    justify-content: flex-end;
+}
+
+.o-grid--left {
+    justify-content: flex-start;
+}
+
+
+/* Vertical alignment
+   ========================================================================== */
+
+.o-grid--middle {
+    align-items: center;
+}
+
+.o-grid--bottom {
+    align-items: flex-end;
+}
+
+
+/* Content distribution
+   ========================================================================== */
+
+.o-grid--around {
+    justify-content: space-around;
+}
+
+.o-grid--between {
+    justify-content: space-between;
+}
+
+.o-grid--reverse {
+    flex-direction: row-reverse;
+}
+
+
+/**
+ * If we’re using Sass-MQ, automatically generate classes which start as a 
+ * a column/row grid and then flip to the other direction at defined 
+ * breakpoints, and give them a Responsive Suffix, e.g.:
+ *
+ * <div class="o-grid--flip@desktop">
+ */
+
+@if (variable-exists(mq-breakpoints)) {
+
+  @each $inuit-bp-name, $inuit-bp-value in $mq-breakpoints {
+
+    @include mq($from: $inuit-bp-name) {
+      .o-grid.o-grid--flip\@#{$inuit-bp-name} {
+        flex-flow: column wrap;
+        margin-left: 0;
+        margin-top: -$inuit-flexgrid-gutter-width;
+
+        & > .o-grid__cell {
+            padding-left: 0;
+            padding-top: $inuit-flexgrid-gutter-width;
+        }
+      }
+
+      .o-grid--column.o-grid--flip\@#{$inuit-bp-name} {
+        flex-flow: row wrap;
+        margin-left: -$inuit-flexgrid-gutter-width;
+        margin-top: 0;
+
+        & > .o-grid__cell {
+            padding-left: $inuit-flexgrid-gutter-width;
+            padding-top: 0;
+        }
+      }
+    }
+
+  }
+
+}

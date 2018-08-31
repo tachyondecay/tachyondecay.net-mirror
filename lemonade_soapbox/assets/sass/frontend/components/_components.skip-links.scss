@@ -1,0 +1,38 @@
+
+.c-skip-links {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+
+  background: $black;
+  box-shadow: 0 0 15px rgba($black, 0.75);
+}
+
+.c-skip-links ul {  
+  text-align: right;
+
+  @include mq($from: desktop) {
+    justify-content: flex-end;
+
+    li {
+      padding: 0 $unit-small;
+    }
+  }
+}
+
+.c-skip-links a {
+  color: $white;
+  font-family: $sans-serif;
+  font-size: 0.9em;
+  text-transform: uppercase;
+
+  &:hover, &:focus {
+    text-decoration: none;
+  }
+
+  &::after {
+    content: "↘";
+    // @include font-size($unit-small);
+  }
+}

@@ -1,0 +1,39 @@
+.o-site-grid {
+  display: flex;
+  flex-flow: column wrap;
+  justify-content: center;
+
+  main {
+    // flex: 2 1 35em;
+    padding-bottom: $unit;
+    margin-bottom: $unit;
+  }
+
+  .c-sidebar {
+    margin-bottom: $unit;
+  }
+
+  @include mq($from: tablet) {
+    flex-flow: row wrap;
+
+    .c-sidebar {
+      display: flex;
+      flex-flow: column wrap;
+      flex: 1 1 15em;
+      align-items: center;
+      max-width: 20em;
+
+      margin-top: $unit-huge;
+
+      body.index & {
+        margin-top: 0;
+      }
+    }
+  }
+
+  @include mq($from: wide) {
+    .c-sidebar--left {
+      order: -1;
+    }
+  }
+}

@@ -1,0 +1,20 @@
+
+@each $dir in left, right {
+  .u-flow-#{$dir} {
+    display: block;
+    margin: $unit-small auto;
+
+    @include mq($from: tablet) {
+      float: $dir;
+
+      margin-#{$dir}: -1 * $unit;
+      margin-#{opposite-direction($dir)}: $unit;
+      max-width: 25vw;
+    }
+
+    @include mq($from: desktop) {
+      margin-#{$dir}: -5 * $unit;
+    }
+  }
+}
+

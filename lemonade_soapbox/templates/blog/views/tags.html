@@ -1,0 +1,17 @@
+{% extends 'blog/layouts/master.html' %}
+
+{% block body_main %}
+<h1 class="page-title">{{ page_title }}</h1>
+
+{% if all_tags|length > 0 %}
+	<ul>
+	{% for tag in all_tags|weight %}
+		<li style="display: inline; font-size: {{ tag[2] * 200 }}%">
+			<a href="{{ url_for('blog.show_tag', handle=tag[0].handle) }}" title="{{ ngettext('%(num)d article', '%(num)d articles', tag[1]) }} with this tag">{{ tag[0].label }}</a>
+		</li>
+	{% endfor %}
+	</ul>
+{% else %}
+<p>No tags.</p>
+{% endif %}
+{% endblock body_main %}

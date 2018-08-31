@@ -1,0 +1,71 @@
+/* ==========================================================================
+   #FORM FIELD STRUCTURES
+   ========================================================================== */
+
+/**
+ * Form for editing complex post-like structures
+ */
+
+.o-form-field {
+    display: flex;
+    flex-flow: column wrap;
+    margin-bottom: $unit;
+}
+
+    .o-form-field__input {
+        display: flex;
+        flex-flow: row wrap;
+
+        & > span {
+            flex: 1;
+        }
+    }
+
+
+
+
+/**
+ * For inputs with icon sprites
+ */
+
+.o-form-field--icon-before {
+    display: inline-block;
+    position: relative;
+
+    & input {
+        padding-left: 25px;
+    }
+
+    &:before {
+        content: '';
+        position: absolute;
+        top: $unit-tiny;
+        // font-size: 8px;
+    }
+}
+
+.o-form-field--icon-after {
+    display: inline-block;
+    position: relative;
+
+    & input {
+        padding-right: 25px;
+    }
+
+    &:after {
+        content: '';
+        position: absolute;
+        top: $unit-tiny;
+        // font-size: 8px;
+    }
+}
+
+
+/*
+ * Information paragraph
+ */
+.o-form__info {
+    color: $grey--dark;
+
+    border-top: 1px solid $grey;
+}

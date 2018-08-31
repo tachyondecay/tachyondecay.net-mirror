@@ -1,0 +1,8 @@
+{% extends 'frontend/layouts/master.html' %}
+
+{% block page_title %}{{ page_title }} | {{ config.BLOG_NAME }}{% endblock %}
+
+{% block body_sidebar_right %}
+{% include 'blog/articles/_breakdown.html' %}
+{% endblock %}
+

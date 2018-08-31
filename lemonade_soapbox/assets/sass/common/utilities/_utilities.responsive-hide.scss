@@ -1,0 +1,16 @@
+
+@if (variable-exists(mq-breakpoints)) {
+
+    @each $bp-name, $bp in $mq-breakpoints {
+        @include mq($from: $bp-name) {
+            .u-hidden-visually\@#{$bp-name} {
+                @include inuit-hidden-visually();
+            }
+
+            .u-hidden\@#{$bp-name} {
+                display: none !important;
+            }
+        }
+    }
+
+}

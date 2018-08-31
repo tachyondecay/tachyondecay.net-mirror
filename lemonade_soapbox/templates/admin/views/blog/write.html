@@ -1,0 +1,149 @@
+{% extends 'admin/layouts/master.html' %}
+{% from 'macros.html' import notifications, render_field %}
+
+{% block page_title %}
+{% if article.title %}Editing “{{ article.title }}”{% else %}Writing{% endif %} {{ super() }}
+{% endblock %}
+
+{% block body_classes %}editing article-status--{{ article.status }}{% endblock %}
+
+{% block page_title_body %}
+            {% if article.title %}
+            <span class="c-page-title__action">
+                {{ 'Deleted' if article.status == 'deleted' else 'Editing' }} Blog Post »</span>
+            <span class="c-page-title__item u-hidden-visually">{{ article.title }}</span>
+            {% else %}
+            <span class="c-page-title__action">New Blog Post »</span>
+            {% endif %}
+{% endblock %}
+
+{% block header_end %}
+<div class="o-grid--column o-grid--flip@desktop o-grid--middle">
+            <div class="o-grid__cell u-flex-2/3@desktop c-page-title__field">
+                <label for="title" class="u-hidden-visually">Title</label>
+                {{ form.title(**{'aria-label': 'Title', 'class': 'o-text-input o-text-input--blend c-page-title__input', 'placeholder': 'Add title…'}) }}
+            </div>
+            <div class="o-grid__cell c-btn-group u-flex-1/3@desktop u-margin-vertical-small u-text--centre">
+                {{ form.save(class='c-btn c-btn--positive', icon_after='floppy-disk') }}
+                {% if article.status != 'published' and article.status != 'deleted' %}
+                {{ form.publish(class='c-btn c-btn--important', icon_after='earth') }}
+                {% endif %}
+                {% if article.status != 'draft' %}
+                {{ form.drafts(class='c-btn c-btn--important', icon_after='eye-blocked', label=('Undelete' if article.status == 'deleted' else 'Unpublish'))}}
+                {% endif %}
+                <a target="_blank" class="c-btn js-view-post js-reveal-on-creation {{ 'u-hidden' if not article.id }}" href="{{ article.get_permalink() }}">View <span class="i--new-tab"></span></a>
+            </div>
+        </div>
+{% endblock header_end %}
+
+{% block body_main %}
+<form id="write" method="post" data-article="{{ article.id|default('', true) }}" data-published="{{'true' if (article.status == 'published') else 'false' }}" data-autosave="{{ config['AUTOSAVE_DELAY'] }}">
+{{ form.hidden_tag() }}
+
+{{ super() }}
+
+
+<div class="o-wrapper">
+    <div class="o-grid--column o-grid--flip@desktop o-article-editor o-article-editor--{{ article.status|default('draft', true) }} u-padding-vertical">
+
+        <div class="o-grid__cell u-flex-2/3@desktop">
+
+            {% if article.autosave and selected_revision == article.revision_id %}
+            <div class="c-notification c-notification--warning c-notification--dismissable js-autosave-notification u-margin-top-tiny">
+                Looks like some changes were automatically saved but never committed. <a href="{{ url_for('.edit_article', revision_id=article.autosave.id) }}" data-content="{{ article.selected_revision.restore(article.autosave, article.body) }}">Restore them?</a>
+            </div>
+            {% endif %}
+
+            <p class="u-text--centre u-hidden-visually@desktop"><a href="#post-metadata" class="c-btn c-btn--micro">Jump to metadata ↓</a></p>
+
+            <fieldset id="post-contents">
+                <legend class="u-hidden-visually">Post Contents</legend>
+
+            <!-- contenteditable = true makes Firefox's spellchecker work with SimpleMDE, and I prefer this to the built-in spellchecker -->
+                <div class="o-form-field u-font--large" contenteditable="true">
+                    <label for="body" class="u-hidden-visually">Body</label>
+                    {{ form.body(**{'aria-label': 'Body', 'cols': 80, 'rows': 5, 'placeholder': 'Lorem ipsum, baby…', 'data-revision': selected_revision|default('', True)}) }}
+                </div>
+
+                <div class="o-form-field">
+                    <label for="summary">Summary</label>
+                    {{ form.summary(**{'aria-label': 'Summary', 'cols': 50, 'rows': 1, 'placeholder': 'Add summary…', 'class': 'o-textarea'}) }}
+                </div>
+            </fieldset>
+        </div>
+
+        <div class="o-grid__cell u-flex-1/3@desktop">
+            <fieldset id="post-metadata">
+                <legend class="u-hidden-visually">Post Metadata</legend>
+                
+                <div class="o-form-field">
+                    {{ render_field(form.date_published, {'class': 'o-text-input js-breaks-url', 'date_class': 'o-form-field--icon-before i-before--calendar', 'time_class': 'o-form-field--icon-before i-before--clock' }, label='Published') }}
+                </div>
+
+                {% if article.status == 'published' %}
+                <div class="o-form-field">
+                    {{ render_field(form.show_updated, label='Show post was updated')}}
+                </div>
+                {% endif %}
+
+                <div class="o-form-field">
+                    {{ render_field(form.handle, {'class': 'o-text-input o-text-input--blend u-1/1 js-breaks-url' }, label='URL Handle', container_class='o-form-field--icon-before i-before--link') }}
+                </div>
+
+                <div class="o-form-field">
+                    {{ render_field(form.tags, {'class': 'js-autocomplete js-tagit'}, label='Tags') }}
+                </div>
+
+                {% include "admin/articles/revision_history.html" %}
+
+            </fieldset>
+
+            <p class="o-form__info js-date-created js-reveal-on-creation u-text--right {{ 'u-hidden' if not article.date_created }}">
+                {% if article.date_created %}
+                <small>Created <time datetime="{{ article.date_created.isoformat() }}">{{ article.date_created.to(config['TIMEZONE']).format('MMM DD, YYYY HH:mm')}}</time></small>
+                {% endif %}
+                {% if article.status != 'deleted' %}
+                {{ form.delete(class='c-btn c-btn--micro c-btn--danger') }}
+                {% endif %}
+            </p>
+
+            <p class="u-text--centre u-hidden-visually@desktop"><a href="#post-contents" class="c-btn c-btn--micro">Jump to post contents ↑</a></p>
+        </div>
+    </div>
+</div>
+
+{# ...
+
+<div class="container">
+<div class="columns">
+    <div class="column is-two-thirds">
+
+    </div>
+
+    <div class="column">
+
+        <div class="control is-grouped">
+
+        </div>
+
+        <div id="metadata">
+            <h2>Post Metadata</h2>
+
+
+            <div class="control is-grouped">
+
+
+            {% if article.status != 'draft' %}
+            <p class="control">{{ form.drafts(class='button is-small') }}</p>
+            {% endif %}
+            {% if article.status in ['published', 'draft'] and article.id %}
+            <p class="control">{{ form.delete(class='button is-small is-danger') }}</p>
+            {% endif %}
+            </div>
+        </div>
+    </div>
+    </div>
+</div>}
+#}
+</form>
+{% endblock body_main %}
