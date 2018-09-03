@@ -85,6 +85,7 @@ class DevelopmentConfig(Config):
 class TestingConfig(Config):
     TESTING = True
     INSTANCE_PATH = os.path.join(basedir, 'instance/tests/')
+    WTF_CSRF_ENABLED = False
 
 
 class ProductionConfig(Config):

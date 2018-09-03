@@ -1745,6 +1745,10 @@ table {
 .o-post__tags {
   text-align: center; }
 
+.o-post__title {
+  margin: 0 12px;
+  text-align: left; }
+
 .o-post__content h1 {
   margin: 24px 12px 12px;
   font-size: 28px;

@@ -3,6 +3,7 @@ instance
 migrations
 venv
 .sass-cache
+.pytest_cache
 
 *.pyc
 

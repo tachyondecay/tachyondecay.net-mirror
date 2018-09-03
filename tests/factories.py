@@ -1,21 +1,27 @@
 import datetime
 import factory
+import pytest
 
 from diff_match_patch import diff_match_patch
-from factory.alchemy import SQLAlchemyModelFactory as ModelFactory
+from factory.alchemy import SQLAlchemyModelFactory
 from factory.fuzzy import FuzzyNaiveDateTime, FuzzyText
 from lemonade_soapbox import db
-from lemonade_soapbox.posts import Article, Revision, Tag
-from lemonade_soapbox.models.users import User
+from lemonade_soapbox.models import Article, Revision, Tag, User
+# from sqlalchemy.orm.scoping import scoped_session
 from uuid import uuid4
 
 differ = diff_match_patch()
 
 
+class ModelFactory(SQLAlchemyModelFactory):
+    class Meta:
+        abstract = True
+        sqlalchemy_session = db.session
+
+
 class TagFactory(ModelFactory):
     class Meta:
         model = Tag
-        sqlalchemy_session = db.session
 
     id = factory.Sequence(lambda n: n)
     label = FuzzyText(8)
@@ -24,13 +30,11 @@ class TagFactory(ModelFactory):
 class RevisionFactory(ModelFactory):
     class Meta:
         model = Revision
-        sqlalchemy_session = db.session
 
 
 class ArticleFactory(ModelFactory):
     class Meta:
         model = Article
-        sqlalchemy_session = db.session
 
     id = factory.Sequence(lambda n: n)
     title = 'Hello World'
@@ -65,7 +69,6 @@ class ArticleFactory(ModelFactory):
 class UserFactory(ModelFactory):
     class Meta:
         model = User
-        sqlalchemy_session = db.session
 
     id = factory.Sequence(lambda n: n)
     name = FuzzyText()
