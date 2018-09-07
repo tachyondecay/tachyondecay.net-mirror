@@ -17,7 +17,7 @@
     <article class="c-results__item o-grid__cell u-padding-top" id="{{ article.handle }}" data-id="{{ article.id }}">
         <header>
             <h1 class="u-h3 u-margin-bottom-none">
-                <a href="{{ article.get_permalink() }}" title="Edit this article">{{ article.title }}</a>
+                <a href="{{ article.get_permalink() }}">{{ article.title }}</a>
             </h1>
 
             <p class="o-post__details"><time datetime="{{ article.date_published.isoformat() }}">{{ article.date_published.to(config.TIMEZONE).format('MMM DD, YYYY h:mm a') }}</time></p>
