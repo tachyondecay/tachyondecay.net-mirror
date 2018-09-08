@@ -1773,6 +1773,14 @@ table {
     font-size: 1.1111111111rem;
     line-height: 1.35; }
 
+.o-post__content figcaption {
+  margin: 12px 24px 24px;
+  color: #1f5673;
+  font-family: Oswald, Verdana, Arial, sans-serif;
+  font-size: 14px;
+  font-size: 0.7777777778rem;
+  line-height: 1.9285714286; }
+
 .o-post__content figure {
   display: flex;
   flex-flow: column;
