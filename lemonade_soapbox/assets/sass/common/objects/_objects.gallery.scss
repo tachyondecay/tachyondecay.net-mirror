@@ -1,0 +1,52 @@
+.o-gallery {
+  > figcaption {
+    width: 100%;
+
+    &:first-child {
+      border-bottom: 1px solid $dark-blue;
+    }
+
+    &:last-child {
+      border-top: 1px solid $dark-blue;
+    }
+
+    @include font-size($inuit-global-font-size);
+    text-align: center;
+  }
+
+  figcaption {
+    margin: 0 $unit;
+  }
+  
+  @include mq($from: tablet) {
+    flex-flow: row;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: center;
+
+    margin: $unit -1 * $unit;
+
+    figure {
+      display: block;
+      flex: 1;
+      margin: $unit-small;
+
+      img {
+        max-width: 100%;
+      }
+
+    }
+  }
+
+  @include mq($from: wide) {
+    margin: $unit -1 * $unit-huge;
+  }
+}
+
+
+// Limit the gallery to n items per row
+@for $i from 1 through 6 {
+  .o-gallery--#{$i} figure {
+    flex: 0 1 calc(100% / #{$i} - 2 * #{$unit-small});
+  }
+}

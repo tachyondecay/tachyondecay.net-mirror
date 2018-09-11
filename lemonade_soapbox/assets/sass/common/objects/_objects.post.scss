@@ -24,11 +24,13 @@
 }
 
 .o-post__content h2,
-.o-post--excerpt .o-post__content h1 {
+.o-post--excerpt .o-post__content h1,
+.o-post--excerpt .o-post__summary h1 {
   @include font-size($inuit-font-size-h3);
 }
 
-.o-post--excerpt .o-post__content h2 {
+.o-post--excerpt .o-post__content h2,
+.o-post--excerpt .o-post__summary h2 {
   @include font-size($inuit-font-size-h4);
 }
 
@@ -37,26 +39,6 @@
 
   .o-post--single & {
     @include font-size(20px);
-  }
-}
-
-.o-post__content figcaption {
-  margin: $unit-small $unit $unit;
-
-  color: $dark-blue;
-  font-family: $sans-serif;
-  @include font-size(14px);
-}
-
-.o-post__content figure {
-  display: flex;
-  flex-flow: column;
-  align-items: center;
-
-  margin: $unit auto;
-
-  a:not(:last-child) {
-    margin: 0 0 $unit-small 0;
   }
 }
 

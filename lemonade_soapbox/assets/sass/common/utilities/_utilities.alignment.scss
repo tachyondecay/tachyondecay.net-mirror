@@ -1,19 +1,27 @@
 
 @each $dir in left, right {
+  $original-dir: $dir;
   .u-flow-#{$dir} {
     display: block;
     margin: $unit-small auto;
 
+    // Trying to make $dir force to right for large but not too large screens
     @include mq($from: tablet) {
-      float: $dir;
-
-      margin-#{$dir}: -1 * $unit;
-      margin-#{opposite-direction($dir)}: $unit;
+      float: right;
+      margin-right: -5 * $unit;
+      margin-left: $unit;
       max-width: 25vw;
+
+      img {
+        max-width: 25vw;
+      }
     }
 
-    @include mq($from: desktop) {
+    @include mq($from: wide) {
+      float: $dir;
+
       margin-#{$dir}: -5 * $unit;
+      margin-#{opposite-direction($dir)}: $unit;
     }
   }
 }

@@ -4236,13 +4236,17 @@ a {
   margin: 12px auto; }
   @media (min-width: 46.25em) {
     .u-flow-left {
-      float: left;
-      margin-left: -24px;
-      margin-opposite-direction(left): 24px;
-      max-width: 25vw; } }
-  @media (min-width: 61.25em) {
+      float: right;
+      margin-right: -120px;
+      margin-left: 24px;
+      max-width: 25vw; }
+      .u-flow-left img {
+        max-width: 25vw; } }
+  @media (min-width: 81.25em) {
     .u-flow-left {
-      margin-left: -120px; } }
+      float: left;
+      margin-left: -120px;
+      margin-opposite-direction(left): 24px; } }
 
 .u-flow-right {
   display: block;
@@ -4250,12 +4254,16 @@ a {
   @media (min-width: 46.25em) {
     .u-flow-right {
       float: right;
-      margin-right: -24px;
-      margin-opposite-direction(right): 24px;
-      max-width: 25vw; } }
-  @media (min-width: 61.25em) {
+      margin-right: -120px;
+      margin-left: 24px;
+      max-width: 25vw; }
+      .u-flow-right img {
+        max-width: 25vw; } }
+  @media (min-width: 81.25em) {
     .u-flow-right {
-      margin-right: -120px; } }
+      float: right;
+      margin-right: -120px;
+      margin-opposite-direction(right): 24px; } }
 
 @media (min-width: 20em) {
   .u-hidden-visually\@mobile {

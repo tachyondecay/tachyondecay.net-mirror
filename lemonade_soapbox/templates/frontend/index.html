@@ -14,7 +14,7 @@
 
 {% if articles %}
     {% for article in articles %}
-    <article class="c-results__item o-grid__cell u-padding-top" id="{{ article.handle }}" data-id="{{ article.id }}">
+    <article class="c-results__item o-grid__cell o-post o-post--excerpt u-padding-top" id="{{ article.handle }}" data-id="{{ article.id }}">
         <header>
             <h1 class="u-h3 u-margin-bottom-none">
                 <a href="{{ article.get_permalink() }}">{{ article.title }}</a>

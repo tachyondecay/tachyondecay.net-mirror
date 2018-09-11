@@ -1,0 +1,29 @@
+figure {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+
+  margin: $unit auto;
+
+  a:not(:last-child) {
+    margin: 0 0 $unit-small 0;
+  }
+
+  img {
+    @include mq($from: wide) {
+      max-width: initial;
+    }
+
+    box-shadow: rgba($black, 0.75) 0 0 10px;
+  }
+}
+
+figcaption {
+  margin: $unit-small $unit $unit;
+
+  color: $dark-blue;
+  font-family: $sans-serif;
+  @include font-size(14px);
+  text-align: center;
+  text-shadow: rgba($light-blue, 0.5) 1px 1px 2px;
+}

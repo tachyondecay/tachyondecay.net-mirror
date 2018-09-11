@@ -9,6 +9,15 @@
     margin-bottom: $unit;
   }
 
+  main:after {
+    display: block;
+    content: "";
+    height: 20vh;
+    margin: $unit auto;
+    
+    background: url("/assets/images/layout/knitting-ball.svg") center/15vh no-repeat;
+  }
+
   .c-sidebar {
     margin-bottom: $unit;
   }

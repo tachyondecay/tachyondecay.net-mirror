@@ -569,6 +569,29 @@ html {
 .c-page__title {
   text-align: center; }
 
+figure {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  margin: 24px auto; }
+  figure a:not(:last-child) {
+    margin: 0 0 12px 0; }
+  figure img {
+    box-shadow: rgba(35, 35, 35, 0.75) 0 0 10px; }
+    @media (min-width: 81.25em) {
+      figure img {
+        max-width: initial; } }
+
+figcaption {
+  margin: 12px 24px 24px;
+  color: #1f5673;
+  font-family: Oswald, Verdana, Arial, sans-serif;
+  font-size: 14px;
+  font-size: 0.7777777778rem;
+  line-height: 1.9285714286;
+  text-align: center;
+  text-shadow: rgba(96, 131, 154, 0.5) 1px 1px 2px; }
+
 /* ==========================================================================
    #HEADINGS
    ========================================================================== */
@@ -1110,6 +1133,12 @@ table {
   .o-site-grid main {
     padding-bottom: 24px;
     margin-bottom: 24px; }
+  .o-site-grid main:after {
+    display: block;
+    content: "";
+    height: 20vh;
+    margin: 24px auto;
+    background: url("/assets/images/layout/knitting-ball.svg") center/15vh no-repeat; }
   .o-site-grid .c-sidebar {
     margin-bottom: 24px; }
   @media (min-width: 46.25em) {
@@ -1336,6 +1365,53 @@ table {
 .o-flag--bottom > .o-flag__body {
   vertical-align: bottom; }
 
+.o-gallery > figcaption {
+  width: 100%;
+  font-size: 18px;
+  font-size: 1rem;
+  line-height: 1.5;
+  text-align: center; }
+  .o-gallery > figcaption:first-child {
+    border-bottom: 1px solid #1f5673; }
+  .o-gallery > figcaption:last-child {
+    border-top: 1px solid #1f5673; }
+.o-gallery figcaption {
+  margin: 0 24px; }
+@media (min-width: 46.25em) {
+  .o-gallery {
+    flex-flow: row;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: center;
+    margin: 24px -24px; }
+    .o-gallery figure {
+      display: block;
+      flex: 1;
+      margin: 12px; }
+      .o-gallery figure img {
+        max-width: 100%; } }
+@media (min-width: 81.25em) {
+  .o-gallery {
+    margin: 24px -96px; } }
+
+.o-gallery--1 figure {
+  flex: 0 1 calc(100% / 1 - 2 * 12px); }
+
+.o-gallery--2 figure {
+  flex: 0 1 calc(100% / 2 - 2 * 12px); }
+
+.o-gallery--3 figure {
+  flex: 0 1 calc(100% / 3 - 2 * 12px); }
+
+.o-gallery--4 figure {
+  flex: 0 1 calc(100% / 4 - 2 * 12px); }
+
+.o-gallery--5 figure {
+  flex: 0 1 calc(100% / 5 - 2 * 12px); }
+
+.o-gallery--6 figure {
+  flex: 0 1 calc(100% / 6 - 2 * 12px); }
+
 /* ==========================================================================
    #LIST-BARE
    ========================================================================== */
@@ -1389,7 +1465,7 @@ table {
   text-align: right; }
 
 .o-list-split__right {
-  flex: 0 1 50%; }
+  flex: 1 1 50%; }
 
 /* ==========================================================================
    #BOX
@@ -1756,12 +1832,14 @@ table {
   line-height: 1.9285714286; }
 
 .o-post__content h2,
-.o-post--excerpt .o-post__content h1 {
+.o-post--excerpt .o-post__content h1,
+.o-post--excerpt .o-post__summary h1 {
   font-size: 24px;
   font-size: 1.3333333333rem;
   line-height: 1.125; }
 
-.o-post--excerpt .o-post__content h2 {
+.o-post--excerpt .o-post__content h2,
+.o-post--excerpt .o-post__summary h2 {
   font-size: 20px;
   font-size: 1.1111111111rem;
   line-height: 1.35; }
@@ -1772,22 +1850,6 @@ table {
     font-size: 20px;
     font-size: 1.1111111111rem;
     line-height: 1.35; }
-
-.o-post__content figcaption {
-  margin: 12px 24px 24px;
-  color: #1f5673;
-  font-family: Oswald, Verdana, Arial, sans-serif;
-  font-size: 14px;
-  font-size: 0.7777777778rem;
-  line-height: 1.9285714286; }
-
-.o-post__content figure {
-  display: flex;
-  flex-flow: column;
-  align-items: center;
-  margin: 24px auto; }
-  .o-post__content figure a:not(:last-child) {
-    margin: 0 0 12px 0; }
 
 .o-post__summary {
   margin: 12px;
@@ -3758,13 +3820,17 @@ table {
   margin: 12px auto; }
   @media (min-width: 46.25em) {
     .u-flow-left {
-      float: left;
-      margin-left: -24px;
-      margin-right: 24px;
-      max-width: 25vw; } }
-  @media (min-width: 61.25em) {
+      float: right;
+      margin-right: -120px;
+      margin-left: 24px;
+      max-width: 25vw; }
+      .u-flow-left img {
+        max-width: 25vw; } }
+  @media (min-width: 81.25em) {
     .u-flow-left {
-      margin-left: -120px; } }
+      float: left;
+      margin-left: -120px;
+      margin-right: 24px; } }
 
 .u-flow-right {
   display: block;
@@ -3772,12 +3838,16 @@ table {
   @media (min-width: 46.25em) {
     .u-flow-right {
       float: right;
-      margin-right: -24px;
+      margin-right: -120px;
       margin-left: 24px;
-      max-width: 25vw; } }
-  @media (min-width: 61.25em) {
+      max-width: 25vw; }
+      .u-flow-right img {
+        max-width: 25vw; } }
+  @media (min-width: 81.25em) {
     .u-flow-right {
-      margin-right: -120px; } }
+      float: right;
+      margin-right: -120px;
+      margin-left: 24px; } }
 
 .u-all-caps {
   text-transform: uppercase; }
@@ -3790,6 +3860,9 @@ table {
 
 .u-img-circle {
   border-radius: 50%; }
+
+.u-box-shadow {
+  box-shadow: rgba(35, 35, 35, 0.75) 0 0 10px; }
 
 /* ==========================================================================
    #FONT-SIZING
