@@ -48,3 +48,38 @@
   color: $dark-grey;
   font-family: $sans-serif;
 }
+
+.o-post__prevnext {
+  display: flex;
+  flex-flow: column;
+  justify-content: space-between;
+  margin: $unit-huge 0 $unit-small;
+  padding: $unit-small $unit-tiny;
+
+  border-top: 2px solid $light-blue;
+  color: $light-blue;
+  text-align: center;
+
+  a {
+    color: $light-blue;
+  }
+
+  h2 {
+    color: $dark-blue;
+  }
+
+  @include mq($from: tablet) {
+    flex-flow: row;
+    text-align: left;
+  }
+}
+
+.o-post__next {
+  flex: 1;
+  margin-top: $unit-small;
+  @include mq($from: tablet) {
+    margin-top: 0;
+    text-align: right;
+  }
+}
+

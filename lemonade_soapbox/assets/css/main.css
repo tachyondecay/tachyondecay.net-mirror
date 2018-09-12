@@ -1130,15 +1130,6 @@ table {
   display: flex;
   flex-flow: column wrap;
   justify-content: center; }
-  .o-site-grid main {
-    padding-bottom: 24px;
-    margin-bottom: 24px; }
-  .o-site-grid main:after {
-    display: block;
-    content: "";
-    height: 20vh;
-    margin: 24px auto;
-    background: url("/assets/images/layout/knitting-ball.svg") center/15vh no-repeat; }
   .o-site-grid .c-sidebar {
     margin-bottom: 24px; }
   @media (min-width: 46.25em) {
@@ -1856,6 +1847,32 @@ table {
   color: #706967;
   font-family: Oswald, Verdana, Arial, sans-serif; }
 
+.o-post__prevnext {
+  display: flex;
+  flex-flow: column;
+  justify-content: space-between;
+  margin: 96px 0 12px;
+  padding: 12px 6px;
+  border-top: 2px solid #60839a;
+  color: #60839a;
+  text-align: center; }
+  .o-post__prevnext a {
+    color: #60839a; }
+  .o-post__prevnext h2 {
+    color: #1f5673; }
+  @media (min-width: 46.25em) {
+    .o-post__prevnext {
+      flex-flow: row;
+      text-align: left; } }
+
+.o-post__next {
+  flex: 1;
+  margin-top: 12px; }
+  @media (min-width: 46.25em) {
+    .o-post__next {
+      margin-top: 0;
+      text-align: right; } }
+
 /* ==========================================================================
    #BUTTONS
    ========================================================================== */
@@ -1994,6 +2011,13 @@ table {
 .c-colophon {
   margin-top: 48px;
   color: #1f5673; }
+
+.c-colophon:before {
+  display: block;
+  content: "";
+  height: 20vh;
+  margin: 48px auto 24px;
+  background: url("/assets/images/layout/knitting-ball.svg") center/15vh no-repeat; }
 
 .c-colophon__copyright {
   display: flex;
@@ -3854,6 +3878,9 @@ table {
 
 .u-text-center {
   text-align: center; }
+
+.u-text-right {
+  text-align: right; }
 
 .u-text-shadow {
   text-shadow: 1px 1px 2px rgba(96, 131, 154, 0.5); }

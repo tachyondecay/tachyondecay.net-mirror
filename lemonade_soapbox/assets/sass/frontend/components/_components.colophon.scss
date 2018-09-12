@@ -6,6 +6,15 @@
   color: $dark-blue;
 }
 
+  .c-colophon:before {
+    display: block;
+    content: "";
+    height: 20vh;
+    margin: $unit-large auto $unit;
+    
+    background: url("/assets/images/layout/knitting-ball.svg") center/15vh no-repeat;
+  }
+
   .c-colophon__copyright {
     display: flex;
     flex-direction: column;

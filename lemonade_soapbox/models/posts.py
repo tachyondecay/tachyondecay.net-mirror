@@ -8,10 +8,11 @@ from lemonade_soapbox.helpers import Timer
 from lemonade_soapbox.models.users import User
 from markdown import markdown
 from slugify import slugify_unicode, UniqueSlugify
-from sqlalchemy import desc, event, func, orm
+from sqlalchemy import asc, desc, event, func, orm
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy_utils import ArrowType, auto_delete_orphans
+from werkzeug.utils import cached_property
 from whoosh import index, writing
 from whoosh.analysis import StemmingAnalyzer
 from whoosh.fields import Schema, ID, KEYWORD, TEXT, DATETIME
@@ -225,6 +226,16 @@ class PostMixin(AuthorMixin):
     def get_permalink(self, relative=True):
         """Generate a permanent link to the post."""
         raise NotImplementedError
+
+    @cached_property
+    def next_post(self):
+        """Return the post published after this post."""
+        return self.query.filter(self.__class__.date_published > self.date_published).order_by(asc('date_published')).first()
+
+    @cached_property
+    def previous_post(self):
+        """Return the post published prior to this post."""
+        return self.query.filter(self.__class__.date_published < self.date_published).order_by(desc('date_published')).first()
 
     @classmethod
     def published(cls):

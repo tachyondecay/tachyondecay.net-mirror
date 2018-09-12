@@ -5,17 +5,8 @@
 
   main {
     // flex: 2 1 35em;
-    padding-bottom: $unit;
-    margin-bottom: $unit;
-  }
-
-  main:after {
-    display: block;
-    content: "";
-    height: 20vh;
-    margin: $unit auto;
-    
-    background: url("/assets/images/layout/knitting-ball.svg") center/15vh no-repeat;
+    // padding-bottom: $unit;
+    // margin-bottom: $unit;
   }
 
   .c-sidebar {

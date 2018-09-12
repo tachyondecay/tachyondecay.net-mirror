@@ -42,5 +42,14 @@
     <div class="o-post__content">
         {{ article.body_html }}
     </div>
+
+    <aside class="o-post__prevnext">
+    {% if article.previous_post %}
+        <div class="o-post__prev"><h2 class="u-h4 u-margin-bottom-small">Previously</h2>&larr; <a href="{{ article.previous_post.get_permalink() }}">{{ article.previous_post.title }}</a></div>
+    {% endif %}
+    {% if article.next_post %}
+        <div class="o-post__next"><h2 class="u-h4 u-margin-bottom-small">Next</h2><a href="{{ article.next_post.get_permalink() }}">{{ article.next_post.title }}</a> &rarr;</div>
+    {% endif %}
+    </aside>
 </article>
 {% endblock %}
