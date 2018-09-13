@@ -1973,7 +1973,8 @@ table {
 
 .c-calendar-nav {
   display: flex;
-  flex-flow: row wrap; }
+  flex-flow: row wrap;
+  border-bottom: 2px solid #1f5673; }
   @media (min-width: 46.25em) {
     .c-calendar-nav {
       flex-flow: column; } }
@@ -2007,6 +2008,9 @@ table {
     color: #aa4465; }
   .c-calendar-nav__months li {
     margin-right: 6px; }
+
+.c-calendar-nav__more {
+  text-align: center; }
 
 .c-colophon {
   margin-top: 48px;

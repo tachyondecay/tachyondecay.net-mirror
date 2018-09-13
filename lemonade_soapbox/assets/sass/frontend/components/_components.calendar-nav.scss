@@ -2,6 +2,8 @@
   display: flex;
   flex-flow: row wrap;
 
+  border-bottom: 2px solid $dark-blue;
+
   @include mq($from: tablet) {
     flex-flow: column;
   }
@@ -49,4 +51,8 @@
   li {
     margin-right: $unit-tiny;
   }
+}
+
+.c-calendar-nav__more {
+  text-align: center;
 }
