@@ -1442,6 +1442,8 @@ table {
 .o-list-inline-flex {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
   margin-left: 0;
   list-style: none; }
 

@@ -68,38 +68,7 @@
     </header>
 
 
-    <div class="o-grid__cell c-results__list u-flex-3/4@desktop u-padding-left-large">
-        <div class="o-grid--column o-grid--flip@desktop">
-
-        {% if articles %}
-            {% for article in articles %}
-            <article class="o-grid__cell c-results__item u-1/2@desktop u-padding-top" id="{{ article.handle }}" data-id="{{ article.id }}">
-                <header>
-                    <p class="c-results__time c-results__time--{{ article.status }}">
-                        {% if article.status == 'published' %}
-                        Published: <time datetime="{{ article.date_published.isoformat() }}">{{ article.date_published.to(config.TIMEZONE).format('MMM DD, YYYY h:mm a') }}</time>
-                        {% else %}
-                        Created: <time datetime="{{ article.date_created.isoformat() }}">{{ article.date_created.to(config.TIMEZONE).format('MMM DD, YYYY h:mm a') }}</time>
-                        {% endif %}
-                    </p>
-                    <h1 class="u-h3">
-                        <a href="{{ url_for('admin.edit_article', id=article.id) }}" title="Edit this article">{{ article.title }}</a>
-                    </h1>
-                </header>
-                <div class="">
-                    {{ article.body_html|truncate_html(50) }}
-                </div>
-            </article>
-            {% endfor %}
-        {% else %}
-            <div class="o-grid__cell c-no-results u-margin-top u-text--centre">
-                <p><span class="c-no-results__icon i--newspaper"></span> </p>
-                <p> No articles found. </p>
-            </div>
-        {% endif %}
-
-        </div>
-    </div>
+    {% include 'admin/views/results.html' %}
 </section>
 </div>
 {% endblock %}

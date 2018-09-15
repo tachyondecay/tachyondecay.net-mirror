@@ -1399,6 +1399,20 @@ a {
   padding: 96px; }
 
 /* ==========================================================================
+   #LIST-INLINE-FLEX
+   ========================================================================== */
+/**
+ * The list-inline-flex object uses flexbox to display list items inline.
+ */
+.o-list-inline-flex {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  margin-left: 0;
+  list-style: none; }
+
+/* ==========================================================================
    #BUTTONS
    ========================================================================== */
 /**
