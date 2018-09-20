@@ -30,7 +30,7 @@ def before_request():
 @bp.route('/')
 @login_required
 def index():
-    return 'Hello {}'.format(current_user.name)
+    return redirect('/meta/blog/')
 
 
 @bp.route('/search/')
@@ -137,7 +137,8 @@ def signin():
 
     return render_template('admin/views/signin.html',
                            signin_form=form,
-                           page_title='Sign In')
+                           page_title='Sign In',
+                           subtitle='Secret Lair')
 
 
 @bp.route('/signout/')

@@ -2084,7 +2084,8 @@ a {
     border: 1px solid #8c5383;
     border-radius: 5px;
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
-    transition: all 300ms ease-in-out; }
+    transition: all 300ms ease-in-out;
+    margin: -1px; }
 
 .c-results__time {
   margin-bottom: 0;

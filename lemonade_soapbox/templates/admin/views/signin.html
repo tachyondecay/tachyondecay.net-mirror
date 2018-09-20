@@ -2,16 +2,21 @@
 {% from 'macros.html' import render_field %}
 
 {% block body_main %}
-<h1 class="page-title">Sign In</h1>
+{{ super () }}
 
 <form method="post" class="signin-form">
-    <p>Enter your email to receive a sign-in link.</p>
-    <div class="field--block">
-        {{ render_field(signin_form.email) }}
+
+<div class="o-grid--column o-grid--middle u-margin-top">
+    <p class="">Enter your email to receive a sign-in link.</p>
+    <div class="o-grid o-grid--bottom">
+        <div class="">
+            {{ render_field(signin_form.email) }}
+        </div>
+        <div class="u-margin-left-small">
+            <input type="submit" class="c-btn" value="Sign In"/>
+        </div>
     </div>
-    <div class="signin-form__submit">
-        <input type="submit" value="Sign In"/>
-    </div>
-    {{ signin_form.csrf_token }}
+</div>
+{{ signin_form.csrf_token }}
 </form>
 {% endblock %}
