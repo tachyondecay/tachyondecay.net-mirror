@@ -81,6 +81,13 @@ function BackendInit() {
             source: $(v).data('src')
         });
     });
+    $('.js-tag-search').each(function(i, v) {
+        $(v).autocomplete({
+            select: function(event, ui) {
+                window.location = application_root + '/meta/search/?q=tag:' + ui.item.handle;
+            }
+        });
+    });
     $('.js-autocomplete.js-tagit').tagit({
         autocomplete: {
             minLength: 3,
@@ -90,7 +97,7 @@ function BackendInit() {
     });
     $('.tagit')
         .removeClass('ui-widget ui-widget-content ui-corner-all')
-        .addClass('o-text-input o-text-input--blend')
+        .addClass('o-text-input o-text-input--blend');
 
 
     /*

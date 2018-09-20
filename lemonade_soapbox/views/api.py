@@ -54,7 +54,8 @@ def tags_lookup():
     term = request.args.get('term')
     if term is not None:
         matches = Tag.query.filter(Tag.label.startswith(term)).all()
-        just_tags = [{'value': t.label,
+        just_tags = [{'handle': t.handle,
+                      'value': t.label,
                       'url': url_for('blog.show_tag', handle=t.handle),
                       } for t in matches]
         return Response(json.dumps(just_tags), mimetype='application/json')

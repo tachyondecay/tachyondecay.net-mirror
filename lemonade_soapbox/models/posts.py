@@ -565,14 +565,18 @@ class Tag(db.Model):
         self.handle = self.slugify(label)
 
     @classmethod
-    def frequency(cls):
+    def frequency(cls, order_by='handle'):
         """Returns tuples of tags and their frequencies."""
+        if order_by == 'count':
+            order_by = func.count().desc()
+        else:
+            order_by = cls.handle
         return db.session.query(cls, func.count()) \
                          .outerjoin((tags, tags.c.tag_id == cls.id),
                                     (Article, Article.id == tags.c.article_id)) \
                          .filter(Article.status == 'published') \
                          .group_by(cls.id) \
-                         .order_by(func.lower(cls.label))
+                         .order_by(order_by)
 
     @classmethod
     def slugify(cls, text):

@@ -15,7 +15,7 @@ from flask_login import current_user, login_user, login_required, logout_user
 from lemonade_soapbox import db, mail
 from lemonade_soapbox.forms import ArticleForm, SignInForm
 from lemonade_soapbox.helpers import compose
-from lemonade_soapbox.models import Article, Revision
+from lemonade_soapbox.models import Article, Revision, Tag
 from lemonade_soapbox.models.users import User
 from sqlalchemy import and_, func
 
@@ -46,20 +46,25 @@ def search():
         if q.startswith('id:') or q.startswith('revision:'):
             comp = q.split(':')
             return redirect(url_for('.edit_article', **{comp[0]: comp[1]}))
-
-        search_params = {
-            'pagenum': request.args.get('page', 1, int),
-            'pagelen': request.args.get('per_page', 50, int),
-            'sort_field': request.args.get('order_by', 'date_created'),
-            'sort_order': request.args.get('order', 'desc')
-        }
-        current_app.logger.debug('Searching for "{}"'.format(q))
-        results = Article.search(q, **search_params)
-        if results is not None and results['query'] is not None:
-            articles = results['query'].all()
-            subtitle = 'Showing {} – {} of {}'.format(results['offset']+1,
-                                                      results['offset'] + results['pagelen'],
-                                                      results['total']
+        elif q.startswith('tag:'):
+            tag = Tag.query.filter_by(handle=q.split(':')[1]).first()
+            if tag:
+                articles = sorted(tag.articles, key=lambda k: k.date_published, reverse=True)
+                subtitle = 'Tag: {}'.format(tag.label)
+        else:
+            search_params = {
+                'pagenum': request.args.get('page', 1, int),
+                'pagelen': request.args.get('per_page', 50, int),
+                'sort_field': request.args.get('order_by', 'date_created'),
+                'sort_order': request.args.get('order', 'desc')
+            }
+            current_app.logger.debug('Searching for "{}"'.format(q))
+            results = Article.search(q, **search_params)
+            if results is not None and results['query'] is not None:
+                articles = results['query'].all()
+                subtitle = 'Showing {} – {} of {}'.format(results['offset']+1,
+                                                          results['offset'] + results['pagelen'],
+                                                          results['total']
                                                  )
     return render_template('admin/views/search.html',
                            articles=articles,
@@ -205,6 +210,7 @@ def blog():
     if len(articles) == 1:
         subtitle = subtitle.replace('posts', 'post')
 
+    tags = Tag.frequency(order_by='count').limit(10).all()
 
     status_count = db.session.query(Article.status, func.count(Article.id)).group_by(Article.status).all()
     current_app.logger.debug(status_count)
@@ -215,7 +221,8 @@ def blog():
                            current_month=current_month,
                            page_title='Manage Blog Posts',
                            status_breakdown=status_count,
-                           subtitle=subtitle)
+                           subtitle=subtitle,
+                           tags=tags)
 
 
 @bp.route('/blog/write/', defaults={'id': None, 'revision_id': None}, methods=['POST', 'GET'])

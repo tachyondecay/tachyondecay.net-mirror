@@ -39,27 +39,17 @@
                 <h2 class="u-accent u-h4 u-margin-bottom-tiny">Tags</h2>
 
                 <ul class="o-list-bare c-filter-facet__list">
-                    <li>
-                        <a href="" class="c-filter-facet__link">
-                            <span class="c-filter-facet__link-text">Tag 1</span>
-                            <span class="c-filter-facet__count">1</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="" class="c-filter-facet__link">
-                            <span class="c-filter-facet__link-text">Tag 2</span>
-                            <span class="c-filter-facet__count">1</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="" class="c-filter-facet__link">
-                            <span class="c-filter-facet__link-text">Tag 3</span>
-                            <span class="c-filter-facet__count">1</span>
-                        </a>
-                    </li>
                     <li class="u-margin-top-small">
-                        <input type="text" placeholder="Search for tag…" class="o-text-input o-text-input--blend u-1/1 js-autocomplete" data-src="{{ url_for('api.tags_lookup') }}" />
+                        <input type="text" placeholder="Search for tag…" class="o-text-input o-text-input--blend u-1/1 js-autocomplete js-tag-search" data-src="{{ url_for('api.tags_lookup') }}" />
                     </li>
+                    {% for tag in tags %}
+                    <li>
+                        <a href="{{ url_for('admin.search', q='tag:' + tag[0].handle) }}" class="c-filter-facet__link">
+                            <span class="c-filter-facet__link-text">{{ tag[0].label }}</span>
+                            <span class="c-filter-facet__count">{{ tag[1] }}</span>
+                        </a>
+                    </li>
+                    {% endfor %}
                 </ul>
             </section>
         </div>
