@@ -230,12 +230,16 @@ class PostMixin(AuthorMixin):
     @cached_property
     def next_post(self):
         """Return the post published after this post."""
-        return self.query.filter(self.__class__.date_published > self.date_published).order_by(asc('date_published')).first()
+        if self.date_published:
+            return self.query.filter(self.__class__.date_published > self.date_published).order_by(asc('date_published')).first()
+        return None
 
     @cached_property
     def previous_post(self):
         """Return the post published prior to this post."""
-        return self.query.filter(self.__class__.date_published < self.date_published).order_by(desc('date_published')).first()
+        if self.date_published:
+            return self.query.filter(self.__class__.date_published < self.date_published).order_by(desc('date_published')).first()
+        return None
 
     @classmethod
     def published(cls):
