@@ -569,6 +569,12 @@ html {
 .c-page__title {
   text-align: center; }
 
+blockquote {
+  border-left: 2px solid #aa4465;
+  margin-left: 1em;
+  margin-right: 2em;
+  padding-left: 1em; }
+
 figure {
   display: flex;
   flex-flow: column;
