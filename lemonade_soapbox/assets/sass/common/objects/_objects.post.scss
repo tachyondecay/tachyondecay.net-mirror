@@ -17,20 +17,20 @@
   text-align: left;
 }
 
-.o-post__content h1 {
+.o-post__content h2 {
   margin: $unit $unit-small $unit-small;
 
   @include font-size($inuit-font-size-h2);
 }
 
-.o-post__content h2,
-.o-post--excerpt .o-post__content h1,
-.o-post--excerpt .o-post__summary h1 {
+.o-post__content h3,
+.o-post--excerpt .o-post__content h2,
+.o-post--excerpt .o-post__summary h2 {
   @include font-size($inuit-font-size-h3);
 }
 
-.o-post--excerpt .o-post__content h2,
-.o-post--excerpt .o-post__summary h2 {
+.o-post--excerpt .o-post__content h3,
+.o-post--excerpt .o-post__summary h3 {
   @include font-size($inuit-font-size-h4);
 }
 

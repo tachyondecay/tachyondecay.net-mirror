@@ -1824,21 +1824,21 @@ table {
   margin: 0 12px;
   text-align: left; }
 
-.o-post__content h1 {
+.o-post__content h2 {
   margin: 24px 12px 12px;
   font-size: 28px;
   font-size: 1.5555555556rem;
   line-height: 1.9285714286; }
 
-.o-post__content h2,
-.o-post--excerpt .o-post__content h1,
-.o-post--excerpt .o-post__summary h1 {
+.o-post__content h3,
+.o-post--excerpt .o-post__content h2,
+.o-post--excerpt .o-post__summary h2 {
   font-size: 24px;
   font-size: 1.3333333333rem;
   line-height: 1.125; }
 
-.o-post--excerpt .o-post__content h2,
-.o-post--excerpt .o-post__summary h2 {
+.o-post--excerpt .o-post__content h3,
+.o-post--excerpt .o-post__summary h3 {
   font-size: 20px;
   font-size: 1.1111111111rem;
   line-height: 1.35; }

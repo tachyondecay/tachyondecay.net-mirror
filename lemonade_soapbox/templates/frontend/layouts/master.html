@@ -5,7 +5,6 @@
 
         {% block meta_tags %}
         <meta charset="utf-8" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         {% endblock %}
 
@@ -19,8 +18,8 @@
         {% endblock %}
 
         {% block feeds %}
-        <link rel="feed"  href="{{ url_for('blog.show_feed', format='rss') }}" title="Articles RSS feed"/>
-        <link rel="feed" href="{{ url_for('blog.show_feed', format='atom') }}" title="Articles Atom feed"/>
+        <link rel="alternate"  href="{{ url_for('blog.show_feed', format='rss') }}" title="Articles RSS feed"/>
+        <link rel="alternate" href="{{ url_for('blog.show_feed', format='atom') }}" title="Articles Atom feed"/>
         {% endblock %}
 
         <link rel="shortcut icon" href="{{ url_for('static', filename='images/layout/favicon.ico') }}" type="image/x-icon" />
