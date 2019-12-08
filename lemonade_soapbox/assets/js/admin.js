@@ -134,7 +134,7 @@ var ArticleForm = function(form) {
     // Initialize SimpleMDE on the body
     this.simplemde = new SimpleMDE({
         'element': this.body[0],
-        'spellChecker': false,
+        // 'spellChecker': false,
         'toolbar': ['preview', 'side-by-side', 'fullscreen']
     });
 }
