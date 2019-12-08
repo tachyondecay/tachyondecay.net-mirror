@@ -11,7 +11,7 @@ from slugify import slugify_unicode, UniqueSlugify
 from sqlalchemy import asc, desc, event, func, orm
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.declarative import declared_attr
-from sqlalchemy_utils import ArrowType, auto_delete_orphans
+from sqlalchemy_utils import ArrowType, auto_delete_orphans, DateRangeType
 from werkzeug.utils import cached_property
 from whoosh import index, writing
 from whoosh.analysis import StemmingAnalyzer
@@ -466,6 +466,21 @@ class Article(PostMixin, UniqueHandleMixin, Searchable, db.Model):
             'tags': lambda x: ', '.join(x)
         }
         return exceptions
+
+
+class Review(PostMixin, UniqueHandleMixin, Searchable, db.Model):
+    """Book reviews."""
+
+    __tablename__ = 'reviews'
+    __searchable__ = ['body']
+    __sortable__ = ['author', 'date_created', 'date_published']
+
+    book_author = db.Column(db.String(255), nullable=False)
+    book_id = db.Column(db.String(255), nullable=False) #ISBN or ASIN
+    book_title = db.Column(db.String(255), nullable=False)
+
+    handle = db.Column(db.String(255), nullable=False) #ISBN or ASIN
+    date_read = db.Column(DateRangeType)
 
 
 class Revision(AuthorMixin, db.Model):
