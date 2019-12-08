@@ -227,6 +227,13 @@ class PostMixin(AuthorMixin):
         """Generate a permanent link to the post."""
         raise NotImplementedError
 
+    @property
+    def body_html(self):
+        """Return the formatted version of the article contents."""
+        if not self._body_html:
+            self._body_html = self.format(self.body)
+        return self._body_html
+
     @cached_property
     def next_post(self):
         """Return the post published after this post."""
@@ -333,13 +340,6 @@ class Article(PostMixin, UniqueHandleMixin, Searchable, db.Model):
     def tags(self, tag_list):
         """Set list of tag objects associated with this article."""
         self._tags = [self._find_or_create_tag(t) for t in tag_list]
-
-    @property
-    def body_html(self):
-        """Return the formatted version of the article contents."""
-        if not self._body_html:
-            self._body_html = self.format(self.body)
-        return self._body_html
 
     def __init__(self, **kwargs):
         """Extend init function to set sensible defaults."""
