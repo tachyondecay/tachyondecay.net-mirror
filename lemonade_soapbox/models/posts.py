@@ -7,7 +7,7 @@ from lemonade_soapbox import db
 from lemonade_soapbox.helpers import Timer
 from lemonade_soapbox.models.users import User
 from markdown import markdown
-from slugify import slugify_unicode, UniqueSlugify
+from slugify import slugify
 from sqlalchemy import asc, desc, event, func, orm
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.declarative import declared_attr
@@ -174,15 +174,23 @@ class UniqueHandleMixin():
     """
 
     @classmethod
-    def unique_check(cls, text, uids=None):
+    def unique_check(cls, text):
         """Query database to check if handle is unique."""
         return not cls.query.filter_by(handle=text).first()
 
-    def __init__(self, max_length=100, to_lower=True, translate=None, **kwargs):
-        self.slugify = UniqueSlugify(max_length=max_length,
-                                     to_lower=to_lower,
-                                     translate=translate,
-                                     unique_check=self.unique_check)
+    def slugify(self, text, max_length=100, to_lower=True, **kwargs):
+        slug = original = slugify(text, max_length=max_length, lowercase=to_lower)
+
+        # Check if unique
+        i = 1
+        while not self.unique_check(slug):
+            slug = f'{original}-{i}'
+            i += 1
+
+        return slug
+
+
+    def __init__(self, **kwargs):
         # If handle passed into init, verify it is unique
         if 'handle' in kwargs and not self.unique_check(kwargs['handle']):
             current_app.logger.info('Non-unique handle, "{}" requested.'.format(kwargs['handle']))
@@ -600,7 +608,7 @@ class Tag(db.Model):
     @classmethod
     def slugify(cls, text):
         """Create a unique handle for this tag."""
-        return slugify_unicode(text, to_lower=True, max_length=100)
+        return slugify(text, lowercase=True, max_length=100)
 
 
 # Tags no longer associated with any article should be removed
