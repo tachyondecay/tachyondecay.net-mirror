@@ -15,7 +15,7 @@ from sqlalchemy_utils import ArrowType, auto_delete_orphans, DateRangeType
 from werkzeug.utils import cached_property
 from whoosh import index, writing
 from whoosh.analysis import StemmingAnalyzer
-from whoosh.fields import Schema, ID, KEYWORD, TEXT, DATETIME
+from whoosh.fields import Schema, ID, KEYWORD, NUMERIC, TEXT, DATETIME
 from whoosh.qparser import GtLtPlugin, MultifieldParser, QueryParser
 from whoosh.qparser.dateparse import DateParserPlugin
 from uuid import uuid4
@@ -23,6 +23,7 @@ from uuid import uuid4
 
 tags = db.Table('tag_associations',
                 db.Column('tag_id', db.Integer, db.ForeignKey('tags.id')),
+                db.Column('review_id', db.Integer, db.ForeignKey('reviews.id')),
                 db.Column('article_id', db.Integer, db.ForeignKey('articles.id')))
 
 
@@ -210,6 +211,35 @@ class AuthorMixin():
         return db.relationship('User', backref=cls.__tablename__)
 
 
+class TagMixin():
+    """Any posts that are taggable."""
+    tag_list = association_proxy('_tags', 'label')
+
+    @declared_attr
+    def _tags(cls):
+        return db.relationship('Tag', secondary=tags, backref=cls.__tablename__)
+
+    def _find_or_create_tag(self, tag):
+        with db.session.no_autoflush:
+            q = Tag.query.filter_by(handle=Tag.slugify(tag))
+            t = q.first()
+            if not(t):
+                current_app.logger.info('Tag "{}" does not exist, creating.'.format(tag))
+                t = Tag(tag)
+        return t
+
+    @property
+    def tags(self):
+        """Return list of tag objects associated with this article."""
+        tag_list = getattr(self, 'tag_list', [])
+        return tag_list if (tag_list != ['']) else []
+
+    @tags.setter
+    def tags(self, tag_list):
+        """Set list of tag objects associated with this article."""
+        self._tags = [self._find_or_create_tag(t) for t in tag_list]
+
+
 class PostMixin(AuthorMixin):
     """Base class from which all post-liked objects (articles, comments) inherit."""
 
@@ -273,8 +303,7 @@ class PostMixin(AuthorMixin):
             timing = self.date_published.humanize()
         current_app.logger.info('Post {} published at {} (publication date: {}'
                                 .format(self.id, arrow.utcnow(), self.date_published))
-        return '“{0}” published {1}. <a href="{2}">View live version</a>.'\
-            .format(self.title, timing, self.get_permalink())
+        return f'Post published {timing}. <a href="{self.get_permalink()}">View live version</a>.'
 
     def update_post(self):
         """Save changes to a post without altering its publication status."""
@@ -286,7 +315,7 @@ class PostMixin(AuthorMixin):
         return message
 
 
-class Article(PostMixin, UniqueHandleMixin, Searchable, db.Model):
+class Article(PostMixin, UniqueHandleMixin, TagMixin, Searchable, db.Model):
     """Blog posts."""
 
     __tablename__ = 'articles'
@@ -315,9 +344,6 @@ class Article(PostMixin, UniqueHandleMixin, Searchable, db.Model):
                                uselist=False,
                                post_update=True)
 
-    _tags = db.relationship('Tag', secondary=tags, backref='articles')
-    tag_list = association_proxy('_tags', 'label')
-
     schema = Schema(id=ID(stored=True, unique=True),
                     author=TEXT(phrase=False),
                     date_created=DATETIME(sortable=True),
@@ -328,26 +354,6 @@ class Article(PostMixin, UniqueHandleMixin, Searchable, db.Model):
                     status=ID(),
                     tags=KEYWORD(commas=True, scorable=True),
                     title=TEXT(analyzer=StemmingAnalyzer()))
-
-    def _find_or_create_tag(self, tag):
-        with db.session.no_autoflush:
-            q = Tag.query.filter_by(handle=Tag.slugify(tag))
-            t = q.first()
-            if not(t):
-                current_app.logger.info('Tag "{}" does not exist, creating.'.format(tag))
-                t = Tag(tag)
-        return t
-
-    @property
-    def tags(self):
-        """Return list of tag objects associated with this article."""
-        tag_list = getattr(self, 'tag_list', [])
-        return tag_list if (tag_list != ['']) else []
-
-    @tags.setter
-    def tags(self, tag_list):
-        """Set list of tag objects associated with this article."""
-        self._tags = [self._find_or_create_tag(t) for t in tag_list]
 
     def __init__(self, **kwargs):
         """Extend init function to set sensible defaults."""
@@ -476,19 +482,79 @@ class Article(PostMixin, UniqueHandleMixin, Searchable, db.Model):
         return exceptions
 
 
-class Review(PostMixin, UniqueHandleMixin, Searchable, db.Model):
+class Review(PostMixin, UniqueHandleMixin, TagMixin, Searchable, db.Model):
     """Book reviews."""
-
     __tablename__ = 'reviews'
-    __searchable__ = ['body']
-    __sortable__ = ['author', 'date_created', 'date_published']
+    __searchable__ = ['body', 'book_title', 'book_author']
+    __sortable__ = ['date_created', 'date_published', 'date_read', 'book_title']
 
     book_author = db.Column(db.String(255), nullable=False)
-    book_id = db.Column(db.String(255), nullable=False) #ISBN or ASIN
+    book_cover = db.Column(db.String(255))
+    book_id = db.Column(db.String(255)) #ISBN or ASIN
     book_title = db.Column(db.String(255), nullable=False)
 
-    handle = db.Column(db.String(255), nullable=False) #ISBN or ASIN
     date_read = db.Column(DateRangeType)
+    goodreads_id = db.Column(db.Integer)
+    handle = db.Column(db.String(255), nullable=False) #ISBN or ASIN
+    rating = db.Column(db.Integer)
+    spoilers = db.Column(db.Boolean, default=False)
+
+    schema = Schema(id=ID(stored=True, unique=True),
+                    book_author=TEXT(),
+                    book_title=TEXT(),
+                    date_created=DATETIME(sortable=True),
+                    date_published=DATETIME(sortable=True),
+                    date_updated=DATETIME(sortable=True),
+                    date_read=DATETIME(sortable=True),
+                    body=TEXT(analyzer=StemmingAnalyzer()),
+                    rating=NUMERIC(),
+                    handle=ID(unique=True),
+                    status=ID(),
+                    tags=KEYWORD(commas=True, scorable=True))
+
+    @property
+    def date_started(self):
+        """Date started from date_read interval"""
+        return self.date_read.lower
+
+    @property
+    def date_finished(self):
+        """Date finished from date_read interval"""
+        return self.date_read.upper
+
+    def __init__(self, **kwargs):
+        """Extend init function to set sensible defaults."""
+        super().__init__(**kwargs)
+        if not self.body:
+            self.body = ''
+        if not self.status:
+            self.status = 'draft'
+
+    def get_permalink(self, relative=True):
+        """Generate a permanent link to the review."""
+        if not self.id:
+            return ""
+        kwargs = {
+            'handle': self.handle,
+            '_external': not(relative),
+        }
+        return url_for(f'reviews.{self.status}', **kwargs)
+
+    def schema_filters(self):
+        """Return a dict of attr => func pairs, where func is applied to the
+        value of attr to process it before indexing."""
+        def get_datetime(d):
+            return getattr(d, 'datetime', None)
+
+        exceptions = {
+            'id': str,
+            'date_created': get_datetime,
+            'date_published': get_datetime,
+            'date_updated': get_datetime,
+            'date_read': self.date_finished,
+            'tags': lambda x: ', '.join(x)
+        }
+        return exceptions
 
 
 class Revision(AuthorMixin, db.Model):
@@ -613,3 +679,4 @@ class Tag(db.Model):
 
 # Tags no longer associated with any article should be removed
 auto_delete_orphans(Article._tags)
+auto_delete_orphans(Review._tags)
