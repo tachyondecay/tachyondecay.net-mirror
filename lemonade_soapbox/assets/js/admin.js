@@ -91,7 +91,7 @@ function BackendInit() {
     $('.js-autocomplete.js-tagit').tagit({
         autocomplete: {
             minLength: 3,
-            source: application_root + '/api/tags/search'
+            source: application_root + '/api/tags/search/'
         },
         allowSpaces: true
     });
