@@ -21,10 +21,14 @@ from whoosh.qparser.dateparse import DateParserPlugin
 from uuid import uuid4
 
 
-tags = db.Table('tag_associations',
-                db.Column('tag_id', db.Integer, db.ForeignKey('tags.id')),
-                db.Column('review_id', db.Integer, db.ForeignKey('reviews.id')),
-                db.Column('article_id', db.Integer, db.ForeignKey('articles.id')))
+tag_relationships = {
+    'Article': db.Table('tag_associations',
+                        db.Column('tag_id', db.Integer, db.ForeignKey('tags.id')),
+                        db.Column('article_id', db.Integer, db.ForeignKey('articles.id'))),
+    'Review': db.Table('shelf_associations',
+                       db.Column('tag_id', db.Integer, db.ForeignKey('tags.id')),
+                       db.Column('review_id', db.Integer, db.ForeignKey('reviews.id')))
+}
 
 
 class Searchable():
@@ -217,7 +221,7 @@ class TagMixin():
 
     @declared_attr
     def _tags(cls):
-        return db.relationship('Tag', secondary=tags, backref=cls.__tablename__)
+        return db.relationship('Tag', secondary=tag_relationships[cls.__name__], backref=cls.__tablename__)
 
     def _find_or_create_tag(self, tag):
         with db.session.no_autoflush:
@@ -493,11 +497,12 @@ class Review(PostMixin, UniqueHandleMixin, TagMixin, Searchable, db.Model):
     book_id = db.Column(db.String(255)) #ISBN or ASIN
     book_title = db.Column(db.String(255), nullable=False)
 
-    date_read = db.Column(DateRangeType)
+    dates_read = db.Column(DateRangeType)
     goodreads_id = db.Column(db.Integer)
-    handle = db.Column(db.String(255), nullable=False) #ISBN or ASIN
-    rating = db.Column(db.Integer)
+    handle = db.Column(db.String(255), nullable=False)
+    rating = db.Column(db.Integer, info={'min': 0, 'max': 5})
     spoilers = db.Column(db.Boolean, default=False)
+    summary = db.Column(db.Text)
 
     schema = Schema(id=ID(stored=True, unique=True),
                     book_author=TEXT(),
@@ -515,12 +520,12 @@ class Review(PostMixin, UniqueHandleMixin, TagMixin, Searchable, db.Model):
     @property
     def date_started(self):
         """Date started from date_read interval"""
-        return self.date_read.lower
+        return self.dates_read.lower
 
     @property
     def date_finished(self):
         """Date finished from date_read interval"""
-        return self.date_read.upper
+        return self.dates_read.upper
 
     def __init__(self, **kwargs):
         """Extend init function to set sensible defaults."""
@@ -658,16 +663,17 @@ class Tag(db.Model):
         self.handle = self.slugify(label)
 
     @classmethod
-    def frequency(cls, order_by='handle'):
+    def frequency(cls, parent, order_by='handle'):
         """Returns tuples of tags and their frequencies."""
+        rel = tag_relationships[parent.__name__]
         if order_by == 'count':
             order_by = func.count().desc()
         else:
             order_by = cls.handle
         return db.session.query(cls, func.count()) \
-                         .outerjoin((tags, tags.c.tag_id == cls.id),
-                                    (Article, Article.id == tags.c.article_id)) \
-                         .filter(Article.status == 'published') \
+                         .outerjoin((rel, rel.c.tag_id == cls.id),
+                                    (parent, parent.id == rel.c.article_id)) \
+                         .filter(parent.status == 'published') \
                          .group_by(cls.id) \
                          .order_by(order_by)
 

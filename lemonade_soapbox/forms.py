@@ -1,16 +1,19 @@
 import arrow
 from flask import current_app
 from flask_wtf import Form
+from flask_wtf.file import FileAllowed, FileField
 from lemonade_soapbox import db
-from lemonade_soapbox.models import Article
+from lemonade_soapbox.models import Article, Review
+from werkzeug.utils import secure_filename
 from wtforms import (
     DateTimeField,
+    IntegerField,
     StringField,
     SubmitField,
     validators
 )
 from wtforms.fields.html5 import EmailField
-from wtforms.widgets import HTMLString, html_params
+from wtforms.widgets import HTMLString, html_params, TextInput
 from wtforms_alchemy import model_form_factory
 
 BaseModelForm = model_form_factory(Form)
@@ -24,6 +27,7 @@ class ModelForm(BaseModelForm):
 
 class ButtonWidget:
     """Widget for SubmitFields that uses the button element instead."""
+
     def __call__(self, field, **kwargs):
         button_params = html_params(class_=kwargs.get('class'),
                                     name=kwargs.get('name', field.name))
@@ -39,6 +43,7 @@ class ButtonWidget:
 
 class DateTimeWidget:
     """Widget for DateTimeFields using separate date and time inputs."""
+
     def __call__(self, field, **kwargs):
         id = kwargs.pop('id', field.id)
         date = time = ''
@@ -105,6 +110,29 @@ class ArticleForm(ModelForm):
     date_published = DateTimeLocalField('Published',
                                         format='%Y-%M-%D %H:%m',
                                         validators=[validators.Optional()])
+    tags = TagListField('Tags')
+    publish = SubmitField('Publish', widget=ButtonWidget())
+    save = SubmitField('Save', widget=ButtonWidget())
+    delete = SubmitField('Delete', widget=ButtonWidget())
+    drafts = SubmitField('Unpublish', widget=ButtonWidget())
+
+
+class ReviewForm(ModelForm):
+    class Meta:
+        model = Review
+        only = [
+            'body', 'date_published', 'show_updated', 'summary',
+            'handle', 'book_author', 'book_title', 'book_id', 'goodreads_id',
+            'book_cover', 'dates_read', 'rating', 'spoilers'
+        ]
+    date_published = DateTimeLocalField('Published',
+                                        format='%Y-%M-%D %H:%m',
+                                        validators=[validators.Optional()])
+    goodreads_id = IntegerField(widget=TextInput())
+    book_cover = FileField(validators=[
+        FileAllowed(['jpg', 'jpeg', 'png', 'gif']),
+        validators.Optional()
+    ])
     tags = TagListField('Tags')
     publish = SubmitField('Publish', widget=ButtonWidget())
     save = SubmitField('Save', widget=ButtonWidget())
