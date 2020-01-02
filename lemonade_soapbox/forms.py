@@ -8,6 +8,7 @@ from werkzeug.utils import secure_filename
 from wtforms import (
     DateTimeField,
     IntegerField,
+    RadioField,
     StringField,
     SubmitField,
     validators
@@ -133,6 +134,10 @@ class ReviewForm(ModelForm):
         FileAllowed(['jpg', 'jpeg', 'png', 'gif']),
         validators.Optional()
     ])
+    rating = RadioField('Rating', choices=[(5, '5 out of 5 stars'), (4, '4 out of 5 stars'),
+                                           (3, '3 out of 5 stars'), (2, '2 out of 5 stars'),
+                                           (1, '1 out of 5 stars'), (0, 'No rating')
+                                           ])
     tags = TagListField('Tags')
     publish = SubmitField('Publish', widget=ButtonWidget())
     save = SubmitField('Save', widget=ButtonWidget())

@@ -500,7 +500,7 @@ class Review(PostMixin, UniqueHandleMixin, TagMixin, Searchable, db.Model):
     dates_read = db.Column(DateRangeType)
     goodreads_id = db.Column(db.Integer)
     handle = db.Column(db.String(255), nullable=False)
-    rating = db.Column(db.Integer, info={'min': 0, 'max': 5})
+    rating = db.Column(db.Integer, info={'min': 0, 'max': 5}, default=0)
     spoilers = db.Column(db.Boolean, default=False)
     summary = db.Column(db.Text)
 

@@ -2,8 +2,12 @@
    #BASIC FORM ELEMENT STYLES
    ========================================================================== */
 
-label {
+label, legend {
     font-weight: bold;
+}
+
+textarea {
+    max-width: 100%;
 }
 
 

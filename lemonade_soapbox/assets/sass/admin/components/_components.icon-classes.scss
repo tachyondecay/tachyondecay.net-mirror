@@ -9,7 +9,7 @@
 //
 $included-icons: ("box-add", "bin", "calendar", "checkmark", "clock", "earth", 
                   "eye-blocked", "floppy-disk", "link", "newspaper", "new-tab", 
-                  "pencil", "spinner") !default;
+                  "pencil", "spinner", "star-empty", "star-full") !default;
 
 @each $i in $included-icons {
     .i--#{$i} {

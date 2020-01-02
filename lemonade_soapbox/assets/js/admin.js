@@ -72,6 +72,16 @@ function BackendInit() {
         });
     });
 
+    // Activate daterange picker
+    $('.js-daterangepicker').daterangepicker({
+        'autoApply': true,
+        'startDate': $(this).attr('data-startDate'),
+        'endDate': $(this).attr('data-endDate'),
+        'locale': {
+            'format': 'YYYY/MM/DD'
+        }
+    });
+
     /*
      * Autocomplete tag searching goodness
      */

@@ -1,0 +1,48 @@
+/* ==========================================================================
+   #Star rating input for reviews
+   ========================================================================== */
+
+.c-rating-input {
+    display: flex;
+    flex-flow: row-reverse;
+    justify-content: flex-end;
+
+    input { @include inuit-hidden-visually(); }
+
+    label:not(:last-child) {
+        @include sprite('star-empty');
+        margin-top: $unit-small;
+        margin-right: $unit-tiny;
+        width: 1em;
+
+        cursor: pointer;
+        @include inuit-font-size(24px);
+    }
+
+    label:last-child {
+        align-self: last baseline;
+        margin-left: $unit-small;
+        order: -1;
+
+        cursor: pointer;
+        color: $blue;
+
+        &:hover {
+            color: $purple;
+            transition: $global-transition;
+        }
+    }
+
+    input:checked ~ label:not(:last-child),
+    &:not(:checked) label:not(:last-child):hover,
+    &:not(:checked) label:not(:last-child):hover ~ label:not(:last-child) {
+        @include sprite('star-full');
+        width: 1em;
+    }
+}
+
+
+// .rating > input:checked + label:hover, /* hover current star when changing rating */
+// .rating > input:checked ~ label:hover,
+// .rating > label:hover ~ input:checked ~ label, /* lighten current selection */
+// .rating > input:checked ~ label:hover ~ label { color: #FFED85;  } 
