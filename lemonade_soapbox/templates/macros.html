@@ -40,3 +40,13 @@
     {{ field(**params) }}
     </div>
 {% endmacro %}
+
+{% macro checkbox_toggle(field, params={}, label='') %}
+    <div class="c-checkbox-toggle">
+        {{ field(**params) }}
+        <label for="{{ field.id }}">
+            <div class="c-checkbox-toggle__switch" data-checked="Yes" data-unchecked="No"></div>
+            <div class="c-checkbox-toggle__label-text">{{ label }}</div>
+        </label>
+    </div>
+{% endmacro %}

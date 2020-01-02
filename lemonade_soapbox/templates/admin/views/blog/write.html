@@ -1,5 +1,5 @@
 {% extends 'admin/layouts/master.html' %}
-{% from 'macros.html' import notifications, render_field %}
+{% from 'macros.html' import notifications, render_field, checkbox_toggle %}
 
 {% block page_title %}
 {% if article.title %}Editing “{{ article.title }}”{% else %}Writing{% endif %} {{ super() }}
@@ -82,7 +82,7 @@
 
                 {% if article.status == 'published' %}
                 <div class="o-form-field">
-                    {{ render_field(form.show_updated, label='Show post was updated')}}
+                    {{ checkbox_toggle(form.show_updated, label='Show post was updated')}}
                 </div>
                 {% endif %}
 

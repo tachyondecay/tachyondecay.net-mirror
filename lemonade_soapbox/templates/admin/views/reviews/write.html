@@ -1,5 +1,5 @@
 {% extends 'admin/layouts/master.html' %}
-{% from 'macros.html' import notifications, render_field %}
+{% from 'macros.html' import notifications, render_field, checkbox_toggle %}
 
 {% block page_title %}
 {% if review.book_title %}Editing review of “{{ review.book_title }}”{% else %}Writing a new review{% endif %} {{ super() }}
@@ -59,7 +59,7 @@
             <fieldset id="post-contents">
                 <legend class="u-hidden-visually">Post Contents</legend>
 
-                <div class="o-grid--column o-grid--flip@tablet o-grid--auto">
+                <div class="o-grid--column o-grid--flip@tablet o-grid--auto o-grid--middle">
                     <div class="o-grid__cell o-form-field">
                         <fieldset tabindex="0">
                             <legend>Rating</legend>
@@ -73,7 +73,7 @@
                     </div>
 
                 <div class="o-grid__cell o-form-field">
-                    {{ render_field(form.spoilers, label='Review contains spoilers') }}
+                    {{ checkbox_toggle(form.spoilers, label='Review contains spoilers') }}
                 </div>
                 </div>
 
@@ -102,10 +102,6 @@
                 </div>
 
                 <div class="o-form-field">
-                    {{ render_field(form.goodreads_id, {'class': 'o-text-input o-text-input--blend u-1/1' }, label='Goodreads Review') }}
-                </div>
-
-                <div class="o-form-field">
                     {{ render_field(form.book_cover, {'class': 'o-upload-field u-1/1' }, label='Book Cover') }}
                 </div>
 
@@ -129,6 +125,10 @@
 
                 <div class="o-form-field">
                     {{ render_field(form.tags, {'class': 'js-autocomplete js-tagit'}, label='Shelves') }}
+                </div>
+
+                <div class="o-form-field">
+                    {{ render_field(form.goodreads_id, {'class': 'o-text-input o-text-input--blend u-1/1' }, label='Goodreads Review') }}
                 </div>
 
                 {# {% include "admin/reviews/revision_history.html" %} #}

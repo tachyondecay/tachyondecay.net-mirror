@@ -556,7 +556,7 @@ body {
   display: flex;
   min-height: 100vh;
   flex-direction: column;
-  background: #fafafa;
+  background: #fff;
   font-family: PT Sans, Verdana, Arial, sans-serif; }
 
 /* ==========================================================================
@@ -641,7 +641,7 @@ body {
   display: flex;
   min-height: 100vh;
   flex-direction: column;
-  background: #fafafa;
+  background: #fff;
   font-family: PT Sans, Verdana, Arial, sans-serif; }
 
 /* ==========================================================================
@@ -2155,8 +2155,108 @@ a {
   line-height: 1; }
 
 /* ==========================================================================
-   #Star rating input for reviews
+   # Specialized form inputs
    ========================================================================== */
+/* Checkbox toggle */
+.c-checkbox-toggle {
+  position: relative;
+  display: flex; }
+  .c-checkbox-toggle *, .c-checkbox-toggle *:before, .c-checkbox-toggle *:after {
+    box-sizing: border-box; }
+  .c-checkbox-toggle input[type="checkbox"] {
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    left: 0; }
+    .c-checkbox-toggle input[type="checkbox"][disabled] ~ label {
+      pointer-events: none; }
+      .c-checkbox-toggle input[type="checkbox"][disabled] ~ label .c-checkbox-toggle__switch {
+        opacity: 0.4; }
+    .c-checkbox-toggle input[type="checkbox"]:checked ~ label .c-checkbox-toggle__switch:before {
+      content: attr(data-unchecked);
+      left: 0; }
+    .c-checkbox-toggle input[type="checkbox"]:checked ~ label .c-checkbox-toggle__switch:after {
+      content: attr(data-checked); }
+  .c-checkbox-toggle label {
+    flex: 1;
+    user-select: none;
+    position: relative;
+    display: flex;
+    align-items: center; }
+    .c-checkbox-toggle label .c-checkbox-toggle__label-text {
+      flex: 0 auto;
+      order: -1;
+      margin-right: 12px; }
+    .c-checkbox-toggle label .c-checkbox-toggle__switch {
+      position: relative; }
+      .c-checkbox-toggle label .c-checkbox-toggle__switch:before {
+        content: attr(data-checked);
+        position: absolute;
+        top: 0;
+        text-transform: uppercase;
+        text-align: center; }
+      .c-checkbox-toggle label .c-checkbox-toggle__switch:after {
+        content: attr(data-unchecked);
+        position: absolute;
+        z-index: 5;
+        text-transform: uppercase;
+        text-align: center;
+        background: white;
+        transform: translate3d(0, 0, 0); }
+  .c-checkbox-toggle input[type="checkbox"]:focus ~ label .c-checkbox-toggle__switch:after, .c-checkbox-toggle input[type="checkbox"]:hover ~ label .c-checkbox-toggle__switch:after {
+    box-shadow: 0 3px 3px rgba(0, 0, 0, 0.4); }
+  .c-checkbox-toggle input[type="checkbox"]:checked ~ label .c-checkbox-toggle__switch:after {
+    transform: translate3d(35.5px, 0, 0); }
+  .c-checkbox-toggle input[type="checkbox"]:checked:focus ~ label .c-checkbox-toggle__switch:after, .c-checkbox-toggle input[type="checkbox"]:checked:hover ~ label .c-checkbox-toggle__switch:after {
+    box-shadow: 0 3px 3px rgba(0, 0, 0, 0.4); }
+  .c-checkbox-toggle label {
+    font-size: 16px; }
+    .c-checkbox-toggle label .c-checkbox-toggle__switch {
+      height: 24px;
+      flex: 0 0 75px;
+      border-radius: 4px; }
+      .c-checkbox-toggle label .c-checkbox-toggle__switch:before {
+        left: 37.5px;
+        font-size: 10px;
+        line-height: 24px;
+        width: 37.5px;
+        padding: 0 12px; }
+      .c-checkbox-toggle label .c-checkbox-toggle__switch:after {
+        top: 2px;
+        left: 2px;
+        border-radius: 2px;
+        width: 35.5px;
+        line-height: 20px;
+        font-size: 10px; }
+      .c-checkbox-toggle label .c-checkbox-toggle__switch:hover:after {
+        box-shadow: 0 3px 3px rgba(0, 0, 0, 0.4); }
+  .c-checkbox-toggle input[type="checkbox"][disabled] ~ label {
+    color: rgba(150, 147, 155, 0.5); }
+  .c-checkbox-toggle input[type="checkbox"]:focus ~ label .c-checkbox-toggle__switch, .c-checkbox-toggle input[type="checkbox"]:hover ~ label .c-checkbox-toggle__switch {
+    background-color: #96939b; }
+    .c-checkbox-toggle input[type="checkbox"]:focus ~ label .c-checkbox-toggle__switch:after, .c-checkbox-toggle input[type="checkbox"]:hover ~ label .c-checkbox-toggle__switch:after {
+      color: #7c7982; }
+  .c-checkbox-toggle input[type="checkbox"]:checked ~ label .c-checkbox-toggle__switch {
+    background-color: #548aa2; }
+    .c-checkbox-toggle input[type="checkbox"]:checked ~ label .c-checkbox-toggle__switch:after {
+      color: #426e80; }
+  .c-checkbox-toggle input[type="checkbox"]:checked:focus ~ label .c-checkbox-toggle__switch, .c-checkbox-toggle input[type="checkbox"]:checked:hover ~ label .c-checkbox-toggle__switch {
+    background-color: #4b7c91; }
+    .c-checkbox-toggle input[type="checkbox"]:checked:focus ~ label .c-checkbox-toggle__switch:after, .c-checkbox-toggle input[type="checkbox"]:checked:hover ~ label .c-checkbox-toggle__switch:after {
+      color: #3a5f6f; }
+  .c-checkbox-toggle label .c-checkbox-toggle__switch {
+    transition: background-color 0.3s ease-in-out;
+    background: #a3a0a7; }
+    .c-checkbox-toggle label .c-checkbox-toggle__switch:before {
+      color: rgba(255, 255, 255, 0.6); }
+    .c-checkbox-toggle label .c-checkbox-toggle__switch:after {
+      -webkit-transition: -webkit-transform 0.3s ease-in-out;
+      transition: transform 0.3s ease-in-out;
+      color: #96939b; }
+
+/*
+ * Star rating input 
+ */
 .c-rating-input {
   display: flex;
   flex-flow: row-reverse;

@@ -36,7 +36,7 @@ def index():
 @bp.route('/search/')
 def search():
     """Search for articles."""
-    next_year = str(arrow.utcnow().replace(years=1).year)
+    next_year = str(arrow.utcnow().shift(years=+1).year)
     q = request.args.get('q', 'date_created:<' + next_year).strip()
     results = None
     articles = None
@@ -49,7 +49,7 @@ def search():
         elif q.startswith('tag:'):
             tag = Tag.query.filter_by(handle=q.split(':')[1]).first()
             if tag:
-                articles = sorted(tag.articles, key=lambda k: k.date_published, reverse=True)
+                articles = sorted(tag.articles, key=lambda k: k.date_published if k.date_published else arrow.utcnow(), reverse=True)
                 subtitle = 'Tag: {}'.format(tag.label)
         else:
             search_params = {
@@ -210,7 +210,7 @@ def blog():
     if len(articles) == 1:
         subtitle = subtitle.replace('posts', 'post')
 
-    tags = Tag.frequency(order_by='count').limit(10).all()
+    tags = Tag.frequency(Article, order_by='count').limit(10).all()
 
     status_count = db.session.query(Article.status, func.count(Article.id)).group_by(Article.status).all()
     current_app.logger.debug(status_count)
