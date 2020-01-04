@@ -45,6 +45,8 @@ class Config:
         except Exception as e:
             app.logger.error('Could not load user config: %s', e)
 
+        app.logger.info(f'Config: {cls.__name__} | Instance: {app.instance_path}')
+
         cls.setup_logging(app)
 
     @classmethod
@@ -55,7 +57,7 @@ class Config:
             with open(os.path.join(app.instance_path, 'logging.json')) as f:
                 data = json.load(f)
         except FileNotFoundError as e:
-            app.logger.info('No logging config file found, using default.')
+            app.logger.info(f'No logging config file found, using default: {e}')
         except IOError as e:
             app.logger.error('Could not open logging config file: %s', e)
 
