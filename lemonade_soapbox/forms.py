@@ -2,6 +2,7 @@ import arrow
 from flask import current_app
 from flask_wtf import Form
 from flask_wtf.file import FileAllowed, FileField
+from intervals import DateInterval
 from lemonade_soapbox import db
 from lemonade_soapbox.models import Article, Review
 from werkzeug.utils import secure_filename
@@ -77,6 +78,25 @@ class DateTimeLocalField(DateTimeField):
                 raise ValueError('Not a valid datetime value. Looking for YYYY-MM-DD HH:mm.')
 
 
+# Note: This class is currently unused because DateRangeType from sqlalchemy-utils
+# is not working as expected.
+class DateRangeField(StringField):
+    """Field for date ranges"""
+
+    def _value(self):
+        if self.data:
+            start, end = [arrow.get(k).format('YYYY/MM/DD') for k in [self.data.lower, self.data.upper]]
+            return f'{start} - {end}'
+        return ''
+
+    def process_formdata(self, valuelist):
+        if valuelist:
+            start, end = [arrow.get(x.strip()) for x in valuelist[0].split('-')]
+            self.data = DateInterval.closed(start.date(), end.date())
+        else:
+            self.data = ''
+
+
 class TagListField(StringField):
     """
     A text input field that processes input as if it were a comma-separated
@@ -134,10 +154,11 @@ class ReviewForm(ModelForm):
         FileAllowed(['jpg', 'jpeg', 'png', 'gif']),
         validators.Optional()
     ])
+    handle = StringField('URL Handle', validators=[validators.Optional()])
     rating = RadioField('Rating', choices=[(5, '5 out of 5 stars'), (4, '4 out of 5 stars'),
                                            (3, '3 out of 5 stars'), (2, '2 out of 5 stars'),
                                            (1, '1 out of 5 stars'), (0, 'No rating')
-                                           ])
+                                           ], coerce=int)
     tags = TagListField('Tags')
     publish = SubmitField('Publish', widget=ButtonWidget())
     save = SubmitField('Save', widget=ButtonWidget())

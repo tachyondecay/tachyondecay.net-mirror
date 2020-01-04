@@ -11,6 +11,7 @@ from slugify import slugify
 from sqlalchemy import asc, desc, event, func, orm
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.declarative import declared_attr
+from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy_utils import ArrowType, auto_delete_orphans, DateRangeType
 from werkzeug.utils import cached_property
 from whoosh import index, writing
@@ -497,7 +498,7 @@ class Review(PostMixin, UniqueHandleMixin, TagMixin, Searchable, db.Model):
     book_id = db.Column(db.String(255)) #ISBN or ASIN
     book_title = db.Column(db.String(255), nullable=False)
 
-    dates_read = db.Column(DateRangeType)
+    dates_read = db.Column(db.String(255))
     goodreads_id = db.Column(db.Integer)
     handle = db.Column(db.String(255), nullable=False)
     rating = db.Column(db.Integer, info={'min': 0, 'max': 5}, default=0)
@@ -510,22 +511,24 @@ class Review(PostMixin, UniqueHandleMixin, TagMixin, Searchable, db.Model):
                     date_created=DATETIME(sortable=True),
                     date_published=DATETIME(sortable=True),
                     date_updated=DATETIME(sortable=True),
-                    date_read=DATETIME(sortable=True),
+                    date_finished=DATETIME(sortable=True),
                     body=TEXT(analyzer=StemmingAnalyzer()),
                     rating=NUMERIC(),
                     handle=ID(unique=True),
                     status=ID(),
                     tags=KEYWORD(commas=True, scorable=True))
 
-    @property
+    @hybrid_property
     def date_started(self):
         """Date started from date_read interval"""
-        return self.dates_read.lower
+        start, end = [arrow.get(x.strip()) for x in self.dates_read.split('-')]
+        return start
 
-    @property
+    @hybrid_property
     def date_finished(self):
         """Date finished from date_read interval"""
-        return self.dates_read.upper
+        start, end = [arrow.get(x.strip()) for x in self.dates_read.split('-')]
+        return end
 
     def __init__(self, **kwargs):
         """Extend init function to set sensible defaults."""
@@ -535,6 +538,11 @@ class Review(PostMixin, UniqueHandleMixin, TagMixin, Searchable, db.Model):
         if not self.status:
             self.status = 'draft'
 
+    # @orm.reconstructor
+    # def __db_init__(self):
+    #     super().__init__()
+    #     self.dates_read = DateInterval.closed()
+
     def get_permalink(self, relative=True):
         """Generate a permanent link to the review."""
         if not self.id:
@@ -543,7 +551,7 @@ class Review(PostMixin, UniqueHandleMixin, TagMixin, Searchable, db.Model):
             'handle': self.handle,
             '_external': not(relative),
         }
-        return url_for(f'reviews.{self.status}', **kwargs)
+        return url_for(f'reviews.show_{self.status}', **kwargs)
 
     def schema_filters(self):
         """Return a dict of attr => func pairs, where func is applied to the
@@ -556,7 +564,7 @@ class Review(PostMixin, UniqueHandleMixin, TagMixin, Searchable, db.Model):
             'date_created': get_datetime,
             'date_published': get_datetime,
             'date_updated': get_datetime,
-            'date_read': self.date_finished,
+            'date_finished': get_datetime,
             'tags': lambda x: ', '.join(x)
         }
         return exceptions

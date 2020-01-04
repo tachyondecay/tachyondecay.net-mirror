@@ -1,4 +1,5 @@
 import arrow
+import os
 from flask import (
     abort,
     Blueprint,
@@ -18,6 +19,7 @@ from lemonade_soapbox.helpers import compose
 from lemonade_soapbox.models import Article, Review, Revision, Tag
 from lemonade_soapbox.models.users import User
 from sqlalchemy import and_, func
+from werkzeug import secure_filename
 
 bp = Blueprint('admin', __name__)
 
@@ -133,7 +135,7 @@ def signin():
 
             if msg:
                 mail.send(msg)
-                session['signin_email_time'] = arrow.utcnow().replace(minutes=current_app.config['LOGIN_EMAIL_FLOOD'])
+                session['signin_email_time'] = arrow.utcnow().replace(minute=current_app.config['LOGIN_EMAIL_FLOOD'])
                 flash('Verification link sent to {}'.format(form.email.data), 'success')
                 current_app.logger.info('Auth link sent to {}'.format(form.email.data))
         return redirect(url_for('.signin'))
@@ -320,7 +322,7 @@ def edit_review(id, revision_id):
     # Load a review either by ID or a specific revision
     if id:
         review = Review.query.get_or_404(id)
-        revision_id = review.revision_id
+        # revision_id = review.revision_id
         g.search_query = 'id:' + str(id)
     elif revision_id:
         review = Review.from_revision(revision_id)
@@ -337,10 +339,21 @@ def edit_review(id, revision_id):
         message = ''
         message_category = 'success'
         # Save a copy of the original body before we overwrite it
-        current_body = review.body
+        # current_body = review.body
         form.populate_obj(review)
         if not form.handle.data:
-            review.handle = review.slugify(review.title)
+            review.handle = review.slugify(review.book_title)
+
+        # Handle book cover uploading
+        if form.book_cover.data:
+            cover = request.files[form.book_cover.name]
+            filename = secure_filename(cover.filename)
+            review.book_cover = filename
+            try:
+                cover.save(os.path.join(current_app.instance_path, 'media', filename))
+            except Exception as e:
+                current_app.logger.warn(f'Could not upload book cover: {e}.')
+                flash('There was a problem uploading the book cover. Try again?', 'error')
 
         # Remove an autosave if present, since we're creating a revision anyway
         # if review.autosave:
@@ -348,20 +361,20 @@ def edit_review(id, revision_id):
         #     db.session.delete(review.autosave)
 
         # Create a new revision, conditionally
-        if current_body != form.body.data or review.revision_id != revision_id:
-            review.new_revision(new=form.body.data, old=current_body)
+        # if current_body != form.body.data or review.revision_id != revision_id:
+        #     review.new_revision(new=form.body.data, old=current_body)
         if form.publish.data:
             message = review.publish_post()
         else:
             message = review.update_post()
             if form.delete.data:
                 review.status = 'deleted'
-                message = 'Article moved to the trash.'
+                message = 'Review moved to the trash.'
                 message_category = 'removed'
             elif form.drafts.data:
                 review.status = 'draft'
                 review.date_published = None
-                message = 'Article moved to drafts.'
+                message = 'Review moved to drafts.'
         db.session.add(review)
         db.session.commit()
         flash(message, message_category)
