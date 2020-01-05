@@ -429,6 +429,9 @@ class Article(PostMixin, UniqueHandleMixin, TagMixin, Searchable, db.Model):
                 current_app.logger.info('Deleting autosave {} for post {}'.format(
                                         self.autosave.id,
                                         self.id))
+                db.session.delete(self.autosave)
+                db.session.commit()
+
             new_save.article_id = self.id
             self.autosave = new_save
             db.session.commit()
@@ -455,6 +458,18 @@ class Article(PostMixin, UniqueHandleMixin, TagMixin, Searchable, db.Model):
         parent_id = getattr(parent, 'id', None)
         current_app.logger.info('Created new revision {} (parent: {}) for post {}.'
                                 .format(r.id, parent_id, self.id))
+
+        # Delete autosave
+        if self.autosave:
+            db.session.delete(self.autosave)
+            db.session.commit()
+
+        # Only keep newest 3 revisions
+        revs = self.revisions.all()
+        if len(revs) > current_app.config['KEEP_REVISIONS']:
+            for r in revs[:(-1 * current_app.config['KEEP_REVISIONS'])]:
+                db.session.delete(r)
+            db.session.commit()
         return r
 
     @classmethod

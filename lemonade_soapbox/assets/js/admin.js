@@ -238,7 +238,8 @@ ArticleForm.prototype.bindAutosaveRestores = function() {
             .insertBefore(self.body)
             .fadeIn('fast')
             .delay(5000)
-            .fadeOut();
+            .fadeOut()
+            .remove();
     });
 }
 
