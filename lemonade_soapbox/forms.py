@@ -1,16 +1,22 @@
 import arrow
 from flask import current_app
 from flask_wtf import Form
+from flask_wtf.file import FileAllowed, FileField
+from intervals import DateInterval
 from lemonade_soapbox import db
-from lemonade_soapbox.models import Article
+from lemonade_soapbox.models import Article, Review
+from werkzeug.utils import secure_filename
 from wtforms import (
+    BooleanField,
     DateTimeField,
+    IntegerField,
+    RadioField,
     StringField,
     SubmitField,
-    validators
+    validators,
 )
 from wtforms.fields.html5 import EmailField
-from wtforms.widgets import HTMLString, html_params
+from wtforms.widgets import HTMLString, html_params, TextInput
 from wtforms_alchemy import model_form_factory
 
 BaseModelForm = model_form_factory(Form)
@@ -24,6 +30,7 @@ class ModelForm(BaseModelForm):
 
 class ButtonWidget:
     """Widget for SubmitFields that uses the button element instead."""
+
     def __call__(self, field, **kwargs):
         button_params = html_params(class_=kwargs.get('class'),
                                     name=kwargs.get('name', field.name))
@@ -39,6 +46,7 @@ class ButtonWidget:
 
 class DateTimeWidget:
     """Widget for DateTimeFields using separate date and time inputs."""
+
     def __call__(self, field, **kwargs):
         id = kwargs.pop('id', field.id)
         date = time = ''
@@ -69,6 +77,25 @@ class DateTimeLocalField(DateTimeField):
             except arrow.parser.ParserError as e:
                 current_app.logger.warn('Invalid datetime value submitted: %s', e)
                 raise ValueError('Not a valid datetime value. Looking for YYYY-MM-DD HH:mm.')
+
+
+# Note: This class is currently unused because DateRangeType from sqlalchemy-utils
+# is not working as expected.
+class DateRangeField(StringField):
+    """Field for date ranges"""
+
+    def _value(self):
+        if self.data:
+            start, end = [arrow.get(k).format('YYYY/MM/DD') for k in [self.data.lower, self.data.upper]]
+            return f'{start} - {end}'
+        return ''
+
+    def process_formdata(self, valuelist):
+        if valuelist:
+            start, end = [arrow.get(x.strip()) for x in valuelist[0].split('-')]
+            self.data = DateInterval.closed(start.date(), end.date())
+        else:
+            self.data = ''
 
 
 class TagListField(StringField):
@@ -110,6 +137,44 @@ class ArticleForm(ModelForm):
     save = SubmitField('Save', widget=ButtonWidget())
     delete = SubmitField('Delete', widget=ButtonWidget())
     drafts = SubmitField('Unpublish', widget=ButtonWidget())
+
+
+class ReviewForm(ModelForm):
+    class Meta:
+        model = Review
+        only = [
+            'body', 'date_published', 'show_updated', 'summary',
+            'handle', 'book_author', 'book_title', 'book_id', 'goodreads_id',
+            'book_cover', 'dates_read', 'rating', 'spoilers'
+        ]
+    date_published = DateTimeLocalField('Published',
+                                        format='%Y-%M-%D %H:%m',
+                                        validators=[validators.Optional()])
+    goodreads_id = IntegerField(widget=TextInput())
+    book_cover = FileField(validators=[
+        FileAllowed(['jpg', 'jpeg', 'png', 'gif']),
+        validators.Optional()
+    ])
+    remove_cover = BooleanField('Remove uploaded cover', validators=[validators.Optional()])
+    handle = StringField('URL Handle', validators=[validators.Optional()])
+    rating = RadioField('Rating', choices=[(5, '5 out of 5 stars'), (4, '4 out of 5 stars'),
+                                           (3, '3 out of 5 stars'), (2, '2 out of 5 stars'),
+                                           (1, '1 out of 5 stars'), (0, 'No rating')
+                                           ], coerce=int)
+    tags = TagListField('Tags')
+    publish = SubmitField('Publish', widget=ButtonWidget())
+    save = SubmitField('Save', widget=ButtonWidget())
+    delete = SubmitField('Delete', widget=ButtonWidget())
+    drafts = SubmitField('Unpublish', widget=ButtonWidget())
+
+    def validate_dates_read(form, field):
+        """Validate the dates read field is a range of dates"""
+        try:
+            start, end = [arrow.get(x.strip()) for x in field.data.split('-')]
+            if end < start:
+                raise Exception
+        except Exception:
+            raise validators.ValidationError('Dates read must be a valid range.')
 
 
 class SignInForm(Form):

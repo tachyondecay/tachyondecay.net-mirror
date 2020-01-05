@@ -82,6 +82,7 @@ $notification-variations: (
  */
 
 .c-notification--inline {
+    margin-bottom: 0;
     padding: 0 $unit-tiny;
 
     @include font-size(12px);

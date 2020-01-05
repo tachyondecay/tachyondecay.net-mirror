@@ -33,10 +33,20 @@
     {% endif %}
 {% endmacro %}
 
-{% macro render_field(field, params={}, label=None, container_class=None) %}
+{% macro render_field(field, params={}, label=None, container_class='') %}
     {{ field.label(label) }}
     {{ render_errors(field) }}
-    <div class="o-form-field__input {{ container_class|default('') }} {{ "o-form-field__input--error" if field.errors }}">
+    <div class="o-form-field__input {{ container_class }} {{ "o-form-field__input--error" if field.errors }}">
     {{ field(**params) }}
+    </div>
+{% endmacro %}
+
+{% macro checkbox_toggle(field, params={}, label='', size=None) %}
+    <div class="c-checkbox-toggle {{ ['c-checkbox-toggle--', size]|join('') if size}}">
+        {{ field(**params) }}
+        <label for="{{ field.id }}">
+            <div class="c-checkbox-toggle__switch" data-checked="Yes" data-unchecked="No"></div>
+            <div class="c-checkbox-toggle__label-text">{{ label|default(field.label.text, true) }}</div>
+        </label>
     </div>
 {% endmacro %}

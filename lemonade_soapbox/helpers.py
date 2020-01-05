@@ -160,10 +160,10 @@ class Timer:
     def __enter__(self):
         """Start the timer."""
 
-        self.start = time.clock()
+        self.start = time.perf_counter()
         return self
 
     def __exit__(self, *args):
         """End the timer."""
-        self.end = time.clock()
+        self.end = time.perf_counter()
         self.interval = self.end - self.start

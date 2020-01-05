@@ -1,4 +1,5 @@
 import arrow
+import os
 from flask import (
     abort,
     Blueprint,
@@ -13,11 +14,12 @@ from flask import (
 )
 from flask_login import current_user, login_user, login_required, logout_user
 from lemonade_soapbox import db, mail
-from lemonade_soapbox.forms import ArticleForm, SignInForm
+from lemonade_soapbox.forms import ArticleForm, ReviewForm, SignInForm
 from lemonade_soapbox.helpers import compose
-from lemonade_soapbox.models import Article, Revision, Tag
+from lemonade_soapbox.models import Article, Review, Revision, Tag
 from lemonade_soapbox.models.users import User
 from sqlalchemy import and_, func
+from werkzeug import secure_filename
 
 bp = Blueprint('admin', __name__)
 
@@ -36,7 +38,7 @@ def index():
 @bp.route('/search/')
 def search():
     """Search for articles."""
-    next_year = str(arrow.utcnow().replace(years=1).year)
+    next_year = str(arrow.utcnow().shift(years=+1).year)
     q = request.args.get('q', 'date_created:<' + next_year).strip()
     results = None
     articles = None
@@ -49,7 +51,7 @@ def search():
         elif q.startswith('tag:'):
             tag = Tag.query.filter_by(handle=q.split(':')[1]).first()
             if tag:
-                articles = sorted(tag.articles, key=lambda k: k.date_published, reverse=True)
+                articles = sorted(tag.articles, key=lambda k: k.date_published if k.date_published else arrow.utcnow(), reverse=True)
                 subtitle = 'Tag: {}'.format(tag.label)
         else:
             search_params = {
@@ -133,7 +135,7 @@ def signin():
 
             if msg:
                 mail.send(msg)
-                session['signin_email_time'] = arrow.utcnow().replace(minutes=current_app.config['LOGIN_EMAIL_FLOOD'])
+                session['signin_email_time'] = arrow.utcnow().replace(minute=current_app.config['LOGIN_EMAIL_FLOOD'])
                 flash('Verification link sent to {}'.format(form.email.data), 'success')
                 current_app.logger.info('Auth link sent to {}'.format(form.email.data))
         return redirect(url_for('.signin'))
@@ -210,7 +212,7 @@ def blog():
     if len(articles) == 1:
         subtitle = subtitle.replace('posts', 'post')
 
-    tags = Tag.frequency(order_by='count').limit(10).all()
+    tags = Tag.frequency(Article, order_by='count').limit(10).all()
 
     status_count = db.session.query(Article.status, func.count(Article.id)).group_by(Article.status).all()
     current_app.logger.debug(status_count)
@@ -294,3 +296,105 @@ def edit_article(id, revision_id):
                            form=form,
                            revisions=revisions,
                            selected_revision=revision_id)
+
+
+#
+# Review endpoints
+#
+
+@bp.route('/reviews/')
+@login_required
+def reviews():
+    """View and manage reviews."""
+    status = request.args.get('status', 'published')
+    reviews = Review.query.filter_by(status=status)
+
+    return render_template('admin/views/reviews/index.html',
+                           reviews=reviews)
+
+
+@bp.route('/reviews/write/', defaults={'id': None, 'revision_id': None}, methods=['POST', 'GET'])
+@bp.route('/reviews/write/<int:id>/', defaults={'revision_id': None}, methods=['POST', 'GET'])
+@bp.route('/reviews/write/<revision_id>/', defaults={'id': None}, methods=['POST', 'GET'])
+@login_required
+def edit_review(id, revision_id):
+    """Compose a new review or edit an existing review."""
+    # Load a review either by ID or a specific revision
+    if id:
+        review = Review.query.get_or_404(id)
+        # revision_id = review.revision_id
+        g.search_query = 'id:' + str(id)
+    elif revision_id:
+        review = Review.from_revision(revision_id)
+        g.search_query = 'revision:' + str(revision_id)
+        if not review:
+            abort(404)
+    else:
+        review = Review()
+
+    # Copy revisions section from edit_article when revisions enabled for reviews
+
+    form = ReviewForm(obj=review)
+    if(form.validate_on_submit()):
+        message = ''
+        message_category = 'success'
+        # Save a copy of the original body before we overwrite it
+        # current_body = review.body
+        form.populate_obj(review)
+        if not form.handle.data:
+            review.handle = review.slugify(review.book_title)
+
+        # Handle book cover uploading
+        if form.book_cover.data and request.files.get(form.book_cover.name):
+            cover = request.files[form.book_cover.name]
+            filename = secure_filename(
+                review.handle + '-cover.' +
+                cover.filename.rsplit('.', 1)[1].lower()
+            )
+            review.book_cover = filename
+            try:
+                cover.save(os.path.join(current_app.instance_path, 
+                                        'media', 'book_covers', filename))
+            except Exception as e:
+                current_app.logger.warn(f'Could not upload book cover: {e}.')
+                flash('There was a problem uploading the book cover. Try again?', 'error')
+        if form.remove_cover.data and review.book_cover:
+            try:
+                os.remove(os.path.join(current_app.instance_path,
+                                       'media', 'book_covers', review.book_cover))
+                review.book_cover = ''
+            except Exception as e:
+                current_app.logger.warn(f'Could not delete book cover: {e}')
+                flash('Could not delete book cover.', 'error')
+
+        # Remove an autosave if present, since we're creating a revision anyway
+        # if review.autosave:
+        #     review.autosave_id = None
+        #     db.session.delete(review.autosave)
+
+        # Create a new revision, conditionally
+        # if current_body != form.body.data or review.revision_id != revision_id:
+        #     review.new_revision(new=form.body.data, old=current_body)
+        if form.publish.data:
+            message = review.publish_post()
+        else:
+            message = review.update_post()
+            if form.delete.data:
+                review.status = 'deleted'
+                message = 'Review moved to the trash.'
+                message_category = 'removed'
+            elif form.drafts.data:
+                review.status = 'draft'
+                review.date_published = None
+                message = 'Review moved to drafts.'
+        db.session.add(review)
+        db.session.commit()
+        flash(message, message_category)
+        return redirect(url_for('.edit_review', id=review.id))
+    elif form.errors:
+        current_app.logger.debug(form.errors)
+        flash('You need to fix a few things before you can save your changes.', 'error')
+
+    return render_template('admin/views/reviews/write.html',
+                           review=review,
+                           form=form)

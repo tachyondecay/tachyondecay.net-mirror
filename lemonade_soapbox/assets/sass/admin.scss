@@ -151,6 +151,7 @@
 @import "admin/components/components.page";
 @import "admin/components/components.notifications";
 @import "admin/components/components.filter-results";
+@import "admin/components/components.forms";
 
 
 
@@ -179,3 +180,4 @@ $inuit-offsets: true;
 @import "vendor/jquery-ui/jquery-ui.theme";
 @import "vendor/simplemde/simplemde.min";
 @import "vendor/MonthPicker/MonthPicker";
+@import "vendor/daterangepicker/daterangepicker";

@@ -28,11 +28,12 @@ def create_app(config_name='default'):
     login_manager.login_message_category = "error"
     mail.init_app(app)
 
-    from lemonade_soapbox.views import admin, api, blog, frontend
+    from lemonade_soapbox.views import admin, api, blog, frontend, reviews
     app.register_blueprint(admin.bp, url_prefix='/meta')
     app.register_blueprint(api.bp, url_prefix='/api')
     app.register_blueprint(blog.bp, url_prefix='/blog')
     app.register_blueprint(frontend.bp, url_prefix='')
+    app.register_blueprint(reviews.bp, url_prefix='/reviews')
 
     app.jinja_env.add_extension('jinja2.ext.i18n')
     app.jinja_env.lstrip_blocks = True

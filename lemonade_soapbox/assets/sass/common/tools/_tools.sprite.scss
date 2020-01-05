@@ -120,6 +120,6 @@ $sprite: map-get($icons, sprite) !default;
 
     // Outputs background position in em
     @if $type == all or $type == bg {
-        background-position: ceil(mq-px2em(map-get($iconMap, x) - 5)) ceil(mq-px2em(map-get($iconMap, y) - 5)); // [1]
+        background-position: ceil(mq-px2em(map-get($iconMap, x) - 5px)) ceil(mq-px2em(map-get($iconMap, y) - 5px)); // [1]
     }
 }

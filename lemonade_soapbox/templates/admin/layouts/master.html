@@ -22,6 +22,8 @@
         <script src="{{ url_for('static', filename='js/vendor/jquery-ui.min.js') }}"></script>
         <script src="{{ url_for('static', filename='js/vendor/modernizr.min.js') }}"></script>
         <script src="{{ url_for('static', filename='js/vendor/autosize.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/vendor/moment.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/vendor/daterangepicker.js') }}"></script>
         <script src="{{ url_for('static', filename='js/vendor/jquery.timepicker.min.js') }}"></script>
         <script src="{{ url_for('static', filename='js/vendor/MonthPicker.js') }}"></script>
         <script src="{{ url_for('static', filename='js/vendor/tag-it.min.js') }}"></script>
@@ -55,9 +57,9 @@
                                 </ul>
                             </li>
                             <li class="o-powerbar-nav__parent-item c-powerbar-nav__parent-item">
-                                <a href="">Reviews</a>
+                                <a href="{{ url_for('admin.reviews') }}">Reviews</a>
                                 <ul>
-                                    <li  class="o-powerbar-nav__sub-item c-powerbar-nav__sub-item"><a href="">Lists</a></li>
+                                    <li  class="o-powerbar-nav__sub-item c-powerbar-nav__sub-item"><a href="{{ url_for('admin.edit_review') }}">Write</a></li>
                                 </ul>
                             </li>
                             <li class="o-powerbar-nav__parent-item c-powerbar-nav__parent-item"><a href="">Tag Manager</a></li>
