@@ -538,11 +538,6 @@ class Review(PostMixin, UniqueHandleMixin, TagMixin, Searchable, db.Model):
         if not self.status:
             self.status = 'draft'
 
-    # @orm.reconstructor
-    # def __db_init__(self):
-    #     super().__init__()
-    #     self.dates_read = DateInterval.closed()
-
     def get_permalink(self, relative=True):
         """Generate a permanent link to the review."""
         if not self.id:

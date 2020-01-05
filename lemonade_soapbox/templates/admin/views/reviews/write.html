@@ -8,7 +8,7 @@
 {% block body_classes %}editing review-status--{{ review.status }}{% endblock %}
 
 {% block page_title_body %}
-            {% if review.title %}
+            {% if review.book_title %}
             <span class="c-page-title__action">
                 {{ 'Deleted' if review.status == 'deleted' else 'Editing' }} review of  »</span>
             <span class="c-page-title__item u-hidden-visually">{{ review.book_title }}</span>
@@ -37,7 +37,7 @@
 {% endblock header_end %}
 
 {% block body_main %}
-<form id="write" method="post" data-review="{{ review.id|default('', true) }}" data-published="{{'true' if (review.status == 'published') else 'false' }}" data-autosave="{{ config['AUTOSAVE_DELAY'] }}" enctype="multipart/form-data">
+<form id="write" method="post" data-id="{{ review.id|default('', true) }}" data-published="{{'true' if (review.status == 'published') else 'false' }}" data-autosave="" enctype="multipart/form-data">
 {{ form.hidden_tag() }}
 
 {{ super() }}
@@ -101,21 +101,34 @@
                     {{ render_field(form.book_id, {'class': 'o-text-input o-text-input--blend u-1/1' }, label='ISBN') }}
                 </div>
 
-                <div class="o-form-field">
-                    {{ render_field(form.book_cover, {'class': 'o-upload-field u-1/1' }, label='Book Cover') }}
+                <div class="o-form-field o-upload{{ ' u-margin-bottom-none' if review.book_cover }}">
+                    <div class="o-upload__field">
+                        {{ render_field(form.book_cover, {'class': 'o-upload__input u-1/1' }, label='Book Cover') }}
+                    </div>
+                    {% if review.book_cover %}
+                    <div class="o-upload__preview">
+                        <img src="/media/book_covers/{{ review.book_cover }}" class="o-upload__image" alt="Cover image"/>
+                    </div>
+                    {% endif %}
                 </div>
+
+                {% if review.book_cover %}
+                <div class="o-form-field">
+                    {{ checkbox_toggle(form.remove_cover, size='small') }}
+                </div>
+                {% endif %}
 
                 <div class="o-form-field">
                     {{ render_field(form.dates_read, {'class': 'o-text-input o-text-input--blend js-daterangepicker', }, label='Dates Read') }}
                 </div>
 
-                <div class="o-form-field">
-                    {{ render_field(form.date_published, {'class': 'o-text-input js-breaks-url', 'date_class': 'o-form-field--icon-before i-before--calendar', 'time_class': 'o-form-field--icon-before i-before--clock' }, label='Review Publish Date') }}
+                <div class="o-form-field{{ ' u-margin-bottom-none' if review.status == 'published' }}">
+                    {{ render_field(form.date_published, {'class': 'o-text-input', 'date_class': 'o-form-field--icon-before i-before--calendar', 'time_class': 'o-form-field--icon-before i-before--clock' }, label='Review Publish Date') }}
                 </div>
 
                 {% if review.status == 'published' %}
                 <div class="o-form-field">
-                    {{ render_field(form.show_updated, label='Show post was updated')}}
+                    {{ checkbox_toggle(form.show_updated, label='Show post was updated', size='small')}}
                 </div>
                 {% endif %}
 

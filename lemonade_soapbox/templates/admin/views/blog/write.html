@@ -37,7 +37,7 @@
 {% endblock header_end %}
 
 {% block body_main %}
-<form id="write" method="post" data-article="{{ article.id|default('', true) }}" data-published="{{'true' if (article.status == 'published') else 'false' }}" data-autosave="{{ config['AUTOSAVE_DELAY'] }}">
+<form id="write" method="post" data-id="{{ article.id|default('', true) }}" data-published="{{'true' if (article.status == 'published') else 'false' }}" data-autosave="{{ config['AUTOSAVE_DELAY'] }}">
 {{ form.hidden_tag() }}
 
 {{ super() }}
@@ -75,14 +75,14 @@
         <div class="o-grid__cell u-flex-1/3@desktop">
             <fieldset id="post-metadata">
                 <legend class="u-hidden-visually">Post Metadata</legend>
-                
-                <div class="o-form-field">
-                    {{ render_field(form.date_published, {'class': 'o-text-input js-breaks-url', 'date_class': 'o-form-field--icon-before i-before--calendar', 'time_class': 'o-form-field--icon-before i-before--clock' }, label='Published') }}
+
+                <div class="o-form-field{{ ' u-margin-bottom-none' if article.status == 'published' }}">
+                    {{ render_field(form.date_published, {'class': 'o-text-input js-breaks-url', 'date_class': 'o-form-field--icon-before i-before--calendar', 'time_class': 'o-form-field--icon-before i-before--clock' }, label='Review Publish Date') }}
                 </div>
 
                 {% if article.status == 'published' %}
                 <div class="o-form-field">
-                    {{ checkbox_toggle(form.show_updated, label='Show post was updated')}}
+                    {{ checkbox_toggle(form.show_updated, label='Show post was updated', size='small')}}
                 </div>
                 {% endif %}
 

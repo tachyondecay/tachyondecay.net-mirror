@@ -23,7 +23,7 @@ function BackendInit() {
                 var rev = current.data('view');
                 current
                     .removeClass('js-revisions__current')
-                current.wrapInner('<a href="' + application_root + '/meta/write/' + rev + '/" title="View this revision"></a>');
+                current.wrapInner('<a href="' + application_root + '/meta/blog/write/' + rev + '/" title="View this revision"></a>');
                 current.before('<li class="js-revisions__current"><span class="i--spinner"></span> Autosaving…</li>');
             } else {
                 $('.js-revisions__current').html('Autosaving…');
@@ -75,8 +75,6 @@ function BackendInit() {
     // Activate daterange picker
     $('.js-daterangepicker').daterangepicker({
         'autoApply': true,
-        'startDate': $(this).attr('data-startDate'),
-        'endDate': $(this).attr('data-endDate'),
         'locale': {
             'format': 'YYYY/MM/DD'
         }
@@ -125,20 +123,21 @@ function BackendInit() {
 
 var ArticleForm = function(form) {
     this.form = $(form);
-    this.id = this.form.data('article');
+    this.id = this.form.data('id');
     this.body = this.form.find('[name=body]');
     this.old_content = this.body.val(); // For autosaving
 
-
     // Initialize autosave logic
-    this.autosaveConfig = {
-        ajaxURL: application_root + '/api/articles/autosave/',
-        delay: this.form.data('autosave') * 1000
-    };
-    this.autosaveTimer = setTimeout(this.autosave.bind(this), this.autosaveConfig.delay);
+    if (this.form.data('autosave')) {
+        this.autosaveConfig = {
+            ajaxURL: application_root + '/api/articles/autosave/',
+            delay: this.form.data('autosave') * 1000
+        };
+        this.autosaveTimer = setTimeout(this.autosave.bind(this), this.autosaveConfig.delay);
 
-    // Add functionality to restore autosave to any links that are present
-    this.bindAutosaveRestores();
+        // Add functionality to restore autosave to any links that are present
+        this.bindAutosaveRestores();
+    }
 
 
     // Initialize SimpleMDE on the body
@@ -209,6 +208,7 @@ ArticleForm.prototype.autosave = function() {
                     .html('Last autosave: ' + data.date + ' <a href="#" class="c-revision__link">Restore</a>')
                     .children('a')
                         .data('content', self.old_content);
+                self.bindAutosaveRestores();
 
                 // Remove a warning about an extant autosave if we just made a new one
                 $('.js-autosave-notification').fadeOut('fast');

@@ -7,12 +7,13 @@ from lemonade_soapbox import db
 from lemonade_soapbox.models import Article, Review
 from werkzeug.utils import secure_filename
 from wtforms import (
+    BooleanField,
     DateTimeField,
     IntegerField,
     RadioField,
     StringField,
     SubmitField,
-    validators
+    validators,
 )
 from wtforms.fields.html5 import EmailField
 from wtforms.widgets import HTMLString, html_params, TextInput
@@ -154,6 +155,7 @@ class ReviewForm(ModelForm):
         FileAllowed(['jpg', 'jpeg', 'png', 'gif']),
         validators.Optional()
     ])
+    remove_cover = BooleanField('Remove uploaded cover', validators=[validators.Optional()])
     handle = StringField('URL Handle', validators=[validators.Optional()])
     rating = RadioField('Rating', choices=[(5, '5 out of 5 stars'), (4, '4 out of 5 stars'),
                                            (3, '3 out of 5 stars'), (2, '2 out of 5 stars'),
@@ -164,6 +166,15 @@ class ReviewForm(ModelForm):
     save = SubmitField('Save', widget=ButtonWidget())
     delete = SubmitField('Delete', widget=ButtonWidget())
     drafts = SubmitField('Unpublish', widget=ButtonWidget())
+
+    def validate_dates_read(form, field):
+        """Validate the dates read field is a range of dates"""
+        try:
+            start, end = [arrow.get(x.strip()) for x in field.data.split('-')]
+            if end < start:
+                raise Exception
+        except Exception:
+            raise validators.ValidationError('Dates read must be a valid range.')
 
 
 class SignInForm(Form):

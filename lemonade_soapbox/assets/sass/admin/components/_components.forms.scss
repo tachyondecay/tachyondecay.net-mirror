@@ -211,7 +211,21 @@
       rgba(white, 0.6),  // Off state text color
       ease-in-out  // Transition timing function
     );   
+
+  &.c-checkbox-toggle--small {
+    @include can-toggle-appearance 
+    ( 
+      $can-toggle-width: 60px,
+      $can-toggle-height: 16px,
+      $can-toggle-border-radius: 4px,
+      $can-toggle-offset: 2px,
+      $can-toggle-label-font-size: 12px,
+      $can-toggle-switch-font-size: 8px,
+      $can-toggle-shadow: 0 3px 3px rgba(black, 0.4)
+    )
+  }
 }
+
 
 
 /*

@@ -345,15 +345,27 @@ def edit_review(id, revision_id):
             review.handle = review.slugify(review.book_title)
 
         # Handle book cover uploading
-        if form.book_cover.data:
+        if form.book_cover.data and request.files.get(form.book_cover.name):
             cover = request.files[form.book_cover.name]
-            filename = secure_filename(cover.filename)
+            filename = secure_filename(
+                review.handle + '-cover.' +
+                cover.filename.rsplit('.', 1)[1].lower()
+            )
             review.book_cover = filename
             try:
-                cover.save(os.path.join(current_app.instance_path, 'media', filename))
+                cover.save(os.path.join(current_app.instance_path, 
+                                        'media', 'book_covers', filename))
             except Exception as e:
                 current_app.logger.warn(f'Could not upload book cover: {e}.')
                 flash('There was a problem uploading the book cover. Try again?', 'error')
+        if form.remove_cover.data and review.book_cover:
+            try:
+                os.remove(os.path.join(current_app.instance_path,
+                                       'media', 'book_covers', review.book_cover))
+                review.book_cover = ''
+            except Exception as e:
+                current_app.logger.warn(f'Could not delete book cover: {e}')
+                flash('Could not delete book cover.', 'error')
 
         # Remove an autosave if present, since we're creating a revision anyway
         # if review.autosave:

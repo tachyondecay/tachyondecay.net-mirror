@@ -10,6 +10,7 @@
     display: flex;
     flex-flow: column wrap;
     margin-bottom: $unit;
+    padding: 0 $unit-tiny;
 }
 
     .o-form-field__input {
@@ -69,3 +70,38 @@
 
     border-top: 1px solid $grey;
 }
+
+
+/*
+ * File upload
+ */
+.o-upload {
+    align-items: end;
+    flex-flow: row wrap;
+    justify-content: space-evenly;
+
+    padding: 0;
+}
+
+    .o-upload__field {
+        display: flex;
+        flex-flow: column nowrap;
+        flex: 2;
+
+        background: $grey;
+        border-radius: $global-radius;
+        padding: $unit-tiny;
+    }
+
+    .o-upload__preview {
+        flex: 1;
+        text-align: center;
+    }
+
+    .o-upload__image {
+        max-height: 75px;
+    }
+
+    .o-upload__input {
+        @include inuit-font-size(12px);
+    }

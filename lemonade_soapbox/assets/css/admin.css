@@ -1324,7 +1324,8 @@ a {
 .o-form-field {
   display: flex;
   flex-flow: column wrap;
-  margin-bottom: 24px; }
+  margin-bottom: 24px;
+  padding: 0 6px; }
 
 .o-form-field__input {
   display: flex;
@@ -1361,6 +1362,35 @@ a {
 .o-form__info {
   color: #96939b;
   border-top: 1px solid #e8e8e8; }
+
+/*
+ * File upload
+ */
+.o-upload {
+  align-items: end;
+  flex-flow: row wrap;
+  justify-content: space-evenly;
+  padding: 0; }
+
+.o-upload__field {
+  display: flex;
+  flex-flow: column nowrap;
+  flex: 2;
+  background: #e8e8e8;
+  border-radius: 5px;
+  padding: 6px; }
+
+.o-upload__preview {
+  flex: 1;
+  text-align: center; }
+
+.o-upload__image {
+  max-height: 75px; }
+
+.o-upload__input {
+  font-size: 12px;
+  font-size: 0.75rem;
+  line-height: 2; }
 
 /* ==========================================================================
    #TABLE
@@ -2056,6 +2086,7 @@ a {
  * Inline notifications for form fields, etc.
  */
 .c-notification--inline {
+  margin-bottom: 0;
   padding: 0 6px;
   font-size: 12px;
   font-size: 0.75rem;
@@ -2253,6 +2284,33 @@ a {
       -webkit-transition: -webkit-transform 0.3s ease-in-out;
       transition: transform 0.3s ease-in-out;
       color: #96939b; }
+  .c-checkbox-toggle.c-checkbox-toggle--small input[type="checkbox"]:focus ~ label .c-checkbox-toggle__switch:after, .c-checkbox-toggle.c-checkbox-toggle--small input[type="checkbox"]:hover ~ label .c-checkbox-toggle__switch:after {
+    box-shadow: 0 3px 3px rgba(0, 0, 0, 0.4); }
+  .c-checkbox-toggle.c-checkbox-toggle--small input[type="checkbox"]:checked ~ label .c-checkbox-toggle__switch:after {
+    transform: translate3d(28px, 0, 0); }
+  .c-checkbox-toggle.c-checkbox-toggle--small input[type="checkbox"]:checked:focus ~ label .c-checkbox-toggle__switch:after, .c-checkbox-toggle.c-checkbox-toggle--small input[type="checkbox"]:checked:hover ~ label .c-checkbox-toggle__switch:after {
+    box-shadow: 0 3px 3px rgba(0, 0, 0, 0.4); }
+  .c-checkbox-toggle.c-checkbox-toggle--small label {
+    font-size: 12px; }
+    .c-checkbox-toggle.c-checkbox-toggle--small label .c-checkbox-toggle__switch {
+      height: 16px;
+      flex: 0 0 60px;
+      border-radius: 4px; }
+      .c-checkbox-toggle.c-checkbox-toggle--small label .c-checkbox-toggle__switch:before {
+        left: 30px;
+        font-size: 8px;
+        line-height: 16px;
+        width: 30px;
+        padding: 0 12px; }
+      .c-checkbox-toggle.c-checkbox-toggle--small label .c-checkbox-toggle__switch:after {
+        top: 2px;
+        left: 2px;
+        border-radius: 2px;
+        width: 28px;
+        line-height: 12px;
+        font-size: 8px; }
+      .c-checkbox-toggle.c-checkbox-toggle--small label .c-checkbox-toggle__switch:hover:after {
+        box-shadow: 0 3px 3px rgba(0, 0, 0, 0.4); }
 
 /*
  * Star rating input 
