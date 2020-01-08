@@ -8,7 +8,7 @@
     {% endif %}
 
     <ol class="c-revisions js-revisions__list">
-        {% for r in revisions %}
+        {% for r in revisions|reverse %}
         {% set rtext = r.date_created.to(config['TIMEZONE']).format('HH:mm:ss, DD MMM YYYY') %}
         {%- if r.id == selected_revision %}
         <li class="js-revisions__current" data-view="{{ r.id }}">{{ rtext }}</li>

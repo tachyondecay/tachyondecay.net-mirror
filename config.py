@@ -23,7 +23,7 @@ class Config:
     LOGIN_ALLOW_NEW = False
     LOGIN_EMAIL_FLOOD = 10
     LOGIN_TOKEN_EXPIRY = 1500
-    KEEP_REVISIONS = 3
+    REVISION_THRESHOLD = 0.25
     TIMEZONE = 'UTC'
 
     @classmethod

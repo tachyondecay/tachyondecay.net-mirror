@@ -3,6 +3,7 @@ import os
 from datetime import datetime
 from diff_match_patch import diff_match_patch
 from flask import current_app, Markup, url_for
+from flask_login import current_user
 from lemonade_soapbox import db
 from lemonade_soapbox.helpers import Timer
 from lemonade_soapbox.models.users import User
@@ -70,13 +71,13 @@ class Searchable():
         fields = self.schema.names()
         current_app.logger.debug(fields)
         for field in fields:
-            current_app.logger.debug('Processing {}'.format(field))
+            # current_app.logger.debug('Processing {}'.format(field))
             value = getattr(self, field)
             if field in filters:
                 value = filters[field](value)
             idx_info[field] = value
-            current_app.logger.debug(value)
-        current_app.logger.debug(idx_info)
+            # current_app.logger.debug(value)
+        # current_app.logger.debug(idx_info)
         writer.update_document(**idx_info)
 
     @classmethod
@@ -209,7 +210,9 @@ class AuthorMixin():
     """Many-to-one relationship with the users table."""
     @declared_attr
     def author_id(cls):
-        return db.Column(db.Integer, db.ForeignKey('users.id'))
+        return db.Column(db.Integer,
+                         db.ForeignKey('users.id'),
+                         default=lambda: getattr(current_user, 'id', None))
 
     @declared_attr
     def author(cls):
@@ -320,7 +323,154 @@ class PostMixin(AuthorMixin):
         return message
 
 
-class Article(PostMixin, UniqueHandleMixin, TagMixin, Searchable, db.Model):
+class RevisionMixin():
+    """Mixin for any post classes that want to handle revisions and autosaves."""
+
+    @declared_attr
+    def revision_id(cls):
+        return db.Column(db.String(32),
+                         db.ForeignKey('revisions.id', use_alter=True))
+
+    @declared_attr
+    def autosave_id(cls):
+        return db.Column(db.String(32), db.ForeignKey('revisions.id'))
+
+    @declared_attr
+    def revisions(cls):
+        fk = "[Revision.post_id]"
+        return db.relationship(
+            'Revision',
+            backref=orm.backref('post', uselist=False, foreign_keys=fk),
+            primaryjoin=f'and_('
+                        f'revisions.c.post_id == {cls.__name__}.id, '
+                        f'revisions.c.post_type == "{cls.__name__}", '
+                        f'revisions.c.major)',
+            order_by='Revision.date_created.asc()',
+            foreign_keys=fk,
+            lazy='select',
+            uselist=True,
+            post_update=True,
+            cascade='all'
+        )
+
+    @declared_attr
+    def current_revision(cls):
+        return db.relationship(
+            'Revision',
+            foreign_keys=cls.revision_id,
+            uselist=False,
+            lazy='joined',
+            post_update=True,
+            cascade='all'
+        )
+
+    @declared_attr
+    def autosave(cls):
+        return db.relationship(
+            'Revision',
+            foreign_keys=cls.autosave_id,
+            uselist=False,
+            post_update=True,
+            cascade='all'
+        )
+
+    @orm.reconstructor
+    def __db_init__(self):
+        super().__init__()
+        self.selected_revision = self.current_revision
+
+    @classmethod
+    def from_revision(cls, revision_id):
+        """Instantiate a post with a specific revision loaded."""
+        r = Revision.query.get(revision_id)
+        if r:
+            if r.post.revision_id != revision_id:
+                r.post.load_revision(r)
+            return r.post
+        else:
+            current_app.logger.warn('Revision {} does not exist.'.format(revision_id))
+            return None
+
+    def load_revision(self, target):
+        """Restore the article to a previous revision from current."""
+        content = self.selected_revision.restore(target, self.body)
+        if content:
+            self.body = content
+            self._body_html = None
+            self.selected_revision = target
+            current_app.logger.info('Loaded revision {} for post {}'.format(
+                                    self.selected_revision.id,
+                                    self.id))
+        return self
+
+    def new_autosave(self, content):
+        """Save a temporary revision."""
+        try:
+            new_save = Revision(self, new=self.body, old=content,
+                                parent=self.selected_revision, major=False)
+            if self.id:
+                if self.autosave:
+                    current_app.logger.info(
+                        f'Deleting autosave {self.autosave.id} for post {self.id}'
+                    )
+                    db.session.delete(self.autosave)
+
+                new_save.post_id = self.id
+                self.autosave = new_save
+                current_app.logger.info(
+                    f'New autosave for post {self.id} is {new_save.id}'
+                )
+            return new_save
+        except Exception as e:
+            current_app.logger.info(e)
+            return None
+
+    def new_revision(self, old_content=''):
+        """
+        Create a revision object representing the diff between current body and
+        new body.
+        """
+
+        r = None
+        if not self.revision_id:
+            r = Revision(self, new=self.body, old='')
+        else:
+            # Check Levenshtein distance and generate patches while we're at it.
+            distance, patch_text = self.selected_revision.distance(self.body,
+                                                                   old_content)
+
+            if distance > current_app.config['REVISION_THRESHOLD']:
+                # Distance percentage trips the threshold for a new revision.
+                r = Revision(self, parent=self.selected_revision,
+                             patch_text=patch_text)
+                current_app.logger.debug(
+                    f'Levenshtein percentage difference ({round(distance, 2)}) '
+                    f'resulted in new revision {r.id}')
+            else:
+                # Changes aren't significant enough to merit a new revision.
+                self.selected_revision.date_created = arrow.utcnow()
+                self.selected_revisionpatch_text = patch_text
+                try:
+                    del self.selected_revision.patches
+                except AttributeError:
+                    pass
+                current_app.logger.debug(
+                    f'Levenshtein percentage difference ({round(distance, 2)}) is '
+                    f'below the threshold ({current_app.config["REVISION_THRESHOLD"]}) for new revision creation.'
+                )
+
+        if r:
+            self.revision_id = r.id
+            self.revisions.append(r)
+            self.selected_revision = r
+
+        # Delete autosave
+        if self.autosave:
+            db.session.delete(self.autosave)
+        return r or self.selected_revision
+
+
+class Article(PostMixin, RevisionMixin, UniqueHandleMixin, TagMixin, Searchable, db.Model):
     """Blog posts."""
 
     __tablename__ = 'articles'
@@ -330,24 +480,6 @@ class Article(PostMixin, UniqueHandleMixin, TagMixin, Searchable, db.Model):
     title = db.Column(db.String(255), nullable=False)
     summary = db.Column(db.Text)
     handle = db.Column(db.String(255), unique=True)
-
-    revisions = db.relationship('Revision',
-                                backref='article',
-                                foreign_keys='Revision.article_id',
-                                lazy='dynamic',
-                                post_update=True)
-    revision_id = db.Column(db.String(32),
-                            db.ForeignKey('revisions.id', use_alter=True))
-    current_revision = db.relationship('Revision',
-                                       foreign_keys='Article.revision_id',
-                                       uselist=False,
-                                       lazy='joined',
-                                       post_update=True)
-    autosave_id = db.Column(db.String(32), db.ForeignKey('revisions.id'))
-    autosave = db.relationship('Revision',
-                               foreign_keys='Article.autosave_id',
-                               uselist=False,
-                               post_update=True)
 
     schema = Schema(id=ID(stored=True, unique=True),
                     author=TEXT(phrase=False),
@@ -372,11 +504,6 @@ class Article(PostMixin, UniqueHandleMixin, TagMixin, Searchable, db.Model):
         if self.title and not self.handle:
             self.handle = self.slugify(self.title)
 
-    @orm.reconstructor
-    def __db_init__(self):
-        super().__init__()
-        self.selected_revision = self.current_revision
-
     def get_permalink(self, relative=True):
         """Generate a permanent link to the article."""
         if not self.id:
@@ -394,83 +521,6 @@ class Article(PostMixin, UniqueHandleMixin, TagMixin, Searchable, db.Model):
         elif self.status == 'deleted':
             route = 'blog.show_deleted'
         return url_for(route, **kwargs)
-
-    @classmethod
-    def from_revision(cls, revision_id):
-        """Instantiate an article with a specific revision loaded."""
-        r = Revision.query.get(revision_id)
-        if r:
-            if r.article.revision_id != revision_id:
-                r.article.load_revision(r)
-            return r.article
-        else:
-            current_app.logger.warn('Revision {} does not exist.'.format(revision_id))
-            return None
-
-    def load_revision(self, target):
-        """Restore the article to a previous revision from current."""
-        content = self.selected_revision.restore(target, self.body)
-        if content:
-            self.body = content
-            self._body_html = None
-            self.selected_revision = target
-            current_app.logger.info('Loaded revision {} for post {}'.format(
-                                    self.selected_revision.id,
-                                    self.id))
-        return self
-
-    def new_autosave(self, content):
-        """Save a temporary revision."""
-        new_save = Revision(new=content, old=self.body,
-                            parent=self.selected_revision, author=self.author,
-                            major=False)
-        if self.id:
-            if self.autosave:
-                current_app.logger.info('Deleting autosave {} for post {}'.format(
-                                        self.autosave.id,
-                                        self.id))
-                db.session.delete(self.autosave)
-                db.session.commit()
-
-            new_save.article_id = self.id
-            self.autosave = new_save
-            db.session.commit()
-            current_app.logger.info('New autosave for post {} is {}'.format(
-                                    self.id,
-                                    new_save.id))
-        return new_save
-
-    def new_revision(self, new, old=None, parent=None):
-        """
-        Create a revision object representing the diff between current body and
-        new body.
-        """
-        if parent is None:
-            parent = getattr(self, 'selected_revision', None)
-        if old is None:
-            old = self.body
-        r = Revision(new=new, old=old, parent=parent, author=self.author)
-        self.body = new
-        self._body_html = None  # Will regenerate body HTML next time it's needed
-        self.revision_id = r.id
-        self.revisions.append(r)
-        self.selected_revision = r
-        parent_id = getattr(parent, 'id', None)
-        current_app.logger.info('Created new revision {} (parent: {}) for post {}.'
-                                .format(r.id, parent_id, self.id))
-
-        # Delete autosave
-        if self.autosave:
-            db.session.delete(self.autosave)
-            db.session.commit()
-
-        # Only keep newest 3 revisions
-        revs = self.revisions.all()
-        if len(revs) > current_app.config['KEEP_REVISIONS']:
-            for r in revs[:(-1 * current_app.config['KEEP_REVISIONS'])]:
-                db.session.delete(r)
-            db.session.commit()
-        return r
 
     @classmethod
     def post_breakdown(cls):
@@ -589,29 +639,57 @@ class Revision(AuthorMixin, db.Model):
     __tablename__ = 'revisions'
 
     id = db.Column(db.String(32), primary_key=True, unique=True)
+    post_type = db.Column(db.String(32))
+    post_id = db.Column(db.Integer)
     date_created = db.Column(ArrowType, default=datetime.utcnow)
     depth = db.Column(db.Integer)
     patch_text = db.Column(db.Text)
-    article_id = db.Column(db.Integer, db.ForeignKey('articles.id', use_alter=True))
-    parent_id = db.Column(db.String(32), db.ForeignKey('revisions.id'))
+    parent_id = db.Column(db.String(32), db.ForeignKey('revisions.id', ondelete='SET NULL'))
     parent = db.relationship('Revision', remote_side=[id])
     major = db.Column(db.Boolean, default=True)
 
-    def __init__(self, new, old, parent=None, author=None, major=True):
-        self.author = author
-        self.major = major
-        self.depth = getattr(parent, 'depth', -1) + 1
+
+    def __init__(self, post, new='', old='', **kwargs):
+        """
+        Create a new Revision object.
+
+        Expects in kwargs a `patch_text` containing previously made 
+        patches, or `new` and `old` text for generating the patches.
+        """
+        super().__init__(post_type=type(post).__name__,
+                         author_id=post.author_id,
+                         **kwargs)
+
         self.differ = diff_match_patch()
         self.id = uuid4().hex
-        self.parent = parent
-        self.parent_id = getattr(parent, 'id', None)
-        self.patches = self.differ.patch_make(new, old)
-        self.patch_text = self.differ.patch_toText(self.patches)
+        self.depth = getattr(self.parent, 'depth', -1) + 1
+        self.parent_id = getattr(self.parent, 'id', None)
+
+        if not self.patch_text:
+            self.patch_text = self.differ.patch_toText(
+                self.differ.patch_make(new, old)
+            )
 
     @orm.reconstructor
     def __db_init__(self):
+        super().__init__()
         self.differ = diff_match_patch()
-        self.patches = self.differ.patch_fromText(self.patch_text)
+
+    def distance(self, new, old):
+        """
+        Calculates Levenshtein distance between provided texts, returns 
+        distance and patch_text as a tuple.
+        """
+        diffs = self.differ.diff_main(new, old)
+        distance = self.differ.diff_levenshtein(diffs) / max(len(old), len(new))
+        patches = self.differ.patch_make(new, diffs)
+        patch_text = self.differ.patch_toText(patches)
+        return (distance, patch_text)
+
+    @cached_property
+    def patches(self):
+        """Unpacks patch text into a patches object for the first time."""
+        return self.differ.patch_fromText(self.patch_text)
 
     def restore(self, target, content):
         """

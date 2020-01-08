@@ -16,13 +16,16 @@ def autosave():
         if not article:
             abort(404)
         r = article.new_autosave(body)
+        db.session.commit()
         return jsonify(revision_id=r.id,
                        date=r.date_created.to(current_app.config['TIMEZONE']).format('HH:mm:ss, DD MMM YYYY'))
     else:
         # We're composing a brand new article, so let's create a new draft entry
         # in the database.
-        article = Article(title=request.form.get('title'), handle=request.form.get('handle'))
-        article.new_revision(new=body, old='')
+        article = Article(title=request.form.get('title'),
+                          handle=request.form.get('handle'),
+                          body=body)
+        article.new_revision()
         db.session.add(article)
         db.session.commit()
 
@@ -34,7 +37,7 @@ def autosave():
                        history=render_template('admin/articles/revision_history.html',
                                                article=article,
                                                selected_revision=article.revision_id,
-                                               revisions=article.revisions.all()))
+                                               revisions=article.revisions))
 
 
 @bp.route('/articles/slugify/')

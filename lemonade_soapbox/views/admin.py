@@ -244,33 +244,21 @@ def edit_article(id, revision_id):
         if not article:
             abort(404)
     else:
-        article = Article(author=current_user)
+        article = Article()
         # article.autosave = Revision.query.filter_by(article_id=None).first()
-
-    if article.id:
-        revisions = article.revisions.order_by(Revision.date_created.desc())\
-            .filter(and_(Revision.id != article.autosave_id, Revision.major)).limit(5).all()
-    else:
-        revisions = None
 
     form = ArticleForm(obj=article)
     if(form.validate_on_submit()):
         message = ''
         message_category = 'success'
         # Save a copy of the original body before we overwrite it
-        current_body = article.body
+        old_body = article.body
         form.populate_obj(article)
+
         if not form.handle.data:
             article.handle = article.slugify(article.title)
 
-        # Remove an autosave if present, since we're creating a revision anyway
-        if article.autosave:
-            article.autosave_id = None
-            db.session.delete(article.autosave)
-
-        # Create a new revision, conditionally
-        if current_body != form.body.data or article.revision_id != revision_id:
-            article.new_revision(new=form.body.data, old=current_body)
+        article.new_revision(old_body)
         if form.publish.data:
             message = article.publish_post()
         else:
@@ -294,7 +282,7 @@ def edit_article(id, revision_id):
     return render_template('admin/views/blog/write.html',
                            article=article,
                            form=form,
-                           revisions=revisions,
+                           revisions=article.revisions,
                            selected_revision=revision_id)
 
 
