@@ -1,12 +1,22 @@
 import json
-from flask import abort, Blueprint, current_app, jsonify, render_template, request, Response, url_for
+from flask import (
+    abort, Blueprint, current_app, jsonify,
+    render_template, request, Response, url_for
+)
+from flask_login import login_required
+from flask_wtf import csrf
 from lemonade_soapbox import db
 from lemonade_soapbox.models import Article, Review, Tag
 
 bp = Blueprint('api', __name__)
 
+@bp.route('/csrf/')
+@login_required
+def get_csrf():
+    return csrf.generate_csrf()
 
 @bp.route('/posts/autosave/', methods=['POST'])
+@login_required
 def autosave():
     """Autosave the current draft content of a post object."""
     parent = request.form.get('parent')
@@ -46,6 +56,7 @@ def autosave():
         )
 
 @bp.route('/tags/search/')
+@login_required
 def tags_lookup():
     """Returns a list of JSON objects of tags that begin with a given `term` GET parameter."""
     term = request.args.get('term')

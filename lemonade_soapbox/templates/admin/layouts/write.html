@@ -32,8 +32,8 @@
 {% endblock header_end %}
 
 {% block body_main %}
-<form id="write" method="post" data-id="{{ post.id|default('', true) }}" data-type="{{ post.type }}" data-published="{{'true' if (post.status == 'published') else 'false' }}" data-autosave="{{ config['AUTOSAVE_DELAY'] }}">
-{{ form.hidden_tag() }}
+<form id="write" method="post" data-id="{{ post.id|default('', true) }}" data-type="{{ post.type }}" data-published="{{'true' if (post.status == 'published') else 'false' }}" data-autosave="{{ config['AUTOSAVE_DELAY'] }}" enctype="multipart/form-data">
+{{ form.csrf_token }}
 
 {{ super() }}
 

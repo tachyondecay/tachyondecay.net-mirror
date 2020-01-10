@@ -36,6 +36,7 @@ def index():
 
 
 @bp.route('/search/')
+@login_required
 def search():
     """Search for articles."""
     next_year = str(arrow.utcnow().shift(years=+1).year)
@@ -149,6 +150,7 @@ def signin():
 
 
 @bp.route('/signout/')
+@login_required
 def signout():
     if current_user.is_authenticated:
         name = current_user.name
@@ -159,6 +161,7 @@ def signout():
 
 @bp.route('/people/', defaults={'user_id': None})
 @bp.route('/people/<int:user_id>/')
+@login_required
 def show_users(user_id):
     if not user_id:
         # Show all users
@@ -339,7 +342,7 @@ def edit_review(id, revision_id):
             )
             review.book_cover = filename
             try:
-                cover.save(os.path.join(current_app.instance_path, 
+                cover.save(os.path.join(current_app.instance_path,
                                         'media', 'book_covers', filename))
             except Exception as e:
                 current_app.logger.warn(f'Could not upload book cover: {e}.')

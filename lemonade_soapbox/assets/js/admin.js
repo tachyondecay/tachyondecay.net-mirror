@@ -1,3 +1,13 @@
+/*
+ * Reload CSRF token before submitting a form
+ */
+async function refreshCSRF() {
+    await $.get('/api/csrf/').done(function(token) {
+        csrf_token = token;
+    });
+    return csrf_token;
+}
+
 function BackendInit() {
     $('body').removeClass('no-js');
 
@@ -8,7 +18,9 @@ function BackendInit() {
     $(document).ajaxSend(function(e, jqxhr, settings) {
         // Automatically CSRF token with request
         if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
-            jqxhr.setRequestHeader("X-CSRFToken", csrf_token)
+            refreshCSRF().then(function(token) {
+                jqxhr.setRequestHeader("X-CSRFToken", csrf_token);
+            });
         }
 
         /*
@@ -29,6 +41,20 @@ function BackendInit() {
                 $('.js-revisions__current').html('Autosaving…');
             }
         }
+    });
+
+
+    /*
+     * When a POST form is submitted, first reload CSRF token
+     * from server in case it has changed.
+     */
+    $('body').on('submit', 'form[method=post]', function(e) {
+        e.preventDefault();
+        var self = this;
+        refreshCSRF().then(function(data) {
+            self.find('[name=csrf_token]').val(data);
+            self.submit();
+        });
     });
 
 
