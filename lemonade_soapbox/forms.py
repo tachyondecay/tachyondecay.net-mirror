@@ -144,7 +144,7 @@ class ReviewForm(ModelForm):
         model = Review
         only = [
             'body', 'date_published', 'show_updated', 'summary',
-            'handle', 'book_author', 'book_title', 'book_id', 'goodreads_id',
+            'handle', 'book_author', 'title', 'book_id', 'goodreads_id',
             'book_cover', 'dates_read', 'rating', 'spoilers'
         ]
     date_published = DateTimeLocalField('Published',
@@ -161,7 +161,7 @@ class ReviewForm(ModelForm):
                                            (3, '3 out of 5 stars'), (2, '2 out of 5 stars'),
                                            (1, '1 out of 5 stars'), (0, 'No rating')
                                            ], coerce=int)
-    tags = TagListField('Tags')
+    tags = TagListField('Shelves')
     publish = SubmitField('Publish', widget=ButtonWidget())
     save = SubmitField('Save', widget=ButtonWidget())
     delete = SubmitField('Delete', widget=ButtonWidget())

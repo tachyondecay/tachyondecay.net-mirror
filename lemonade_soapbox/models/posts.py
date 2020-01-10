@@ -33,7 +33,7 @@ tag_relationships = {
 }
 
 
-class Searchable():
+class Searchable:
     """Mixin for indexing and searching on a class using Whoosh."""
 
     schema = None
@@ -174,11 +174,18 @@ class Searchable():
             current_app.logger.info('Search error: {}'.format(e))
 
 
-class UniqueHandleMixin():
+class UniqueHandleMixin:
     """
     Mixin for objects that need unique handle fields in DB. Assumes class
     inherits from db.Model and has a column named `handle`.
     """
+
+    # Got to figure this out. Hybrid property?
+
+    @declared_attr
+    def handle(cls):
+        return db.Column(db.String(255), nullable=False,
+                         default='')
 
     @classmethod
     def unique_check(cls, text):
@@ -196,17 +203,17 @@ class UniqueHandleMixin():
 
         return slug
 
-
     def __init__(self, **kwargs):
-        # If handle passed into init, verify it is unique
-        if 'handle' in kwargs and not self.unique_check(kwargs['handle']):
-            current_app.logger.info('Non-unique handle, "{}" requested.'.format(kwargs['handle']))
-            kwargs['handle'] = self.slugify(kwargs['handle'])
-            current_app.logger.info('New handle: {}'.format(kwargs['handle']))
+        """
+        Generate a unique slug for the handle provided or from a
+        sensible default field.
+        """
+        if 'handle' not in kwargs or kwargs['handle'] == '':
+            kwargs['handle'] = self.slugify(kwargs.get('title', ''))
         super().__init__(**kwargs)
 
 
-class AuthorMixin():
+class AuthorMixin:
     """Many-to-one relationship with the users table."""
     @declared_attr
     def author_id(cls):
@@ -219,7 +226,7 @@ class AuthorMixin():
         return db.relationship('User', backref=cls.__tablename__)
 
 
-class TagMixin():
+class TagMixin:
     """Any posts that are taggable."""
     tag_list = association_proxy('_tags', 'label')
 
@@ -253,13 +260,12 @@ class PostMixin(AuthorMixin):
 
     id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.Text, default='')
+    title = db.Column(db.String(255), nullable=False)
     date_created = db.Column(ArrowType, default=datetime.utcnow)
     date_updated = db.Column(ArrowType)
     date_published = db.Column(ArrowType)
     show_updated = db.Column(db.Boolean, default=False)
     status = db.Column(db.String(25), default='draft')
-    _body_html = None
-
 
     def format(self, content, escape=False):
         """Accept raw Markdown input and output HTML5."""
@@ -274,11 +280,14 @@ class PostMixin(AuthorMixin):
         raise NotImplementedError
 
     @property
+    def type(self):
+        """Expose what type of post this is to the wider world."""
+        return type(self).__name__.lower()
+
+    @cached_property
     def body_html(self):
         """Return the formatted version of the article contents."""
-        if not self._body_html:
-            self._body_html = self.format(self.body)
-        return self._body_html
+        return self.format(self.body)
 
     @cached_property
     def next_post(self):
@@ -293,6 +302,11 @@ class PostMixin(AuthorMixin):
         if self.date_published:
             return self.query.filter(self.__class__.date_published < self.date_published).order_by(desc('date_published')).first()
         return None
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        if not self.status:
+            self.status = 'draft'
 
     @classmethod
     def published(cls):
@@ -323,7 +337,7 @@ class PostMixin(AuthorMixin):
         return message
 
 
-class RevisionMixin():
+class RevisionMixin:
     """Mixin for any post classes that want to handle revisions and autosaves."""
 
     @declared_attr
@@ -340,11 +354,12 @@ class RevisionMixin():
         fk = "[Revision.post_id]"
         return db.relationship(
             'Revision',
-            backref=orm.backref('post', uselist=False, foreign_keys=fk),
+            backref=orm.backref(cls.__name__.lower(),
+                                uselist=False,
+                                foreign_keys=fk),
             primaryjoin=f'and_('
                         f'revisions.c.post_id == {cls.__name__}.id, '
-                        f'revisions.c.post_type == "{cls.__name__}", '
-                        f'revisions.c.major)',
+                        f'revisions.c.post_type == "{cls.__name__}")',
             order_by='Revision.date_created.asc()',
             foreign_keys=fk,
             lazy='select',
@@ -384,8 +399,7 @@ class RevisionMixin():
         """Instantiate a post with a specific revision loaded."""
         r = Revision.query.get(revision_id)
         if r:
-            if r.post.revision_id != revision_id:
-                r.post.load_revision(r)
+            r.post.load_revision(r)
             return r.post
         else:
             current_app.logger.warn('Revision {} does not exist.'.format(revision_id))
@@ -396,7 +410,6 @@ class RevisionMixin():
         content = self.selected_revision.restore(target, self.body)
         if content:
             self.body = content
-            self._body_html = None
             self.selected_revision = target
             current_app.logger.info('Loaded revision {} for post {}'.format(
                                     self.selected_revision.id,
@@ -406,7 +419,7 @@ class RevisionMixin():
     def new_autosave(self, content):
         """Save a temporary revision."""
         try:
-            new_save = Revision(self, new=self.body, old=content,
+            new_save = Revision(self, new=content, old=self.body,
                                 parent=self.selected_revision, major=False)
             if self.id:
                 if self.autosave:
@@ -470,14 +483,14 @@ class RevisionMixin():
         return r or self.selected_revision
 
 
-class Article(PostMixin, RevisionMixin, UniqueHandleMixin, TagMixin, Searchable, db.Model):
+class Article(UniqueHandleMixin,
+              TagMixin, Searchable, RevisionMixin, PostMixin, db.Model):
     """Blog posts."""
 
     __tablename__ = 'articles'
     __searchable__ = ['title', 'body']
     __sortable__ = ['author', 'date_created', 'date_published', 'date_updated', 'title']
 
-    title = db.Column(db.String(255), nullable=False)
     summary = db.Column(db.Text)
     handle = db.Column(db.String(255), unique=True)
 
@@ -492,17 +505,9 @@ class Article(PostMixin, RevisionMixin, UniqueHandleMixin, TagMixin, Searchable,
                     tags=KEYWORD(commas=True, scorable=True),
                     title=TEXT(analyzer=StemmingAnalyzer()))
 
-    def __init__(self, **kwargs):
-        """Extend init function to set sensible defaults."""
-        super().__init__(**kwargs)
-        if not self.body:
-            self.body = ''
-        if not self.status:
-            self.status = 'draft'
-
-        # Create handle from title if present
-        if self.title and not self.handle:
-            self.handle = self.slugify(self.title)
+    @classmethod
+    def _default_handle(cls):
+        return cls.slugify(cls.title) if cls.title else None
 
     def get_permalink(self, relative=True):
         """Generate a permanent link to the article."""
@@ -552,27 +557,27 @@ class Article(PostMixin, RevisionMixin, UniqueHandleMixin, TagMixin, Searchable,
         return exceptions
 
 
-class Review(PostMixin, UniqueHandleMixin, TagMixin, Searchable, db.Model):
+class Review(UniqueHandleMixin,
+              TagMixin, Searchable, RevisionMixin, PostMixin, db.Model):
     """Book reviews."""
+
     __tablename__ = 'reviews'
-    __searchable__ = ['body', 'book_title', 'book_author']
-    __sortable__ = ['date_created', 'date_published', 'date_read', 'book_title']
+    __searchable__ = ['body', 'title', 'book_author']
+    __sortable__ = ['date_created', 'date_published', 'date_read', 'title']
 
     book_author = db.Column(db.String(255), nullable=False)
     book_cover = db.Column(db.String(255))
     book_id = db.Column(db.String(255)) #ISBN or ASIN
-    book_title = db.Column(db.String(255), nullable=False)
 
     dates_read = db.Column(db.String(255))
     goodreads_id = db.Column(db.Integer)
-    handle = db.Column(db.String(255), nullable=False)
     rating = db.Column(db.Integer, info={'min': 0, 'max': 5}, default=0)
     spoilers = db.Column(db.Boolean, default=False)
     summary = db.Column(db.Text)
 
     schema = Schema(id=ID(stored=True, unique=True),
                     book_author=TEXT(),
-                    book_title=TEXT(),
+                    title=TEXT(),
                     date_created=DATETIME(sortable=True),
                     date_published=DATETIME(sortable=True),
                     date_updated=DATETIME(sortable=True),
@@ -586,22 +591,18 @@ class Review(PostMixin, UniqueHandleMixin, TagMixin, Searchable, db.Model):
     @hybrid_property
     def date_started(self):
         """Date started from date_read interval"""
-        start, end = [arrow.get(x.strip()) for x in self.dates_read.split('-')]
-        return start
+        if self.dates_read:
+            start, end = [arrow.get(x.strip()) for x in self.dates_read.split('-')]
+            return start
+        return ''
 
     @hybrid_property
     def date_finished(self):
         """Date finished from date_read interval"""
-        start, end = [arrow.get(x.strip()) for x in self.dates_read.split('-')]
-        return end
-
-    def __init__(self, **kwargs):
-        """Extend init function to set sensible defaults."""
-        super().__init__(**kwargs)
-        if not self.body:
-            self.body = ''
-        if not self.status:
-            self.status = 'draft'
+        if self.dates_read:
+            start, end = [arrow.get(x.strip()) for x in self.dates_read.split('-')]
+            return end
+        return ''
 
     def get_permalink(self, relative=True):
         """Generate a permanent link to the review."""
@@ -648,12 +649,11 @@ class Revision(AuthorMixin, db.Model):
     parent = db.relationship('Revision', remote_side=[id])
     major = db.Column(db.Boolean, default=True)
 
-
     def __init__(self, post, new='', old='', **kwargs):
         """
         Create a new Revision object.
 
-        Expects in kwargs a `patch_text` containing previously made 
+        Expects in kwargs a `patch_text` containing previously made
         patches, or `new` and `old` text for generating the patches.
         """
         super().__init__(post_type=type(post).__name__,
@@ -674,6 +674,10 @@ class Revision(AuthorMixin, db.Model):
     def __db_init__(self):
         super().__init__()
         self.differ = diff_match_patch()
+
+    @property
+    def post(self):
+        return getattr(self, self.post_type.lower())
 
     def distance(self, new, old):
         """

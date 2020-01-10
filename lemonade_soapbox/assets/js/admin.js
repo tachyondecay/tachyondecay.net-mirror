@@ -15,7 +15,7 @@ function BackendInit() {
          * If autosaving, we will update the Revision History with an in-progress
          * notification.
          */
-        if(settings.url == (application_root + '/api/articles/autosave/')) {
+        if(settings.url == (application_root + '/api/posts/autosave/')) {
             console.log('Sending autosave request.');
             var current = $('.js-revisions__current:not(.js-is-autosave)');
             if(current.size() > 0) {
@@ -121,7 +121,7 @@ function BackendInit() {
 }
 
 
-var ArticleForm = function(form) {
+var PostForm = function(form) {
     this.form = $(form);
     this.id = this.form.data('id');
     this.body = this.form.find('[name=body]');
@@ -130,7 +130,7 @@ var ArticleForm = function(form) {
     // Initialize autosave logic
     if (this.form.data('autosave')) {
         this.autosaveConfig = {
-            ajaxURL: application_root + '/api/articles/autosave/',
+            ajaxURL: application_root + '/api/posts/autosave/',
             delay: this.form.data('autosave') * 1000
         };
         this.autosaveTimer = setTimeout(this.autosave.bind(this), this.autosaveConfig.delay);
@@ -149,17 +149,19 @@ var ArticleForm = function(form) {
 }
 
 // Autosave articles after a delay
-ArticleForm.prototype.autosave = function() {
+PostForm.prototype.autosave = function() {
     var self = this;
     var new_content = self.simplemde.value();
-    var title = $(self.form).find('[name=title]');
-    var handle = $(self.form).find('[name=handle]');
+    var title = self.form.find('.c-page-title__input');
+    var handle = self.form.find('[name=handle]');
+    var type = self.form.data('type');
 
     // Only autosave if:
     //  * The article has a title
     //  * There have been changes
-    if(title && self.old_content != new_content) {
+    if(title.val() && self.old_content != new_content) {
         $.post(self.autosaveConfig.ajaxURL, {
+            'type': type,
             'body': new_content,
             'parent': self.body.data('revision'),
             'title': title.val(),
@@ -170,9 +172,9 @@ ArticleForm.prototype.autosave = function() {
             // If there was an autosave error, destroy it!
             self.form.find('.js-autosave-error').fadeOut().remove();
 
-            if(data.article_id) {
+            if(data.post_id) {
                 /*
-                 * We created a new article draft.
+                 * We created a new post draft.
                  *
                  * data.history contains a revision history section we can 
                  * append.
@@ -180,7 +182,7 @@ ArticleForm.prototype.autosave = function() {
                  * Then, add the revision id to the body field and bind the 
                  * restore function to the new "restore autosave" link.
                  */
-                self.form.data('article', data.article_id);
+                self.form.data('id', data.post_id);
                 $(data.history).hide().appendTo('#post-metadata').slideDown(500);
                 self.body.data('revision', data.revision_id);
                 self.bindAutosaveRestores();
@@ -190,14 +192,14 @@ ArticleForm.prototype.autosave = function() {
                     handle.val(data.handle);
                 }
                 // Change URL
-                history.replaceState(null, null, location.href + data.article_id + "/");
-                $('.c-page-title__action').text('Editing Blog Post »');
+                history.replaceState(null, null, location.href + data.post_id + "/");
+                $('.c-page-title__action').text('Editing ' + type + ' »');
                 $('.js-view-post').attr('href', data.link);
                 $('.js-date-created').prepend('<small>Created ' + data.created + '</small>');
                 $('.js-reveal-on-creation').removeClass('u-hidden').show('scale');
             } else {
                 /*
-                 * Article already exists.
+                 * Post already exists.
                  *
                  * Grab the revision id and date to amend the Revision History 
                  * section.
@@ -215,7 +217,12 @@ ArticleForm.prototype.autosave = function() {
             }
         }).fail(function(jqxhr, textStatus, error) {
             console.log(error);
-            $('.js-revisions', self.form).append('<div class="c-notification c-notification--error js-autosave-error">Autosave failed.</div>');
+            $('.js-revisions', self.form)
+                .find('.c-notification--error')
+                    .fadeOut('fast')
+                    .remove()
+                    .end()
+                .append('<div class="c-notification c-notification--error js-autosave-error">Autosave failed.</div>');
         });
     } else {
         console.log('Autosave not triggered.');
@@ -224,7 +231,7 @@ ArticleForm.prototype.autosave = function() {
 }
 
 // Restore an existing autosave
-ArticleForm.prototype.bindAutosaveRestores = function() {
+PostForm.prototype.bindAutosaveRestores = function() {
     var self = this;
     $('.js-autosave-notification, .js-is-autosave').on('click', 'a', function(e) {
         e.preventDefault();
@@ -251,7 +258,7 @@ $(function() {
 
     // Largely deals with article autosaving
     if($('#write').size() > 0) {
-        article = new ArticleForm('#write');
+        article = new PostForm('#write');
     }
 });
 

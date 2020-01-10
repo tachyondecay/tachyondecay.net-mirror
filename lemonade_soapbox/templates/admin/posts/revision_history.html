@@ -1,0 +1,23 @@
+{% if post.revisions %}
+<div class="o-form-field js-revisions">
+    <h3>Revision History</h3>
+    {% if post.selected_revision.id == post.autosave_id %}
+    <p>You are editing the latest autosave.</p>
+    {% elif post.selected_revision.id == post.revision_id %}
+    <p>You are editing the current version of this {{ post.type }}.</p>
+    {% else %}
+    <p>You are editing a previous version of this article. <a href="{{ url_for('admin.edit_' + post.type, id=post.id) }}">Edit the most recent version.</a></p>
+    {% endif %}
+
+    <ol class="c-revisions js-revisions__list">
+        {% for r in post.revisions|reverse %}
+        {% set rtext = r.date_created.to(config['TIMEZONE']).format('HH:mm:ss, DD MMM YYYY') %}
+        {%- if r.id == post.selected_revision.id %}
+        <li class="js-revisions__current" data-view="{{ r.id }}">{{ rtext }}</li>
+        {% else %}
+        <li><a href="{{ url_for('admin.edit_' + post.type, revision_id=r.id) }}" class="c-revisions__link" title="View this revision">{{ rtext }}</a> {% if r.id == post.autosave_id %}<small>(Autosave)</small>{% endif %}</li>
+        {% endif -%}
+        {% endfor %}
+    </ol>
+</div>
+{% endif %}

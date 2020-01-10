@@ -280,10 +280,8 @@ def edit_article(id, revision_id):
         flash('You need to fix a few things before you can save your changes.', 'error')
 
     return render_template('admin/views/blog/write.html',
-                           article=article,
-                           form=form,
-                           revisions=article.revisions,
-                           selected_revision=revision_id)
+                           post=article,
+                           form=form)
 
 
 #
@@ -327,7 +325,7 @@ def edit_review(id, revision_id):
         message = ''
         message_category = 'success'
         # Save a copy of the original body before we overwrite it
-        # current_body = review.body
+        old_body = review.body
         form.populate_obj(review)
         if not form.handle.data:
             review.handle = review.slugify(review.book_title)
@@ -355,14 +353,7 @@ def edit_review(id, revision_id):
                 current_app.logger.warn(f'Could not delete book cover: {e}')
                 flash('Could not delete book cover.', 'error')
 
-        # Remove an autosave if present, since we're creating a revision anyway
-        # if review.autosave:
-        #     review.autosave_id = None
-        #     db.session.delete(review.autosave)
-
-        # Create a new revision, conditionally
-        # if current_body != form.body.data or review.revision_id != revision_id:
-        #     review.new_revision(new=form.body.data, old=current_body)
+        review.new_revision(old_body)
         if form.publish.data:
             message = review.publish_post()
         else:
@@ -384,5 +375,5 @@ def edit_review(id, revision_id):
         flash('You need to fix a few things before you can save your changes.', 'error')
 
     return render_template('admin/views/reviews/write.html',
-                           review=review,
+                           post=review,
                            form=form)
