@@ -152,7 +152,7 @@ class ReviewForm(ModelForm):
     date_published = DateTimeLocalField('Published',
                                         format='%Y-%M-%D %H:%m',
                                         validators=[validators.Optional()])
-    goodreads_id = IntegerField(widget=TextInput())
+    goodreads_id = IntegerField(widget=TextInput(), validators=[validators.Optional()])
     book_cover = FileField(validators=[
         FileAllowed(['jpg', 'jpeg', 'png', 'gif']),
         validators.Optional()

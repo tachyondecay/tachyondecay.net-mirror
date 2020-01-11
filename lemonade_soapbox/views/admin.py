@@ -1,4 +1,5 @@
 import arrow
+import base64
 import os
 from flask import (
     abort,
@@ -333,20 +334,44 @@ def edit_review(id, revision_id):
         if not form.handle.data:
             review.handle = review.slugify(review.book_title)
 
-        # Handle book cover uploading
+        current_app.logger.debug('HELLO DARKNESS MY HOLD FRIEND')
+        #
+        # Book cover uploading
+        #
+        # First, check if we uploaded a file the old-fashioned way
         if form.book_cover.data and request.files.get(form.book_cover.name):
             cover = request.files[form.book_cover.name]
             filename = secure_filename(
                 review.handle + '-cover.' +
                 cover.filename.rsplit('.', 1)[1].lower()
             )
-            review.book_cover = filename
             try:
                 cover.save(os.path.join(current_app.instance_path,
                                         'media', 'book_covers', filename))
             except Exception as e:
                 current_app.logger.warn(f'Could not upload book cover: {e}.')
                 flash('There was a problem uploading the book cover. Try again?', 'error')
+            else:
+                review.book_cover = filename
+        elif form.pasted_cover.data and not form.remove_cover.data:
+            # We're uploading a pasted image, so decode the base64
+            # and see if we can save it as an image file
+            try:
+                filename = secure_filename(f'{review.handle}-cover.png')
+                current_app.logger.info('Creating new book image from pasted data.')
+                with open(
+                    os.path.join(current_app.instance_path, 'media',
+                                'book_covers', filename),
+                    'wb'
+                ) as f:
+                    # Decode Base64 dataURL. The split is there to grab the 
+                    # "data" portion of the dataURL
+                    f.write(base64.b64decode(form.pasted_cover.data.split(",")[1]))
+            except Exception as e:
+                current_app.logger.warn(f'Could not save book cover: {e}.')
+                flash('There was a problem uploading the book cover. Try again?')
+            else:
+                review.book_cover = filename
         if form.remove_cover.data and review.book_cover:
             try:
                 os.remove(os.path.join(current_app.instance_path,
