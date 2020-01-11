@@ -11,7 +11,6 @@ from lemonade_soapbox.models import Article, Review, Tag
 bp = Blueprint('api', __name__)
 
 @bp.route('/csrf/')
-@login_required
 def get_csrf():
     return csrf.generate_csrf()
 

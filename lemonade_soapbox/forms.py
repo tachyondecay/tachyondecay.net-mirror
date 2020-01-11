@@ -1,6 +1,6 @@
 import arrow
 from flask import current_app
-from flask_wtf import Form
+from flask_wtf import FlaskForm
 from flask_wtf.file import FileAllowed, FileField
 from intervals import DateInterval
 from lemonade_soapbox import db
@@ -9,6 +9,7 @@ from werkzeug.utils import secure_filename
 from wtforms import (
     BooleanField,
     DateTimeField,
+    HiddenField,
     IntegerField,
     RadioField,
     StringField,
@@ -19,6 +20,7 @@ from wtforms.fields.html5 import EmailField
 from wtforms.widgets import HTMLString, html_params, TextInput
 from wtforms_alchemy import model_form_factory
 
+Form = FlaskForm
 BaseModelForm = model_form_factory(Form)
 
 
@@ -156,6 +158,7 @@ class ReviewForm(ModelForm):
         validators.Optional()
     ])
     remove_cover = BooleanField('Remove uploaded cover', validators=[validators.Optional()])
+    pasted_cover = HiddenField(validators=[validators.Optional()])
     handle = StringField('URL Handle', validators=[validators.Optional()])
     rating = RadioField('Rating', choices=[(5, '5 out of 5 stars'), (4, '4 out of 5 stars'),
                                            (3, '3 out of 5 stars'), (2, '2 out of 5 stars'),

@@ -1,11 +1,12 @@
 /*
- * Reload CSRF token before submitting a form
+ * Reload CSRF token periodically in case page has been sitting there
  */
-async function refreshCSRF() {
-    await $.get('/api/csrf/').done(function(token) {
+function refreshCSRF() {
+    $.get('/api/csrf/').done(function(token) {
         csrf_token = token;
+        console.log('New token ' + token);
+        $('input[name=csrf_token]').val(token);
     });
-    return csrf_token;
 }
 
 function BackendInit() {
@@ -18,9 +19,7 @@ function BackendInit() {
     $(document).ajaxSend(function(e, jqxhr, settings) {
         // Automatically CSRF token with request
         if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
-            refreshCSRF().then(function(token) {
-                jqxhr.setRequestHeader("X-CSRFToken", csrf_token);
-            });
+            jqxhr.setRequestHeader("X-CSRFToken", csrf_token);
         }
 
         /*
@@ -42,21 +41,6 @@ function BackendInit() {
             }
         }
     });
-
-
-    /*
-     * When a POST form is submitted, first reload CSRF token
-     * from server in case it has changed.
-     */
-    $('body').on('submit', 'form[method=post]', function(e) {
-        e.preventDefault();
-        var self = this;
-        refreshCSRF().then(function(data) {
-            self.find('[name=csrf_token]').val(data);
-            self.submit();
-        });
-    });
-
 
 
     /*
@@ -337,6 +321,8 @@ PostForm.prototype.bindAutosaveRestores = function() {
 $(function() {
     // Initialize various backend UI components
     BackendInit();
+
+    var prevent_csrf_expiry = setInterval(refreshCSRF, 1000 * 3600);
 
     // Largely deals with article autosaving
     if($('#write').size() > 0) {
