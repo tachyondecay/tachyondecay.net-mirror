@@ -1,6 +1,6 @@
 logging_config = {
     "version": 1,
-    "disable_existing_loggers": False,
+    "disable_existing_loggers": True,
     "formatters": {
         "simple": {
             "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
@@ -41,5 +41,12 @@ logging_config = {
     "root": {
         "level": "INFO",
         "handlers": ["console", "info_file_handler", "error_file_handler"]
+    },
+
+    "loggers": {
+        "werkzeug": {
+            "level": "INFO",
+            "handlers": ["console", "info_file_handler", "error_file_handler"]
+        }
     }
 }

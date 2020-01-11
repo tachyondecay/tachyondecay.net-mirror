@@ -1,6 +1,8 @@
 import json
+import logging
 import logging.config
 import os
+from flask.logging import default_handler
 from lemonade_soapbox.logging_config import logging_config
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -74,7 +76,9 @@ class Config:
         try:
             if not os.path.exists(app.config['LOG_PATH']):
                 os.makedirs(app.config['LOG_PATH'])
+            # logging.getLogger('werkzeug').removeHandler(default_handler)
             logging.config.dictConfig(data)
+            app.logger.removeHandler(default_handler)
         except Exception as e:
             app.logger.exception('Could not configure logging: %s', e)
 
