@@ -33,22 +33,25 @@
 {% endblock post_contents %}
 
 {% block post_metadata %}
-    <div class="o-form-field o-upload{{ ' u-margin-bottom-none' if post.book_cover }}">
+    <div class="o-form-field o-upload{{' u-margin-bottom-none' if post.book_cover }}">
         <div class="o-upload__field">
-            {{ render_field(form.book_cover, {'class': 'o-upload__input u-1/1' }, label='Book Cover') }}
+            {{ render_field(form.book_cover, {'class': 'o-upload__input' }, label='Book Cover') }}
         </div>
+        <div class="o-upload__preview js-image-upload">
+            {% if post.book_cover %}
+            <img src="/media/book_covers/{{ post.book_cover }}" class="o-upload__image" alt="Cover image" />
+            {% else %}
+            <img src="" class="o-upload__image o-upload__image--none" alt="" />
+            {% endif %}
+            <div class="o-upload__placeholder">Paste cover image here</div>
+
         {% if post.book_cover %}
-        <div class="o-upload__preview">
-            <img src="/media/book_covers/{{ post.book_cover }}" class="o-upload__image" alt="Cover image"/>
+        <div class="o-form-field">
+            {{ checkbox_toggle(form.remove_cover, size='small') }}
         </div>
         {% endif %}
+        </div>
     </div>
-
-    {% if post.book_cover %}
-    <div class="o-form-field">
-        {{ checkbox_toggle(form.remove_cover, size='small') }}
-    </div>
-    {% endif %}
 
     <div class="o-form-field">
         {{ render_field(form.book_author, {'class': 'o-text-input o-text-input--blend u-1/1' }, label='Author') }}

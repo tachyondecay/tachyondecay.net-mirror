@@ -133,6 +133,26 @@ function BackendInit() {
         .removeClass('ui-widget ui-widget-content ui-corner-all')
         .addClass('o-text-input o-text-input--blend');
 
+    $('.js-image-upload')
+        .pastableNonInputable()
+        .on('pasteImage', function (e, data){
+            console.log("dataURL: " + data.dataURL);
+             console.log("width: " + data.width);
+             console.log("height: " + data.height);
+             console.log(data.blob);
+
+            // Scale image while preserving aspect ratio
+
+
+            $('.o-upload__image', this).attr({
+                'src': data.dataURL,
+                'alt': 'Pasted book cover image'
+            }).removeClass('o-upload__image--none');
+        })
+        .find('.o-upload__image').hover(function() {
+            
+        });
+
 
     /*
      * Notifications
