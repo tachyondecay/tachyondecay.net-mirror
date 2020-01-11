@@ -33,7 +33,8 @@
 {% endblock post_contents %}
 
 {% block post_metadata %}
-    <div class="o-form-field o-upload js-image-upload">
+    <div class="o-form-field o-upload js-image-upload" data-alt="Pasted book cover image">
+        {{ form.pasted_cover }}
         <div class="o-upload__field">
             {{ render_field(form.book_cover, {'class': 'o-upload__input' }, label='Book Cover') }}
         </div>
@@ -43,7 +44,7 @@
             {% else %}
             <img src="" class="o-upload__image o-upload__image--none" alt="" />
             {% endif %}
-            <div class="o-upload__placeholder">Paste cover image here</div>
+            <div class="o-upload__placeholder">Paste image here</div>
         </div>
 
         <div class="o-upload__remove">

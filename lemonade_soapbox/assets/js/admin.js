@@ -117,62 +117,10 @@ function BackendInit() {
         .removeClass('ui-widget ui-widget-content ui-corner-all')
         .addClass('o-text-input o-text-input--blend');
 
-    $('.o-upload__image--none').parent().next().hide();
-    $('.js-image-upload')
-        .find('.o-upload__preview')
-            .pastableNonInputable()
-            .on('pasteImage', function (e, data){
-                console.log("dataURL: " + data.dataURL);
-                 console.log("width: " + data.width);
-                 console.log("height: " + data.height);
-                 console.log(data.blob);
-
-                $('.o-upload__image', this).attr({
-                    'src': data.dataURL,
-                    'alt': 'Pasted book cover image'
-                }).removeClass('o-upload__image--none');
-
-                $(this)
-                    .parent()
-                        .find('.o-upload__remove')
-                            .show('fast')
-                            .find('input')
-                                .prop('checked', false)
-                                .end()
-                            .end()
-                        .find('.o-upload__input').val(null);
-            });
-
-    $('input[type=checkbox]', '.o-upload__remove').change(function(e) {
-        if($(this).prop('checked')) {
-            $(this).parents('.js-image-upload')
-                .find('.o-upload__input').val(null)
-                .end()
-                .find('.o-upload__image')
-                    .attr({ 'src': '', alt: '' })
-                    .addClass('o-upload__image--none');
-        }
+    // Initialize special upload fields!
+    $('.js-image-upload').each(function(i, v) {
+        new MagnificentUpload(v);
     });
-
-    $('.js-image-upload .o-upload__input').change(function(e) {
-        const file = this.files[0];
-        var preview = $(this).parents('.js-image-upload').find('.o-upload__image');
-        if (file.type.startsWith('image/')){
-            const reader = new FileReader();
-            reader.onload = (function(aImg) { return function(e) { aImg.src = e.target.result; }; })(preview[0]);
-            reader.readAsDataURL(file);
-
-            preview
-                .removeClass('o-upload__image--none')
-                .parent()
-                    .show('fast')
-                    .parents('.js-image-upload')
-                        .find('.o-upload__remove')
-                        .show('fast')
-                            .find('input').prop('checked', false);
-        }
-    });
-
 
     /*
      * Notifications
@@ -314,6 +262,96 @@ PostForm.prototype.bindAutosaveRestores = function() {
             .fadeOut()
             .remove();
     });
+}
+
+
+var MagnificentUpload = function(container) {
+    var self = this;
+    self.container = $(container);
+    self.input = self.container.find('.o-upload__input');
+    self.image = self.container.find('.o-upload__image');
+    self.pasted = self.container.find('input[type=hidden]');
+    self.placeholder = self.container.find('.o-upload__placeholder');
+    self.remove = self.container.find('.o-upload__remove');
+
+    self.css_no_img = 'o-upload__image--none';
+
+    // Hide the remove toggle if no image currently uploaded
+    if(self.image.hasClass(self.css_no_img)) {
+        self.remove.hide();
+    }
+    else {
+        // Let's save the original image src in case we want to restore it
+        self.original_src = self.image.attr('src');
+    }
+
+    // Create a pastable area for the image uploaded
+    self.image.parent()
+        .pastableNonInputable()
+        .on('pasteImage', function(e, data) {
+            // Replace the preview image with pasted image
+            // and show if necessary
+            self.image.attr({
+                'src': data.dataURL,
+                'alt': self.container.data('alt')
+            }).removeClass(self.css_no_img);
+
+            self.pasted.val(data.dataURL);
+
+            // Show the remove toggle, if necessary
+            self.resetRemoveToggle();
+
+            // Clear file field input
+            self.input.val(null);
+
+            // Change placeholder text
+            self.placeholder
+                .dblclick(function(e) {
+                    if(self.original_src) {
+                        self.image.attr('src', self.original_src);
+                    } else {
+                        self.image.addClass(self.css_no_img);
+                    }
+                    self.resetRemoveToggle(false);
+                    $(this).text('Paste image here');
+
+                    self.pasted.val('');
+                })
+                .html('Double-click to reset');
+        });
+
+    // Bind event to the remove toggle to clear image preview and file field
+    $('input[type=checkbox]').change(function(e) {
+        if($(this).prop('checked')) {
+            self.input.val(null);
+            self.image
+                .attr({ 'src': '', alt: '' })
+                .addClass(self.css_no_img);
+            self.placeholder.html('Paste image here');
+        }
+    });
+
+    // Generate preview thumbnail when image selected in file input
+    self.input.change(function(e) {
+        const file = this.files[0];
+        if (file.type.startsWith('image/')){
+            const reader = new FileReader();
+            reader.onload = (function(aImg) { return function(e) { aImg.src = e.target.result; }; })(self.image[0]);
+            reader.readAsDataURL(file);
+
+            self.image.removeClass(self.css_no_img);
+            self.resetRemoveToggle();
+        }
+    });
+}
+
+MagnificentUpload.prototype.resetRemoveToggle = function(show = true) {
+    this.remove.find('input[type=checkbox]').prop('checked', false);
+    if(show) {
+        this.remove.show('fast');
+    } else {
+        this.remove.hide('fast');
+    }
 }
 
 
