@@ -33,7 +33,7 @@
 {% endblock post_contents %}
 
 {% block post_metadata %}
-    <div class="o-form-field o-upload{{' u-margin-bottom-none' if post.book_cover }}">
+    <div class="o-form-field o-upload">
         <div class="o-upload__field">
             {{ render_field(form.book_cover, {'class': 'o-upload__input' }, label='Book Cover') }}
         </div>
@@ -44,12 +44,10 @@
             <img src="" class="o-upload__image o-upload__image--none" alt="" />
             {% endif %}
             <div class="o-upload__placeholder">Paste cover image here</div>
-
-        {% if post.book_cover %}
-        <div class="o-form-field">
-            {{ checkbox_toggle(form.remove_cover, size='small') }}
         </div>
-        {% endif %}
+
+        <div class="o-upload__remove">
+            {{ checkbox_toggle(form.remove_cover, size='small') }}
         </div>
     </div>
 
