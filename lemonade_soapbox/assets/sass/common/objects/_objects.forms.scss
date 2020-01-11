@@ -103,6 +103,10 @@
         z-index: 5;
     }
 
+        .o-upload__image--none {
+            display: none;
+        }
+
     .o-upload__input {
         @include inuit-font-size(12px);
     }

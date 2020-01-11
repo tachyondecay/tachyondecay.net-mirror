@@ -135,23 +135,58 @@ function BackendInit() {
 
     $('.o-upload__image--none').parent().next().hide();
     $('.js-image-upload')
-        .pastableNonInputable()
-        .on('pasteImage', function (e, data){
-            console.log("dataURL: " + data.dataURL);
-             console.log("width: " + data.width);
-             console.log("height: " + data.height);
-             console.log(data.blob);
+        .find('.o-upload__preview')
+            .pastableNonInputable()
+            .on('pasteImage', function (e, data){
+                console.log("dataURL: " + data.dataURL);
+                 console.log("width: " + data.width);
+                 console.log("height: " + data.height);
+                 console.log(data.blob);
 
-            $('.o-upload__image', this).attr({
-                'src': data.dataURL,
-                'alt': 'Pasted book cover image'
-            }).removeClass('o-upload__image--none');
+                $('.o-upload__image', this).attr({
+                    'src': data.dataURL,
+                    'alt': 'Pasted book cover image'
+                }).removeClass('o-upload__image--none');
 
-            $(this).next().show('fast');
-        });
+                $(this)
+                    .parent()
+                        .find('.o-upload__remove')
+                            .show('fast')
+                            .find('input')
+                                .prop('checked', false)
+                                .end()
+                            .end()
+                        .find('.o-upload__input').val(null);
+            });
 
-    $('.o-upload__remove').change(function(e) {
-        $(this).prev('.o-upload__preview').toggle('fast');
+    $('input[type=checkbox]', '.o-upload__remove').change(function(e) {
+        if($(this).prop('checked')) {
+            $(this).parents('.js-image-upload')
+                .find('.o-upload__input').val(null)
+                .end()
+                .find('.o-upload__image')
+                    .attr({ 'src': '', alt: '' })
+                    .addClass('o-upload__image--none');
+        }
+    });
+
+    $('.js-image-upload .o-upload__input').change(function(e) {
+        const file = this.files[0];
+        var preview = $(this).parents('.js-image-upload').find('.o-upload__image');
+        if (file.type.startsWith('image/')){
+            const reader = new FileReader();
+            reader.onload = (function(aImg) { return function(e) { aImg.src = e.target.result; }; })(preview[0]);
+            reader.readAsDataURL(file);
+
+            preview
+                .removeClass('o-upload__image--none')
+                .parent()
+                    .show('fast')
+                    .parents('.js-image-upload')
+                        .find('.o-upload__remove')
+                        .show('fast')
+                            .find('input').prop('checked', false);
+        }
     });
 
 

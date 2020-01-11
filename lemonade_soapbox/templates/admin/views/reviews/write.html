@@ -33,11 +33,11 @@
 {% endblock post_contents %}
 
 {% block post_metadata %}
-    <div class="o-form-field o-upload">
+    <div class="o-form-field o-upload js-image-upload">
         <div class="o-upload__field">
             {{ render_field(form.book_cover, {'class': 'o-upload__input' }, label='Book Cover') }}
         </div>
-        <div class="o-upload__preview js-image-upload">
+        <div class="o-upload__preview">
             {% if post.book_cover %}
             <img src="/media/book_covers/{{ post.book_cover }}" class="o-upload__image" alt="Cover image" />
             {% else %}
