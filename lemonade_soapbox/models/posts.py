@@ -190,7 +190,10 @@ class UniqueHandleMixin:
     @classmethod
     def unique_check(cls, text):
         """Query database to check if handle is unique."""
-        return not cls.query.filter_by(handle=text).first()
+        unique = None
+        with db.session.no_autoflush:
+             unique = not cls.query.filter_by(handle=text).first()
+        return unique
 
     def slugify(self, text, max_length=100, to_lower=True, **kwargs):
         slug = original = slugify(text, max_length=max_length, lowercase=to_lower)

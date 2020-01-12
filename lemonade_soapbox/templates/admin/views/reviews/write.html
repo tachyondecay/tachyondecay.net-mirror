@@ -6,7 +6,7 @@
 
 {% block field__title %}
 <label for="title" class="u-hidden-visually">Book Title</label>
-{{ form.title(**{'aria-label': 'Title', 'class': 'o-text-input o-text-input--blend c-page-title__input', 'placeholder': 'Book title…'}) }}
+{{ form.title(**{'aria-label': 'Title', 'class': 'o-text-input o-text-input--blend c-page-title__input', 'placeholder': 'Book title…', 'autocomplete': 'off'}) }}
 {% endblock %}
 
 
@@ -57,15 +57,15 @@
     </div>
 
     <div class="o-form-field">
-        {{ render_field(form.book_id, {'class': 'o-text-input o-text-input--blend u-1/1' }, label='ISBN') }}
+        {{ render_field(form.book_id, {'class': 'o-text-input o-text-input--blend u-1/1', 'autocomplete': 'off' }, label='ISBN') }}
     </div>
 
     <div class="o-form-field">
-        {{ render_field(form.goodreads_id, {'class': 'o-text-input o-text-input--blend u-1/1' }, label='Goodreads Review') }}
+        {{ render_field(form.goodreads_id, {'class': 'o-text-input o-text-input--blend u-1/1 js-gr', 'autocomplete': 'off' }, label='Goodreads Review') }}
     </div>
 
     <div class="o-form-field">
-        {{ render_field(form.dates_read, {'class': 'o-text-input o-text-input--blend js-daterangepicker', }, label='Dates Read') }}
+        {{ render_field(form.dates_read, {'class': 'o-text-input o-text-input--blend js-daterangepicker', 'autocomplete': 'off' }, label='Dates Read') }}
     </div>
 
     {{ super() }}

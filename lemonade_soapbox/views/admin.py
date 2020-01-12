@@ -331,8 +331,8 @@ def edit_review(id, revision_id):
         # Save a copy of the original body before we overwrite it
         old_body = review.body
         form.populate_obj(review)
-        if not form.handle.data:
-            review.handle = review.slugify(review.book_title)
+        if not form.handle.data or not review.unique_check(review.handle):
+            review.handle = review.slugify(review.title)
 
         current_app.logger.debug('HELLO DARKNESS MY HOLD FRIEND')
         #

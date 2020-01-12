@@ -160,10 +160,15 @@ class ReviewForm(ModelForm):
     remove_cover = BooleanField('Remove uploaded cover', validators=[validators.Optional()])
     pasted_cover = HiddenField(validators=[validators.Optional()])
     handle = StringField('URL Handle', validators=[validators.Optional()])
-    rating = RadioField('Rating', choices=[(5, '5 out of 5 stars'), (4, '4 out of 5 stars'),
-                                           (3, '3 out of 5 stars'), (2, '2 out of 5 stars'),
-                                           (1, '1 out of 5 stars'), (0, 'No rating')
-                                           ], coerce=int)
+    rating = RadioField('Rating',
+                        choices=[
+                            (5, '5 out of 5 stars'), (4, '4 out of 5 stars'),
+                            (3, '3 out of 5 stars'), (2, '2 out of 5 stars'),
+                            (1, '1 out of 5 stars'), (0, 'No rating')
+                        ],
+                        coerce=int,
+                        default=0,
+                        validators=[validators.Optional()])
     tags = TagListField('Shelves')
     publish = SubmitField('Publish', widget=ButtonWidget())
     save = SubmitField('Save', widget=ButtonWidget())
