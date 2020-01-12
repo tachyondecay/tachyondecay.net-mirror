@@ -2,6 +2,14 @@
    # Specialized form inputs
    ========================================================================== */
 
+/* Override CodeMirror styles */
+.editing .cm-spell-error {
+  text-decoration: underline wavy red;
+}
+
+.editing .CodeMirror .cm-spell-error:not(.cm-url):not(.cm-comment):not(.cm-tag):not(.cm-word) {
+  background: none;
+}
 
 /* Checkbox toggle */
 @mixin can-toggle-branding(

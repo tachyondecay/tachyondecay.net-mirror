@@ -154,10 +154,11 @@ var PostForm = function(form) {
     }
 
 
-    // Initialize SimpleMDE on the body
-    this.simplemde = new SimpleMDE({
+    // Initialize EasyMDE on the body
+    this.editor = new EasyMDE({
+        'autoDownloadFontAwesome': true,
         'element': this.body[0],
-        // 'spellChecker': false,
+        'spellChecker': true,
         'toolbar': ['preview', 'side-by-side', 'fullscreen']
     });
 }
@@ -165,7 +166,7 @@ var PostForm = function(form) {
 // Autosave articles after a delay
 PostForm.prototype.autosave = function() {
     var self = this;
-    var new_content = self.simplemde.value();
+    var new_content = self.editor.value();
     var title = self.form.find('.c-page-title__input');
     var handle = self.form.find('[name=handle]');
     var type = self.form.data('type');
@@ -250,7 +251,7 @@ PostForm.prototype.bindAutosaveRestores = function() {
     $('.js-autosave-notification, .js-is-autosave').on('click', 'a', function(e) {
         e.preventDefault();
         self.old_content = $(this).data('content'); // Prevent another autosave triggering
-        self.simplemde.value(self.old_content);
+        self.editor.value(self.old_content);
         $('.js-autosave-notification').fadeOut();
         var success = $('<div/>');
         success
