@@ -122,6 +122,22 @@ function BackendInit() {
         new MagnificentUpload(v);
     });
 
+    // Automatically strip GR Review ID from URL
+    $('.js-gr').change(function(e) {
+        const gr_id_regex = /^[a-z\./\:]+([0-9]+)$/i;
+        var matches = $(this).val().match(gr_id_regex);
+        if(matches) {
+            $(this).val(matches[1]);
+        }
+    });
+
+    $('#dates_read').on('apply.daterangepicker', function(e, picker) {
+        if(!$('#date_published-date').val()) {
+            $('#date_published-date').val(picker.endDate.format('YYYY-MM-DD'));
+            $('#date_published-time').val('00:00:00');
+        }
+    });
+
     /*
      * Notifications
      */
@@ -156,7 +172,6 @@ var PostForm = function(form) {
 
     // Initialize EasyMDE on the body
     this.editor = new EasyMDE({
-        'autoDownloadFontAwesome': true,
         'element': this.body[0],
         'spellChecker': true,
         'toolbar': ['preview', 'side-by-side', 'fullscreen']
