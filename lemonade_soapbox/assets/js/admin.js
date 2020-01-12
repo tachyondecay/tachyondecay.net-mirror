@@ -337,7 +337,7 @@ var MagnificentUpload = function(container) {
         });
 
     // Bind event to the remove toggle to clear image preview and file field
-    $('input[type=checkbox]').change(function(e) {
+    this.remove.find('input[type=checkbox]').change(function(e) {
         if($(this).prop('checked')) {
             self.input.val(null);
             self.image
