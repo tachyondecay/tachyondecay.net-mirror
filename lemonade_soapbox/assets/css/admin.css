@@ -1895,7 +1895,7 @@ a {
 
 .i--star-empty {
   background-image: url("/assets/images/icons/sprite--000000.svg");
-  width: 1.0625em;
+  width: 0.9375em;
   height: 1.0625em;
   background-position: -30em -12em;
   margin-top: 0.1em;
@@ -1903,13 +1903,13 @@ a {
 
 .i-before--star-empty:before {
   background-image: url("/assets/images/icons/sprite--000000.svg");
-  width: 1.0625em;
+  width: 0.9375em;
   height: 1.0625em;
   background-position: -30em -12em; }
 
 .i-after--star-empty:after {
   background-image: url("/assets/images/icons/sprite--000000.svg");
-  width: 1.0625em;
+  width: 0.9375em;
   height: 1.0625em;
   background-position: -30em -12em; }
 
@@ -2191,18 +2191,56 @@ a {
   font-weight: bold;
   border-left: 5px solid #4b7c91; }
 
+.c-results__list {
+  list-style: none;
+  flex: 1; }
+
 .c-results__item {
-  display: flex;
-  flex-flow: column;
-  border-top: 0 solid #e8e8e8; }
-  .c-results__item:nth-child(n+3) {
-    border-top-width: 1px; }
+  display: grid;
+  grid-template-columns: calc(75px + 12px) 1fr;
+  grid-template-areas: "img title" "img footer" "img review";
+  border-top: 0 solid #e8e8e8;
+  margin: 24px; }
   .c-results__item:hover {
     border: 1px solid #8c5383;
     border-radius: 5px;
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
     transition: all 300ms ease-in-out;
     margin: -1px; }
+
+.c-results__details {
+  margin: 0; }
+  .c-results__details dd {
+    margin-right: 12px; }
+  .c-results__details dt, .c-results__details dd {
+    display: inline-block;
+    margin: 0;
+    font-size: 12px;
+    font-size: 0.75rem;
+    line-height: 2; }
+
+.c-results__title {
+  grid-area: title;
+  margin-bottom: 0;
+  font-size: 18px;
+  font-size: 1.125rem;
+  line-height: 1.3333333333; }
+
+.c-results__image {
+  display: block;
+  grid-area: img;
+  margin-right: 12px;
+  width: 75px; }
+
+.c-results__item footer {
+  grid-area: footer; }
+
+.c-results__review {
+  grid-area: review;
+  font-size: 12px;
+  font-size: 0.75rem;
+  line-height: 2;
+  line-height: 1.0; }
 
 .c-results__time {
   margin-bottom: 0;
@@ -2382,7 +2420,7 @@ a {
     width: 1px !important; }
   .c-rating-input label:not(:last-child) {
     background-image: url("/assets/images/icons/sprite--000000.svg");
-    width: 1.0625em;
+    width: 0.9375em;
     height: 1.0625em;
     background-position: -30em -12em;
     margin-top: 12px;

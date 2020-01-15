@@ -24,12 +24,16 @@ from uuid import uuid4
 
 
 tag_relationships = {
-    'Article': db.Table('tag_associations',
-                        db.Column('tag_id', db.Integer, db.ForeignKey('tags.id')),
-                        db.Column('article_id', db.Integer, db.ForeignKey('articles.id'))),
-    'Review': db.Table('shelf_associations',
-                       db.Column('tag_id', db.Integer, db.ForeignKey('tags.id')),
-                       db.Column('review_id', db.Integer, db.ForeignKey('reviews.id')))
+    'Article': db.Table(
+        'tag_associations',
+        db.Column('tag_id', db.Integer, db.ForeignKey('tags.id')),
+        db.Column('post_id', db.Integer, db.ForeignKey('articles.id')),
+    ),
+    'Review': db.Table(
+        'shelf_associations',
+        db.Column('tag_id', db.Integer, db.ForeignKey('tags.id')),
+        db.Column('post_id', db.Integer, db.ForeignKey('reviews.id')),
+    ),
 }
 
 
@@ -51,14 +55,16 @@ class Searchable:
         ix_path = current_app.config['INDEX_PATH']
         # Create index if it does not exist.
         for model, instances in models.items():
-            if not(index.exists_in(ix_path, indexname=model.__name__)):
+            if not (index.exists_in(ix_path, indexname=model.__name__)):
                 model.build_index()
             ix = index.open_dir(ix_path, indexname=model.__name__)
             with ix.writer() as writer:
                 for obj in instances:
                     id = getattr(obj, 'id')
                     if obj in session.deleted:
-                        current_app.logger.info('Removing {} {} from index.'.format(model, id))
+                        current_app.logger.info(
+                            'Removing {} {} from index.'.format(model, id)
+                        )
                         writer.delete_by_term('id', str(id))
                     else:
                         current_app.logger.info('Indexing {} {}'.format(model, id))
@@ -84,31 +90,44 @@ class Searchable:
     def build_index(cls, per_pass=500):
         """Build a clean index of this model."""
         with Timer() as t:
-            current_app.logger.info('Beginning clean indexing operation of {}'.format(cls.__name__))
+            current_app.logger.info(
+                'Beginning clean indexing operation of {}'.format(cls.__name__)
+            )
             try:
                 ix_path = current_app.config['INDEX_PATH']
                 if not os.path.exists(ix_path):
-                    current_app.logger.info('Index directory does not exist, '
-                                            'attempting to create it at {}'.format(ix_path))
+                    current_app.logger.info(
+                        'Index directory does not exist, '
+                        'attempting to create it at {}'.format(ix_path)
+                    )
                     os.mkdir(ix_path)
 
                 ix = index.create_in(ix_path, schema=cls.schema, indexname=cls.__name__)
                 with ix.writer() as writer:
                     total = int(cls.query.order_by(None).count())
-                    current_app.logger.info('Indexing {}: {} rows found.'.format(cls.__name__, total))
+                    current_app.logger.info(
+                        'Indexing {}: {} rows found.'.format(cls.__name__, total)
+                    )
                     done = 0
 
                     for m in cls.query.yield_per(per_pass):
                         m.add_to_index(writer)
                         done += 1
                         if done % per_pass == 0:
-                            current_app.logger.info('Indexed {}/{} ({:.1%})'
-                                                    .format(done, total, done/total))
+                            current_app.logger.info(
+                                'Indexed {}/{} ({:.1%})'.format(
+                                    done, total, done / total
+                                )
+                            )
 
-                    current_app.logger.info('Finished: {}/{} indexed.'.format(done, total))
+                    current_app.logger.info(
+                        'Finished: {}/{} indexed.'.format(done, total)
+                    )
             except Exception:
                 raise
-        current_app.logger.info('Built index for {} in {:.3f} seconds'.format(cls.__name__, t.interval))
+        current_app.logger.info(
+            'Built index for {} in {:.3f} seconds'.format(cls.__name__, t.interval)
+        )
 
     @classmethod
     def get_query_parser(cls, fields=None):
@@ -118,7 +137,7 @@ class Searchable:
             fields = getattr(cls, '__searchable__', None)
 
         current_app.logger.debug(fields)
-        if(isinstance(fields, list)):
+        if isinstance(fields, list):
             qparser = MultifieldParser(fields, schema=cls.schema)
         else:
             qparser = QueryParser(fields, schema=cls.schema)
@@ -132,11 +151,22 @@ class Searchable:
         raise NotImplementedError
 
     @classmethod
-    def search(cls, query, paginate=True, fields=None, pagenum=1, pagelen=50,
-               sort_order=None, sort_field=None, **kwargs):
+    def search(
+        cls,
+        query,
+        paginate=True,
+        fields=None,
+        pagenum=1,
+        pagelen=50,
+        sort_order=None,
+        sort_field=None,
+        **kwargs,
+    ):
         """Execute a Whoosh search against this model's index."""
         try:
-            ix = index.open_dir(current_app.config['INDEX_PATH'], indexname=cls.__name__)
+            ix = index.open_dir(
+                current_app.config['INDEX_PATH'], indexname=cls.__name__
+            )
             qparser = cls.get_query_parser(fields)
             parsed_query = qparser.parse(query)
             with ix.searcher() as searcher:
@@ -145,19 +175,24 @@ class Searchable:
                     if sort_order == 'desc':
                         kwargs['reverse'] = True
                 if paginate:
-                    raw_results = searcher.search_page(parsed_query,
-                                                       pagenum,
-                                                       pagelen=pagelen,
-                                                       **kwargs)
+                    raw_results = searcher.search_page(
+                        parsed_query, pagenum, pagelen=pagelen, **kwargs
+                    )
                 else:
                     raw_results = searcher.search(parsed_query, **kwargs)
                 if raw_results.total > 0:
-                    query_obj = cls.query.filter(cls.id.in_([r['id'] for r in raw_results]))
+                    query_obj = cls.query.filter(
+                        cls.id.in_([r['id'] for r in raw_results])
+                    )
                     if sort_field in cls.__sortable__:
                         if sort_order == 'asc':
-                            query_obj = query_obj.order_by(getattr(cls, sort_field).asc())
+                            query_obj = query_obj.order_by(
+                                getattr(cls, sort_field).asc()
+                            )
                         else:
-                            query_obj = query_obj.order_by(getattr(cls, sort_field).desc())
+                            query_obj = query_obj.order_by(
+                                getattr(cls, sort_field).desc()
+                            )
 
                 else:
                     query_obj = None
@@ -167,7 +202,7 @@ class Searchable:
                     'pagecount': raw_results.pagecount,
                     'pagelen': raw_results.pagelen,
                     'pagenum': raw_results.pagenum,
-                    'total': raw_results.total
+                    'total': raw_results.total,
                 }
                 return results
         except Exception as e:
@@ -184,15 +219,14 @@ class UniqueHandleMixin:
 
     @declared_attr
     def handle(cls):
-        return db.Column(db.String(255), nullable=False,
-                         default='')
+        return db.Column(db.String(255), nullable=False, default='')
 
     @classmethod
     def unique_check(cls, text):
         """Query database to check if handle is unique."""
         unique = None
         with db.session.no_autoflush:
-             unique = not cls.query.filter_by(handle=text).first()
+            unique = not cls.query.filter_by(handle=text).first()
         return unique
 
     def slugify(self, text, max_length=100, to_lower=True, **kwargs):
@@ -218,11 +252,14 @@ class UniqueHandleMixin:
 
 class AuthorMixin:
     """Many-to-one relationship with the users table."""
+
     @declared_attr
     def author_id(cls):
-        return db.Column(db.Integer,
-                         db.ForeignKey('users.id'),
-                         default=lambda: getattr(current_user, 'id', None))
+        return db.Column(
+            db.Integer,
+            db.ForeignKey('users.id'),
+            default=lambda: getattr(current_user, 'id', None),
+        )
 
     @declared_attr
     def author(cls):
@@ -231,18 +268,23 @@ class AuthorMixin:
 
 class TagMixin:
     """Any posts that are taggable."""
+
     tag_list = association_proxy('_tags', 'label')
 
     @declared_attr
     def _tags(cls):
-        return db.relationship('Tag', secondary=tag_relationships[cls.__name__], backref=cls.__tablename__)
+        return db.relationship(
+            'Tag', secondary=tag_relationships[cls.__name__], backref=cls.__tablename__
+        )
 
     def _find_or_create_tag(self, tag):
         with db.session.no_autoflush:
             q = Tag.query.filter_by(handle=Tag.slugify(tag))
             t = q.first()
-            if not(t):
-                current_app.logger.info('Tag "{}" does not exist, creating.'.format(tag))
+            if not (t):
+                current_app.logger.info(
+                    'Tag "{}" does not exist, creating.'.format(tag)
+                )
                 t = Tag(tag)
         return t
 
@@ -296,14 +338,22 @@ class PostMixin(AuthorMixin):
     def next_post(self):
         """Return the post published after this post."""
         if self.date_published:
-            return self.query.filter(self.__class__.date_published > self.date_published).order_by(asc('date_published')).first()
+            return (
+                self.query.filter(self.__class__.date_published > self.date_published)
+                .order_by(asc('date_published'))
+                .first()
+            )
         return None
 
     @cached_property
     def previous_post(self):
         """Return the post published prior to this post."""
         if self.date_published:
-            return self.query.filter(self.__class__.date_published < self.date_published).order_by(desc('date_published')).first()
+            return (
+                self.query.filter(self.__class__.date_published < self.date_published)
+                .order_by(desc('date_published'))
+                .first()
+            )
         return None
 
     def __init__(self, **kwargs):
@@ -314,7 +364,9 @@ class PostMixin(AuthorMixin):
     @classmethod
     def published(cls):
         """Filter queries so only published records are shown."""
-        return cls.query.filter((cls.status == 'published') & (cls.date_published <= arrow.utcnow()))
+        return cls.query.filter(
+            (cls.status == 'published') & (cls.date_published <= arrow.utcnow())
+        )
 
     def publish_post(self):
         """Set a post's status to "published" and set date published if null."""
@@ -326,14 +378,19 @@ class PostMixin(AuthorMixin):
             timing = 'just now'
         elif self.date_published > arrow.utcnow():
             timing = self.date_published.humanize()
-        current_app.logger.info('Post {} published at {} (publication date: {}'
-                                .format(self.id, arrow.utcnow(), self.date_published))
+        current_app.logger.info(
+            'Post {} published at {} (publication date: {}'.format(
+                self.id, arrow.utcnow(), self.date_published
+            )
+        )
         return f'Post published {timing}. <a href="{self.get_permalink()}">View live version</a>.'
 
     def update_post(self):
         """Save changes to a post without altering its publication status."""
         self.date_updated = arrow.utcnow()
-        current_app.logger.info('Post {} updated at {}'.format(self.id, self.date_updated))
+        current_app.logger.info(
+            'Post {} updated at {}'.format(self.id, self.date_updated)
+        )
         message = 'Article saved.'
         if self.status == 'published':
             message += ' <a href="{0}">View post.</a>'.format(self.get_permalink())
@@ -345,8 +402,7 @@ class RevisionMixin:
 
     @declared_attr
     def revision_id(cls):
-        return db.Column(db.String(32),
-                         db.ForeignKey('revisions.id', use_alter=True))
+        return db.Column(db.String(32), db.ForeignKey('revisions.id', use_alter=True))
 
     @declared_attr
     def autosave_id(cls):
@@ -357,18 +413,16 @@ class RevisionMixin:
         fk = "[Revision.post_id]"
         return db.relationship(
             'Revision',
-            backref=orm.backref(cls.__name__.lower(),
-                                uselist=False,
-                                foreign_keys=fk),
+            backref=orm.backref(cls.__name__.lower(), uselist=False, foreign_keys=fk),
             primaryjoin=f'and_('
-                        f'revisions.c.post_id == {cls.__name__}.id, '
-                        f'revisions.c.post_type == "{cls.__name__}")',
+            f'revisions.c.post_id == {cls.__name__}.id, '
+            f'revisions.c.post_type == "{cls.__name__}")',
             order_by='Revision.date_created.asc()',
             foreign_keys=fk,
             lazy='select',
             uselist=True,
             post_update=True,
-            cascade='all'
+            cascade='all',
         )
 
     @declared_attr
@@ -379,7 +433,7 @@ class RevisionMixin:
             uselist=False,
             lazy='joined',
             post_update=True,
-            cascade='all'
+            cascade='all',
         )
 
     @declared_attr
@@ -389,7 +443,7 @@ class RevisionMixin:
             foreign_keys=cls.autosave_id,
             uselist=False,
             post_update=True,
-            cascade='all'
+            cascade='all',
         )
 
     @orm.reconstructor
@@ -414,16 +468,23 @@ class RevisionMixin:
         if content:
             self.body = content
             self.selected_revision = target
-            current_app.logger.info('Loaded revision {} for post {}'.format(
-                                    self.selected_revision.id,
-                                    self.id))
+            current_app.logger.info(
+                'Loaded revision {} for post {}'.format(
+                    self.selected_revision.id, self.id
+                )
+            )
         return self
 
     def new_autosave(self, content):
         """Save a temporary revision."""
         try:
-            new_save = Revision(self, new=content, old=self.body,
-                                parent=self.selected_revision, major=False)
+            new_save = Revision(
+                self,
+                new=content,
+                old=self.body,
+                parent=self.selected_revision,
+                major=False,
+            )
             if self.id:
                 if self.autosave:
                     current_app.logger.info(
@@ -452,16 +513,17 @@ class RevisionMixin:
             r = Revision(self, new=self.body, old='')
         else:
             # Check Levenshtein distance and generate patches while we're at it.
-            distance, patch_text = self.selected_revision.distance(self.body,
-                                                                   old_content)
+            distance, patch_text = self.selected_revision.distance(
+                self.body, old_content
+            )
 
             if distance > current_app.config['REVISION_THRESHOLD']:
                 # Distance percentage trips the threshold for a new revision.
-                r = Revision(self, parent=self.selected_revision,
-                             patch_text=patch_text)
+                r = Revision(self, parent=self.selected_revision, patch_text=patch_text)
                 current_app.logger.debug(
                     f'Levenshtein percentage difference ({round(distance, 2)}) '
-                    f'resulted in new revision {r.id}')
+                    f'resulted in new revision {r.id}'
+                )
             else:
                 # Changes aren't significant enough to merit a new revision.
                 self.selected_revision.date_created = arrow.utcnow()
@@ -486,8 +548,9 @@ class RevisionMixin:
         return r or self.selected_revision
 
 
-class Article(UniqueHandleMixin,
-              TagMixin, Searchable, RevisionMixin, PostMixin, db.Model):
+class Article(
+    UniqueHandleMixin, TagMixin, Searchable, RevisionMixin, PostMixin, db.Model
+):
     """Blog posts."""
 
     __tablename__ = 'articles'
@@ -497,16 +560,18 @@ class Article(UniqueHandleMixin,
     summary = db.Column(db.Text)
     handle = db.Column(db.String(255), unique=True)
 
-    schema = Schema(id=ID(stored=True, unique=True),
-                    author=TEXT(phrase=False),
-                    date_created=DATETIME(sortable=True),
-                    date_published=DATETIME(sortable=True),
-                    date_updated=DATETIME(sortable=True),
-                    body=TEXT(analyzer=StemmingAnalyzer()),
-                    handle=ID(unique=True),
-                    status=ID(),
-                    tags=KEYWORD(commas=True, scorable=True),
-                    title=TEXT(analyzer=StemmingAnalyzer()))
+    schema = Schema(
+        id=ID(stored=True, unique=True),
+        author=TEXT(phrase=False),
+        date_created=DATETIME(sortable=True),
+        date_published=DATETIME(sortable=True),
+        date_updated=DATETIME(sortable=True),
+        body=TEXT(analyzer=StemmingAnalyzer()),
+        handle=ID(unique=True),
+        status=ID(),
+        tags=KEYWORD(commas=True, scorable=True),
+        title=TEXT(analyzer=StemmingAnalyzer()),
+    )
 
     @classmethod
     def _default_handle(cls):
@@ -516,10 +581,7 @@ class Article(UniqueHandleMixin,
         """Generate a permanent link to the article."""
         if not self.id:
             return ""
-        kwargs = {
-            'handle': self.handle,
-            '_external': not(relative)
-        }
+        kwargs = {'handle': self.handle, '_external': not (relative)}
         if self.status == 'published':
             kwargs['year'] = self.date_published.year
             kwargs['month'] = self.date_published.strftime('%m')
@@ -533,10 +595,17 @@ class Article(UniqueHandleMixin,
     @classmethod
     def post_breakdown(cls):
         """Generate a breakdown of post counts by year and month."""
-        q = db.session.query(func.strftime('%Y',
-                             Article.date_published).label('pub_year'),
-                             func.strftime('%m', Article.date_published).label('pub_month'),
-                             func.count(Article.id)).filter(Article.status == 'published').group_by('pub_year', 'pub_month').order_by(desc('pub_year')).all()
+        q = (
+            db.session.query(
+                func.strftime('%Y', Article.date_published).label('pub_year'),
+                func.strftime('%m', Article.date_published).label('pub_month'),
+                func.count(Article.id),
+            )
+            .filter(Article.status == 'published')
+            .group_by('pub_year', 'pub_month')
+            .order_by(desc('pub_year'))
+            .all()
+        )
         breakdown = {}
         for (y, m, c) in q:
             year = breakdown.setdefault(y, {})
@@ -546,6 +615,7 @@ class Article(UniqueHandleMixin,
     def schema_filters(self):
         """Return a dict of attr => func pairs, where func is applied to the
         value of attr to process it before indexing."""
+
         def get_datetime(d):
             return getattr(d, 'datetime', None)
 
@@ -555,13 +625,14 @@ class Article(UniqueHandleMixin,
             'date_created': get_datetime,
             'date_published': get_datetime,
             'date_updated': get_datetime,
-            'tags': lambda x: ', '.join(x)
+            'tags': lambda x: ', '.join(x),
         }
         return exceptions
 
 
-class Review(UniqueHandleMixin,
-              TagMixin, Searchable, RevisionMixin, PostMixin, db.Model):
+class Review(
+    UniqueHandleMixin, TagMixin, Searchable, RevisionMixin, PostMixin, db.Model
+):
     """Book reviews."""
 
     __tablename__ = 'reviews'
@@ -570,7 +641,7 @@ class Review(UniqueHandleMixin,
 
     book_author = db.Column(db.String(255), nullable=False)
     book_cover = db.Column(db.String(255))
-    book_id = db.Column(db.String(255)) #ISBN or ASIN
+    book_id = db.Column(db.String(255))  # ISBN or ASIN
 
     dates_read = db.Column(db.String(255))
     goodreads_id = db.Column(db.Integer)
@@ -578,18 +649,20 @@ class Review(UniqueHandleMixin,
     spoilers = db.Column(db.Boolean, default=False)
     summary = db.Column(db.Text)
 
-    schema = Schema(id=ID(stored=True, unique=True),
-                    book_author=TEXT(),
-                    title=TEXT(),
-                    date_created=DATETIME(sortable=True),
-                    date_published=DATETIME(sortable=True),
-                    date_updated=DATETIME(sortable=True),
-                    date_finished=DATETIME(sortable=True),
-                    body=TEXT(analyzer=StemmingAnalyzer()),
-                    rating=NUMERIC(),
-                    handle=ID(unique=True),
-                    status=ID(),
-                    tags=KEYWORD(commas=True, scorable=True))
+    schema = Schema(
+        id=ID(stored=True, unique=True),
+        book_author=TEXT(),
+        title=TEXT(),
+        date_created=DATETIME(sortable=True),
+        date_published=DATETIME(sortable=True),
+        date_updated=DATETIME(sortable=True),
+        date_finished=DATETIME(sortable=True),
+        body=TEXT(analyzer=StemmingAnalyzer()),
+        rating=NUMERIC(),
+        handle=ID(unique=True),
+        status=ID(),
+        tags=KEYWORD(commas=True, scorable=True),
+    )
 
     @hybrid_property
     def date_started(self):
@@ -613,13 +686,14 @@ class Review(UniqueHandleMixin,
             return ""
         kwargs = {
             'handle': self.handle,
-            '_external': not(relative),
+            '_external': not (relative),
         }
         return url_for(f'reviews.show_{self.status}', **kwargs)
 
     def schema_filters(self):
         """Return a dict of attr => func pairs, where func is applied to the
         value of attr to process it before indexing."""
+
         def get_datetime(d):
             return getattr(d, 'datetime', None)
 
@@ -629,7 +703,7 @@ class Review(UniqueHandleMixin,
             'date_published': get_datetime,
             'date_updated': get_datetime,
             'date_finished': get_datetime,
-            'tags': lambda x: ', '.join(x)
+            'tags': lambda x: ', '.join(x),
         }
         return exceptions
 
@@ -648,7 +722,9 @@ class Revision(AuthorMixin, db.Model):
     date_created = db.Column(ArrowType, default=datetime.utcnow)
     depth = db.Column(db.Integer)
     patch_text = db.Column(db.Text)
-    parent_id = db.Column(db.String(32), db.ForeignKey('revisions.id', ondelete='SET NULL'))
+    parent_id = db.Column(
+        db.String(32), db.ForeignKey('revisions.id', ondelete='SET NULL')
+    )
     parent = db.relationship('Revision', remote_side=[id])
     major = db.Column(db.Boolean, default=True)
 
@@ -659,9 +735,9 @@ class Revision(AuthorMixin, db.Model):
         Expects in kwargs a `patch_text` containing previously made
         patches, or `new` and `old` text for generating the patches.
         """
-        super().__init__(post_type=type(post).__name__,
-                         author_id=post.author_id,
-                         **kwargs)
+        super().__init__(
+            post_type=type(post).__name__, author_id=post.author_id, **kwargs
+        )
 
         self.differ = diff_match_patch()
         self.id = uuid4().hex
@@ -669,9 +745,7 @@ class Revision(AuthorMixin, db.Model):
         self.parent_id = getattr(self.parent, 'id', None)
 
         if not self.patch_text:
-            self.patch_text = self.differ.patch_toText(
-                self.differ.patch_make(new, old)
-            )
+            self.patch_text = self.differ.patch_toText(self.differ.patch_make(new, old))
 
     @orm.reconstructor
     def __db_init__(self):
@@ -726,7 +800,7 @@ class Revision(AuthorMixin, db.Model):
         """Reverse the insertions/deletions in a patch to move forward in time."""
         reverse_patches = self.differ.patch_deepCopy(self.patches)
         for p in reverse_patches:
-            p.diffs = [(d[0]*-1, d[1]) for d in p.diffs]
+            p.diffs = [(d[0] * -1, d[1]) for d in p.diffs]
         return reverse_patches
 
     @staticmethod
@@ -766,19 +840,22 @@ class Tag(db.Model):
         self.handle = self.slugify(label)
 
     @classmethod
-    def frequency(cls, parent, order_by='handle'):
+    def frequency(cls, parent, order_by='handle', status='published'):
         """Returns tuples of tags and their frequencies."""
         rel = tag_relationships[parent.__name__]
         if order_by == 'count':
             order_by = func.count().desc()
         else:
             order_by = cls.handle
-        return db.session.query(cls, func.count()) \
-                         .outerjoin((rel, rel.c.tag_id == cls.id),
-                                    (parent, parent.id == rel.c.article_id)) \
-                         .filter(parent.status == 'published') \
-                         .group_by(cls.id) \
-                         .order_by(order_by)
+        return (
+            db.session.query(cls, func.count())
+            .outerjoin(
+                (rel, rel.c.tag_id == cls.id), (parent, parent.id == rel.c.post_id)
+            )
+            .filter(parent.status == status)
+            .group_by(cls.id)
+            .order_by(order_by)
+        )
 
     @classmethod
     def slugify(cls, text):

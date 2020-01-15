@@ -21,10 +21,14 @@ def truncate_html(content, max_length=None):
     """Truncate HTML content to a certain number of words."""
     if not max_length:
         max_length = current_app.config['EXCERPT_LEN']
-    bs = BeautifulSoup(str(content), "html.parser")
-    parser = HTMLAbbrev(max_length)
-    parser.feed(str(bs))
-    return Markup(parser.close())
+    try:
+        bs = BeautifulSoup(str(content), "html.parser")
+        parser = HTMLAbbrev(max_length)
+        parser.feed(str(bs))
+        return Markup(parser.close())
+    except Exception as e:
+        current_app.logger.debug(e)
+        return "Could not truncate HTML"
 
 
 def weight(tag_list):
@@ -36,11 +40,10 @@ def weight(tag_list):
 
     # Use logarithmic scale
     for f in freqs:
-        weights.append(Decimal(f).ln()
-                       / Decimal(max_frequency).ln()
-                       / Decimal(1.5)
-                       + Decimal.from_float(float(Fraction('1/3')))
-                       )
+        weights.append(
+            Decimal(f).ln() / Decimal(max_frequency).ln() / Decimal(1.5)
+            + Decimal.from_float(float(Fraction('1/3')))
+        )
 
     return zip(tags, freqs, weights)
 
@@ -137,6 +140,7 @@ class ReverseProxied:
 
     :param app: the WSGI application
     '''
+
     def __init__(self, app):
         self.app = app
 
@@ -146,7 +150,7 @@ class ReverseProxied:
             environ['SCRIPT_NAME'] = script_name
             path_info = environ['PATH_INFO']
             if path_info.startswith(script_name):
-                environ['PATH_INFO'] = path_info[len(script_name):]
+                environ['PATH_INFO'] = path_info[len(script_name) :]
 
         scheme = environ.get('HTTP_X_SCHEME', '')
         if scheme:
