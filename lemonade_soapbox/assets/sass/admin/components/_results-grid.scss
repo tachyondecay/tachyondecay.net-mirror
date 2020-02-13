@@ -1,0 +1,196 @@
+/**
+ * _results-grid.scss
+ *
+ * Grid for a results page.
+ */
+
+.results-grid {
+  display: flex;
+  flex-flow: column;
+
+  @include mq($from: tablet) {
+    display: grid;
+    align-items: start;
+    grid-gap: var(--unit);
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-areas:
+      "sidebar main main main";
+
+    margin: var(--unit-large) auto;
+    max-width: $max-width;
+
+    & > .jumplink {
+      display: none;
+    }
+
+    .page-sidebar {
+      grid-area: sidebar;
+    }
+
+    .main-panel {
+      grid-area: main;
+    }
+  }
+
+  @include mq($from: desktop) {
+    grid-template-columns: repeat(5, 1fr);
+    grid-gap: var(--unit-large);
+
+    .main-panel {
+      grid-column: 2 / span 4;
+    }
+  }
+
+  .jumplink {
+    order: 1;
+
+    a {
+      display: block;
+      padding: var(--unit-tiny) var(--unit-tiny);
+
+      color: $snow-white;
+      text-align: center;
+
+      background: $blue-grey;
+
+      &:hover, &:focus {
+        font-weight: bold;
+        background: $blue;
+      }
+    }
+  }
+
+  > .main-panel {
+    order: 2;
+  }
+
+  > .page-sidebar {
+    order: 3;
+
+    margin-top: var(--unit-large);
+
+    @include mq($from: tablet) {
+      margin-top: 0;
+    }
+  }
+}
+
+.results-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  .result-item {
+    margin: var(--unit-small) 0;
+
+    @include mq($from: tablet) {
+      margin: var(--unit) 0;
+    }
+
+    @include mq($from: desktop) {
+      margin: var(--unit-large) 0;
+    }
+  }
+}
+
+.result-item {
+  --cover-width: 50px;
+  display: grid;
+  grid-template-columns: calc(var(--cover-width) + var(--unit-small)) 1fr;
+  grid-auto-rows: minmax(0, auto);
+  grid-template-areas: 
+      "img title"
+      "img footer"
+      "img review";
+
+  @include mq($from: tablet) {
+    --cover-width: 75px;
+  }
+
+  @include mq($from: desktop) {
+    --cover-width: 100px;
+  }
+
+  .details {
+    margin: 0;
+
+    color: $grey;
+
+    & dt, & dd {
+        display: inline-block;
+        margin: 0;
+        font-size: 0.75rem;
+    }
+
+    @include mq($from: tablet) {
+      & dd {
+        margin-right: var(--unit-small);
+      }
+    }
+  }
+
+  > .title {
+    grid-area: title;
+    margin: 0;
+    max-height: rvr(2);
+    overflow: hidden;
+
+    font-size: 1.1rem;
+    line-height: rvr(1);
+
+    @include mq($from: tablet) {
+      font-size: 1.2rem;
+    } 
+  }
+
+  > .cover {
+    display: block;
+    grid-area: img;
+
+    margin-right: var(--unit-small);
+    width: var(--cover-width);
+
+  }
+
+  > footer {
+    grid-area: footer;
+    // margin-top: calc(-1 * var(--unit-tiny));
+  }
+
+  > .review {
+    grid-area: review;
+    max-height: rvr(2.25);
+    overflow: hidden;
+
+    font-size: 0.75rem;
+    line-height: rvr(0.75);
+
+    display: none;
+
+    @include mq($from: tablet) {
+      display: block;
+    }
+  }
+
+  .star {
+    font-size: 0.5rem;
+
+    @include mq($from: tablet) {
+      font-size: 0.75rem;
+    }
+  }
+
+  .star.-full {
+    @include sprite(star-full);
+  }
+
+  .star.-empty {
+    @include sprite(star-empty);
+  }
+}
+
+.page-sidebar {
+  > .search-filter {
+    margin: var(--unit) 0;
+  }
+}

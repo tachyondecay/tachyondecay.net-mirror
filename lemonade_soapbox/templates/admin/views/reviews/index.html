@@ -4,91 +4,90 @@
 {% block body_main %}
 {{ super() }}
 
-<div class="o-wrapper">
-<section class="o-grid--column o-grid--flip@desktop o-grid--center c-results u-margin-vertical">
+<div class="results-grid">
 
-    <header class="o-grid__cell c-results__filter u-flex-1/4@desktop u-padding-horizontal u-padding-vertical-none">
-        <h1 class="u-hidden-visually">Filters</h1>
+<p class="jumplink"><a href="#page-sidebar">Filter these results</a></p>
 
-        <div class="o-grid o-grid--auto">
+<div class="page-sidebar" id="page-sidebar">
+<div class="search-filter -status">
+    <h3 class="label">Status</h3>
 
-            <section class="o-grid__cell c-filter-facet u-margin-bottom-small u-flex-1/4">
-                <h2 class="u-accent u-h4 u-margin-bottom-tiny">Status</h2>
+    <ul>
+        {% for status in status_breakdown %}
+        <li>
+            <a href="?status={{status[0]}}" class="link {{' -current' if current_status==status[0]}}">
+                <span class="text">{{status[0]|capitalize }}</span>
+                <span class="count">{{ status[1] }}</span>
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
 
-                <ul class="o-list-bare c-filter-facet__list">
-                    {% for status in status_breakdown %}
-                        <a href="?status={{status[0]}}" class="c-filter-facet__link {{'c-filter-facet__link--current' if current_status==status[0]}}">
-                            <span class="c-filter-facet__link-text">{{status[0]|capitalize }}</span>
-                            <span class="c-filter-facet__count">{{ status[1] }}</span>
-                        </a>
-                    </li>
-                    {% endfor %}
-                </ul>
-            </section>
+<div class="search-filter -tags">
+    <h3 class="label">Top 10 Tags</h3>
+{#     <input type="text" placeholder="Search for tag…" class="text-input js-autocomplete js-tag-search" data-src="{{ url_for('api.tags_lookup') }}" /> #}
+    <ul>
+        {% for tag in tags %}
+        <li>
+            <a href="{{ url_for('admin.search', q='tag:' + tag[0].handle) }}" class="link">
+                <span class="text">{{ tag[0].label }}</span>
+                <span class="count">{{ tag[1] }}</span>
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+</div>
 
-            <section class="o-grid__cell c-filter-facet u-flex-1/4">
-                <h2 class="u-accent u-h4 u-margin-bottom-tiny">Tags</h2>
+<section class="main-panel">
+<main>
+{% if posts %}
+    <h2 class="_hide">Results</h1>
+    <ol class="results-list">
+    {% for post in posts %}
+        <li>
+            <article class="result-item">
+                <h2 class="title"><a href="{{ url_for('.edit_review', id=post.id) }}" title="Edit review">{{ post.title }}</a></h2>
+                <img src="/media/book_covers/{{ post.book_cover }}" alt="" class="cover" />
+                <footer>
+                    <dl class="details">
+                        <dt class="_hide">Author</dt>
+                        <dd><a href="{{ url_for('.reviews', book_author=post.book_author) }}">{{ post.book_author }}</a></dd>
 
-                <ul class="o-list-bare c-filter-facet__list">
-                    <li class="u-margin-top-small">
-                        <input type="text" placeholder="Search for tag…" class="o-text-input o-text-input--blend u-1/1 js-autocomplete js-tag-search" data-src="{{ url_for('api.tags_lookup') }}" />
-                    </li>
-                    {% for tag in tags %}
-                    <li>
-                        <a href="{{ url_for('admin.search', q='tag:' + tag[0].handle) }}" class="c-filter-facet__link">
-                            <span class="c-filter-facet__link-text">{{ tag[0].label }}</span>
-                            <span class="c-filter-facet__count">{{ tag[1] }}</span>
-                        </a>
-                    </li>
-                    {% endfor %}
-                </ul>
-            </section>
-        </div>
+                        <dt>Finished</dt>
+                        <dd><time datetime="{{ post.date_finished.format('YYYY-MM-DD') }}">{{ post.date_finished.format('MMM DD, YYYY') }}</time></dd>
 
+                        <dt class="_hide">Rating</dt>
+                        <dd title="{{ post.rating }} of 5 stars">
+                            {% for star in range(5) %}
+                                {% if star <= post.rating %}
+                                <i class="star -full"></i>
+                                {% else %}
+                                <i class="star -empty"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </dd>
+                    </dl>
+                </footer>
 
-    </header>
+                <div class="review">
+                    {% if post.summary %}
+                        {{ post.summary }}
+                    {% else %}
+                        {{ post.body_html|striptags|truncate(300) }}
+                    {% endif %}
+                </div>
+            </article>
+        </li>
+    {% endfor %}
+    </ol>
 
-
-    {% if posts %}
-            <ol class="c-results__list">
-            {% for post in posts %}
-                <li>
-                    <article class="c-results__item">
-                        <h2 class="c-results__title"><a href="{{ url_for('.edit_review', id=post.id) }}" title="Edit review">{{ post.title }}</a></h2>
-                        <img src="/media/book_covers/{{ post.book_cover }}" alt="" class="c-results__image" />
-                        <footer>
-                            <dl class="c-results__details">
-                                <dt class="u-hidden-visually">Author</dt>
-                                <dd><a href="{{ url_for('.reviews', book_author=post.book_author) }}">{{ post.book_author }}</a></dd>
-
-                                <dt>Finished</dt>
-                                <dd><time datetime="{{ post.date_finished.format('YYYY-MM-DD') }}">{{ post.date_finished.format('MMM DD, YYYY') }}</time></dd>
-
-                                <dt class="u-hidden-visually">Rating</dt>
-                                <dd title="{{ post.rating }} of 5 stars">
-                                    {% for star in range(5) %}
-                                        {% if star <= post.rating %}
-                                        <i class="i--star-full"></i>
-                                        {% else %}
-                                        <i class="i--star-empty"></i>
-                                        {% endif %}
-                                    {% endfor %}
-                                </dd>
-                            </dl>
-                        </footer>
-
-                        <div class="c-results__review">
-                            {% if post.summary %}
-                                {{ post.summary }}
-                            {% else %}
-                                {{ post.body_html|striptags|truncate(300) }}
-                            {% endif %}
-                        </div>
-                    </article>
-                </li>
-            {% endfor %}
-            </ol>
-    {% endif %}
+    <p class="jumplink"><a href="#top">Back to Top</a></p>
+{% else %}
+    <div class="noresults">No reviews found for the selected criteria.</div>
+{% endif %}
+</main>
 </section>
 </div>
 {% endblock %}

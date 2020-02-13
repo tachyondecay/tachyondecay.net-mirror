@@ -1,0 +1,65 @@
+/**
+ * _typography.scss
+ *
+ * Font, line-height, text-decoration, etc.
+ */
+
+/**
+ * Sensible default global styles and variables for responsive vertical rhythm
+ */
+html {
+  --baseline: 1.5;
+  --unit: #{rvr(1)};
+  --unit-tiny: #{rvr(0.25)};
+  --unit-small: #{rvr(0.5)};
+  --unit-large: #{rvr(1.5)};
+  --unit-huge: #{rvr(2)};
+
+  font-size: $base-font-size;
+  line-height: var(--baseline);
+
+  @include mq($from: desktop) {
+    --unit: #{$base-font-size * 1.5 * 1.25};
+    font-size: #{$base-font-size * 1.25};
+    line-height: rvr(1.25);
+  }
+}
+
+body {
+  color: $black;
+  font-family: $f-sans;
+}
+
+a {
+  color: $purple;
+  transition: $global-transition;
+
+  &:hover, &:focus {
+    color: $blue;
+    text-decoration: none;
+  }
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: $f-accent;
+}
+
+h1, ._h1 {
+  font-size: 1.8rem;
+  line-height: rvr(2);
+}
+
+h2, ._h2 {
+  font-size: 1.6rem;
+  line-height: rvr(1.5);
+}
+
+h3, ._h3 {
+  font-size: 1.4rem;
+  line-height: rvr(1.5);
+}
+
+h4, ._h4 {
+  font-size: 1.2rem;
+  line-height: rvr(1);
+}

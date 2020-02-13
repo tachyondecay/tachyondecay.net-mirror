@@ -10,7 +10,7 @@
         {% endblock %}
 
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fjalla+One|PT+Sans:400,700"/>
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/admin/admin.css') }}"/>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/admin/basic.css') }}"/>
         {% block styles %}{% endblock %}
 
         <script type="text/javascript">
@@ -27,19 +27,18 @@
         <script src="{{ url_for('static', filename='js/vendor/tag-it.min.js') }}"></script>
         <script src="{{ url_for('static', filename='js/vendor/paste.js') }}"></script>
         <script src="{{ url_for('static', filename='js/vendor/easymde.min.js') }}"></script>
-        {% block scripts %} {% endblock %}
         <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+
+        {% block scripts %} {% endblock %}
     </head>
     <body class="no-js {% block body_classes %}{% endblock %}">
-        {% block body_main %}
-        <header class="page-title" id="top">
-            {% block page_title_body %}
-            <h1 class="title">{{ page_title }}</h1>
-            {% if subtitle %}<p class="subtitle">{{ subtitle }}</p>{% endif %}
-            {% endblock page_title_body %}
-
+        <main class="page-wrapper">
+            {% block body_main %}
+            <h1 class="title">
+                {% block page_title_body %} {{ page_title }} {% endblock page_title_body %}
+            </h1>
             {% block header_end %}{% endblock header_end %}
-        </header>
-        {% endblock body_main %}
+            {% endblock body_main %}
+        </main>
     </body>
 </html>

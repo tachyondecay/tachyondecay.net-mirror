@@ -1,0 +1,12 @@
+/**
+ * _functions.scss
+ *
+ * Helper functions.
+ */
+
+/// Create vertical rhythm based on --unit set in media query
+/// @param {Number} $multiple - Number of rhthym units
+/// @return A CSS calc statement that can be assigned to a CSS property
+@function rvr($multiple) {
+  @return calc(var(--baseline) * #{$multiple} * 1rem);
+}

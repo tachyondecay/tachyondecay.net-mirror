@@ -2,7 +2,7 @@
     {% with notify = get_flashed_messages(category_filter=category_filter, with_categories=true) %}
     {% if notify %}
         {%- for category, msg in notify %}
-        <div class="c-notification c-notification--dismissable c-notification--{{ category }}">{{ msg|safe }}</div>
+        <div class="notification -dismissable -{{ category }}">{{ msg|safe }}</div>
         {% endfor -%}
     {% endif %}
     {% endwith %}

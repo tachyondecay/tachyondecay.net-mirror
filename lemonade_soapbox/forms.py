@@ -34,8 +34,9 @@ class ButtonWidget:
     """Widget for SubmitFields that uses the button element instead."""
 
     def __call__(self, field, **kwargs):
-        button_params = html_params(class_=kwargs.get('class'),
-                                    name=kwargs.get('name', field.name))
+        button_params = html_params(
+            class_=kwargs.get('class'), name=kwargs.get('name', field.name)
+        )
         html = '<button type="submit" value="true" {}>'.format(button_params)
         if 'icon_before' in kwargs:
             html += '<span class="i--{}"></span> '.format(kwargs['icon_before'])
@@ -58,9 +59,17 @@ class DateTimeWidget:
             time = dt.format('HH:mm:ss')
         date_class = kwargs.get('date_class', '')
         time_class = kwargs.get('time_class', '')
-        date_params = html_params(name=field.name, id=id + '-date', value=date, **kwargs)
-        time_params = html_params(name=field.name, id=id + '-time', step='1', value=time, **kwargs)
-        return HTMLString('<span class="{}"><input type="date" {}/></span><span class="{}"><input type="time" {}/></span>'.format(date_class, date_params, time_class, time_params))
+        date_params = html_params(
+            name=field.name, id=id + '-date', value=date, **kwargs
+        )
+        time_params = html_params(
+            name=field.name, id=id + '-time', step='1', value=time, **kwargs
+        )
+        return HTMLString(
+            '<span class="{}"><input type="date" {}/></span><span class="{}"><input type="time" {}/></span>'.format(
+                date_class, date_params, time_class, time_params
+            )
+        )
 
 
 class DateTimeLocalField(DateTimeField):
@@ -68,6 +77,7 @@ class DateTimeLocalField(DateTimeField):
     DateTimeField that assumes input is in app-configured timezone and converts
     to UTC for further processing/storage.
     """
+
     widget = DateTimeWidget()
 
     def process_formdata(self, valuelist):
@@ -75,10 +85,16 @@ class DateTimeLocalField(DateTimeField):
         if valuelist:
             date_str = ' '.join(valuelist)
             try:
-                self.data = arrow.get(date_str).replace(tzinfo=current_app.config['TIMEZONE']).to('UTC')
+                self.data = (
+                    arrow.get(date_str)
+                    .replace(tzinfo=current_app.config['TIMEZONE'])
+                    .to('UTC')
+                )
             except arrow.parser.ParserError as e:
                 current_app.logger.warn('Invalid datetime value submitted: %s', e)
-                raise ValueError('Not a valid datetime value. Looking for YYYY-MM-DD HH:mm.')
+                raise ValueError(
+                    'Not a valid datetime value. Looking for YYYY-MM-DD HH:mm.'
+                )
 
 
 # Note: This class is currently unused because DateRangeType from sqlalchemy-utils
@@ -88,7 +104,10 @@ class DateRangeField(StringField):
 
     def _value(self):
         if self.data:
-            start, end = [arrow.get(k).format('YYYY/MM/DD') for k in [self.data.lower, self.data.upper]]
+            start, end = [
+                arrow.get(k).format('YYYY/MM/DD')
+                for k in [self.data.lower, self.data.upper]
+            ]
             return f'{start} - {end}'
         return ''
 
@@ -131,9 +150,10 @@ class ArticleForm(ModelForm):
     class Meta:
         model = Article
         only = ['body', 'date_published', 'show_updated', 'title', 'summary', 'handle']
-    date_published = DateTimeLocalField('Published',
-                                        format='%Y-%M-%D %H:%m',
-                                        validators=[validators.Optional()])
+
+    date_published = DateTimeLocalField(
+        'Published', format='%Y-%M-%D %H:%m', validators=[validators.Optional()]
+    )
     tags = TagListField('Tags')
     publish = SubmitField('Publish', widget=ButtonWidget())
     save = SubmitField('Save', widget=ButtonWidget())
@@ -145,30 +165,47 @@ class ReviewForm(ModelForm):
     class Meta:
         model = Review
         only = [
-            'body', 'date_published', 'show_updated', 'summary',
-            'handle', 'book_author', 'title', 'book_id', 'goodreads_id',
-            'book_cover', 'dates_read', 'rating', 'spoilers'
+            'body',
+            'date_published',
+            'show_updated',
+            'summary',
+            'handle',
+            'book_author',
+            'title',
+            'book_id',
+            'goodreads_id',
+            'book_cover',
+            'dates_read',
+            'rating',
+            'spoilers',
         ]
-    date_published = DateTimeLocalField('Published',
-                                        format='%Y-%M-%D %H:%m',
-                                        validators=[validators.Optional()])
+
+    date_published = DateTimeLocalField(
+        'Published', format='%Y-%M-%D %H:%m', validators=[validators.Optional()]
+    )
     goodreads_id = IntegerField(widget=TextInput(), validators=[validators.Optional()])
-    book_cover = FileField(validators=[
-        FileAllowed(['jpg', 'jpeg', 'png', 'gif']),
-        validators.Optional()
-    ])
-    remove_cover = BooleanField('Remove uploaded cover', validators=[validators.Optional()])
+    book_cover = FileField(
+        validators=[FileAllowed(['jpg', 'jpeg', 'png', 'gif']), validators.Optional()]
+    )
+    remove_cover = BooleanField(
+        'Remove uploaded cover', validators=[validators.Optional()]
+    )
     pasted_cover = HiddenField(validators=[validators.Optional()])
     handle = StringField('URL Handle', validators=[validators.Optional()])
-    rating = RadioField('Rating',
-                        choices=[
-                            (5, '5 out of 5 stars'), (4, '4 out of 5 stars'),
-                            (3, '3 out of 5 stars'), (2, '2 out of 5 stars'),
-                            (1, '1 out of 5 stars'), (0, 'No rating')
-                        ],
-                        coerce=int,
-                        default=0,
-                        validators=[validators.Optional()])
+    rating = RadioField(
+        'Rating',
+        choices=[
+            (5, '5 out of 5 stars'),
+            (4, '4 out of 5 stars'),
+            (3, '3 out of 5 stars'),
+            (2, '2 out of 5 stars'),
+            (1, '1 out of 5 stars'),
+            (0, 'No rating'),
+        ],
+        coerce=int,
+        default=0,
+        validators=[validators.Optional()],
+    )
     tags = TagListField('Shelves')
     publish = SubmitField('Publish', widget=ButtonWidget())
     save = SubmitField('Save', widget=ButtonWidget())
@@ -186,4 +223,6 @@ class ReviewForm(ModelForm):
 
 
 class SignInForm(Form):
-    email = EmailField('Email address', validators=[validators.Email()])
+    email = EmailField(
+        'Email address', validators=[validators.InputRequired(), validators.Email()]
+    )

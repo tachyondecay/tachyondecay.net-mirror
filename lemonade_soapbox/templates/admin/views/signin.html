@@ -1,22 +1,20 @@
-{% extends 'admin/layouts/master.html' %}
+{% extends 'admin/layouts/basic.html' %}
 {% from 'macros.html' import render_field %}
 
 {% block body_main %}
-{{ super () }}
+<header class="page-title">
+    <h1 class="title">Lemonade Soapbox Admin</h1>
+    <p class="subtitle">Sign-in required</p>
+</header>
+
+{{ notifications() }}
 
 <form method="post" class="signin-form">
-
-<div class="o-grid--column o-grid--middle u-margin-top">
-    <p class="">Enter your email to receive a sign-in link.</p>
-    <div class="o-grid o-grid--bottom">
-        <div class="">
-            {{ render_field(signin_form.email) }}
-        </div>
-        <div class="u-margin-left-small">
-            <input type="submit" class="c-btn" value="Sign In"/>
-        </div>
+    <p class="text">Enter your email to receive a sign-in link.</p>
+    <div class="field">
+        <label title="enter email address">{{ signin_form.email }}</label>
+        <input type="submit" value="Sign In">
     </div>
-</div>
 {{ signin_form.csrf_token }}
 </form>
 {% endblock %}

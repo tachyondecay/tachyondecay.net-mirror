@@ -1,0 +1,56 @@
+/**
+ * _page-title.scss
+ *
+ * Masthead with page title/subtitle
+ *
+ * 1. h1.title has a faux border via bg-gradient
+ * 2. This "bites" a chunk out of the border.
+ */
+
+.page-title {
+  display: flex;
+  flex-flow: column-reverse;
+  position: relative;
+
+  margin: var(--unit) var(--unit-small);
+
+  @include mq($from: desktop) {
+    max-width: $max-width;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  > .title:before { /* 2 */
+    content: " ";
+    position: absolute;
+    bottom: 0;
+    left: 1.25rem;
+
+    height: calc(var(--unit-tiny) + 1px);
+    width: 0.75rem;
+
+    background: $white;
+  }
+
+  > .title {
+    margin: 0;
+    padding-bottom: var(--unit-small);
+
+    line-height: rvr(1.4);
+
+    background: linear-gradient(0deg, $purple var(--unit-tiny),
+      transparent var(--unit-tiny)); /* 1 */
+  }
+
+  > .subtitle {
+    margin: 0 0 var(--unit-tiny);
+
+    font-family: $f-accent;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+  }
+
+  > .subtitle:after {
+    content: " »";
+  }
+}

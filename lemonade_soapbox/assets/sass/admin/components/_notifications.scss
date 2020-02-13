@@ -1,0 +1,73 @@
+/**
+ * _notificaions.scss
+ *
+ * Component: Notification messages displayed like banners.
+ */
+
+/**
+ * The base notification class
+ *
+ * 1. Set vars for bg and text colour; these can be customized depending on 
+ *    notification type.
+ * 2. "Dismissable" notifications will have an X link added via JS.
+ * 3. 
+ */
+.notification {
+  --bg: #{darken($snow-white, 3)};  /* 1 */
+  --colour: #{$blue-grey};
+  padding: var(--unit-tiny) var(--unit-small) var(--unit-tiny) var(--unit-large);
+  position: relative;
+
+  background-color: var(--bg);
+  background: linear-gradient(120deg, var(--bg), $snow-white);
+  border: 1px solid var(--colour);
+  border-radius: $global-radius;
+  color: var(--colour);
+  font-family: $f-accent;
+  font-size: 0.75rem;
+  line-height: rvr(0.75);
+
+  &.-dismissable {
+    padding-right: var(--unit); /* 2 */
+  }
+
+  > .dismiss {  /* 2 */
+    display: block;
+    position: absolute;
+    top: 3px;
+    right: 3px;
+
+    @include sprite(cross, $colour: $blue-grey);
+    cursor: pointer;
+    font-size: 0.8em;
+  }
+
+  &.-error {
+    --colour: #{$red};
+  }
+
+  &.-success {
+    --colour: #{$green};
+  }
+}
+
+/* Icons that indicate type of notification */
+.notification:before {
+  content: "";
+  height: 1em;
+  position: absolute;
+  left: var(--unit-tiny);
+  top: 50%;
+  transform: translate(0,-50%);
+
+  @include sprite(info, $colour: $blue-grey);
+  font-size: 1.4rem;
+}
+
+.notification.-error:before {
+  @include sprite(warning, $colour: $red);
+}
+
+.notification.-success:before {
+  @include sprite(checkmark, $colour: $green);
+}

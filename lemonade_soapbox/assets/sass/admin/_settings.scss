@@ -1,0 +1,56 @@
+/**
+ * _settings.scss
+ *
+ * Configurable elements common to all backend theming.
+ */
+
+/**
+ * Colours
+ *
+ * Start with the neutrals, least to most saturated.
+ * Then the rainbow, with some variants.
+ * Finally, some sensible defaults for various decorations.
+ */
+$white: #fff;
+$snow-white: #f8f8f8;
+$grey: #6e6e6e;
+$charcoal: #242424;
+$black: #383838;
+
+
+$red: #993835;
+$orange: #fc814a;
+$green: #6c9e5b;
+$blue: #4b7c91;
+$blue-grey: #657177;
+$purple: #8c5383;
+$purple-grey: #756a73;
+
+
+$c-border: $grey;
+$c-shadow: rgba(0, 0, 0, 0.5);
+
+
+/**
+ * Font families
+ */
+$f-serif: Garamond, Palatino, Times New Roman, serif;
+$f-sans: PT Sans, Verdana, Arial, sans-serif;
+$f-accent: Fjalla One, Verdana, sans-serif;
+
+
+/**
+ * Some UI components can be defined as variables for consistent styling.
+ */
+$global-radius: 5px !default;
+$global-transition: all 300ms ease-in-out !default;
+
+
+/**
+ * Vertical rhythm
+ */
+
+$base-font-size: 16px !default;
+
+$max-width: 70em !default;
+$max-text-width: 60em !default;

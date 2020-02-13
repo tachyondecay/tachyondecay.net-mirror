@@ -48,12 +48,10 @@ function BackendInit() {
      */
     
     // Add datepickers to the date inputs
-    if(!Modernizr.inputtypes.date) {
-        $('input[type=date]')
-            .datepicker({
-                dateFormat: 'yy-mm-dd',
-            });
-    }
+    $('input[type=date]')
+        .datepicker({
+            dateFormat: 'yy-mm-dd',
+        });
 
     // Add timepickers to the time inputs, courtesy jquery-timepicker
     $('input[type=time]').timepicker({
@@ -143,10 +141,11 @@ function BackendInit() {
      */
 
     // Add a link to dismiss notifications
-    $('<span title="Dismiss" class="c-notification__dismiss">❌</span>')
-        .appendTo('.c-notification--dismissable')
+    $('<a title="Clear notification" class="dismiss" tabindex></a>')
+        .appendTo('.-dismissable')
         .click(function(e) {
-            $(this).parents('.c-notification').hide('scale', { origin: ["top", "center"], percent: 25, easing: "easeInOutBack" }, 250);
+            $(this).parents('.notification').hide('scale', { origin: ["top", "center"], percent: 5, easing: "easeInOutBack" }, 750);
+            e.preventDefault();
         });
 }
 

@@ -1,0 +1,40 @@
+
+
+@mixin max-width() {
+  margin: 0 auto;
+  max-width: $max-width;
+}
+
+@mixin max-text-width() {
+  margin: 0 auto;
+  max-width: $max-text-width;
+}
+
+%vmargins-small {
+  margin: var(--unit-small) var(--unit);
+}
+
+%vmargins-standard {
+  margin: var(--unit);
+}
+
+%vmargins-large {
+  margin: var(--unit-large) var(--unit);
+}
+
+._center {
+  text-align: center;
+}
+
+._hide {
+  border: 0 !important;
+  clip: rect(0 0 0 0) !important;
+  clip-path: inset(50%) !important;
+  height: 1px !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+  position: absolute !important;
+  white-space: nowrap !important;
+  width: 1px !important;
+}

@@ -1,0 +1,114 @@
+/**
+ * _search-filter.scss
+ *
+ * List for applying search result filters.
+ */
+
+
+%borderleft-link {
+
+}
+
+%button-link {
+  margin-bottom: calc(var(--unit-tiny) / 2);
+
+  color: $snow-white;
+  text-decoration: none;
+
+  background: $blue;
+  border-radius: $global-radius;
+
+  &:hover {
+    background: $purple;
+  }
+}
+
+.search-filter {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+
+  > .label {
+    display: inline-block;
+    margin: 0;
+
+    font-size: 1rem;
+    line-height: rvr(1.5);
+  }
+
+  > ul {
+    display: inline-flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    list-style: none;
+    margin: 0 0 0 var(--unit-small);
+    padding: 0;
+  }
+
+  .link {
+    display: block;
+    margin: var(--unit-tiny);
+    padding: 0 var(--unit-tiny);
+
+    color: $blue-grey;
+
+    border-left: 4px solid $blue-grey;
+
+    &:hover, &:focus {
+      color: $purple;
+      border-color: $purple;
+      font-weight: bold;
+    }
+
+    &.-current {
+      color: $blue;
+      font-weight: bold;
+      text-decoration: none;
+
+      border-color: $blue;
+    }
+
+    > .count {
+      font-size: 0.8rem;
+    }
+
+    > .count:before {
+      content: "(";
+    }
+
+    > .count:after {
+      content: ")";
+    }
+  }
+}
+
+.search-filter.-tags {
+  flex-direction: column;
+
+  > .label {
+    text-align: center;
+  }
+
+  @include mq($from: tablet) {
+    & > ul {
+      display: block;
+    }
+
+    .link {
+      display: flex;
+      justify-content: space-between;
+      margin: 0;
+      padding: 0 0 0 var(--unit-tiny);
+
+      font-size: 0.9rem;
+      line-height: rvr(0.9);
+      text-decoration: none;
+
+      border-width: 6px;
+    }
+
+    .count:before, .count:after {
+      content: "";
+    }
+  }
+}

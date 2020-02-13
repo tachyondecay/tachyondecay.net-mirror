@@ -1,0 +1,24 @@
+/**
+ * admin.scss
+ *
+ * Corresponds to "master.html" layout for backend.
+ * 
+ * Most backend views will invoke this layout stylesheet.
+ */
+
+@import "settings";
+@import "../common/normalize";
+@import "../vendor/mq";
+@import "../common/functions";
+@import "../common/sprites";
+@import "helpers";
+@import "typography";
+
+@import "components/notifications";
+@import "components/results-grid";
+@import "components/page-title";
+@import "components/search-filter";
+
+
+
+
