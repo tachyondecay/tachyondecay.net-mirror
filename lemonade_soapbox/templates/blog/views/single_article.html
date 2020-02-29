@@ -38,7 +38,7 @@
         </aside>
         {% endif %}
 
-        {% if article.date_published < config.TRANS_DATE %}
+        {% if article.status == 'published' and article.date_published < config.TRANS_DATE %}
         <p class="o-post__note">Note: This post was written before I realized I was trans and/or before I came out online. As such, I might refer to myself as a man or use my deadname. Please read my <a href="/about#name">name policy</a> to understand how you should refer to me.</small></p>
         {% else %}
         {{ article.date_published }} and {{ config.TRANS_DATE }}
