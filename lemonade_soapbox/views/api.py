@@ -1,54 +1,61 @@
 import json
-from flask import abort, Blueprint, current_app, jsonify, render_template, request, Response, url_for
+from flask import (
+    abort, Blueprint, current_app, jsonify,
+    render_template, request, Response, url_for
+)
+from flask_login import login_required
+from flask_wtf import csrf
 from lemonade_soapbox import db
-from lemonade_soapbox.models import Article, Tag
+from lemonade_soapbox.models import Article, Review, Tag
 
 bp = Blueprint('api', __name__)
 
+@bp.route('/csrf/')
+def get_csrf():
+    return csrf.generate_csrf()
 
-@bp.route('/articles/autosave/', methods=['POST'])
+@bp.route('/posts/autosave/', methods=['POST'])
+@login_required
 def autosave():
-    """Autosave the current draft content of an article."""
+    """Autosave the current draft content of a post object."""
     parent = request.form.get('parent')
     body = request.form.get('body')
+    post_type = request.form.get('type').capitalize()
     if parent:
-        article = Article.from_revision(parent)
-        if not article:
+        post = getattr(globals()[post_type], 'from_revision')(parent)
+        if not post:
             abort(404)
-        r = article.new_autosave(body)
-        return jsonify(revision_id=r.id,
-                       date=r.date_created.to(current_app.config['TIMEZONE']).format('HH:mm:ss, DD MMM YYYY'))
+        r = post.new_autosave(body)
+        db.session.commit()
+        date_created = r.date_created.to(
+            current_app.config['TIMEZONE']
+        ).format('HH:mm:ss, DD MMM YYYY')
+        return jsonify(revision_id=r.id, date=date_created)
     else:
-        # We're composing a brand new article, so let's create a new draft entry
+        # We're composing a brand new post, so let's create a new draft entry
         # in the database.
-        article = Article(title=request.form.get('title'), handle=request.form.get('handle'))
-        article.new_revision(new=body, old='')
-        db.session.add(article)
+        post = globals()[post_type](handle=request.form.get('handle'),
+                                    body=body, title=request.form.get('title'))
+        post.new_revision()
+        db.session.add(post)
         db.session.commit()
 
-        return jsonify(revision_id=article.revision_id,
-                       article_id=article.id,
-                       created=article.date_created.to(current_app.config['TIMEZONE']).format('MMM DD, YYYY HH:mm'),
-                       handle=article.handle,
-                       link=article.get_permalink(),
-                       history=render_template('admin/articles/revision_history.html',
-                                               article=article,
-                                               selected_revision=article.revision_id,
-                                               revisions=article.revisions.all()))
-
-
-@bp.route('/articles/slugify/')
-def get_handle():
-    """Create a handle based on a given `title`."""
-    handle = ''
-    title = request.args.get('title')
-    if title:
-        a = Article()
-        handle = a.slugify(title)
-    return jsonify(handle=handle)
-
+        return jsonify(
+            revision_id=post.revision_id,
+            post_id=post.id,
+            created=post.date_created.to(
+                current_app.config['TIMEZONE']
+            ).format('MMM DD, YYYY HH:mm'),
+            handle=post.handle,
+            link=post.get_permalink(),
+            history=render_template(
+                'admin/posts/revision_history.html',
+                post=post
+            )
+        )
 
 @bp.route('/tags/search/')
+@login_required
 def tags_lookup():
     """Returns a list of JSON objects of tags that begin with a given `term` GET parameter."""
     term = request.args.get('term')

@@ -76,14 +76,16 @@
  * File upload
  */
 .o-upload {
-    align-items: end;
-    flex-flow: row wrap;
-    justify-content: space-evenly;
+    display: grid;
+    grid-template-columns: 1fr 100px;
+    grid-gap: $unit-tiny;
 
+    min-height: 100px;
     padding: 0;
 }
 
     .o-upload__field {
+        grid-area: 1 / 1;
         display: flex;
         flex-flow: column nowrap;
         flex: 2;
@@ -93,15 +95,69 @@
         padding: $unit-tiny;
     }
 
-    .o-upload__preview {
-        flex: 1;
-        text-align: center;
+    .o-upload__image {
+        max-height: 100%;
+        max-width: 100%;
+
+        position: relative;
+        z-index: 5;
     }
 
-    .o-upload__image {
-        max-height: 75px;
-    }
+        .o-upload__image--none {
+            display: none;
+        }
 
     .o-upload__input {
         @include inuit-font-size(12px);
+    }
+
+    .o-upload__placeholder {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex: 0 100%;
+
+        height: 100%;
+        width: 100%;
+        position: absolute;
+        top: -500px;
+        left: -500px;
+        z-index: 1;
+
+        @include inuit-font-size(12px);
+
+        background: rgba($white, 0.8);
+        border: 1px dashed $grey--dark;
+        border-radius: $global-radius;
+        color: $grey--dark;
+
+        &:hover {
+            cursor: crosshair;
+        }
+
+        &:hover, &:active, 
+        .o-upload__image--none + &,
+        .o-upload__image:hover + & {
+            top: 0;
+            left: 0;
+            z-index: 100;
+        }
+    }
+
+    .o-upload__preview {
+        grid-area: 1 / 2 / span 2;
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        height: 100px;
+        width: 75px;
+        padding: 0 $unit-tiny;
+
+        text-align: center;
+    }
+
+    .o-upload__remove {
+        grid-row: 2;
     }

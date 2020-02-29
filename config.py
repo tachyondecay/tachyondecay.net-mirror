@@ -1,7 +1,11 @@
+import arrow
 import json
+import logging
 import logging.config
 import os
+from flask.logging import default_handler
 from lemonade_soapbox.logging_config import logging_config
+
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 
@@ -23,14 +27,16 @@ class Config:
     LOGIN_ALLOW_NEW = False
     LOGIN_EMAIL_FLOOD = 10
     LOGIN_TOKEN_EXPIRY = 1500
-    KEEP_REVISIONS = 3
+    REVISION_THRESHOLD = 0.25
     TIMEZONE = 'UTC'
+    TRANS_DATE = arrow.get('2020-02-28')
 
     @classmethod
     def init_app(cls, app):
         if cls.SQLALCHEMY_DATABASE_URI is None:
             app.config['SQLALCHEMY_DATABASE_URI'] = (
-                'sqlite:///' + app.instance_path + 'database.sqlite')
+                'sqlite:///' + app.instance_path + 'database.sqlite'
+            )
         app.config['INDEX_PATH'] = os.path.join(app.instance_path, 'index')
         app.config['LOG_PATH'] = os.path.join(app.instance_path, 'logs')
 
@@ -74,7 +80,9 @@ class Config:
         try:
             if not os.path.exists(app.config['LOG_PATH']):
                 os.makedirs(app.config['LOG_PATH'])
+            # logging.getLogger('werkzeug').removeHandler(default_handler)
             logging.config.dictConfig(data)
+            app.logger.removeHandler(default_handler)
         except Exception as e:
             app.logger.exception('Could not configure logging: %s', e)
 
@@ -98,13 +106,14 @@ class ProductionConfig(Config):
     def init_app(cls, app):
         super().init_app(app)
         if app.config['SECRET_KEY'] == 'ermahgerd':
-            raise Exception('Please configure a unique secret key in your production config file.')
+            raise Exception(
+                'Please configure a unique secret key in your production config file.'
+            )
 
 
 config = {
     'development': DevelopmentConfig,
     'testing': TestingConfig,
     'production': ProductionConfig,
-
-    'default': ProductionConfig
+    'default': ProductionConfig,
 }

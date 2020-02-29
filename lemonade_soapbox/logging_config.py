@@ -41,5 +41,12 @@ logging_config = {
     "root": {
         "level": "INFO",
         "handlers": ["console", "info_file_handler", "error_file_handler"]
+    },
+
+    "loggers": {
+        "werkzeug": {
+            "level": "INFO",
+            "handlers": ["console", "info_file_handler", "error_file_handler"]
+        }
     }
 }

@@ -1,3 +1,14 @@
+/*
+ * Reload CSRF token periodically in case page has been sitting there
+ */
+function refreshCSRF() {
+    $.get('/api/csrf/').done(function(token) {
+        csrf_token = token;
+        console.log('New token ' + token);
+        $('input[name=csrf_token]').val(token);
+    });
+}
+
 function BackendInit() {
     $('body').removeClass('no-js');
 
@@ -8,14 +19,14 @@ function BackendInit() {
     $(document).ajaxSend(function(e, jqxhr, settings) {
         // Automatically CSRF token with request
         if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
-            jqxhr.setRequestHeader("X-CSRFToken", csrf_token)
+            jqxhr.setRequestHeader("X-CSRFToken", csrf_token);
         }
 
         /*
          * If autosaving, we will update the Revision History with an in-progress
          * notification.
          */
-        if(settings.url == (application_root + '/api/articles/autosave/')) {
+        if(settings.url == (application_root + '/api/posts/autosave/')) {
             console.log('Sending autosave request.');
             var current = $('.js-revisions__current:not(.js-is-autosave)');
             if(current.size() > 0) {
@@ -30,7 +41,6 @@ function BackendInit() {
             }
         }
     });
-
 
 
     /*
@@ -107,6 +117,26 @@ function BackendInit() {
         .removeClass('ui-widget ui-widget-content ui-corner-all')
         .addClass('o-text-input o-text-input--blend');
 
+    // Initialize special upload fields!
+    $('.js-image-upload').each(function(i, v) {
+        new MagnificentUpload(v);
+    });
+
+    // Automatically strip GR Review ID from URL
+    $('.js-gr').change(function(e) {
+        const gr_id_regex = /^[a-z\./\:]+([0-9]+)$/i;
+        var matches = $(this).val().match(gr_id_regex);
+        if(matches) {
+            $(this).val(matches[1]);
+        }
+    });
+
+    $('#dates_read').on('apply.daterangepicker', function(e, picker) {
+        if(!$('#date_published-date').val()) {
+            $('#date_published-date').val(picker.endDate.format('YYYY-MM-DD'));
+            $('#date_published-time').val('00:00:00');
+        }
+    });
 
     /*
      * Notifications
@@ -121,7 +151,7 @@ function BackendInit() {
 }
 
 
-var ArticleForm = function(form) {
+var PostForm = function(form) {
     this.form = $(form);
     this.id = this.form.data('id');
     this.body = this.form.find('[name=body]');
@@ -130,7 +160,7 @@ var ArticleForm = function(form) {
     // Initialize autosave logic
     if (this.form.data('autosave')) {
         this.autosaveConfig = {
-            ajaxURL: application_root + '/api/articles/autosave/',
+            ajaxURL: application_root + '/api/posts/autosave/',
             delay: this.form.data('autosave') * 1000
         };
         this.autosaveTimer = setTimeout(this.autosave.bind(this), this.autosaveConfig.delay);
@@ -140,26 +170,28 @@ var ArticleForm = function(form) {
     }
 
 
-    // Initialize SimpleMDE on the body
-    this.simplemde = new SimpleMDE({
+    // Initialize EasyMDE on the body
+    this.editor = new EasyMDE({
         'element': this.body[0],
-        // 'spellChecker': false,
+        'spellChecker': true,
         'toolbar': ['preview', 'side-by-side', 'fullscreen']
     });
 }
 
 // Autosave articles after a delay
-ArticleForm.prototype.autosave = function() {
+PostForm.prototype.autosave = function() {
     var self = this;
-    var new_content = self.simplemde.value();
-    var title = $(self.form).find('[name=title]');
-    var handle = $(self.form).find('[name=handle]');
+    var new_content = self.editor.value();
+    var title = self.form.find('.c-page-title__input');
+    var handle = self.form.find('[name=handle]');
+    var type = self.form.data('type');
 
     // Only autosave if:
     //  * The article has a title
     //  * There have been changes
-    if(title && self.old_content != new_content) {
+    if(title.val() && self.old_content != new_content) {
         $.post(self.autosaveConfig.ajaxURL, {
+            'type': type,
             'body': new_content,
             'parent': self.body.data('revision'),
             'title': title.val(),
@@ -170,9 +202,9 @@ ArticleForm.prototype.autosave = function() {
             // If there was an autosave error, destroy it!
             self.form.find('.js-autosave-error').fadeOut().remove();
 
-            if(data.article_id) {
+            if(data.post_id) {
                 /*
-                 * We created a new article draft.
+                 * We created a new post draft.
                  *
                  * data.history contains a revision history section we can 
                  * append.
@@ -180,7 +212,7 @@ ArticleForm.prototype.autosave = function() {
                  * Then, add the revision id to the body field and bind the 
                  * restore function to the new "restore autosave" link.
                  */
-                self.form.data('article', data.article_id);
+                self.form.data('id', data.post_id);
                 $(data.history).hide().appendTo('#post-metadata').slideDown(500);
                 self.body.data('revision', data.revision_id);
                 self.bindAutosaveRestores();
@@ -190,14 +222,14 @@ ArticleForm.prototype.autosave = function() {
                     handle.val(data.handle);
                 }
                 // Change URL
-                history.replaceState(null, null, location.href + data.article_id + "/");
-                $('.c-page-title__action').text('Editing Blog Post »');
+                history.replaceState(null, null, location.href + data.post_id + "/");
+                $('.c-page-title__action').text('Editing ' + type + ' »');
                 $('.js-view-post').attr('href', data.link);
                 $('.js-date-created').prepend('<small>Created ' + data.created + '</small>');
                 $('.js-reveal-on-creation').removeClass('u-hidden').show('scale');
             } else {
                 /*
-                 * Article already exists.
+                 * Post already exists.
                  *
                  * Grab the revision id and date to amend the Revision History 
                  * section.
@@ -215,7 +247,12 @@ ArticleForm.prototype.autosave = function() {
             }
         }).fail(function(jqxhr, textStatus, error) {
             console.log(error);
-            $('.js-revisions', self.form).append('<div class="c-notification c-notification--error js-autosave-error">Autosave failed.</div>');
+            $('.js-revisions', self.form)
+                .find('.c-notification--error')
+                    .fadeOut('fast')
+                    .remove()
+                    .end()
+                .append('<div class="c-notification c-notification--error js-autosave-error">Autosave failed.</div>');
         });
     } else {
         console.log('Autosave not triggered.');
@@ -224,12 +261,12 @@ ArticleForm.prototype.autosave = function() {
 }
 
 // Restore an existing autosave
-ArticleForm.prototype.bindAutosaveRestores = function() {
+PostForm.prototype.bindAutosaveRestores = function() {
     var self = this;
     $('.js-autosave-notification, .js-is-autosave').on('click', 'a', function(e) {
         e.preventDefault();
         self.old_content = $(this).data('content'); // Prevent another autosave triggering
-        self.simplemde.value(self.old_content);
+        self.editor.value(self.old_content);
         $('.js-autosave-notification').fadeOut();
         var success = $('<div/>');
         success
@@ -244,14 +281,106 @@ ArticleForm.prototype.bindAutosaveRestores = function() {
 }
 
 
+var MagnificentUpload = function(container) {
+    var self = this;
+    self.container = $(container);
+    self.input = self.container.find('.o-upload__input');
+    self.image = self.container.find('.o-upload__image');
+    self.pasted = self.container.find('input[type=hidden]');
+    self.placeholder = self.container.find('.o-upload__placeholder');
+    self.remove = self.container.find('.o-upload__remove');
+
+    self.css_no_img = 'o-upload__image--none';
+
+    // Hide the remove toggle if no image currently uploaded
+    if(self.image.hasClass(self.css_no_img)) {
+        self.remove.hide();
+    }
+    else {
+        // Let's save the original image src in case we want to restore it
+        self.original_src = self.image.attr('src');
+    }
+
+    // Create a pastable area for the image uploaded
+    self.image.parent()
+        .pastableNonInputable()
+        .on('pasteImage', function(e, data) {
+            // Replace the preview image with pasted image
+            // and show if necessary
+            self.image.attr({
+                'src': data.dataURL,
+                'alt': self.container.data('alt')
+            }).removeClass(self.css_no_img);
+
+            self.pasted.val(data.dataURL);
+
+            // Show the remove toggle, if necessary
+            self.resetRemoveToggle();
+
+            // Clear file field input
+            self.input.val(null);
+
+            // Change placeholder text
+            self.placeholder
+                .dblclick(function(e) {
+                    if(self.original_src) {
+                        self.image.attr('src', self.original_src);
+                    } else {
+                        self.image.addClass(self.css_no_img);
+                    }
+                    self.resetRemoveToggle(false);
+                    $(this).text('Paste image here');
+
+                    self.pasted.val('');
+                })
+                .html('Double-click to reset');
+        });
+
+    // Bind event to the remove toggle to clear image preview and file field
+    this.remove.find('input[type=checkbox]').change(function(e) {
+        if($(this).prop('checked')) {
+            self.input.val(null);
+            self.image
+                .attr({ 'src': '', alt: '' })
+                .addClass(self.css_no_img);
+            self.placeholder.html('Paste image here');
+        }
+    });
+
+    // Generate preview thumbnail when image selected in file input
+    self.input.change(function(e) {
+        const file = this.files[0];
+        if (file.type.startsWith('image/')){
+            const reader = new FileReader();
+            reader.onload = (function(aImg) { return function(e) { aImg.src = e.target.result; }; })(self.image[0]);
+            reader.readAsDataURL(file);
+
+            self.image.removeClass(self.css_no_img);
+            self.resetRemoveToggle();
+        }
+    });
+}
+
+MagnificentUpload.prototype.resetRemoveToggle = function(show = true) {
+    this.remove.find('input[type=checkbox]').prop('checked', false);
+    if(show) {
+        this.remove.show('fast');
+    } else {
+        this.remove.hide('fast');
+    }
+}
+
+
 
 $(function() {
     // Initialize various backend UI components
     BackendInit();
 
+    var prevent_csrf_expiry = setInterval(refreshCSRF, 1000 * 3600);
+
     // Largely deals with article autosaving
     if($('#write').size() > 0) {
-        article = new ArticleForm('#write');
+        article = new PostForm('#write');
     }
 });
 

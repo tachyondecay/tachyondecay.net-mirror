@@ -1881,6 +1881,15 @@ table {
       margin-top: 0;
       text-align: right; } }
 
+.o-post__note {
+  margin: 12px;
+  border: 0;
+  color: #800080;
+  font-family: Oswald, Verdana, Arial, sans-serif;
+  font-size: 12px;
+  font-size: 0.6666666667rem;
+  line-height: 2.25; }
+
 /* ==========================================================================
    #BUTTONS
    ========================================================================== */

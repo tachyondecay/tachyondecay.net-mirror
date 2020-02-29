@@ -83,3 +83,13 @@
   }
 }
 
+.o-post__note {
+  margin: $unit-small;
+
+  border: 0;
+
+  color: $brown;
+  font-family: $sans-serif;
+  @include font-size(12px);
+}
+

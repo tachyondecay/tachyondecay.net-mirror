@@ -1,0 +1,94 @@
+{% extends 'admin/layouts/master.html' %}
+{% from 'macros.html' import notifications %}
+
+{% block body_main %}
+{{ super() }}
+
+<div class="o-wrapper">
+<section class="o-grid--column o-grid--flip@desktop o-grid--center c-results u-margin-vertical">
+
+    <header class="o-grid__cell c-results__filter u-flex-1/4@desktop u-padding-horizontal u-padding-vertical-none">
+        <h1 class="u-hidden-visually">Filters</h1>
+
+        <div class="o-grid o-grid--auto">
+
+            <section class="o-grid__cell c-filter-facet u-margin-bottom-small u-flex-1/4">
+                <h2 class="u-accent u-h4 u-margin-bottom-tiny">Status</h2>
+
+                <ul class="o-list-bare c-filter-facet__list">
+                    {% for status in status_breakdown %}
+                        <a href="?status={{status[0]}}" class="c-filter-facet__link {{'c-filter-facet__link--current' if current_status==status[0]}}">
+                            <span class="c-filter-facet__link-text">{{status[0]|capitalize }}</span>
+                            <span class="c-filter-facet__count">{{ status[1] }}</span>
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </section>
+
+            <section class="o-grid__cell c-filter-facet u-flex-1/4">
+                <h2 class="u-accent u-h4 u-margin-bottom-tiny">Tags</h2>
+
+                <ul class="o-list-bare c-filter-facet__list">
+                    <li class="u-margin-top-small">
+                        <input type="text" placeholder="Search for tag…" class="o-text-input o-text-input--blend u-1/1 js-autocomplete js-tag-search" data-src="{{ url_for('api.tags_lookup') }}" />
+                    </li>
+                    {% for tag in tags %}
+                    <li>
+                        <a href="{{ url_for('admin.search', q='tag:' + tag[0].handle) }}" class="c-filter-facet__link">
+                            <span class="c-filter-facet__link-text">{{ tag[0].label }}</span>
+                            <span class="c-filter-facet__count">{{ tag[1] }}</span>
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </section>
+        </div>
+
+
+    </header>
+
+
+    {% if posts %}
+            <ol class="c-results__list">
+            {% for post in posts %}
+                <li>
+                    <article class="c-results__item">
+                        <h2 class="c-results__title"><a href="{{ url_for('.edit_review', id=post.id) }}" title="Edit review">{{ post.title }}</a></h2>
+                        <img src="/media/book_covers/{{ post.book_cover }}" alt="" class="c-results__image" />
+                        <footer>
+                            <dl class="c-results__details">
+                                <dt class="u-hidden-visually">Author</dt>
+                                <dd><a href="{{ url_for('.reviews', book_author=post.book_author) }}">{{ post.book_author }}</a></dd>
+
+                                <dt>Finished</dt>
+                                <dd><time datetime="{{ post.date_finished.format('YYYY-MM-DD') }}">{{ post.date_finished.format('MMM DD, YYYY') }}</time></dd>
+
+                                <dt class="u-hidden-visually">Rating</dt>
+                                <dd title="{{ post.rating }} of 5 stars">
+                                    {% for star in range(5) %}
+                                        {% if star <= post.rating %}
+                                        <i class="i--star-full"></i>
+                                        {% else %}
+                                        <i class="i--star-empty"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                </dd>
+                            </dl>
+                        </footer>
+
+                        <div class="c-results__review">
+                            {% if post.summary %}
+                                {{ post.summary }}
+                            {% else %}
+                                {{ post.body_html|striptags|truncate(300) }}
+                            {% endif %}
+                        </div>
+                    </article>
+                </li>
+            {% endfor %}
+            </ol>
+    {% endif %}
+</section>
+</div>
+{% endblock %}
