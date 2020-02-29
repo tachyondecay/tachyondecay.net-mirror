@@ -1,9 +1,11 @@
+import arrow
 import json
 import logging
 import logging.config
 import os
 from flask.logging import default_handler
 from lemonade_soapbox.logging_config import logging_config
+
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 
@@ -27,12 +29,14 @@ class Config:
     LOGIN_TOKEN_EXPIRY = 1500
     REVISION_THRESHOLD = 0.25
     TIMEZONE = 'UTC'
+    TRANS_DATE = arrow.get('2020-02-28')
 
     @classmethod
     def init_app(cls, app):
         if cls.SQLALCHEMY_DATABASE_URI is None:
             app.config['SQLALCHEMY_DATABASE_URI'] = (
-                'sqlite:///' + app.instance_path + 'database.sqlite')
+                'sqlite:///' + app.instance_path + 'database.sqlite'
+            )
         app.config['INDEX_PATH'] = os.path.join(app.instance_path, 'index')
         app.config['LOG_PATH'] = os.path.join(app.instance_path, 'logs')
 
@@ -102,13 +106,14 @@ class ProductionConfig(Config):
     def init_app(cls, app):
         super().init_app(app)
         if app.config['SECRET_KEY'] == 'ermahgerd':
-            raise Exception('Please configure a unique secret key in your production config file.')
+            raise Exception(
+                'Please configure a unique secret key in your production config file.'
+            )
 
 
 config = {
     'development': DevelopmentConfig,
     'testing': TestingConfig,
     'production': ProductionConfig,
-
-    'default': ProductionConfig
+    'default': ProductionConfig,
 }
