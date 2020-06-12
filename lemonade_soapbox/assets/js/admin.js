@@ -61,7 +61,7 @@ function BackendInit() {
     });
 
     // Add text input classes to these inputs
-    $('input[type=date], input[type=time]').addClass('o-text-input o-text-input--blend');
+    $('input[type=date], input[type=time]').addClass('textinput -blend');
 
     // Add monthpickers
     $('.js-monthpicker').each(function(i, v) {
@@ -113,7 +113,7 @@ function BackendInit() {
     });
     $('.tagit')
         .removeClass('ui-widget ui-widget-content ui-corner-all')
-        .addClass('o-text-input o-text-input--blend');
+        .addClass('textinput -blend');
 
     // Initialize special upload fields!
     $('.js-image-upload').each(function(i, v) {
@@ -147,6 +147,14 @@ function BackendInit() {
             $(this).parents('.notification').hide('scale', { origin: ["top", "center"], percent: 5, easing: "easeInOutBack" }, 750);
             e.preventDefault();
         });
+
+
+    /*
+     * Sort form options
+     */
+    $('.sort-form').on('change', 'select, input', function(e) {
+        $(this).parents('form').submit();
+    });
 }
 
 
@@ -181,7 +189,7 @@ var PostForm = function(form) {
 PostForm.prototype.autosave = function() {
     var self = this;
     var new_content = self.editor.value();
-    var title = self.form.find('.c-page-title__input');
+    var title = self.form.find('.-title');
     var handle = self.form.find('[name=handle]');
     var type = self.form.data('type');
 
@@ -222,7 +230,7 @@ PostForm.prototype.autosave = function() {
                 }
                 // Change URL
                 history.replaceState(null, null, location.href + data.post_id + "/");
-                $('.c-page-title__action').text('Editing ' + type + ' »');
+                $('.page-title .subtitle').text('Editing ' + type + ' »');
                 $('.js-view-post').attr('href', data.link);
                 $('.js-date-created').prepend('<small>Created ' + data.created + '</small>');
                 $('.js-reveal-on-creation').removeClass('u-hidden').show('scale');
@@ -247,7 +255,7 @@ PostForm.prototype.autosave = function() {
         }).fail(function(jqxhr, textStatus, error) {
             console.log(error);
             $('.js-revisions', self.form)
-                .find('.c-notification--error')
+                .find('.notification.-error')
                     .fadeOut('fast')
                     .remove()
                     .end()
@@ -269,7 +277,7 @@ PostForm.prototype.bindAutosaveRestores = function() {
         $('.js-autosave-notification').fadeOut();
         var success = $('<div/>');
         success
-            .addClass('c-notification c-notification--success')
+            .addClass('notification -success')
             .text('Autosave restored!')
             .insertBefore(self.body)
             .fadeIn('fast')
@@ -283,13 +291,13 @@ PostForm.prototype.bindAutosaveRestores = function() {
 var MagnificentUpload = function(container) {
     var self = this;
     self.container = $(container);
-    self.input = self.container.find('.o-upload__input');
-    self.image = self.container.find('.o-upload__image');
+    self.input = self.container.find('.input');
+    self.image = self.container.find('.thumbnail');
     self.pasted = self.container.find('input[type=hidden]');
-    self.placeholder = self.container.find('.o-upload__placeholder');
-    self.remove = self.container.find('.o-upload__remove');
+    self.placeholder = self.container.find('.placeholder');
+    self.remove = self.container.find('.remove');
 
-    self.css_no_img = 'o-upload__image--none';
+    self.css_no_img = 'thumbnail -none';
 
     // Hide the remove toggle if no image currently uploaded
     if(self.image.hasClass(self.css_no_img)) {

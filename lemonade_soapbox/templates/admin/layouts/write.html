@@ -5,30 +5,29 @@
 
 {% block page_title_body %}
             {% if post.title %}
-            <span class="c-page-title__action">
-                {{ 'Deleted' if post.status == 'deleted' else 'Editing' }} {{ post.type.capitalize() }} »</span>
-            <span class="c-page-title__item u-hidden-visually">{{ post.title }}</span>
+            <h1 class="_hide">{{ post.title }}</h1>
+            <p class="subtitle">
+                {{ 'Deleted' if post.status == 'deleted' else 'Editing' }} {{ post.type.capitalize() }}
+            </p>
             {% else %}
-            <span class="c-page-title__action">New {{ post.type.capitalize() }} »</span>
+            <p class="subtitle">New {{ post.type.capitalize() }}</p>
             {% endif %}
 {% endblock %}
 
 {% block header_end %}
-<div class="o-grid--column o-grid--flip@desktop o-grid--middle">
-            <div class="o-grid__cell u-flex-2/3@desktop c-page-title__field">
-                {% block field__title %}{% endblock %}
-            </div>
-            <div class="o-grid__cell c-btn-group u-flex-1/3@desktop u-margin-vertical-small u-text--centre">
-                {{ form.save(class='c-btn c-btn--positive', icon_after='floppy-disk') }}
-                {% if post.status != 'published' and post.status != 'deleted' %}
-                {{ form.publish(class='c-btn c-btn--important', icon_after='earth') }}
-                {% endif %}
-                {% if post.status != 'draft' %}
-                {{ form.drafts(class='c-btn c-btn--important', icon_after='eye-blocked', label=('Undelete' if post.status == 'deleted' else 'Unpublish'))}}
-                {% endif %}
-                <a target="_blank" class="c-btn js-view-post js-reveal-on-creation {{ 'u-hidden' if not post.id }}" href="{{ post.get_permalink() }}">View <span class="i--new-tab"></span></a>
-            </div>
+    <div class="postform-title">
+        <div class="titlefield">{% block field__title %}{% endblock %}</div>
+        <div class="actions">
+            {{ form.save(class='_button -positive', icon_after='floppy-disk') }}
+            {% if post.status != 'published' and post.status != 'deleted' %}
+            {{ form.publish(class='_button -important', icon_after='earth') }}
+            {% endif %}
+            {% if post.status != 'draft' %}
+            {{ form.drafts(class='_button -important', icon_after='eye-blocked', label=('Undelete' if post.status == 'deleted' else 'Unpublish'))}}
+            {% endif %}
+            <a target="_blank" class="_button js-view-post js-reveal-on-creation {{ '_hide' if not post.id }}" href="{{ post.get_permalink() }}">View <span class="i--new-tab"></span></a>
         </div>
+    </div>
 {% endblock header_end %}
 
 {% block body_main %}
@@ -37,79 +36,72 @@
 
 {{ super() }}
 
-
-<div class="o-wrapper">
-    <div class="o-grid--column o-grid--flip@desktop o-post-editor o-post-editor--{{ post.status|default('draft', true) }} u-padding-vertical">
-
-        <div class="o-grid__cell u-flex-2/3@desktop">
-
-            {% if post.autosave and post.selected_revision.id == post.revision_id %}
-            <div class="c-notification c-notification--warning c-notification--dismissable u-margin-top-tiny">
-                Looks like some changes were automatically saved but never committed. <a href="{{ url_for('.edit_' + post.type, revision_id=post.autosave.id) }}" data-content="{{ post.selected_revision.restore(post.autosave, post.body) }}">Restore them?</a>
-            </div>
-            {% endif %}
-
-            <p class="u-text--centre u-hidden-visually@desktop"><a href="#post-metadata" class="c-btn c-btn--micro">Jump to metadata ↓</a></p>
-
-            <fieldset id="post-contents">
-                <legend class="u-hidden-visually">Post Contents</legend>
-
-                {% block post_contents %}
-            <!-- contenteditable = true makes Firefox's spellchecker work with SimpleMDE, and I prefer this to the built-in spellchecker -->
-                <div class="o-form-field u-font--large" contenteditable="true">
-                    <label for="body" class="u-hidden-visually">Body</label>
-                    {{ form.body(**{'aria-label': 'Body', 'cols': 80, 'rows': 5, 'placeholder': 'Lorem ipsum, baby…', 'data-revision': (post.selected_revision.id if post.selected_revision else '')}) }}
-                </div>
-
-                <div class="o-form-field">
-                    <label for="summary">Summary</label>
-                    {{ form.summary(**{'aria-label': 'Summary', 'cols': 50, 'rows': 1, 'placeholder': 'Add summary…', 'class': 'o-textarea'}) }}
-                </div>
-                {% endblock post_contents %}
-            </fieldset>
-        </div>
-
-        <div class="o-grid__cell u-flex-1/3@desktop">
-            <fieldset id="post-metadata">
-                <legend class="u-hidden-visually">Post Metadata</legend>
-
-                {% block post_metadata %}
-                <div class="o-form-field{{ ' u-margin-bottom-none' if post.status == 'published' }}">
-                    {{ render_field(form.date_published, {'class': 'o-text-input js-breaks-url', 'date_class': 'o-form-field--icon-before i-before--calendar', 'time_class': 'o-form-field--icon-before i-before--clock' }, label='Publish Date') }}
-                </div>
-
-                {% if post.status == 'published' %}
-                <div class="o-form-field">
-                    {{ checkbox_toggle(form.show_updated, label='Show post was updated', size='small')}}
-                </div>
-                {% endif %}
-
-                <div class="o-form-field">
-                    {{ render_field(form.handle, {'class': 'o-text-input o-text-input--blend u-1/1 js-breaks-url' }, label='URL Handle', container_class='o-form-field--icon-before i-before--link') }}
-                </div>
-
-                <div class="o-form-field">
-                    {{ render_field(form.tags, {'class': 'js-autocomplete js-tagit'}) }}
-                </div>
-
-                {% include "admin/posts/revision_history.html" %}
-                {% endblock post_metadata %}
-            </fieldset>
-
-            {% block post_info %}
-            <p class="o-form__info js-date-created js-reveal-on-creation u-text--right {{ 'u-hidden' if not post.date_created }}">
-                {% if post.date_created %}
-                <small>Created <time datetime="{{ post.date_created.isoformat() }}">{{ post.date_created.to(config['TIMEZONE']).format('MMM DD, YYYY HH:mm')}}</time></small>
-                {% endif %}
-                {% if post.status != 'deleted' %}
-                {{ form.delete(class='c-btn c-btn--micro c-btn--danger') }}
-                {% endif %}
-            </p>
-
-            <p class="u-text--centre u-hidden-visually@desktop"><a href="#post-contents" class="c-btn c-btn--micro">Jump to post contents ↑</a></p>
-            {% endblock post_info %}
-        </div>
+<div class="postform-contents">
+    {% if post.autosave and post.selected_revision.id == post.revision_id %}
+    <div class="notification -warning -dismissable">
+        Looks like some changes were automatically saved but never committed. <a href="{{ url_for('.edit_' + post.type, revision_id=post.autosave.id) }}" data-content="{{ post.selected_revision.restore(post.autosave, post.body) }}">Restore them?</a>
     </div>
+    {% endif %}
+
+    <p class="jumplink"><a href="#post-metadata" class="_button -micro">Jump to metadata ↓</a></p>
+
+    <fieldset id="post-contents">
+        <legend class="_hide">Post Contents</legend>
+
+        {% block post_contents %}
+    <!-- contenteditable = true makes Firefox's spellchecker work with SimpleMDE, and I prefer this to the built-in spellchecker -->
+        <div class="form-field" contenteditable="true">
+            <label for="body" class="_hide">Body</label>
+        {{ form.body(**{'aria-label': 'Body', 'cols': 80, 'rows': 5, 'placeholder': 'Lorem ipsum, baby…', 'data-revision': (post.selected_revision.id if post.selected_revision else '')}) }}
+        </div>
+
+        <div class="form-field">
+            <label for="summary">Summary</label>
+            {{ form.summary(**{'aria-label': 'Summary', 'cols': 50, 'rows': 1, 'placeholder': 'Add summary…'}) }}
+        </div>
+        {% endblock post_contents %}
+    </fieldset>
+</div>
+
+<div class="postform-metadata">
+    <fieldset id="post-metadata">
+        <legend class="_hide">Post Metadata</legend>
+
+        {% block post_metadata %}
+        <div class="form-field{{ ' u-margin-bottom-none' if post.status == 'published' }}">
+            {{ render_field(form.date_published, {'class': 'textinput js-breaks-url', 'date_class': '-icon-before i-before--calendar', 'time_class': '-icon-before i-before--clock' }, label='Publish Date') }}
+        </div>
+
+        {% if post.status == 'published' %}
+        <div class="form-field">
+            {{ checkbox_toggle(form.show_updated, label='Show post was updated', size='small')}}
+        </div>
+        {% endif %}
+
+        <div class="form-field">
+            {{ render_field(form.handle, {'class': 'textinput -blend js-breaks-url' }, label='URL Handle', container_class='-icon-before i-before--link') }}
+        </div>
+
+        <div class="form-field">
+            {{ render_field(form.tags, {'class': 'js-autocomplete js-tagit'}) }}
+        </div>
+
+        {% include "admin/posts/revision_history.html" %}
+        {% endblock post_metadata %}
+    </fieldset>
+
+    {% block post_info %}
+    <p class="formfield -info js-date-created js-reveal-on-creation _right {{ '_hide-totally' if not post.date_created }}">
+        {% if post.date_created %}
+        <small>Created <time datetime="{{ post.date_created.isoformat() }}">{{ post.date_created.to(config['TIMEZONE']).format('MMM DD, YYYY HH:mm')}}</time></small>
+        {% endif %}
+        {% if post.status != 'deleted' %}
+        {{ form.delete(class='_button -micro -danger') }}
+        {% endif %}
+    </p>
+
+    <p class="_center"><a href="#post-contents" class="_button -micro">Jump to post contents ↑</a></p>
+    {% endblock post_info %}
 </div>
 </form>
 {% endblock body_main %}

@@ -1,0 +1,188 @@
+/**
+ * _buttons.scss
+ *
+ * Masthead with page title/subtitle
+ *
+ * Code from InuitCSS
+ *
+ * 1. Allow us to style box model properties.
+ * 2. Line different sized buttons up a little nicer.
+ * 3. Make buttons inherit font styles (often necessary when styling `input`s as
+ *    buttons).
+ * 4. Reset/normalize some styles.
+ * 5. Force all button-styled elements to appear clickable.
+ */
+
+$button-colour-variations: (
+    important: $purple,
+    positive: $green,
+    danger: $red
+);
+
+
+
+._button {
+    display: inline-block; /* [1] */
+    vertical-align: middle; /* [2] */
+
+    color: $white;
+    font: inherit; /* [3] */
+    font-family: $f-accent;
+    font-size: 0.85rem;
+    letter-spacing: 2px;
+    text-align: center; /* [4] */
+    text-decoration: none;
+    text-transform: uppercase;
+
+    margin: 0; /* [4] */
+    padding: 6px 12px;
+
+    background-color: $blue;
+    border: 1px solid $blue;
+    border-radius: $global-radius;
+    box-shadow: 0px 4px 0px 0px darken($blue, 20);
+    cursor: pointer; /* [5] */
+    transition: $global-transition;
+
+    &:hover, &:active, &:focus, &.-ghost {
+        color: saturate($blue, 20);
+        text-decoration: none;
+
+        background-color: $white;
+        background-image: none;
+        border-color: saturate($blue, 20);
+        & > span {
+            @include sprite-image($blue);
+        }
+    }
+
+    &:active {
+        box-shadow: 0px 1px 0px 0px;
+        transform: translate(0px, 5px);
+    }
+
+    & > span {
+        @include sprite-image(#ffffff);
+        transition: $global-transition;
+    }
+}
+
+
+
+
+
+/* Style variants
+   ========================================================================== */
+
+@each $name, $variant in $button-colour-variations {
+    ._button.-#{$name} {
+        background-color: $variant;
+        border-color: $variant;
+        box-shadow: 0 4px 0 0 darken($variant, 20);
+
+        &:hover, &:active, &:focus, &.-ghost {
+            background-color: $white;
+            color: saturate($variant, 20);
+            border-color: saturate($variant, 20);
+
+            & > span {
+                @include sprite-image($variant);
+            }
+        }
+    }
+}
+
+
+
+/* Size variants
+   ========================================================================== */
+
+._button.-small {
+  padding: var(--unit-tiny)/2 var(--unit-tiny);
+}
+
+._button.-large {
+  padding: var(--unit-small) var(--unit);
+}
+
+._button.-micro {
+    padding: 0.2em 0.6em;
+    font-size: 0.625em;
+    box-shadow: none;
+}
+
+
+
+
+
+/* Ghost buttons
+   ========================================================================== */
+
+/**
+ * Ghost buttons have see-through backgrounds and are bordered.
+ */
+
+$btn-ghost-border-width: 2px !default;
+
+._button.-ghost {
+    background: none;
+    border-width: $btn-ghost-border-width;
+
+    padding: calc(var(--unit-tiny) - $btn-ghost-border-width) calc(var(--unit-small) - $btn-ghost-border-width);
+
+    &:hover, &:focus {
+        box-shadow: none;
+    }
+
+    &.-small {
+        padding: calc(var(--unit-tiny)/2 - $btn-ghost-border-width) calc(var(--unit-tiny) - $btn-ghost-border-width);
+    }
+
+    &.-large {
+        padding: calc(var(--unit-small) - $btn-ghost-border-width) calc(var(--unit) - $btn-ghost-border-width);
+    }
+}
+
+
+
+/* Icon on hover
+   ========================================================================== */
+
+._button.-hover-icon {
+    position: relative;
+
+    & > span {
+        position: absolute;
+        top: 0.5em;
+        right: 0.5em;
+
+        opacity: 0;
+        transition: opacity 0.5s, top 0.5s, right 0.5s;
+    }
+
+    &:hover, &:active, &:focus {
+        padding-left: 5px;
+        padding-right: 2em;
+
+        & > span {
+            opacity: 1;
+        }
+    }
+}
+
+
+/*
+ * Group of buttons in a row
+ */
+._button-group {
+    display: inline-flex;
+    justify-content: center;
+
+    & ._button {
+        margin: 0 var(--unit-tiny);
+    }
+
+    @include mq($from: desktop) {
+        justify-content: space-around;
+    }
+}

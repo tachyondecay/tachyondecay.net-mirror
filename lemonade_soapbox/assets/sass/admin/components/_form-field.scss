@@ -1,0 +1,47 @@
+/**
+ * _form-field.scss
+ *
+ * Component that lays out form controls, may be nested within larger layouts.
+ */
+
+.form-field {
+  display: flex;
+  flex-flow: column wrap;
+  margin: var(--unit) 0;
+
+  &-info {
+    color: $charcoal;
+
+    border-top: 1px solid $grey;
+  }
+}
+
+.form-field .-icon-before {
+  display: inline-block;
+  position: relative;
+
+  & input {
+      padding-left: 25px;
+  }
+
+  &:before {
+      content: '';
+      position: absolute;
+      top: var(--unit-tiny);
+  }
+}
+
+.form-field .-icon-after {
+  display: inline-block;
+  position: relative;
+
+  & input {
+      padding-right: 25px;
+  }
+
+  &:after {
+      content: '';
+      position: absolute;
+      top: var(--unit-tiny);
+  }
+}

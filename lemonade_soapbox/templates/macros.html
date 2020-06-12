@@ -18,10 +18,10 @@
 
 {% macro render_errors(field) %}
     {% if field.errors %}
-    <div class="c-notification c-notification--error c-notification--inline" data-for="{{ field['id'] }}">
+    <div class="notification -error -inline" data-for="{{ field['id'] }}">
         {% if field.errors|length > 1 %}
-        <p class="u-margin-bottom-none">Please fix the following errors:</p>
-        <ul class="u-margin-vertical-none">
+        <p>Please fix the following errors:</p>
+        <ul class="">
             {% for e in field.errors %}
             <li>{{ e }}</li>
             {% endfor %}
@@ -36,17 +36,35 @@
 {% macro render_field(field, params={}, label=None, container_class='') %}
     {{ field.label(label) }}
     {{ render_errors(field) }}
-    <div class="o-form-field__input {{ container_class }} {{ "o-form-field__input--error" if field.errors }}">
+    <div class="input {{ container_class }} {{ "-error" if field.errors }}">
     {{ field(**params) }}
     </div>
 {% endmacro %}
 
-{% macro checkbox_toggle(field, params={}, label='', size=None) %}
-    <div class="c-checkbox-toggle {{ ['c-checkbox-toggle--', size]|join('') if size}}">
+{% macro checkbox_toggle(field, params={}, label='', size=None, checked='Yes', unchecked='No') %}
+    <div class="checkbox-toggle {{ ['-', size]|join('') if size}}">
         {{ field(**params) }}
         <label for="{{ field.id }}">
-            <div class="c-checkbox-toggle__switch" data-checked="Yes" data-unchecked="No"></div>
-            <div class="c-checkbox-toggle__label-text">{{ label|default(field.label.text, true) }}</div>
+            <div class="switch" data-checked="{{ checked }}" data-unchecked="{{ unchecked }}"></div>
+            <div class="labeltext">{{ label|default(field.label.text, true) }}</div>
         </label>
     </div>
+{% endmacro %}
+
+{% macro render_pagination(pagination) %}
+  {% set query_args = request.args.to_dict() %}
+  <div class="pagination-links">
+  {%- for page in pagination.iter_pages() %}
+    {% if page %}
+      {% if page != pagination.page %}
+        {% set update = query_args.update({'page': page}) %}
+        <a class="button" href="{{ url_for(request.endpoint, **query_args) }}">{{ page }}</a>
+      {% else %}
+        <strong class="current">{{ page }}</strong>
+      {% endif %}
+    {% else %}
+      <span class="ellipsis">…</span>
+    {% endif %}
+  {%- endfor %}
+  </div>
 {% endmacro %}

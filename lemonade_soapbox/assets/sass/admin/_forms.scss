@@ -1,0 +1,87 @@
+/**
+ * _forms.scss
+ *
+ * Styling for generic or base form elements
+ */
+
+fieldset {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+label, legend {
+  font-weight: bold;
+}
+
+textarea {
+  height: 5em;
+  max-width: 100%;
+}
+
+.textinput,
+textarea {
+  padding: var(--unit-tiny) var(--unit-small);
+  background-color: $white;
+  color: $black;
+
+  outline: 0;
+
+  border: 1px solid $grey-light;
+  border-radius: $global-radius;
+
+  &:focus {
+      border-color: $purple;
+  }
+
+  &.-blend {
+    background: none;
+    border: 0;
+    border-bottom: 1px solid $blue;
+    border-radius: 0;
+    transition: $global-transition;
+
+    &:hover:not(:focus) {
+        background-color: rgba($charcoal, 0.3);
+    }
+
+    &:focus {
+        border-bottom: 2px solid $purple;
+        padding-bottom: var(--unit-tiny);
+    }
+  }
+
+  &.-title {
+    margin: 0 var(--unit) var(--unit-small);
+    width: 100%;
+
+    font-family: $f-accent;
+    font-size: 2rem;
+  }
+}
+
+
+/*
+ * Some specialized formatting for certain inputs
+ *
+ * 1.   This makes sure the jQuery UI datepicker appears above other items.
+ */
+
+input[type="date"] {
+  position: relative;
+  width: 100%;
+  z-index: 6;   /* [1] */
+}
+
+input[type="time"] {
+  width: 100%;
+}
+
+/* Override CodeMirror styles */
+.editing .cm-spell-error {
+  text-decoration: underline wavy red;
+}
+
+.editing .CodeMirror .cm-spell-error:not(.cm-url):not(.cm-comment):not(.cm-tag):not(.cm-word) {
+  background: none;
+}

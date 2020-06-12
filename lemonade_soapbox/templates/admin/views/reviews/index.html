@@ -1,5 +1,5 @@
 {% extends 'admin/layouts/master.html' %}
-{% from 'macros.html' import notifications %}
+{% from 'macros.html' import checkbox_toggle, notifications, render_pagination %}
 
 {% block body_main %}
 {{ super() }}
@@ -24,6 +24,15 @@
     </ul>
 </div>
 
+<div class="search-filter -sort">
+    <h3 class="label">Sort by</h3>
+    <form class="sort-form">
+        <input type="hidden" name="status" value="{{ current_status }}"/>
+        {{ sort_form.sort_by }}
+        {{ checkbox_toggle(sort_form.order, checked='Asc', unchecked='Desc') }}
+    </form>
+</div>
+
 <div class="search-filter -tags">
     <h3 class="label">Top 10 Tags</h3>
 {#     <input type="text" placeholder="Search for tag…" class="text-input js-autocomplete js-tag-search" data-src="{{ url_for('api.tags_lookup') }}" /> #}
@@ -43,9 +52,13 @@
 <section class="main-panel">
 <main>
 {% if posts %}
-    <h2 class="_hide">Results</h1>
+    <h2 class="_hide">Results</h2>
+    
+    {% if posts.pages > 1 %}
+        {{ render_pagination(posts) }}
+    {% endif %}
     <ol class="results-list">
-    {% for post in posts %}
+    {% for post in posts.items %}
         <li>
             <article class="result-item">
                 <h2 class="title"><a href="{{ url_for('.edit_review', id=post.id) }}" title="Edit review">{{ post.title }}</a></h2>
@@ -84,6 +97,10 @@
     </ol>
 
     <p class="jumplink"><a href="#top">Back to Top</a></p>
+
+    {% if posts.pages > 1 %}
+        {{ render_pagination(posts) }}
+    {% endif %}
 {% else %}
     <div class="noresults">No reviews found for the selected criteria.</div>
 {% endif %}

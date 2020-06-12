@@ -9,41 +9,22 @@
 
 .page-title {
   display: flex;
-  flex-flow: column-reverse;
-  position: relative;
+  flex-flow: column;
+  
+  @include max-width-container();
 
-  margin: var(--unit) var(--unit-small);
-
-  @include mq($from: desktop) {
-    max-width: $max-width;
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  > .title:before { /* 2 */
-    content: " ";
-    position: absolute;
-    bottom: 0;
-    left: 1.25rem;
-
-    height: calc(var(--unit-tiny) + 1px);
-    width: 0.75rem;
-
-    background: $white;
-  }
+  background-color: $grey-light;
+  box-shadow: inset 0 -12px 20px -10px $c-shadow;
 
   > .title {
     margin: 0;
-    padding-bottom: var(--unit-small);
-
+    padding: 0 var(--unit) var(--unit-small);
     line-height: rvr(1.4);
-
-    background: linear-gradient(0deg, $purple var(--unit-tiny),
-      transparent var(--unit-tiny)); /* 1 */
   }
 
   > .subtitle {
-    margin: 0 0 var(--unit-tiny);
+    margin: 0;
+    padding: var(--unit) var(--unit-small) 0 var(--unit);
 
     font-family: $f-accent;
     font-size: 0.8rem;

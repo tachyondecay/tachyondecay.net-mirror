@@ -1,0 +1,39 @@
+/**
+ * _pagination.scss
+ *
+ * Component: Paginate results
+ */
+
+/**
+ * Pagination links near results 
+ */
+.pagination-links {
+  display: flex;
+  justify-content: center;
+
+  & > .button,
+  & > .current {
+    display: block;
+    margin: 0 var(--unit-tiny);
+    padding: 2px 8px;
+
+    background: $blue-grey;
+    border-radius: $global-radius;
+
+    color: $snow-white;
+    font-size: 0.8rem;
+    text-decoration: none;
+  }
+
+  & > .button:hover, & > .button:focus {
+    font-weight: bold;
+    background: $blue;
+  }
+
+  & > .current {
+    background: $snow-white;
+    border: 1px solid $blue-grey;
+
+    color: $blue-grey;
+  }
+}

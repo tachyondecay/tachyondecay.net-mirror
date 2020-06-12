@@ -15,7 +15,7 @@ from flask import (
 )
 from flask_login import current_user, login_user, login_required, logout_user
 from lemonade_soapbox import db, mail
-from lemonade_soapbox.forms import ArticleForm, ReviewForm, SignInForm
+from lemonade_soapbox.forms import ArticleForm, ReviewForm, SignInForm, SortForm
 from lemonade_soapbox.helpers import compose
 from lemonade_soapbox.models import Article, Review, Revision, Tag
 from lemonade_soapbox.models.users import User
@@ -333,7 +333,28 @@ def edit_article(id, revision_id):
 def reviews():
     """View and manage reviews."""
     status = request.args.get('status', 'published')
-    reviews = Review.query.filter_by(status=status)
+    page = request.args.get('page', 1)
+
+    sort_form = SortForm()
+    sort_form.sort_by.choices = [
+        ('book_author', 'Author'),
+        ('date_published', 'Date published'),
+        ('end_date', 'Date read'),
+        ('date_updated', 'Date updated'),
+        ('rating', 'Rating'),
+        ('title', 'Title'),
+    ]
+    sort_by = sort_form.sort_by.data = request.args.get(
+        'sort_by', ('date_published' if status == 'published' else 'date_updated')
+    )
+    sort_form.order.data = bool(request.args.get('order'))
+    order = 'asc' if sort_form.order.data else 'desc'
+
+    reviews = (
+        Review.query.filter_by(status=status)
+        .order_by(getattr(getattr(Review, sort_by), order)())
+        .paginate(page=int(page), per_page=50)
+    )
 
     tags = Tag.frequency(Review, order_by='count', status=status).limit(10).all()
     status_count = (
@@ -342,14 +363,15 @@ def reviews():
         .all()
     )
 
-    reviews = reviews.limit(10).all()
     return render_template(
         'admin/views/reviews/index.html',
         current_status=status,
+        endpoint='admin.reviews',
         page_title='Manage Reviews',
         posts=reviews,
+        sort_form=sort_form,
         status_breakdown=status_count,
-        subtitle='Test',
+        subtitle=f"{reviews.total} review" + ("s" if reviews.total != 1 else ""),
         tags=tags,
     )
 
