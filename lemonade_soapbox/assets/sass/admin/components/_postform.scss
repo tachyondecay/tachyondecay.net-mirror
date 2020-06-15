@@ -7,6 +7,7 @@
  @import "form-field";
  @import "upload-widget";
 
+
 .postform-title {
   > .actions {
     display: flex;
@@ -17,6 +18,8 @@
   }
 
   @include mq($from: tablet) {
+    grid-column: main-content / span 8;
+    grid-row: 2;
     display: grid;
     grid-template-columns: 66% 33%;
     grid-column-gap: var(--unit);
@@ -25,6 +28,14 @@
       padding: 0;
     }
   }
+}
+
+.postform-contents {
+  grid-column: 3 / 8;
+}
+
+.postform-metadata {
+  grid-column: 8 / 11;
 }
 
 .postform-contents, .postform-metadata {

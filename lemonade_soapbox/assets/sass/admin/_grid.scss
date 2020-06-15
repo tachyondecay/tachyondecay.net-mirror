@@ -1,0 +1,29 @@
+/**
+ * _grid.scss
+ *
+ * Grid layout logic for admin backend.
+ * 
+ */
+
+
+@include mq($from: tablet) {
+  .grid-layout {
+    display: grid;
+    gap: var(--unit-small) var(--unit);
+    grid-gap: var(--unit-small) var(--unit);
+    grid-template-columns: 
+    [left-margin]
+    1rem
+    calc(50vw - 30rem - 5.5*var(--unit-tiny))
+    [main-content]
+    repeat(8, 1fr)
+    [right-margin]
+    calc(50vw - 30rem - 5.5*var(--unit-tiny))
+    1rem;
+  }
+
+  .-slim-rows {
+    row-gap: var(--unit-tiny);
+    grid-row-gap: var(--unit-tiny);
+  }
+}

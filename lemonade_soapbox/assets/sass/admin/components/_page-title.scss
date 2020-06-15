@@ -8,21 +8,25 @@
  */
 
 .page-title {
-  display: flex;
+  // display: flex;
   flex-flow: column;
   
-  @include max-width-container();
+  // @include max-width-container();
 
   background-color: $grey-light;
   box-shadow: inset 0 -12px 20px -10px $c-shadow;
 
   > .title {
+    grid-column: main-content / span 8;
+    grid-row: 2;
     margin: 0;
     padding: 0 var(--unit) var(--unit-small);
     line-height: rvr(1.4);
   }
 
   > .subtitle {
+    grid-column: main-content / span 8;
+    grid-row: 1;
     margin: 0;
     padding: var(--unit) var(--unit-small) 0 var(--unit);
 

@@ -36,6 +36,7 @@
 
 {{ super() }}
 
+<div class="grid-layout">
 <div class="postform-contents">
     {% if post.autosave and post.selected_revision.id == post.revision_id %}
     <div class="notification -warning -dismissable">
@@ -102,6 +103,7 @@
 
     <p class="_center"><a href="#post-contents" class="_button -micro">Jump to post contents ↑</a></p>
     {% endblock post_info %}
+</div>
 </div>
 </form>
 {% endblock body_main %}

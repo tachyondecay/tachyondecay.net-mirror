@@ -11,14 +11,10 @@
   @include mq($from: tablet) {
     display: grid;
     align-items: start;
-    grid-gap: var(--unit);
-    grid-template-columns: repeat(4, 1fr);
     grid-template-areas:
-      "sidebar main main main";
+      ". . sidebar sidebar main main main main main main . .";
 
-    margin: var(--unit-large) auto;
-    max-width: $max-width;
-
+    margin: var(--unit) auto;
     & > .jumplink {
       display: none;
     }
@@ -29,15 +25,6 @@
 
     .main-panel {
       grid-area: main;
-    }
-  }
-
-  @include mq($from: desktop) {
-    grid-template-columns: repeat(5, 1fr);
-    grid-gap: var(--unit-large);
-
-    .main-panel {
-      grid-column: 2 / span 4;
     }
   }
 

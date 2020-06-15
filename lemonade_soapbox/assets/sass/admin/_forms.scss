@@ -22,6 +22,8 @@ textarea {
 .textinput,
 textarea {
   padding: var(--unit-tiny) var(--unit-small);
+  width: 100%;
+
   background-color: $white;
   color: $black;
 
@@ -52,8 +54,7 @@ textarea {
   }
 
   &.-title {
-    margin: 0 var(--unit) var(--unit-small);
-    width: 100%;
+    // margin: 0 var(--unit) var(--unit-small);
 
     font-family: $f-accent;
     font-size: 2rem;

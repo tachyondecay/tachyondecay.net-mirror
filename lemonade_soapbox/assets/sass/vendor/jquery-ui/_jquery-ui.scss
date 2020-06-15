@@ -884,7 +884,7 @@ body .ui-tooltip {
 /* Component containers
 ----------------------------------*/
 .ui-widget {
-	font-family: $fonts--sans-serif;
+	font-family: $f-sans;
 	font-size: 1em;
 }
 .ui-widget .ui-widget {
@@ -894,7 +894,7 @@ body .ui-tooltip {
 .ui-widget select,
 .ui-widget textarea,
 .ui-widget button {
-	font-family: $fonts--sans-serif;
+	font-family: $f-sans;
 	font-size: 1em;
 }
 .ui-widget.ui-widget-content {
@@ -1003,12 +1003,12 @@ a.ui-button:active,
 .ui-widget-content .ui-state-highlight,
 .ui-widget-header .ui-state-highlight {
 	border: 1px solid $grey;
-	background: $grey--dark;
+	background: $charcoal;
 	color: $white;
 }
 .ui-state-checked {
 	border: 1px solid $grey;
-	background: $grey--dark;
+	background: $charcoal;
 }
 .ui-state-highlight a,
 .ui-widget-content .ui-state-highlight a,
