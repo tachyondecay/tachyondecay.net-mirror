@@ -1,12 +1,12 @@
 {% if post.revisions %}
-<div class="form-field -info -span js-revisions">
-    <h3>Revision History</h3>
+<div class="form-field -span js-revisions">
+    <h3 class="_h4">Revision History</h3>
     {% if post.selected_revision.id == post.autosave_id %}
-    <p>You are editing the latest autosave.</p>
+    <p class="_info _smaller">You are editing the latest autosave.</p>
     {% elif post.selected_revision.id == post.revision_id %}
-    <p>You are editing the current version of this {{ post.type }}.</p>
+    <p class="_info _smaller">You are editing the current version of this {{ post.type }}.</p>
     {% else %}
-    <p>You are editing a previous version of this article. <a href="{{ url_for('admin.edit_' + post.type, id=post.id) }}">Edit the most recent version.</a></p>
+    <p class="_info _smaller">You are editing a previous version of this article. <a href="{{ url_for('admin.edit_' + post.type, id=post.id) }}">Edit the most recent version.</a></p>
     {% endif %}
 
     <ol class="js-revisions__list">

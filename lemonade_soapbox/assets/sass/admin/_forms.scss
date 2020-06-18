@@ -59,6 +59,11 @@ textarea {
     font-family: $f-accent;
     font-size: 2rem;
   }
+
+  &.tagit {
+    font-size: 0.75rem;
+    line-height: rvr(0.75);
+  }
 }
 
 

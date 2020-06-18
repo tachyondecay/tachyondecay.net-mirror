@@ -318,8 +318,18 @@ summary {
   display: none !important;
 }
 
+._info {
+  color: #6e6e6e;
+}
+
 ._right {
   text-align: right;
+}
+
+._smaller {
+  margin: var(--unit-tiny);
+  font-size: 0.75rem;
+  line-height: calc(var(--baseline) * 0.75 * 1rem);
 }
 
 ._wrapper {
@@ -432,10 +442,6 @@ h4, ._h4 {
   line-height: calc(var(--baseline) * 1 * 1rem);
 }
 
-.-info {
-  color: #6e6e6e;
-}
-
 /**
  * _forms.scss
  *
@@ -491,6 +497,11 @@ textarea.-blend:focus {
 textarea.-title {
   font-family: Fjalla One, Verdana, sans-serif;
   font-size: 2rem;
+}
+.textinput.tagit,
+textarea.tagit {
+  font-size: 0.75rem;
+  line-height: calc(var(--baseline) * 0.75 * 1rem);
 }
 
 /*

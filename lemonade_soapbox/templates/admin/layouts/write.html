@@ -94,7 +94,7 @@
     </fieldset>
 
     {% block post_info %}
-    <p class="js-date-created js-reveal-on-creation _right {{ '_hide-totally' if not post.date_created }}">
+    <p class="_info _right _smaller js-date-created js-reveal-on-creation {{ '_hide-totally' if not post.date_created }}">
         {% if post.date_created %}
         <small>Created <time datetime="{{ post.date_created.isoformat() }}">{{ post.date_created.to(config['TIMEZONE']).format('MMM DD, YYYY HH:mm')}}</time></small>
         {% endif %}

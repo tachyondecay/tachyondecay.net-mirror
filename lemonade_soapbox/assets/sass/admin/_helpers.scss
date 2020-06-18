@@ -51,8 +51,18 @@
   display: none !important;
 }
 
+._info {
+  color: $grey;
+}
+
 ._right {
   text-align: right;
+}
+
+._smaller {
+  margin: var(--unit-tiny);
+  font-size: 0.75rem;
+  line-height: rvr(0.75);
 }
 
 ._wrapper {

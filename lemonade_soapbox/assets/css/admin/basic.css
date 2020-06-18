@@ -361,10 +361,6 @@ h4, ._h4 {
   line-height: calc(var(--baseline) * 1 * 1rem);
 }
 
-.-info {
-  color: #6e6e6e;
-}
-
 /**
  * _notificaions.scss
  *
