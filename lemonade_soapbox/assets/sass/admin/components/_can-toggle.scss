@@ -241,8 +241,8 @@
 
     label:not(:last-child) {
         @include sprite('star-empty');
-        margin-top: --var(unit-small);
-        margin-right: --var(unit-tiny);
+        margin-top: var(--unit-small);
+        margin-right: var(--unit-tiny);
         width: 1em;
 
         cursor: pointer;
@@ -250,8 +250,8 @@
     }
 
     label:last-child {
-        align-self: last baseline;
-        margin-left: --var(unit-small);
+        align-self: flex-end;
+        margin-left: var(--unit-small);
         order: -1;
 
         cursor: pointer;

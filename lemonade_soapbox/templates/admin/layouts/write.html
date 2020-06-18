@@ -36,7 +36,7 @@
 
 {{ super() }}
 
-<div class="grid-layout">
+<div class="grid-layout -max">
 <div class="postform-contents">
     {% if post.autosave and post.selected_revision.id == post.revision_id %}
     <div class="notification -warning -dismissable">
@@ -49,18 +49,20 @@
     <fieldset id="post-contents">
         <legend class="_hide">Post Contents</legend>
 
+        <div class="fields">
         {% block post_contents %}
     <!-- contenteditable = true makes Firefox's spellchecker work with SimpleMDE, and I prefer this to the built-in spellchecker -->
-        <div class="form-field" contenteditable="true">
+        <div class="form-field -span" contenteditable="true">
             <label for="body" class="_hide">Body</label>
         {{ form.body(**{'aria-label': 'Body', 'cols': 80, 'rows': 5, 'placeholder': 'Lorem ipsum, baby…', 'data-revision': (post.selected_revision.id if post.selected_revision else '')}) }}
         </div>
 
-        <div class="form-field">
+        <div class="form-field -span">
             <label for="summary">Summary</label>
             {{ form.summary(**{'aria-label': 'Summary', 'cols': 50, 'rows': 1, 'placeholder': 'Add summary…'}) }}
         </div>
         {% endblock post_contents %}
+        </div>
     </fieldset>
 </div>
 
@@ -69,21 +71,21 @@
         <legend class="_hide">Post Metadata</legend>
 
         {% block post_metadata %}
-        <div class="form-field{{ ' u-margin-bottom-none' if post.status == 'published' }}">
+        <div class="form-field -span{{ ' u-margin-bottom-none' if post.status == 'published' }}">
             {{ render_field(form.date_published, {'class': 'textinput js-breaks-url', 'date_class': '-icon-before i-before--calendar', 'time_class': '-icon-before i-before--clock' }, label='Publish Date') }}
         </div>
 
         {% if post.status == 'published' %}
-        <div class="form-field">
+        <div class="form-field -span">
             {{ checkbox_toggle(form.show_updated, label='Show post was updated', size='small')}}
         </div>
         {% endif %}
 
-        <div class="form-field">
+        <div class="form-field -span">
             {{ render_field(form.handle, {'class': 'textinput -blend js-breaks-url' }, label='URL Handle', container_class='-icon-before i-before--link') }}
         </div>
 
-        <div class="form-field">
+        <div class="form-field -span">
             {{ render_field(form.tags, {'class': 'js-autocomplete js-tagit'}) }}
         </div>
 
@@ -92,7 +94,7 @@
     </fieldset>
 
     {% block post_info %}
-    <p class="formfield -info js-date-created js-reveal-on-creation _right {{ '_hide-totally' if not post.date_created }}">
+    <p class="js-date-created js-reveal-on-creation _right {{ '_hide-totally' if not post.date_created }}">
         {% if post.date_created %}
         <small>Created <time datetime="{{ post.date_created.isoformat() }}">{{ post.date_created.to(config['TIMEZONE']).format('MMM DD, YYYY HH:mm')}}</time></small>
         {% endif %}

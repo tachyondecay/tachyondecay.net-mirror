@@ -5,21 +5,63 @@
  * 
  */
 
+.grid-layout {
+  display: grid;
+  gap: 1rem;
+  grid-gap: 1rem;
+}
 
 @include mq($from: tablet) {
   .grid-layout {
-    display: grid;
-    gap: var(--unit-small) var(--unit);
-    grid-gap: var(--unit-small) var(--unit);
     grid-template-columns: 
-    [left-margin]
-    1rem
-    calc(50vw - 30rem - 5.5*var(--unit-tiny))
-    [main-content]
-    repeat(8, 1fr)
-    [right-margin]
-    calc(50vw - 30rem - 5.5*var(--unit-tiny))
-    1rem;
+      [content-start ls-start]
+      repeat(3, 1fr)
+      [ls-end]
+      repeat(2, 1fr)
+      [rs-start]
+      repeat(3, 1fr)
+      [content-end rs-end];
+  }
+
+  .grid-layout.-max {
+    grid-template-columns: 
+      [left-margin]
+      1rem
+      [content-start ls-start]
+      repeat(3, 1fr)
+      [ls-end]
+      repeat(2, 1fr)
+      [rs-start]
+      repeat(3, 1fr)
+      [content-end rs-end]
+      1rem
+      [right-margin];
+  }
+
+  .grid-layout > .-span {
+    grid-column: content-start / content-end;
+  }
+}
+
+@include mq($from: desktop) {
+  .grid-layout {
+    gap: 1.5rem;
+    grid-gap: 1.5rem;
+  }
+
+  .grid-layout.-max {
+    grid-template-columns:
+      [left-margin]
+      calc(50vw - 30rem)
+      [content-start ls-start]
+      repeat(3, 1fr)
+      [ls-end]
+      repeat(2, 1fr)
+      [rs-start]
+      repeat(3, 1fr)
+      [content-end rs-end]
+      calc(50vw - 30rem)
+      [right-margin];
   }
 
   .-slim-rows {

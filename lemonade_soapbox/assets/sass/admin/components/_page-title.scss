@@ -9,26 +9,23 @@
 
 .page-title {
   // display: flex;
-  flex-flow: column;
+  // flex-flow: column;
   
   // @include max-width-container();
 
   background-color: $grey-light;
   box-shadow: inset 0 -12px 20px -10px $c-shadow;
+  padding-bottom: var(--unit-small);
 
   > .title {
-    grid-column: main-content / span 8;
-    grid-row: 2;
     margin: 0;
     padding: 0 var(--unit) var(--unit-small);
     line-height: rvr(1.4);
   }
 
   > .subtitle {
-    grid-column: main-content / span 8;
-    grid-row: 1;
     margin: 0;
-    padding: var(--unit) var(--unit-small) 0 var(--unit);
+    padding: var(--unit) var(--unit-small) 0 var(--unit-small);
 
     font-family: $f-accent;
     font-size: 0.8rem;
@@ -37,5 +34,17 @@
 
   > .subtitle:after {
     content: " »";
+  }
+
+  @include mq($from: tablet) {
+    > .title {
+      grid-column: content-start / content-end;
+      grid-row: 2;
+    }
+
+    > .subtitle {
+      grid-column: content-start / content-end;
+      grid-row: 1;
+    }
   }
 }

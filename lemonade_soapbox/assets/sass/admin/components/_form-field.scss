@@ -7,13 +7,7 @@
 .form-field {
   display: flex;
   flex-flow: column wrap;
-  margin: var(--unit) 0;
-
-  &-info {
-    color: $charcoal;
-
-    border-top: 1px solid $grey;
-  }
+  margin: var(--unit-small) 0;
 }
 
 .form-field .-icon-before {

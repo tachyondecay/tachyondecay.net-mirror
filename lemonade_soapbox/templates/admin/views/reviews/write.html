@@ -11,29 +11,27 @@
 
 
 {% block post_contents %}
-    <div class="grid-generic">
-        <div class="cell form-field">
-            <fieldset tabindex="0">
-                <legend>Rating</legend>
+    <div class="form-field">
+        <fieldset tabindex="0">
+            <legend>Rating</legend>
 
-                <div class="rating-input">
-                    {% for star in form.rating %}
-                    {{ star(class='_hide') }} <label for="{{ star.id }}" title="{{ star.label.text }}">{% if loop.last %}Clear{% endif %}</label>
-                    {% endfor %}
-                </div>
-            </fieldset>
-        </div>
+            <div class="rating-input">
+                {% for star in form.rating %}
+                {{ star(class='_hide') }} <label for="{{ star.id }}" title="{{ star.label.text }}">{% if loop.last %}Clear{% endif %}</label>
+                {% endfor %}
+            </div>
+        </fieldset>
+    </div>
 
-        <div class="cell form-field">
-            {{ checkbox_toggle(form.spoilers, label='Review contains spoilers') }}
-        </div>
+    <div class="form-field">
+        {{ checkbox_toggle(form.spoilers, label='Review contains spoilers') }}
     </div>
 
     {{ super() }}
 {% endblock post_contents %}
 
 {% block post_metadata %}
-    <div class="form-field upload-widget js-image-upload" data-alt="Pasted book cover image">
+    <div class="form-field -span upload-widget js-image-upload" data-alt="Pasted book cover image">
         {{ form.pasted_cover }}
         <div class="fileselect">
             {{ render_field(form.book_cover, label='Book Cover') }}
@@ -52,19 +50,19 @@
         </div>
     </div>
 
-    <div class="form-field">
+    <div class="form-field -span">
         {{ render_field(form.book_author, {'class': 'textinput -blend' }, label='Author') }}
     </div>
 
-    <div class="form-field">
+    <div class="form-field -span">
         {{ render_field(form.book_id, {'class': 'textinput -blend', 'autocomplete': 'off' }, label='ISBN') }}
     </div>
 
-    <div class="form-field">
+    <div class="form-field -span">
         {{ render_field(form.goodreads_id, {'class': 'textinput -blend js-gr', 'autocomplete': 'off' }, label='Goodreads Review') }}
     </div>
 
-    <div class="form-field">
+    <div class="form-field -span">
         {{ render_field(form.dates_read, {'class': 'textinput -blend js-daterangepicker', 'autocomplete': 'off' }, label='Dates Read') }}
     </div>
 

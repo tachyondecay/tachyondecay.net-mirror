@@ -6,17 +6,14 @@
  */
 .upload-widget {
   display: grid;
-  // grid-template-columns: 1fr 100px;
-  // grid-gap: var(--unit-tiny);
-
-  min-height: 100px;
-  padding: 0;
+  grid-template-columns: auto fit-content(100px);
+  grid-template-areas: 
+    "fileselect thumbnail"
+    "remove thumbnail";
+  align-items: center;
 
   > .fileselect {
-    grid-area: 1 / 1;
-    display: flex;
-    flex-flow: column nowrap;
-    flex: 2;
+    grid-area: fileselect;
 
     padding: var(--unit-tiny);
 
@@ -28,29 +25,38 @@
     > .input {
       margin-top: var(--unit-tiny);
     }
+
+    @include mq($from: desktop) {
+      padding: 0 var(--unit-tiny);
+
+      > .input {
+        margin-top: 0;
+      }
+    }
   }
 
   > .remove {
-    grid-row: 2;
+    grid-area: remove;
+  }
+
+  @include mq(tablet, desktop) {
+    grid-template-columns: 12em fit-content(100px);
   }
 }
 
 
   .thumbnail-preview {
-    grid-area: 1 / 2 / span 2;
+    grid-area: thumbnail;
     position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
 
-    height: 100px;
-    width: 75px;
     padding: 0 var(--unit-tiny);
 
     text-align: center;
 
     > .thumbnail {
-      max-height: 100%;
       max-width: 100%;
 
       position: relative;

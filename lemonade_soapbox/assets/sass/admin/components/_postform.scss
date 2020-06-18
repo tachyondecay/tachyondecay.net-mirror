@@ -18,11 +18,9 @@
   }
 
   @include mq($from: tablet) {
-    grid-column: main-content / span 8;
+    grid-column: content-start / content-end;
     grid-row: 2;
-    display: grid;
-    grid-template-columns: 66% 33%;
-    grid-column-gap: var(--unit);
+    display: contents;
 
     > .actions {
       padding: 0;
@@ -30,22 +28,18 @@
   }
 }
 
-.postform-contents {
-  grid-column: 3 / 8;
-}
+@include mq($from: tablet) {
+  .postform-contents, .titlefield {
+    grid-column: content-start / rs-start;
+  }
 
-.postform-metadata {
-  grid-column: 8 / 11;
+  .postform-metadata, .actions {
+    grid-column: rs-start / content-end;
+  }
 }
 
 .postform-contents, .postform-metadata {
-  // @include max-width-container();
-  padding: var(--unit-large) var(--unit-small);
-
-  .form-field {
-    margin-bottom: var(--unit);
-    padding: 0 var(--unit-tiny);
-  }
+  margin: var(--unit);
 
   .jumplink {
     text-align: center;
@@ -55,5 +49,22 @@
     .jumplink {
       @include hide;
     }
+
+    margin: var(--unit) 0;
+  }
+}
+
+@include mq($from: desktop) {
+  .postform-contents .fields {
+    display: flex;
+    flex-flow: row wrap;
+  }
+
+  .fields > .form-field {
+    flex: 1;
+  }
+
+  .fields > .-span {
+    flex: 1 0 100%;
   }
 }

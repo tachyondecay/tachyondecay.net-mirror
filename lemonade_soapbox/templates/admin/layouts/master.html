@@ -14,7 +14,6 @@
         {% block styles %}{% endblock %}
 
         <script type="text/javascript">
-            var application_root = {{ request.script_root|tojson|safe }};
             var csrf_token = "{{ csrf_token() }}";
         </script>
 
@@ -32,7 +31,7 @@
     </head>
     <body class="no-js {% block body_classes %}{% endblock %}">
         {% block body_main %}
-        <header class="page-title grid-layout -slim-rows" id="top">
+        <header class="page-title grid-layout -max -slim-rows" id="top">
             {% block page_title_body %}
             {% if subtitle %}<p class="subtitle">{{ subtitle }}</p>{% endif %}
             <h1 class="title">{{ page_title }}</h1>

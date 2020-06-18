@@ -35,7 +35,7 @@ $button-colour-variations: (
     text-transform: uppercase;
 
     margin: 0; /* [4] */
-    padding: 0 12px;
+    padding: var(--unit-small);
 
     background-color: $blue;
     border: 1px solid $blue;
@@ -64,6 +64,14 @@ $button-colour-variations: (
     & > span {
         @include sprite-image(#ffffff);
         transition: $global-transition;
+    }
+
+    @include mq(tablet, desktop) {
+        padding: var(--unit-tiny);
+    }
+
+    @include mq($from: desktop) {
+        padding: calc(var(--unit-tiny)/2) var(--unit-tiny);
     }
 }
 
@@ -98,7 +106,7 @@ $button-colour-variations: (
    ========================================================================== */
 
 ._button.-small {
-  padding: var(--unit-tiny)/2 var(--unit-tiny);
+  padding: calc(var(--unit-tiny)/2) var(--unit-tiny);
 }
 
 ._button.-large {

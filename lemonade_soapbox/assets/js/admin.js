@@ -1,3 +1,4 @@
+const application_root = '';
 /*
  * Reload CSRF token periodically in case page has been sitting there
  */
@@ -11,7 +12,6 @@ function refreshCSRF() {
 
 function BackendInit() {
     $('body').removeClass('no-js');
-
 
     /*
      * AJAX configuration
@@ -291,13 +291,13 @@ PostForm.prototype.bindAutosaveRestores = function() {
 var MagnificentUpload = function(container) {
     var self = this;
     self.container = $(container);
-    self.input = self.container.find('.input');
+    self.input = self.container.find('[type=file]');
     self.image = self.container.find('.thumbnail');
     self.pasted = self.container.find('input[type=hidden]');
     self.placeholder = self.container.find('.placeholder');
     self.remove = self.container.find('.remove');
 
-    self.css_no_img = 'thumbnail -none';
+    self.css_no_img = '-none';
 
     // Hide the remove toggle if no image currently uploaded
     if(self.image.hasClass(self.css_no_img)) {
@@ -348,14 +348,23 @@ var MagnificentUpload = function(container) {
         if($(this).prop('checked')) {
             self.input.val(null);
             self.image
+                .data('old-src', self.image.attr('src'))
                 .attr({ 'src': '', alt: '' })
                 .addClass(self.css_no_img);
             self.placeholder.html('Paste image here');
+        } else {
+            if(self.image.data('old-src')) {
+                self.image.attr({
+                    'src': self.image.data('old-src'),
+                    'alt': self.container.data('alt')
+                }).removeClass(self.css_no_img);
+            }
         }
     });
 
     // Generate preview thumbnail when image selected in file input
     self.input.change(function(e) {
+        console.log(this);
         const file = this.files[0];
         if (file.type.startsWith('image/')){
             const reader = new FileReader();
