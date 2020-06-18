@@ -48,10 +48,10 @@ function BackendInit() {
      */
     
     // Add datepickers to the date inputs
-    $('input[type=date]')
-        .datepicker({
-            dateFormat: 'yy-mm-dd',
-        });
+    // $('input[type=date]')
+    //     .datepicker({
+    //         dateFormat: 'yy-mm-dd',
+    //     });
 
     // Add timepickers to the time inputs, courtesy jquery-timepicker
     $('input[type=time]').timepicker({
