@@ -643,7 +643,9 @@ class Review(
     book_cover = db.Column(db.String(255))
     book_id = db.Column(db.String(255))  # ISBN or ASIN
 
-    dates_read = db.Column(db.String(255))
+    # dates_read = db.Column(db.String(255))
+    date_started = db.Column(ArrowType)
+    date_finished = db.Column(ArrowType)
     goodreads_id = db.Column(db.Integer)
     rating = db.Column(db.Integer, info={'min': 0, 'max': 5}, default=0)
     spoilers = db.Column(db.Boolean, default=False)
@@ -665,20 +667,21 @@ class Review(
     )
 
     @hybrid_property
-    def date_started(self):
-        """Date started from date_read interval"""
-        if self.dates_read:
-            start, end = [arrow.get(x.strip()) for x in self.dates_read.split('-')]
-            return start
-        return ''
+    def dates_read(self):
+        """Formats the start/finished date into a string for us."""
+        return f"{self.date_started.format('YYYY-MM-DD')} - {self.date_finished.format('YYYY-MM-DD')}"
 
-    @hybrid_property
-    def date_finished(self):
-        """Date finished from date_read interval"""
-        if self.dates_read:
-            start, end = [arrow.get(x.strip()) for x in self.dates_read.split('-')]
-            return end
-        return ''
+    @dates_read.setter
+    def dates_read(self, value):
+        """Sets the start/finished date when given an appropriate string."""
+        try:
+            start, end = [arrow.get(x.strip()) for x in value.split('-')]
+            if end < start:
+                raise Exception
+            self.date_started = start
+            self.date_finished = end
+        except Exception:
+            raise Exception('Dates read must be a valid date range.')
 
     def get_permalink(self, relative=True):
         """Generate a permanent link to the review."""

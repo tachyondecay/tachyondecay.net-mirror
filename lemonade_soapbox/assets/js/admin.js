@@ -160,14 +160,18 @@ function BackendInit() {
     const   sort_by = document.getElementById('sort_by'),
             sort_order = document.getElementById('order'),
             qs = new URLSearchParams(location.search);
+    if(sort_by) {
     sort_by.addEventListener('change', function() {
         newSearchOptions(this.id, this.value);
     });
-    sort_order.addEventListener('change', function() {
-        newSearchOptions(this.id, (this.checked) ? "asc" : "desc");
-    });
-    sort_by.value = qs.get('sort_by') || 'date_updated'
-    sort_order.checked = (qs.get('order') == 'asc');
+        sort_by.value = qs.get('sort_by') || 'date_updated';
+    }
+    if(sort_order) {
+        sort_order.addEventListener('change', function() {
+            newSearchOptions(this.id, (this.checked) ? "asc" : "desc");
+        });
+        sort_order.checked = (qs.get('order') == 'asc');
+    }
 }
 
 

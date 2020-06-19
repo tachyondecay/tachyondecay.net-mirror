@@ -98,28 +98,6 @@ class DateTimeLocalField(DateTimeField):
                 )
 
 
-# Note: This class is currently unused because DateRangeType from sqlalchemy-utils
-# is not working as expected.
-class DateRangeField(StringField):
-    """Field for date ranges"""
-
-    def _value(self):
-        if self.data:
-            start, end = [
-                arrow.get(k).format('YYYY/MM/DD')
-                for k in [self.data.lower, self.data.upper]
-            ]
-            return f'{start} - {end}'
-        return ''
-
-    def process_formdata(self, valuelist):
-        if valuelist:
-            start, end = [arrow.get(x.strip()) for x in valuelist[0].split('-')]
-            self.data = DateInterval.closed(start.date(), end.date())
-        else:
-            self.data = ''
-
-
 class TagListField(StringField):
     """
     A text input field that processes input as if it were a comma-separated
@@ -176,10 +154,11 @@ class ReviewForm(ModelForm):
             'book_id',
             'goodreads_id',
             'book_cover',
-            'dates_read',
             'rating',
             'spoilers',
         ]
+
+    dates_read = StringField('Dates Read')
 
     date_published = DateTimeLocalField(
         'Published', format='%Y-%M-%D %H:%m', validators=[validators.Optional()]
