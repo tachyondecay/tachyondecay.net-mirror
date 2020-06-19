@@ -840,7 +840,7 @@ class Tag(db.Model):
         self.handle = self.slugify(label)
 
     @classmethod
-    def frequency(cls, parent, order_by='handle', status='published'):
+    def frequency(cls, parent, order_by='handle', status=['published']):
         """Returns tuples of tags and their frequencies."""
         rel = tag_relationships[parent.__name__]
         if order_by == 'count':
@@ -852,7 +852,7 @@ class Tag(db.Model):
             .outerjoin(
                 (rel, rel.c.tag_id == cls.id), (parent, parent.id == rel.c.post_id)
             )
-            .filter(parent.status == status)
+            .filter(parent.status.in_(status))
             .group_by(cls.id)
             .order_by(order_by)
         )

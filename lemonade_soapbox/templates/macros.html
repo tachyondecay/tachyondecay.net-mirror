@@ -52,7 +52,7 @@
 {% endmacro %}
 
 {% macro render_pagination(pagination) %}
-  {% set query_args = request.args.to_dict() %}
+  {% set query_args = request.args.to_dict(false) %}
   <div class="pagination-links">
   {%- for page in pagination.iter_pages() %}
     {% if page %}

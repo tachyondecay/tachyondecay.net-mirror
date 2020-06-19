@@ -227,8 +227,3 @@ class SignInForm(Form):
     email = EmailField(
         'Email address', validators=[validators.InputRequired(), validators.Email()]
     )
-
-
-class SortForm(Form):
-    sort_by = SelectField('Sort By')
-    order = BooleanField('', default=True)
