@@ -28,7 +28,7 @@ $button-colour-variations: (
     color: $white;
     font: inherit; /* [3] */
     font-family: $f-accent;
-    font-size: 0.85rem;
+    font-size: 0.85em;
     letter-spacing: 2px;
     text-align: center; /* [4] */
     text-decoration: none;
@@ -40,11 +40,11 @@ $button-colour-variations: (
     background-color: $blue;
     border: 1px solid $blue;
     border-radius: $global-radius;
-    box-shadow: 0px 4px 0px 0px darken($blue, 20);
+    box-shadow: 0px 4px 2px 0px darken($blue, 20);
     cursor: pointer; /* [5] */
     transition: $global-transition;
 
-    &:hover, &:active, &:focus, &.-ghost {
+    &:hover, &:active, &.-active, &:focus, &.-ghost {
         color: saturate($blue, 20);
         text-decoration: none;
 
@@ -88,7 +88,7 @@ $button-colour-variations: (
         border-color: $variant;
         box-shadow: 0 4px 0 0 darken($variant, 20);
 
-        &:hover, &:active, &:focus, &.-ghost {
+        &:hover, &:active, &.-active, &:focus, &.-ghost {
             background-color: $white;
             color: saturate($variant, 20);
             border-color: saturate($variant, 20);
@@ -168,7 +168,7 @@ $btn-ghost-border-width: 2px !default;
         transition: opacity 0.5s, top 0.5s, right 0.5s;
     }
 
-    &:hover, &:active, &:focus {
+    &:hover, &:active, &.-active, &:focus {
         padding-left: 5px;
         padding-right: 2em;
 

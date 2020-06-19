@@ -152,16 +152,20 @@ function BackendInit() {
     /*
      * Sort form options
      */
-    function newSearchOptions() {
+    function newSearchOptions(param, value) {
         const qs = new URLSearchParams(location.search);
-        qs.set(this.id, this.value);
+        qs.set(param, value);
         location.search = qs.toString();
     }
     const   sort_by = document.getElementById('sort_by'),
             sort_order = document.getElementById('order'),
             qs = new URLSearchParams(location.search);
-    sort_by.addEventListener('change', newSearchOptions);
-    sort_order.addEventListener('change', newSearchOptions);
+    sort_by.addEventListener('change', function() {
+        newSearchOptions(this.id, this.value);
+    });
+    sort_order.addEventListener('change', function() {
+        newSearchOptions(this.id, (this.checked) ? "asc" : "desc");
+    });
     sort_by.value = qs.get('sort_by') || 'date_updated'
     sort_order.checked = (qs.get('order') == 'asc');
 }

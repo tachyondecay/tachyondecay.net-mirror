@@ -11,6 +11,8 @@
   display: flex;
   justify-content: center;
 
+  margin: var(--unit) 0;
+
   & > .button,
   & > .current {
     display: block;
@@ -35,5 +37,12 @@
     border: 1px solid $blue-grey;
 
     color: $blue-grey;
+  }
+}
+
+@include mq(mobile) {
+  .pagination-links .button,
+  .pagination-links .current {
+    font-size: 1.1rem;
   }
 }
