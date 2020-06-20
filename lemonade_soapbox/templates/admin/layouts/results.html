@@ -1,0 +1,83 @@
+{% extends 'admin/layouts/master.html' %}
+{% from 'macros.html' import notifications, render_pagination %}
+
+{% block body_main %}
+{{ super() }}
+
+<div class="grid-layout results-grid -max">
+    <div class="filter-bar">
+        <h2 class="_hide">Filter Results</h2>
+
+        <div class="filter -status">
+            <h3 class="label _h4">Status</h3>
+            <ul class="statuslist">
+                {% for s in status_breakdown %}
+                    {% set query_args = request.args.to_dict(false) %}
+                    <li>
+                        {% if s[0] is in status -%}
+                            {% if 'status' in query_args %}
+                                {% set update = query_args['status'].remove(s[0]) %}
+                            {% endif %}
+                            <a href="{{ url_for(request.endpoint, **query_args) }}" class="_button -small -active" title="Remove filter">
+                        {% else -%}
+                            {% if 'status' in query_args %}
+                                {% set update = query_args['status'].append(s[0]) %}
+                            {% else %}
+                                {% set update = query_args.update({'status': [s[0]]}) %}
+                            {% endif %}
+                            <a href="{{ url_for(request.endpoint, **query_args) }}" class="_button -small" title="Add filter">
+                        {% endif %}
+                            {{s[0]|capitalize }}
+                            <i class="count">({{ s[1] }})</i>
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="filter -sort">
+            <h3 class="label _h4">Sort by</h3>
+            {% block sort_by %}{% endblock sort_by %}
+            <div class="checkbox-toggle">
+                <input id="order" name="order" type="checkbox" value="asc">
+                <label for="order">
+                    <div class="switch" data-checked="Asc" data-unchecked="Desc"></div>
+                    <div class="labeltext"></div>
+                </label>
+            </div>
+        </div>
+
+        <div class="filter -search">
+            <input type="text" id="search-posts" placeholder="Search…" class="textinput" value="{{ request.args.get('q', '') }}"/>
+        </div>
+    </div>
+
+    {% if posts and posts.pages > 1 %}
+        {{ render_pagination(posts) }}
+    {% endif %}
+
+    <section class="results-view">
+    {% if posts and posts.pages > 0 %}
+        <h2 class="_hide">Results</h2>
+
+        <ol class="results-list">
+        {% for post in posts.items %}
+            <li>
+                <article class="result-item">
+                    {% block result_item scoped %}{% endblock %}
+                </article>
+            </li>
+        {% endfor %}
+        </ol>
+
+        {% if posts.pages > 1 %}
+            {{ render_pagination(posts) }}
+        {% endif %}
+        <p class="jumplink"><a href="#top">Back to Top</a></p>
+
+    {% else %}
+        <div class="noresults">No results found for the selected criteria.</div>
+    {% endif %}
+    </section>
+</div>
+{% endblock %}

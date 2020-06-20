@@ -22,6 +22,7 @@ from lemonade_soapbox.models import Article, Review, Revision, Tag
 from lemonade_soapbox.models.users import User
 from sqlalchemy import and_, func
 from werkzeug import secure_filename
+from whoosh.query import Term as whoosh_term, Or as whoosh_or
 
 bp = Blueprint('admin', __name__)
 
@@ -224,44 +225,8 @@ def edit_user(user_id):
 @login_required
 def blog():
     """View and manage blog posts."""
-    status = request.args.get('status', 'published')
-    articles = Article.query.filter_by(status=status)
-    subtitle = '{} Posts'.format(status.title())
-    current_month = ''
-    if not status or status == 'published':
-        month = request.args.get('month')
-        if month:
-            month = arrow.get(month).span('month')
-        else:
-            month = arrow.utcnow().span('month')
-        articles = articles.filter(Article.date_published.between(month[0], month[1]))
-        current_app.logger.debug('Month: {}'.format(month))
-        subtitle = 'posts from {}'.format(month[0].format('MMMM YYYY'))
-        current_month = month[0].format('YYYY-MM')
-
-    articles = articles.order_by(Article.date_updated.desc()).all()
-    subtitle = '{} {}'.format(len(articles), subtitle)
-    if len(articles) == 1:
-        subtitle = subtitle.replace('posts', 'post')
-
-    tags = Tag.frequency(Article, order_by='count').limit(10).all()
-
-    status_count = (
-        db.session.query(Article.status, func.count(Article.id))
-        .group_by(Article.status)
-        .all()
-    )
-    current_app.logger.debug(status_count)
-
-    return render_template(
-        'admin/views/blog/index.html',
-        articles=articles,
-        current_status=status,
-        current_month=current_month,
-        page_title='Manage Blog Posts',
-        status_breakdown=status_count,
-        subtitle=subtitle,
-        tags=tags,
+    return posts_index(
+        'article', 'admin/views/blog/index.html', page_title='Manage Blog Posts'
     )
 
 
@@ -329,10 +294,8 @@ def edit_article(id, revision_id):
 #
 
 
-@bp.route('/reviews/')
-@login_required
-def reviews():
-    """View and manage reviews."""
+def posts_index(post_type, template, **kwargs):
+    post_class = globals()[post_type.capitalize()]
     status = request.args.getlist('status') or ['published']
     page = request.args.get('page', 1, int)
     sort_by = request.args.get(
@@ -340,7 +303,7 @@ def reviews():
     )
     order = 'asc' if request.args.get('order') == 'asc' else 'desc'
     q = request.args.get('q')
-    reviews = Pagination(None, page=page, per_page=50, total=0, items=[])
+    posts = Pagination(None, page=page, per_page=50, total=0, items=[])
 
     if q:
         search_params = {
@@ -348,33 +311,43 @@ def reviews():
             'pagelen': 50,
             'sort_field': sort_by,
             'sort_order': order,
+            'filter': whoosh_or([whoosh_term('status', x) for x in status]),
         }
-        results = Review.search(q, **search_params)
+        results = post_class.search(q, **search_params)
         current_app.logger.debug(results)
         if results is not None and results['query'] is not None:
-            reviews.items = results['query'].all()
-            reviews.total = results['total']
+            posts.items = results['query'].all()
+            posts.total = results['total']
     else:
-        reviews = (
-            Review.query.filter(Review.status.in_(status))
-            .order_by(getattr(getattr(Review, sort_by), order)())
+        posts = (
+            post_class.query.filter(post_class.status.in_(status))
+            .order_by(getattr(getattr(post_class, sort_by), order)())
             .paginate(page=int(page), per_page=50)
         )
 
-    # tags = Tag.frequency(Review, order_by='count', status=status).limit(10).all()
     status_count = (
-        db.session.query(Review.status, func.count(Review.id))
-        .group_by(Review.status)
+        db.session.query(post_class.status, func.count(post_class.id))
+        .group_by(post_class.status)
         .all()
     )
+    subtitle = f"{posts.total} {post_type}" + ("s" if posts.total != 1 else "")
 
     return render_template(
-        'admin/views/reviews/index.html',
-        page_title='Manage Reviews',
-        posts=reviews,
+        template,
+        posts=posts,
         status_breakdown=status_count,
         status=status,
-        subtitle=f"{reviews.total} review" + ("s" if reviews.total != 1 else ""),
+        subtitle=subtitle,
+        **kwargs,
+    )
+
+
+@bp.route('/reviews/')
+@login_required
+def reviews():
+    """View and manage reviews."""
+    return posts_index(
+        'review', 'admin/views/reviews/index.html', page_title='Manage Reviews'
     )
 
 

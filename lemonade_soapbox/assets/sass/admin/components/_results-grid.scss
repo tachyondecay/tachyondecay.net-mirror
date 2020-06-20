@@ -82,7 +82,7 @@
   grid-template-areas: 
       "img title"
       "img footer"
-      "img review";
+      "img summary";
 
   padding: var(--unit-tiny) 0;
 
@@ -142,8 +142,8 @@
     // margin-top: calc(-1 * var(--unit-tiny));
   }
 
-  > .review {
-    grid-area: review;
+  > .summary {
+    grid-area: summary;
     max-height: rvr(2.25);
     overflow: hidden;
 

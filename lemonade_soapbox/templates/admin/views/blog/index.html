@@ -1,64 +1,35 @@
-{% extends 'admin/layouts/master.html' %}
-{% from 'macros.html' import notifications %}
+{% extends 'admin/layouts/results.html' %}
 
-{% block body_main %}
-{{ super() }}
-
-<div class="">
-<section class="o-grid--column o-grid--flip@desktop c-results u-margin">
-
-    <header class="o-grid__cell c-results__filter u-flex-1/4@desktop u-padding-horizontal u-padding-vertical-none">
-        <h1 class="u-hidden-visually">Filters</h1>
-
-        <div class="o-grid o-grid--auto">
-
-            <section class="o-grid__cell c-filter-facet u-margin-bottom-small u-flex-1/4">
-                <h2 class="u-accent u-h4 u-margin-bottom-tiny">Status</h2>
-
-                <ul class="o-list-bare c-filter-facet__list">
-                    {% for status in status_breakdown %}
-                    <li>
-                        <a href="?status={{status[0]}}" class="c-filter-facet__link {{'c-filter-facet__link--current' if current_status==status[0]}}">
-                            <span class="c-filter-facet__link-text">{{status[0]|capitalize }}</span>
-                            <span class="c-filter-facet__count">{{ status[1] }}</span>
-                        </a>
-                    </li>
-                    {% endfor %}
-                </ul>
-            </section>
-
-            {% if current_status == 'published' %}
-            <section class="o-grid__cell c-filter-facet u-margin-bottom u-flex-1/2">
-                <h2 class="u-hidden-visually">Date</h2>
-
-                <div class="c-filter-facet__month-picker js-monthpicker" data-selected="{{ current_month }}"></div>
-            </section>
-            {% endif %}
-
-            <section class="o-grid__cell c-filter-facet u-flex-1/4">
-                <h2 class="u-accent u-h4 u-margin-bottom-tiny">Tags</h2>
-
-                <ul class="o-list-bare c-filter-facet__list">
-                    <li class="u-margin-top-small">
-                        <input type="text" placeholder="Search for tag…" class="o-text-input o-text-input--blend u-1/1 js-autocomplete js-tag-search" data-src="{{ url_for('api.tags_lookup') }}" />
-                    </li>
-                    {% for tag in tags %}
-                    <li>
-                        <a href="{{ url_for('admin.search', q='tag:' + tag[0].handle) }}" class="c-filter-facet__link">
-                            <span class="c-filter-facet__link-text">{{ tag[0].label }}</span>
-                            <span class="c-filter-facet__count">{{ tag[1] }}</span>
-                        </a>
-                    </li>
-                    {% endfor %}
-                </ul>
-            </section>
-        </div>
+{% block sort_by %}
+            <select id="sort_by">
+                <option value="book_author">Author</option>
+                <option value="date_published">Date published</option>
+                <option value="date_updated">Date updated</option>
+                <option value="title">Title</option>
+            </select>
+{% endblock sort_by %}
 
 
-    </header>
+{% block result_item %}
+                <h3 class="title"><a href="{{ url_for('.edit_article', id=post.id) }}" title="Edit article">{{ post.title }}</a></h3>
+                    <footer>
+                        <dl class="details">
+                            {% if post.date_published %}
+                                <dt>Published</dt>
+                                <dd><time datetime="{{ post.date_published.format('YYYY-MM-DD') }}">{{ post.date_published.format('MMM DD, YYYY') }}</time></dd>
+                            {% endif%}
+                            {% if post.date_updated %}
+                                <dt>Updated</dt>
+                                <dd><time datetime="{{ post.date_updated.format('YYYY-MM-DD') }}">{{ post.date_updated.format('MMM DD, YYYY') }}</time></dd>
+                            {% endif %}
+                        </dl>
+                    </footer>
 
-
-    {% include 'admin/views/results.html' %}
-</section>
-</div>
+                    <div class="summary">
+                        {% if post.summary %}
+                            {{ post.summary }}
+                        {% else %}
+                            {{ post.body_html|striptags|truncate(300) }}
+                        {% endif %}
+                    </div>
 {% endblock %}

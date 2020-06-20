@@ -77,12 +77,12 @@ class Searchable:
         fields = self.schema.names()
         current_app.logger.debug(fields)
         for field in fields:
-            # current_app.logger.debug('Processing {}'.format(field))
+            current_app.logger.debug('Processing {}'.format(field))
             value = getattr(self, field)
             if field in filters:
                 value = filters[field](value)
             idx_info[field] = value
-            # current_app.logger.debug(value)
+            current_app.logger.debug(value)
         # current_app.logger.debug(idx_info)
         writer.update_document(**idx_info)
 
@@ -326,6 +326,10 @@ class PostMixin(AuthorMixin):
         """Generate a permanent link to the post."""
         raise NotImplementedError
 
+    def get_editlink(self, relative=True):
+        """Generate an edit link for this post."""
+        raise NotImplementedError
+
     @property
     def type(self):
         """Expose what type of post this is to the wider world."""
@@ -405,6 +409,7 @@ class PostMixin(AuthorMixin):
         def get_datetime(d):
             return getattr(d, 'datetime', None)
 
+        current_app.logger.debug('hello')
         exceptions = {
             'id': str,
             'author': lambda x: getattr(x, 'name', None),
@@ -573,7 +578,7 @@ class Article(
     """Blog posts."""
 
     __tablename__ = 'articles'
-    __searchable__ = ['title', 'body']
+    __searchable__ = ['title', 'body', 'status']
     __sortable__ = ['author', 'date_created', 'date_published', 'date_updated', 'title']
 
     summary = db.Column(db.Text)
@@ -611,6 +616,11 @@ class Article(
             route = 'blog.show_deleted'
         return url_for(route, **kwargs)
 
+    def get_editlink(self, relative=True):
+        if not self.id:
+            return ""
+        return url_for('admin.edit_article', id=self.id, _external=not (relative))
+
     @classmethod
     def post_breakdown(cls):
         """Generate a breakdown of post counts by year and month."""
@@ -633,7 +643,7 @@ class Article(
 
 
 class Review(
-    UniqueHandleMixin, TagMixin, Searchable, RevisionMixin, PostMixin, db.Model
+    UniqueHandleMixin, TagMixin, RevisionMixin, PostMixin, Searchable, db.Model
 ):
     """Book reviews."""
 
@@ -648,6 +658,7 @@ class Review(
         'date_finished',
         'tags',
         'rating',
+        'status',
     ]
     __sortable__ = [
         'date_created',
@@ -714,21 +725,14 @@ class Review(
         }
         return url_for(f'reviews.show_{self.status}', **kwargs)
 
+    def get_editlink(self, relative=True):
+        if not self.id:
+            return ""
+        return url_for('admin.edit_review', id=self.id, _external=not (relative))
+
     def schema_filters(self):
-        """Return a dict of attr => func pairs, where func is applied to the
-        value of attr to process it before indexing."""
-
-        def get_datetime(d):
-            return getattr(d, 'datetime', None)
-
-        exceptions = {
-            'id': str,
-            'date_created': get_datetime,
-            'date_published': get_datetime,
-            'date_updated': get_datetime,
-            'date_finished': get_datetime,
-            'tags': lambda x: ', '.join(x),
-        }
+        exceptions = super().schema_filters()
+        exceptions['date_finished'] = lambda x: getattr(x, 'datetime', None)
         return exceptions
 
 
