@@ -14,6 +14,7 @@ from flask import (
     url_for,
 )
 from flask_login import current_user, login_user, login_required, logout_user
+from flask_sqlalchemy import Pagination
 from lemonade_soapbox import db, mail
 from lemonade_soapbox.forms import ArticleForm, ReviewForm, SignInForm
 from lemonade_soapbox.helpers import compose
@@ -333,18 +334,32 @@ def edit_article(id, revision_id):
 def reviews():
     """View and manage reviews."""
     status = request.args.getlist('status') or ['published']
-    page = request.args.get('page', 1)
-
+    page = request.args.get('page', 1, int)
     sort_by = request.args.get(
         'sort_by', ('date_published' if status == 'published' else 'date_updated')
     )
     order = 'asc' if request.args.get('order') == 'asc' else 'desc'
+    q = request.args.get('q')
+    reviews = Pagination(None, page=page, per_page=50, total=0, items=[])
 
-    reviews = (
-        Review.query.filter(Review.status.in_(status))
-        .order_by(getattr(getattr(Review, sort_by), order)())
-        .paginate(page=int(page), per_page=50)
-    )
+    if q:
+        search_params = {
+            'pagenum': page,
+            'pagelen': 50,
+            'sort_field': sort_by,
+            'sort_order': order,
+        }
+        results = Review.search(q, **search_params)
+        current_app.logger.debug(results)
+        if results is not None and results['query'] is not None:
+            reviews.items = results['query'].all()
+            reviews.total = results['total']
+    else:
+        reviews = (
+            Review.query.filter(Review.status.in_(status))
+            .order_by(getattr(getattr(Review, sort_by), order)())
+            .paginate(page=int(page), per_page=50)
+        )
 
     # tags = Tag.frequency(Review, order_by='count', status=status).limit(10).all()
     status_count = (
@@ -352,13 +367,13 @@ def reviews():
         .group_by(Review.status)
         .all()
     )
-    current_app.logger.debug(request.args.to_dict(flat=False))
 
     return render_template(
         'admin/views/reviews/index.html',
         page_title='Manage Reviews',
         posts=reviews,
         status_breakdown=status_count,
+        status=status,
         subtitle=f"{reviews.total} review" + ("s" if reviews.total != 1 else ""),
     )
 

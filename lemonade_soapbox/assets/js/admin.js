@@ -231,6 +231,12 @@ function BackendInit() {
         });
         sort_order.checked = (qs.get('order') == 'asc');
     }
+
+    document.getElementById('search-posts').addEventListener('keydown', function(e) {
+        if(e.key == 'Enter') {
+            newSearchOptions('q', this.value);
+        }
+    });
 }
 
 

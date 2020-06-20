@@ -274,7 +274,9 @@ class TagMixin:
     @declared_attr
     def _tags(cls):
         return db.relationship(
-            'Tag', secondary=tag_relationships[cls.__name__], backref=cls.__tablename__
+            'Tag',
+            secondary=tag_relationships[cls.__name__],
+            backref=db.backref(cls.__tablename__, lazy='dynamic'),
         )
 
     def _find_or_create_tag(self, tag):
@@ -637,7 +639,16 @@ class Review(
 
     __tablename__ = 'reviews'
     __searchable__ = ['body', 'title', 'book_author']
-    __sortable__ = ['date_created', 'date_published', 'date_read', 'title']
+    __sortable__ = [
+        'date_created',
+        'date_published',
+        'date_read',
+        'title',
+        'date_updated',
+        'date_finished',
+        'date_started',
+        'book_author',
+    ]
 
     book_author = db.Column(db.String(255), nullable=False)
     book_cover = db.Column(db.String(255))

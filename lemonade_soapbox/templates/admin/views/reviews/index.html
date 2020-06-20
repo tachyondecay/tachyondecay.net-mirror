@@ -53,7 +53,7 @@
         </div>
 
         <div class="filter -search">
-            <input type="text" placeholder="Search…" class="textinput"/>
+            <input type="text" id="search-posts" placeholder="Search…" class="textinput" value="{{ request.args.get('q', '') }}"/>
         </div>
     </div>
 
@@ -62,7 +62,7 @@
     {% endif %}
 
     <section class="results-view">
-    {% if posts.pages > 0 %}
+    {% if posts and posts.pages > 0 %}
         <h2 class="_hide">Results</h2>
 
         <ol class="results-list">
