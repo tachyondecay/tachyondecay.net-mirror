@@ -398,6 +398,23 @@ class PostMixin(AuthorMixin):
             message += ' <a href="{0}">View post.</a>'.format(self.get_permalink())
         return message
 
+    def schema_filters(self):
+        """Return a dict of attr => func pairs, where func is applied to the
+        value of attr to process it before indexing."""
+
+        def get_datetime(d):
+            return getattr(d, 'datetime', None)
+
+        exceptions = {
+            'id': str,
+            'author': lambda x: getattr(x, 'name', None),
+            'date_created': get_datetime,
+            'date_published': get_datetime,
+            'date_updated': get_datetime,
+            'tags': lambda x: ', '.join(x),
+        }
+        return exceptions
+
 
 class RevisionMixin:
     """Mixin for any post classes that want to handle revisions and autosaves."""
@@ -614,23 +631,6 @@ class Article(
             year[int(m)] = c
         return breakdown
 
-    def schema_filters(self):
-        """Return a dict of attr => func pairs, where func is applied to the
-        value of attr to process it before indexing."""
-
-        def get_datetime(d):
-            return getattr(d, 'datetime', None)
-
-        exceptions = {
-            'id': str,
-            'author': lambda x: getattr(x, 'name', None),
-            'date_created': get_datetime,
-            'date_published': get_datetime,
-            'date_updated': get_datetime,
-            'tags': lambda x: ', '.join(x),
-        }
-        return exceptions
-
 
 class Review(
     UniqueHandleMixin, TagMixin, Searchable, RevisionMixin, PostMixin, db.Model
@@ -638,7 +638,17 @@ class Review(
     """Book reviews."""
 
     __tablename__ = 'reviews'
-    __searchable__ = ['body', 'title', 'book_author']
+    __searchable__ = [
+        'body',
+        'title',
+        'book_author',
+        'date_created',
+        'date_published',
+        'date_updated',
+        'date_finished',
+        'tags',
+        'rating',
+    ]
     __sortable__ = [
         'date_created',
         'date_published',

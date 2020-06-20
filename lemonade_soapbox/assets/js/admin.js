@@ -87,6 +87,27 @@ function BackendInit() {
             'format': 'YYYY/MM/DD'
         }
     });
+    $('#search-posts').daterangepicker({
+        'autoApply': true,
+        'autoUpdateInput': false,
+        'locale': {
+            'format': 'YYYY/MM/DD'
+        },
+        'minYear': 2004,
+        'maxYear': moment().year() + 1,
+        'showDropdowns': true
+    });
+    $('#search-posts').on('apply.daterangepicker', function(ev, picker) {
+        let sort = $('#sort_by').val().match('date_');
+        if(sort) {
+            sort = $('#sort_by').val();
+        } else {
+            sort = 'date_updated'
+        }
+        $(this).val(sort + ':[' + picker.startDate.format('YYYYMMDD') + ' to ' + picker.endDate.format('YYYYMMDD') + ']');
+        $(this).focus();
+    });
+
 
     /*
      * Autocomplete tag searching goodness
