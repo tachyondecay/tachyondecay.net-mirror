@@ -1,6 +1,4 @@
-from flask import (
-    Blueprint,
-)
+from flask import Blueprint
 from flask_login import login_required
 
 bp = Blueprint('reviews', __name__)
@@ -20,6 +18,11 @@ def show_draft(handle):
 @bp.route('/trash/<handle>/')
 @login_required
 def show_deleted(handle):
+    return ''
+
+
+@bp.route('/tags/<handle>/')
+def show_tag(handle):
     return ''
 
 

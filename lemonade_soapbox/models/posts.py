@@ -867,5 +867,6 @@ class Tag(db.Model):
 
 
 # Tags no longer associated with any article should be removed
-auto_delete_orphans(Article._tags)
-auto_delete_orphans(Review._tags)
+# Disabled because it doesn't work now that I have two models
+# auto_delete_orphans(Article._tags)
+# auto_delete_orphans(Review._tags)

@@ -91,29 +91,88 @@ function BackendInit() {
     /*
      * Autocomplete tag searching goodness
      */
-    $('.js-autocomplete:not(.js-tagit').each(function(i, v) {
-        $(v).autocomplete({
-            minLength: 3,
-            source: $(v).data('src')
-        });
-    });
-    $('.js-tag-search').each(function(i, v) {
-        $(v).autocomplete({
-            select: function(event, ui) {
-                window.location = application_root + '/meta/search/?q=tag:' + ui.item.handle;
+    document.querySelectorAll('.tag-lookup').forEach(function(self) {
+        // Create the autocomplete div
+        self.style.display = 'none';
+        const container = document.createElement('div'), 
+              input = document.createElement('input'),
+              suggestions = document.createElement('datalist');
+        container.className = 'tag-list textinput -blend';
+        input.className = 'input';
+        input.contentEditable = true;
+        suggestions.id = 'suggestions-' + self.id;
+        input.setAttribute('list', suggestions.id);
+        input.setAttribute('autocomplete', 'off');
+
+        container.append(input, suggestions);
+
+        function appendTag(tag) {
+            const s = document.createElement('span');
+            s.className = 'tag';
+            s.title = 'Delete tag';
+            s.innerText = tag.trim();
+            container.insertBefore(s, input);
+        }
+
+        container.addEventListener('click', (e) => {
+            if(e.target.classList.contains('tag')) {
+                const r = new RegExp(",? ?" + e.target.innerText + ",? ?");
+                self.value = self.value.replace(r, '');
+                e.target.remove();
             }
         });
+
+        self.value.split(',').forEach(appendTag);
+
+        let timer;
+        input.addEventListener('input', (e) => {
+            if(input.value.length >= 3) {
+                window.clearTimeout(timer);
+                timer = window.setTimeout(() => {
+                    fetch(self.dataset.url + "&term=" + input.value)
+                        .then(response => response.json())
+                        .then(data => {
+                            suggestions.innerHTML = '';
+                            if(data) {
+                                data.forEach((tag) => {
+                                    const r = new RegExp(tag.value + ",? ?");
+                                    if(!self.value.match(r)) {
+                                        const opt = document.createElement('option');
+                                        opt.value = tag.value;
+                                        suggestions.appendChild(opt);
+                                    }
+                                });
+                                // input.autocomplete = 'off';
+                                // input.autocomplete = 'on';
+                                // suggestions.style.display = 'block';
+                            }
+                        })
+                        .catch(error => {
+                            console.log(error);
+                        });
+                    }, 1000);
+            }
+        });
+
+        function chooseTag(e) {
+            const v = input.value.trim();
+            if(e.key == 'Enter') {
+                e.preventDefault();
+                if(v) {
+                    appendTag(v);
+                    self.value += ", " + v;
+                    input.value = '';
+                    input.focus();
+                }
+            } else if(e.key == 'Backspace' && v == '') {
+                e.preventDefault();
+                input.previousSibling.click();
+            }
+        }
+        input.addEventListener('keydown', chooseTag);
+
+        self.parentNode.insertBefore(container, self.nextSibling);
     });
-    $('.js-autocomplete.js-tagit').tagit({
-        autocomplete: {
-            minLength: 3,
-            source: application_root + '/api/tags/search/'
-        },
-        allowSpaces: true
-    });
-    $('.tagit')
-        .removeClass('ui-widget ui-widget-content ui-corner-all')
-        .addClass('textinput -blend');
 
     // Initialize special upload fields!
     $('.js-image-upload').each(function(i, v) {

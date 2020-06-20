@@ -1,18 +1,27 @@
 import json
 from flask import (
-    abort, Blueprint, current_app, jsonify,
-    render_template, request, Response, url_for
+    abort,
+    Blueprint,
+    current_app,
+    jsonify,
+    render_template,
+    request,
+    Response,
+    url_for,
 )
 from flask_login import login_required
 from flask_wtf import csrf
+from sqlalchemy import text
 from lemonade_soapbox import db
-from lemonade_soapbox.models import Article, Review, Tag
+from lemonade_soapbox.models import Article, Review, Tag, tag_relationships
 
 bp = Blueprint('api', __name__)
+
 
 @bp.route('/csrf/')
 def get_csrf():
     return csrf.generate_csrf()
+
 
 @bp.route('/posts/autosave/', methods=['POST'])
 @login_required
@@ -27,15 +36,18 @@ def autosave():
             abort(404)
         r = post.new_autosave(body)
         db.session.commit()
-        date_created = r.date_created.to(
-            current_app.config['TIMEZONE']
-        ).format('HH:mm:ss, DD MMM YYYY')
+        date_created = r.date_created.to(current_app.config['TIMEZONE']).format(
+            'HH:mm:ss, DD MMM YYYY'
+        )
         return jsonify(revision_id=r.id, date=date_created)
     else:
         # We're composing a brand new post, so let's create a new draft entry
         # in the database.
-        post = globals()[post_type](handle=request.form.get('handle'),
-                                    body=body, title=request.form.get('title'))
+        post = globals()[post_type](
+            handle=request.form.get('handle'),
+            body=body,
+            title=request.form.get('title'),
+        )
         post.new_revision()
         db.session.add(post)
         db.session.commit()
@@ -43,28 +55,36 @@ def autosave():
         return jsonify(
             revision_id=post.revision_id,
             post_id=post.id,
-            created=post.date_created.to(
-                current_app.config['TIMEZONE']
-            ).format('MMM DD, YYYY HH:mm'),
+            created=post.date_created.to(current_app.config['TIMEZONE']).format(
+                'MMM DD, YYYY HH:mm'
+            ),
             handle=post.handle,
             link=post.get_permalink(),
-            history=render_template(
-                'admin/posts/revision_history.html',
-                post=post
-            )
+            history=render_template('admin/posts/revision_history.html', post=post),
         )
+
 
 @bp.route('/tags/search/')
 @login_required
 def tags_lookup():
     """Returns a list of JSON objects of tags that begin with a given `term` GET parameter."""
-    term = request.args.get('term')
-    if term is not None:
-        matches = Tag.query.filter(Tag.label.startswith(term)).all()
-        just_tags = [{'handle': t.handle,
-                      'value': t.label,
-                      'url': url_for('blog.show_tag', handle=t.handle),
-                      } for t in matches]
+    if term := request.args.get('term'):
+        matches = Tag.query.filter(Tag.label.startswith(term))
+        blueprints = {'article': 'blog', 'review': 'reviews'}
+        if post_type := request.args.get('type'):
+            table = tag_relationships.get(post_type.capitalize())
+            if table is not None:
+                matches = matches.join(table)
+        just_tags = [
+            {
+                'handle': t.handle,
+                'value': t.label,
+                'url': url_for(
+                    f'{blueprints.get(post_type, "blog")}.show_tag', handle=t.handle
+                ),
+            }
+            for t in matches.all()
+        ]
         return Response(json.dumps(just_tags), mimetype='application/json')
     else:
         return jsonify({'result': 'No search term specified.'}), 400

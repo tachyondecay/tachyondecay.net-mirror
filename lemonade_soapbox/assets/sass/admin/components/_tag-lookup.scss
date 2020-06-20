@@ -1,0 +1,44 @@
+/**
+ * _tag-lookup.scss
+ *
+ * Autocomplete tag searching widget
+ */
+
+.tag-list {
+  display: flex;
+  flex-flow: row wrap;
+
+  font-size: 0.9rem;
+  line-height: rvr(0.9);
+}
+
+.tag-list > .input {
+  display: inline;
+  flex: 1;
+  min-width: 4em;
+  outline: 0;
+
+  background: none;
+  border: 0;
+}
+
+.tag-list > .tag {
+  display: inline-block;
+
+  margin: 5px var(--unit-tiny);
+  padding: 0 calc(var(--unit-tiny));
+
+  border-radius: $global-radius;
+
+  background-color: $purple;
+  color: $snow-white;
+
+  transition: $global-transition;
+
+  &:hover {
+    cursor: pointer;
+    &:after {
+      content: " × ";
+    }
+  }
+}

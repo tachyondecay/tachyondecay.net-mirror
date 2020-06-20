@@ -1820,91 +1820,40 @@ input[type=time] {
 }
 
 /**
- * _search-filter.scss
+ * _tag-lookup.scss
  *
- * List for applying search result filters.
+ * Autocomplete tag searching widget
  */
-.search-filter {
+.tag-list {
   display: flex;
   flex-flow: row wrap;
-  align-items: center;
-  justify-content: center;
+  font-size: 0.9rem;
+  line-height: calc(var(--baseline) * 0.9 * 1rem);
 }
-.search-filter > .label {
+
+.tag-list > .input {
+  display: inline;
+  flex: 1;
+  min-width: 4em;
+  outline: 0;
+  background: none;
+  border: 0;
+}
+
+.tag-list > .tag {
   display: inline-block;
-  margin: 0 var(--unit-small) 0;
-  font-size: 1rem;
-  line-height: calc(var(--baseline) * 1.5 * 1rem);
+  margin: 5px var(--unit-tiny);
+  padding: 0 calc(var(--unit-tiny));
+  border-radius: 5px;
+  background-color: #8c5383;
+  color: #f8f8f8;
+  transition: all 300ms ease-in-out;
 }
-.search-filter > ul {
-  display: inline-flex;
-  flex-flow: row wrap;
-  justify-content: center;
-  list-style: none;
-  margin: 0 0 0 var(--unit-small);
-  padding: 0;
+.tag-list > .tag:hover {
+  cursor: pointer;
 }
-.search-filter .link {
-  display: block;
-  margin: var(--unit-tiny);
-  padding: 0 var(--unit-tiny);
-  color: #657177;
-  border-left: 4px solid #657177;
-}
-.search-filter .link:hover, .search-filter .link:focus {
-  color: #8c5383;
-  border-color: #8c5383;
-  font-weight: bold;
-}
-.search-filter .link.-current {
-  color: #4b7c91;
-  font-weight: bold;
-  text-decoration: none;
-  border-color: #4b7c91;
-}
-.search-filter .link > .count {
-  font-size: 0.8rem;
-}
-.search-filter .link > .count:before {
-  content: "(";
-}
-.search-filter .link > .count:after {
-  content: ")";
-}
-
-.search-filter.-sort {
-  font-size: 0.8em;
-}
-.search-filter.-sort select {
-  height: calc(var(--baseline) * 1 * 1rem);
-}
-.search-filter.-sort > .checkbox-toggle {
-  min-width: 7em;
-}
-
-.search-filter.-tags {
-  flex-direction: column;
-}
-.search-filter.-tags > .label {
-  text-align: center;
-}
-@media (min-width: 46.25em) {
-  .search-filter.-tags > ul {
-    display: block;
-  }
-  .search-filter.-tags .link {
-    display: flex;
-    justify-content: space-between;
-    margin: 0;
-    padding: 0 0 0 var(--unit-tiny);
-    font-size: 0.9rem;
-    line-height: calc(var(--baseline) * 0.9 * 1rem);
-    text-decoration: none;
-    border-width: 6px;
-  }
-  .search-filter.-tags .count:before, .search-filter.-tags .count:after {
-    content: "";
-  }
+.tag-list > .tag:hover:after {
+  content: " × ";
 }
 
 .tagit {
