@@ -1,6 +1,7 @@
 import arrow
 import base64
 import os
+import random
 from flask import (
     abort,
     Blueprint,
@@ -25,11 +26,6 @@ from werkzeug import secure_filename
 from whoosh.query import Term as whoosh_term, Or as whoosh_or
 
 bp = Blueprint('admin', __name__)
-
-
-@bp.before_request
-def before_request():
-    g.search_query = request.args.get('q', '')
 
 
 def posts_index(post_type, template, **kwargs):
@@ -87,7 +83,58 @@ def posts_index(post_type, template, **kwargs):
 @bp.route('/')
 @login_required
 def index():
-    return redirect('/meta/blog/')
+    greetings = {
+        "Arabic": "Ahlan",
+        "Chinese": "Nǐ hǎo",
+        "Danish": "Halløj",
+        "Dutch": "Hallo",
+        "French": "Salut",
+        "German": "Guten Tag",
+        "Greek": "Yassou",
+        "Hindi": "Namaste",
+        "Italian": "Ciao",
+        "Japanese": "Konnichiwa",
+        "Korean": "Anyoung",
+        "Polish": "Dzień dobry",
+        "Portuguese": "Olá",
+        "Russian": "Privet",
+        "Spanish": "¿Qué tal?",
+        "Swahili": "Habari",
+        "Swedish": "Hej",
+        "Turkish": "Selam",
+    }
+    hello = random.choice(list(greetings))
+    page_title = (
+        f'<span title="{hello}">{greetings[hello]}</span>, '
+        f'{current_user.first_name}!'
+    )
+
+    # Fetch stats
+    published_count = {
+        str(post_class.__name__): db.session.query(func.count(post_class.id))
+        .filter(post_class.status == 'published')
+        .scalar()
+        for post_class in [Article, Review]
+    }
+
+    # Fetch drafts
+    drafts = []
+    for post_class in [Article, Review]:
+        drafts.extend(
+            post_class.query.filter_by(status='draft')
+            .order_by(post_class.date_updated)
+            .limit(5)
+            .all()
+        )
+    drafts.sort(key=lambda x: x.date_updated, reverse=True)
+
+    return render_template(
+        'admin/views/index.html',
+        drafts=drafts,
+        page_title=page_title,
+        published=published_count,
+        subtitle='Lemonade Soapbox Dashboard',
+    )
 
 
 @bp.route('/signin/', methods=['POST', 'GET'])

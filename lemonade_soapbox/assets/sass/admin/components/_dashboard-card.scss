@@ -1,0 +1,51 @@
+/**
+ * _dashboard-card.scss
+ *
+ * Component: Cards to display stats, info, and actions on the dashboard
+ */
+
+.dashboard-card {
+  padding: var(--unit-small);
+
+  .title {
+    margin-top: 0;
+  }
+
+  @include mq($from: tablet) {
+    grid-column: 3 / span 6;
+  }
+}
+
+.dashboard-card > .statistic {
+  margin: 0;
+  padding-bottom: var(--unit-small);
+
+  border-bottom: 1px solid $blue-grey;
+
+  color: $blue;
+  font-size: 1.15rem;
+  line-height: rvr(1.15);
+
+  strong {
+    font-family: $f-accent;
+    font-size: 1.3rem;
+    line-height: rvr(1.3);
+  }
+}
+
+.dashboard-report {
+  border-collapse: collapse;
+  width: 100%;
+
+  .row > td,
+  .row > th  {
+    border-radius: 5px;
+    padding-bottom: var(--unit-small);
+  }
+
+  .icon {
+    // display: inline-block;
+    @include sprite-image($purple-grey);
+    font-size: 1.2em;
+  }
+}

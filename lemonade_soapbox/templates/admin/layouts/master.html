@@ -2,7 +2,7 @@
 <!doctype html>
 <html>
     <head>
-        <title>{% block page_title %}{{ page_title }}{% endblock %} | Lemonade Soapbox</title>
+        <title>{% block page_title %}{{ page_title|striptags }}{% endblock %} | Lemonade Soapbox</title>
 
         {% block meta_tags %}
         <meta charset="utf-8" />
@@ -56,7 +56,7 @@
             </nav>
             {% block page_title_body %}
             {% if subtitle %}<p class="subtitle">{{ subtitle }}</p>{% endif %}
-            <h1 class="title">{{ page_title }}</h1>
+            <h1 class="title">{{ page_title|safe }}</h1>
             {% endblock page_title_body %}
 
             {% block header_end %}{% endblock header_end %}

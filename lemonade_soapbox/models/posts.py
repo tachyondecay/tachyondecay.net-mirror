@@ -309,7 +309,7 @@ class PostMixin(AuthorMixin):
     body = db.Column(db.Text, default='')
     title = db.Column(db.String(255), nullable=False)
     date_created = db.Column(ArrowType, default=datetime.utcnow)
-    date_updated = db.Column(ArrowType)
+    date_updated = db.Column(ArrowType, default=datetime.utcnow)
     date_published = db.Column(ArrowType)
     show_updated = db.Column(db.Boolean, default=False)
     status = db.Column(db.String(25), default='draft')

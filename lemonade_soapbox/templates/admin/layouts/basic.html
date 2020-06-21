@@ -2,7 +2,7 @@
 <!doctype html>
 <html>
     <head>
-        <title>{% block page_title %}{{ page_title }}{% endblock %} | Lemonade Soapbox</title>
+        <title>{% block page_title %}{{ page_title }}{% endblock %}</title>
 
         {% block meta_tags %}
         <meta charset="utf-8" />
@@ -14,31 +14,25 @@
         {% block styles %}{% endblock %}
 
         <script type="text/javascript">
-            var application_root = {{ request.script_root|tojson|safe }};
-            var csrf_token = "{{ csrf_token() }}";
+            let csrf_token = "{{ csrf_token() }}";
         </script>
 
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-        <script src="{{ url_for('static', filename='js/vendor/jquery-ui.min.js') }}"></script>
-        <script src="{{ url_for('static', filename='js/vendor/moment.min.js') }}"></script>
-        <script src="{{ url_for('static', filename='js/vendor/daterangepicker.js') }}"></script>
-        <script src="{{ url_for('static', filename='js/vendor/jquery.timepicker.min.js') }}"></script>
-        <script src="{{ url_for('static', filename='js/vendor/MonthPicker.js') }}"></script>
-        <script src="{{ url_for('static', filename='js/vendor/tag-it.min.js') }}"></script>
-        <script src="{{ url_for('static', filename='js/vendor/paste.js') }}"></script>
-        <script src="{{ url_for('static', filename='js/vendor/easymde.min.js') }}"></script>
-        <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
 
         {% block scripts %} {% endblock %}
     </head>
     <body class="no-js {% block body_classes %}{% endblock %}">
-        <main class="page-wrapper">
-            {% block body_main %}
-            <h1 class="title">
-                {% block page_title_body %} {{ page_title }} {% endblock page_title_body %}
-            </h1>
+        {% block body_main %}
+        {{ notifications() }}
+
+        <header class="page-title grid-layout -max -slim-rows" id="top">
+            {% block page_title_body %}
+            {% if subtitle %}<p class="subtitle">{{ subtitle }}</p>{% endif %}
+            <h1 class="title">{{ page_title }}</h1>
+            {% endblock page_title_body %}
+
             {% block header_end %}{% endblock header_end %}
-            {% endblock body_main %}
-        </main>
+        </header>
+        {% endblock body_main %}
     </body>
 </html>
