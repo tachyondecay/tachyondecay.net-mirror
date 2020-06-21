@@ -323,6 +323,16 @@ summary {
   color: #6e6e6e;
 }
 
+._inline-list {
+  display: flex;
+  flex-flow: row wrap;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  justify-content: center;
+  align-items: center;
+}
+
 ._left {
   text-align: left;
 }
@@ -588,6 +598,7 @@ h4, ._h4 {
   padding: 0.2em 0.6em;
   font-size: 0.625em;
   box-shadow: none;
+  line-height: calc(var(--baseline) * 0.625 * 1rem);
 }
 
 /* Ghost buttons

@@ -1,4 +1,5 @@
 {% extends 'admin/layouts/results.html' %}
+{% set post_type = 'review' %}
 
 {% block sort_by %}
             <select id="sort_by">
@@ -35,6 +36,14 @@
                             </dd>
                         </dl>
                     </footer>
+
+                    <ul class="tags _inline-list">
+                    {% for t in post._tags|sort(attribute='handle') %}
+                        {% set query_args = request.args.to_dict(false) %}
+                        {% set update = query_args.update({'q': 'tags:' ~ t.handle}) %}
+                        <li><a class="_button -micro" href="{{ url_for(request.endpoint, **query_args)}}">{{ t.label }}</a></li>
+                    {% endfor %}
+                    </ul>
 
                     <div class="summary">
                         {% if post.summary %}

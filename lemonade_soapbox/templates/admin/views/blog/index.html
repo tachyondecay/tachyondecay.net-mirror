@@ -1,4 +1,5 @@
 {% extends 'admin/layouts/results.html' %}
+{% set post_type = 'article' %}
 
 {% block sort_by %}
             <select id="sort_by">
@@ -24,6 +25,12 @@
                             {% endif %}
                         </dl>
                     </footer>
+
+                    <ul class="tags _inline-list">
+                    {% for t in post._tags|sort(attribute='handle') %}
+                        <li><a class="_button -micro" href="">{{ t.label }}</a></li>
+                    {% endfor %}
+                    </ul>
 
                     <div class="summary">
                         {% if post.summary %}

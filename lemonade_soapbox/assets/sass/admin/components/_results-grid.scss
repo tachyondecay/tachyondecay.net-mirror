@@ -68,33 +68,21 @@
   }
 
   @include mq($from: desktop) {
-    li:not(:first-child) {
+    > li:not(:first-child) {
       border-top: 1px solid $grey;
     }
   }
 }
 
 .result-item {
-  --cover-width: 50px;
   display: grid;
-  grid-template-columns: calc(var(--cover-width) + var(--unit-small)) 1fr;
-  grid-auto-rows: minmax(0, auto);
-  grid-template-areas: 
-      "img title"
-      "img footer"
-      "img summary";
+  grid-template-areas:
+    "title"
+    "footer"
+    "tags"
+    "summary";
 
   padding: var(--unit-tiny) 0;
-
-  @include mq($from: tablet) {
-    --cover-width: 75px;
-    padding: var(--unit-small) var(--unit-tiny);
-  }
-
-  @include mq($from: desktop) {
-    --cover-width: 100px;
-    padding: var(--unit) var(--unit-tiny);
-  }
 
   .details {
     margin: 0;
@@ -128,18 +116,16 @@
     } 
   }
 
-  > .cover {
-    display: block;
-    grid-area: img;
+  @include mq($from: tablet) {
+    padding: var(--unit-small) var(--unit-tiny);
+  }
 
-    margin-right: var(--unit-small);
-    width: var(--cover-width);
-
+  @include mq($from: desktop) {
+    padding: var(--unit) var(--unit-tiny);
   }
 
   > footer {
     grid-area: footer;
-    // margin-top: calc(-1 * var(--unit-tiny));
   }
 
   > .summary {
@@ -157,8 +143,58 @@
     }
   }
 
+  .tags {
+    justify-content: start;
+    gap: var(--unit-tiny);
+
+    margin-bottom: var(--unit-small);
+
+    a {
+      text-transform: inherit;
+      opacity: 0.5;
+    }
+
+    a:hover {
+      opacity: 1;
+    }
+  }
+}
+
+.result-item.-review {
+  --cover-width: 50px;
+  grid-template-columns: calc(var(--cover-width) + var(--unit-small)) max-content 1fr;
+  grid-template-areas: 
+      "img title title"
+      "img footer footer"
+      "img tags tags"
+      "img summary summary";
+
+  @include mq($from: tablet) {
+    --cover-width: 75px;
+
+    align-items: center;
+    grid-template-areas:
+      "img title title"
+      "img footer tags"
+      "img summary summary";
+  }
+
+  @include mq($from: desktop) {
+    --cover-width: 100px;
+  }
+
+  > .cover {
+    display: block;
+    grid-area: img;
+
+    margin-right: var(--unit-small);
+    width: var(--cover-width);
+
+  }
+
   .star {
     font-size: 0.5rem;
+    height: 1em !important;
 
     @include mq($from: tablet) {
       font-size: 0.75rem;
@@ -171,6 +207,10 @@
 
   .star.-empty {
     @include sprite(star-empty);
+  }
+
+  .tags {
+    margin: 0;
   }
 }
 

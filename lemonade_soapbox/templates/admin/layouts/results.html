@@ -1,6 +1,8 @@
 {% extends 'admin/layouts/master.html' %}
 {% from 'macros.html' import notifications, render_pagination %}
 
+{% block body_classes %}{{post_type}}-list{% endblock body_classes %}
+
 {% block body_main %}
 {{ super() }}
 
@@ -63,7 +65,7 @@
         <ol class="results-list">
         {% for post in posts.items %}
             <li>
-                <article class="result-item">
+                <article class="result-item -{{ post_type }}">
                     {% block result_item scoped %}{% endblock %}
                 </article>
             </li>

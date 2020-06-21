@@ -292,7 +292,7 @@ summary {
  * Mixins and functions that allow us to apply a SVG sprite icon.
  * Largely cribbed from https://github.com/liquidlight/sass-gulp-svg-sprite
  */
-.result-item .star.-empty, .result-item .star.-full, .notification > .dismiss, .i-after--star-full:after, .i-before--star-full:before, .i--star-full, .i-after--star-empty:after, .i-before--star-empty:before, .i--star-empty, .i-after--spinner:after, .i-before--spinner:before, .i--spinner, .i-after--price-tags:after, .i-before--price-tags:before, .i--price-tags, .i-after--plus:after, .i-before--plus:before, .i--plus, .i-after--pencil:after, .i-before--pencil:before, .i--pencil, .i-after--new-tab:after, .i-before--new-tab:before, .i--new-tab, .i-after--newspaper:after, .i-before--newspaper:before, .i--newspaper, .i-after--link:after, .i-before--link:before, .i--link, .i-after--floppy-disk:after, .i-before--floppy-disk:before, .i--floppy-disk, .i-after--eye-blocked:after, .i-before--eye-blocked:before, .i--eye-blocked, .i-after--earth:after, .i-before--earth:before, .i--earth, .i-after--clock:after, .i-before--clock:before, .i--clock, .i-after--checkmark:after, .i-before--checkmark:before, .i--checkmark, .i-after--calendar:after, .i-before--calendar:before, .i--calendar, .i-after--book:after, .i-before--book:before, .i--book, .i-after--bin:after, .i-before--bin:before, .i--bin, .i-after--box-add:after, .i-before--box-add:before, .i--box-add, .rating-input input:checked ~ label:not(:last-child), .rating-input:not(:checked) label:not(:last-child):hover, .rating-input:not(:checked) label:not(:last-child):hover ~ label:not(:last-child), .rating-input label:not(:last-child) {
+.result-item.-review .star.-empty, .result-item.-review .star.-full, .notification > .dismiss, .i-after--star-full:after, .i-before--star-full:before, .i--star-full, .i-after--star-empty:after, .i-before--star-empty:before, .i--star-empty, .i-after--spinner:after, .i-before--spinner:before, .i--spinner, .i-after--price-tags:after, .i-before--price-tags:before, .i--price-tags, .i-after--plus:after, .i-before--plus:before, .i--plus, .i-after--pencil:after, .i-before--pencil:before, .i--pencil, .i-after--new-tab:after, .i-before--new-tab:before, .i--new-tab, .i-after--newspaper:after, .i-before--newspaper:before, .i--newspaper, .i-after--link:after, .i-before--link:before, .i--link, .i-after--floppy-disk:after, .i-before--floppy-disk:before, .i--floppy-disk, .i-after--eye-blocked:after, .i-before--eye-blocked:before, .i--eye-blocked, .i-after--earth:after, .i-before--earth:before, .i--earth, .i-after--clock:after, .i-before--clock:before, .i--clock, .i-after--checkmark:after, .i-before--checkmark:before, .i--checkmark, .i-after--calendar:after, .i-before--calendar:before, .i--calendar, .i-after--book:after, .i-before--book:before, .i--book, .i-after--bin:after, .i-before--bin:before, .i--bin, .i-after--box-add:after, .i-before--box-add:before, .i--box-add, .rating-input input:checked ~ label:not(:last-child), .rating-input:not(:checked) label:not(:last-child):hover, .rating-input:not(:checked) label:not(:last-child):hover ~ label:not(:last-child), .rating-input label:not(:last-child) {
   display: inline-block;
   background-size: 31em 21em;
 }
@@ -320,6 +320,16 @@ summary {
 
 ._info {
   color: #6e6e6e;
+}
+
+._inline-list {
+  display: flex;
+  flex-flow: row wrap;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  justify-content: center;
+  align-items: center;
 }
 
 ._left {
@@ -674,6 +684,7 @@ input[type=time] {
   padding: 0.2em 0.6em;
   font-size: 0.625em;
   box-shadow: none;
+  line-height: calc(var(--baseline) * 0.625 * 1rem);
 }
 
 /* Ghost buttons
@@ -1971,30 +1982,15 @@ input[type=time] {
   background-color: #e8e8e8;
 }
 @media (min-width: 61.25em) {
-  .results-list li:not(:first-child) {
+  .results-list > li:not(:first-child) {
     border-top: 1px solid #6e6e6e;
   }
 }
 
 .result-item {
-  --cover-width: 50px;
   display: grid;
-  grid-template-columns: calc(var(--cover-width) + var(--unit-small)) 1fr;
-  grid-auto-rows: minmax(0, auto);
-  grid-template-areas: "img title" "img footer" "img summary";
+  grid-template-areas: "title" "footer" "tags" "summary";
   padding: var(--unit-tiny) 0;
-}
-@media (min-width: 46.25em) {
-  .result-item {
-    --cover-width: 75px;
-    padding: var(--unit-small) var(--unit-tiny);
-  }
-}
-@media (min-width: 61.25em) {
-  .result-item {
-    --cover-width: 100px;
-    padding: var(--unit) var(--unit-tiny);
-  }
 }
 .result-item .details {
   margin: 0;
@@ -2023,11 +2019,15 @@ input[type=time] {
     font-size: 1.2rem;
   }
 }
-.result-item > .cover {
-  display: block;
-  grid-area: img;
-  margin-right: var(--unit-small);
-  width: var(--cover-width);
+@media (min-width: 46.25em) {
+  .result-item {
+    padding: var(--unit-small) var(--unit-tiny);
+  }
+}
+@media (min-width: 61.25em) {
+  .result-item {
+    padding: var(--unit) var(--unit-tiny);
+  }
 }
 .result-item > footer {
   grid-area: footer;
@@ -2045,25 +2045,65 @@ input[type=time] {
     display: block;
   }
 }
-.result-item .star {
-  font-size: 0.5rem;
+.result-item .tags {
+  justify-content: start;
+  gap: var(--unit-tiny);
+  margin-bottom: var(--unit-small);
+}
+.result-item .tags a {
+  text-transform: inherit;
+  opacity: 0.5;
+}
+.result-item .tags a:hover {
+  opacity: 1;
+}
+
+.result-item.-review {
+  --cover-width: 50px;
+  grid-template-columns: calc(var(--cover-width) + var(--unit-small)) max-content 1fr;
+  grid-template-areas: "img title title" "img footer footer" "img tags tags" "img summary summary";
 }
 @media (min-width: 46.25em) {
-  .result-item .star {
+  .result-item.-review {
+    --cover-width: 75px;
+    align-items: center;
+    grid-template-areas: "img title title" "img footer tags" "img summary summary";
+  }
+}
+@media (min-width: 61.25em) {
+  .result-item.-review {
+    --cover-width: 100px;
+  }
+}
+.result-item.-review > .cover {
+  display: block;
+  grid-area: img;
+  margin-right: var(--unit-small);
+  width: var(--cover-width);
+}
+.result-item.-review .star {
+  font-size: 0.5rem;
+  height: 1em !important;
+}
+@media (min-width: 46.25em) {
+  .result-item.-review .star {
     font-size: 0.75rem;
   }
 }
-.result-item .star.-full {
+.result-item.-review .star.-full {
   background-image: url("/assets/images/icons/sprite--000000.svg");
   width: 1.0625em;
   height: 1.0625em;
   background-position: -2em -14em;
 }
-.result-item .star.-empty {
+.result-item.-review .star.-empty {
   background-image: url("/assets/images/icons/sprite--000000.svg");
   width: 0.9375em;
   height: 1.0625em;
   background-position: -30em -12em;
+}
+.result-item.-review .tags {
+  margin: 0;
 }
 
 .filter-bar {
