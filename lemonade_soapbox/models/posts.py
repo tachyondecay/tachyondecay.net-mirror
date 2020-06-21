@@ -6,16 +6,15 @@ from flask import current_app, Markup, url_for
 from flask_login import current_user
 from lemonade_soapbox import db
 from lemonade_soapbox.helpers import Timer
-from lemonade_soapbox.models.users import User
 from markdown import markdown
 from slugify import slugify
 from sqlalchemy import asc, desc, event, func, orm
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy_utils import ArrowType, auto_delete_orphans, DateRangeType
+from sqlalchemy_utils import ArrowType
 from werkzeug.utils import cached_property
-from whoosh import index, writing
+from whoosh import index
 from whoosh.analysis import StemmingAnalyzer
 from whoosh.fields import Schema, ID, KEYWORD, NUMERIC, TEXT, DATETIME
 from whoosh.qparser import GtLtPlugin, MultifieldParser, QueryParser

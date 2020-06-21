@@ -1,6 +1,4 @@
-import arrow
 import base64
-import bcrypt
 import os
 import random
 from flask import (
@@ -12,17 +10,15 @@ from flask import (
     redirect,
     render_template,
     request,
-    session,
     url_for,
 )
 from flask_login import current_user, login_user, login_required, logout_user
 from flask_sqlalchemy import Pagination
-from lemonade_soapbox import db, mail
+from lemonade_soapbox import db
 from lemonade_soapbox.forms import ArticleForm, ReviewForm, SignInForm
-from lemonade_soapbox.helpers import compose
-from lemonade_soapbox.models import Article, Review, Revision, Tag
+from lemonade_soapbox.models import Article, Review
 from lemonade_soapbox.models.users import User
-from sqlalchemy import and_, func
+from sqlalchemy import func
 from werkzeug import secure_filename
 from whoosh.query import Term as whoosh_term, Or as whoosh_or
 
@@ -31,7 +27,7 @@ bp = Blueprint('admin', __name__)
 
 def posts_index(post_type, template, **kwargs):
     """
-    Helper method that contains most of the logic common to both blog posts and reviews 
+    Helper method that contains most of the logic common to both blog posts and reviews
     index.
     """
     post_class = globals()[post_type.capitalize()]
