@@ -1,17 +1,963 @@
-/* Error: Can't find stylesheet to import.
- *    ,
- * 12 | @import "../vendor/mq";
- *    |         ^^^^^^^^^^^^^^
- *    '
- *   sass/admin/basic.scss 12:9  root stylesheet */
-
-body::before {
-  font-family: "Source Code Pro", "SF Mono", Monaco, Inconsolata, "Fira Mono",
-      "Droid Sans Mono", monospace, monospace;
-  white-space: pre;
-  display: block;
-  padding: 1em;
-  margin-bottom: 1em;
-  border-bottom: 2px solid black;
-  content: "Error: Can't find stylesheet to import.\a    \2577 \a 12 \2502  @import \"../vendor/mq\";\a    \2502          ^^^^^^^^^^^^^^\a    \2575 \a   sass/admin/basic.scss 12:9  root stylesheet";
+@charset "UTF-8";
+/**
+ * basic.scss
+ *
+ * Corresponds to "basic.html" layout for backend.
+ * 
+ * This layout is intended for extremely simple, brief content like sign-in and 
+ * error pages.
+ */
+/**
+ * _settings.scss
+ *
+ * Configurable elements common to all backend theming.
+ */
+/**
+ * Colours
+ *
+ * Start with the neutrals, least to most saturated.
+ * Then the rainbow, with some variants.
+ * Finally, some sensible defaults for various decorations.
+ */
+/**
+ * Font families
+ */
+/**
+ * Some UI components can be defined as variables for consistent styling.
+ */
+/**
+ * Vertical rhythm
+ */
+/*! modern-normalize v0.6.0 | MIT License | https://github.com/sindresorhus/modern-normalize */
+/*
+Document
+========
+*/
+/**
+Use a better box model (opinionated).
+*/
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
+
+/**
+Use a more readable tab size (opinionated).
+*/
+:root {
+  -moz-tab-size: 4;
+  tab-size: 4;
+}
+
+/**
+1. Correct the line height in all browsers.
+2. Prevent adjustments of font size after orientation changes in iOS.
+*/
+html {
+  line-height: 1.15;
+  /* 1 */
+  -webkit-text-size-adjust: 100%;
+  /* 2 */
+}
+
+/*
+Sections
+========
+*/
+/**
+Remove the margin in all browsers.
+*/
+body {
+  margin: 0;
+}
+
+/**
+Improve consistency of default fonts in all browsers. (https://github.com/sindresorhus/modern-normalize/issues/3)
+*/
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+}
+
+/*
+Grouping content
+================
+*/
+/**
+Add the correct height in Firefox.
+*/
+hr {
+  height: 0;
+}
+
+/*
+Text-level semantics
+====================
+*/
+/**
+Add the correct text decoration in Chrome, Edge, and Safari.
+*/
+abbr[title] {
+  text-decoration: underline dotted;
+}
+
+/**
+Add the correct font weight in Edge and Safari.
+*/
+b,
+strong {
+  font-weight: bolder;
+}
+
+/**
+1. Improve consistency of default fonts in all browsers. (https://github.com/sindresorhus/modern-normalize/issues/3)
+2. Correct the odd 'em' font sizing in all browsers.
+*/
+code,
+kbd,
+samp,
+pre {
+  font-family: SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+  /* 1 */
+  font-size: 1em;
+  /* 2 */
+}
+
+/**
+Add the correct font size in all browsers.
+*/
+small {
+  font-size: 80%;
+}
+
+/**
+Prevent 'sub' and 'sup' elements from affecting the line height in all browsers.
+*/
+sub,
+sup {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+
+sub {
+  bottom: -0.25em;
+}
+
+sup {
+  top: -0.5em;
+}
+
+/*
+Forms
+=====
+*/
+/**
+1. Change the font styles in all browsers.
+2. Remove the margin in Firefox and Safari.
+*/
+button,
+input,
+optgroup,
+select,
+textarea {
+  font-family: inherit;
+  /* 1 */
+  font-size: 100%;
+  /* 1 */
+  line-height: 1.15;
+  /* 1 */
+  margin: 0;
+  /* 2 */
+}
+
+/**
+Remove the inheritance of text transform in Edge and Firefox.
+1. Remove the inheritance of text transform in Firefox.
+*/
+button,
+select {
+  /* 1 */
+  text-transform: none;
+}
+
+/**
+Correct the inability to style clickable types in iOS and Safari.
+*/
+button,
+[type=button],
+[type=reset],
+[type=submit] {
+  -webkit-appearance: button;
+}
+
+/**
+Remove the inner border and padding in Firefox.
+*/
+button::-moz-focus-inner,
+[type=button]::-moz-focus-inner,
+[type=reset]::-moz-focus-inner,
+[type=submit]::-moz-focus-inner {
+  border-style: none;
+  padding: 0;
+}
+
+/**
+Restore the focus styles unset by the previous rule.
+*/
+button:-moz-focusring,
+[type=button]:-moz-focusring,
+[type=reset]:-moz-focusring,
+[type=submit]:-moz-focusring {
+  outline: 1px dotted ButtonText;
+}
+
+/**
+Correct the padding in Firefox.
+*/
+fieldset {
+  padding: 0.35em 0.75em 0.625em;
+}
+
+/**
+Remove the padding so developers are not caught out when they zero out 'fieldset' elements in all browsers.
+*/
+legend {
+  padding: 0;
+}
+
+/**
+Add the correct vertical alignment in Chrome and Firefox.
+*/
+progress {
+  vertical-align: baseline;
+}
+
+/**
+Correct the cursor style of increment and decrement buttons in Safari.
+*/
+[type=number]::-webkit-inner-spin-button,
+[type=number]::-webkit-outer-spin-button {
+  height: auto;
+}
+
+/**
+1. Correct the odd appearance in Chrome and Safari.
+2. Correct the outline style in Safari.
+*/
+[type=search] {
+  -webkit-appearance: textfield;
+  /* 1 */
+  outline-offset: -2px;
+  /* 2 */
+}
+
+/**
+Remove the inner padding in Chrome and Safari on macOS.
+*/
+[type=search]::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+
+/**
+1. Correct the inability to style clickable types in iOS and Safari.
+2. Change font properties to 'inherit' in Safari.
+*/
+::-webkit-file-upload-button {
+  -webkit-appearance: button;
+  /* 1 */
+  font: inherit;
+  /* 2 */
+}
+
+/*
+Interactive
+===========
+*/
+/*
+Add the correct display in Chrome and Safari.
+*/
+summary {
+  display: list-item;
+}
+
+/**
+ * _functions.scss
+ *
+ * Helper functions.
+ */
+/**
+ * _sprites.scss
+ *
+ * Mixins and functions that allow us to apply a SVG sprite icon.
+ * Largely cribbed from https://github.com/liquidlight/sass-gulp-svg-sprite
+ */
+.notification > .dismiss {
+  display: inline-block;
+  background-size: 31em 21em;
+}
+
+._center {
+  text-align: center;
+}
+
+._hide {
+  border: 0 !important;
+  clip: rect(0 0 0 0) !important;
+  clip-path: inset(50%) !important;
+  height: 1px !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+  position: absolute !important;
+  white-space: nowrap !important;
+  width: 1px !important;
+}
+
+._hide-totally {
+  display: none !important;
+}
+
+._info {
+  color: #6e6e6e;
+}
+
+._right {
+  text-align: right;
+}
+
+._smaller {
+  margin: var(--unit-tiny);
+  font-size: 0.75rem;
+  line-height: calc(var(--baseline) * 0.75 * 1rem);
+}
+
+._wrapper {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 60em;
+}
+
+/**
+ * _grid.scss
+ *
+ * Grid layout logic for admin backend.
+ * 
+ */
+.grid-layout {
+  display: grid;
+  gap: 1rem;
+  grid-gap: 1rem;
+}
+
+@media (min-width: 46.25em) {
+  .grid-layout {
+    grid-template-columns: [content-start ls-start] repeat(3, 1fr) [ls-end] repeat(2, 1fr) [rs-start] repeat(3, 1fr) [content-end rs-end];
+  }
+
+  .grid-layout.-max {
+    grid-template-columns: [left-margin] 1rem [content-start ls-start] repeat(3, 1fr) [ls-end] repeat(2, 1fr) [rs-start] repeat(3, 1fr) [content-end rs-end] 1rem [right-margin];
+  }
+
+  .grid-layout > .-span {
+    grid-column: content-start/content-end;
+  }
+}
+@media (min-width: 61.25em) {
+  .grid-layout {
+    gap: 1.5rem;
+    grid-gap: 1.5rem;
+  }
+
+  .grid-layout.-max {
+    grid-template-columns: [left-margin] calc(50vw - 30rem) [content-start ls-start] repeat(3, 1fr) [ls-end] repeat(2, 1fr) [rs-start] repeat(3, 1fr) [content-end rs-end] calc(50vw - 30rem) [right-margin];
+  }
+
+  .-slim-rows {
+    row-gap: var(--unit-tiny);
+    grid-row-gap: var(--unit-tiny);
+  }
+}
+/**
+ * _typography.scss
+ *
+ * Font, line-height, text-decoration, etc.
+ */
+/**
+ * Sensible default global styles and variables for responsive vertical rhythm
+ */
+html {
+  --baseline: 1.5;
+  --unit: calc(var(--baseline) * 1 * 1rem);
+  --unit-tiny: calc(var(--baseline) * 0.25 * 1rem);
+  --unit-small: calc(var(--baseline) * 0.5 * 1rem);
+  --unit-large: calc(var(--baseline) * 1.5 * 1rem);
+  --unit-huge: calc(var(--baseline) * 2 * 1rem);
+  font-size: 16px;
+  line-height: var(--baseline);
+}
+@media (min-width: 61.25em) {
+  html {
+    --unit: 30px;
+    font-size: 20px;
+    line-height: calc(var(--baseline) * 1.25 * 1rem);
+  }
+}
+
+body {
+  color: #383838;
+  font-family: PT Sans, Verdana, Arial, sans-serif;
+}
+
+a {
+  color: #8c5383;
+  transition: all 300ms ease-in-out;
+}
+a:hover, a:focus {
+  color: #4b7c91;
+  text-decoration: none;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: Fjalla One, Verdana, sans-serif;
+}
+
+h1, ._h1 {
+  font-size: 1.8rem;
+  line-height: calc(var(--baseline) * 2 * 1rem);
+}
+
+h2, ._h2 {
+  font-size: 1.6rem;
+  line-height: calc(var(--baseline) * 1.5 * 1rem);
+}
+
+h3, ._h3 {
+  font-size: 1.4rem;
+  line-height: calc(var(--baseline) * 1.5 * 1rem);
+}
+
+h4, ._h4 {
+  font-size: 1.2rem;
+  line-height: calc(var(--baseline) * 1 * 1rem);
+}
+
+/**
+ * _buttons.scss
+ *
+ * Masthead with page title/subtitle
+ *
+ * Code from InuitCSS
+ *
+ * 1. Allow us to style box model properties.
+ * 2. Line different sized buttons up a little nicer.
+ * 3. Make buttons inherit font styles (often necessary when styling `input`s as
+ *    buttons).
+ * 4. Reset/normalize some styles.
+ * 5. Force all button-styled elements to appear clickable.
+ */
+._button {
+  display: inline-block;
+  /* [1] */
+  vertical-align: middle;
+  /* [2] */
+  color: #ffffff;
+  font: inherit;
+  /* [3] */
+  font-family: Fjalla One, Verdana, sans-serif;
+  font-size: 0.85em;
+  letter-spacing: 2px;
+  text-align: center;
+  /* [4] */
+  text-decoration: none;
+  text-transform: uppercase;
+  margin: 0;
+  /* [4] */
+  padding: var(--unit-small);
+  background-color: #4b7c91;
+  border: 1px solid #4b7c91;
+  border-radius: 5px;
+  box-shadow: 0px 4px 2px 0px #28434e;
+  cursor: pointer;
+  /* [5] */
+  transition: all 300ms ease-in-out;
+}
+._button:hover, ._button:active, ._button.-active, ._button:focus, ._button.-ghost {
+  color: #3585a7;
+  text-decoration: none;
+  background-color: #ffffff;
+  background-image: none;
+  border-color: #3585a7;
+}
+._button:hover > span, ._button:active > span, ._button.-active > span, ._button:focus > span, ._button.-ghost > span {
+  background-image: url("/assets/images/icons/sprite--4b7c91.svg");
+}
+._button:active {
+  box-shadow: 0px 1px 0px 0px;
+  transform: translate(0px, 5px);
+}
+._button > span {
+  background-image: url("/assets/images/icons/sprite--ffffff.svg");
+  transition: all 300ms ease-in-out;
+}
+@media (min-width: 46.25em) and (max-width: 61.24em) {
+  ._button {
+    padding: var(--unit-tiny);
+  }
+}
+@media (min-width: 61.25em) {
+  ._button {
+    padding: calc(var(--unit-tiny)/2) var(--unit-tiny);
+  }
+}
+
+/* Style variants
+   ========================================================================== */
+._button.-important {
+  background-color: #8c5383;
+  border-color: #8c5383;
+  box-shadow: 0 4px 0 0 #4c2d47;
+}
+._button.-important:hover, ._button.-important:active, ._button.-important.-active, ._button.-important:focus, ._button.-important.-ghost {
+  background-color: #ffffff;
+  color: #a23d92;
+  border-color: #a23d92;
+}
+._button.-important:hover > span, ._button.-important:active > span, ._button.-important.-active > span, ._button.-important:focus > span, ._button.-important.-ghost > span {
+  background-image: url("/assets/images/icons/sprite--8c5383.svg");
+}
+
+._button.-positive {
+  background-color: #6c9e5b;
+  border-color: #6c9e5b;
+  box-shadow: 0 4px 0 0 #405d36;
+}
+._button.-positive:hover, ._button.-positive:active, ._button.-positive.-active, ._button.-positive:focus, ._button.-positive.-ghost {
+  background-color: #ffffff;
+  color: #60b742;
+  border-color: #60b742;
+}
+._button.-positive:hover > span, ._button.-positive:active > span, ._button.-positive.-active > span, ._button.-positive:focus > span, ._button.-positive.-ghost > span {
+  background-image: url("/assets/images/icons/sprite--6c9e5b.svg");
+}
+
+._button.-danger {
+  background-color: #993835;
+  border-color: #993835;
+  box-shadow: 0 4px 0 0 #4d1c1b;
+}
+._button.-danger:hover, ._button.-danger:active, ._button.-danger.-active, ._button.-danger:focus, ._button.-danger.-ghost {
+  background-color: #ffffff;
+  color: #ae2520;
+  border-color: #ae2520;
+}
+._button.-danger:hover > span, ._button.-danger:active > span, ._button.-danger.-active > span, ._button.-danger:focus > span, ._button.-danger.-ghost > span {
+  background-image: url("/assets/images/icons/sprite--993835.svg");
+}
+
+._button.-new {
+  background-color: #756a73;
+  border-color: #756a73;
+  box-shadow: 0 4px 0 0 #3f3a3e;
+}
+._button.-new:hover, ._button.-new:active, ._button.-new.-active, ._button.-new:focus, ._button.-new.-ghost {
+  background-color: #ffffff;
+  color: #8b5481;
+  border-color: #8b5481;
+}
+._button.-new:hover > span, ._button.-new:active > span, ._button.-new.-active > span, ._button.-new:focus > span, ._button.-new.-ghost > span {
+  background-image: url("/assets/images/icons/sprite--756a73.svg");
+}
+
+/* Size variants
+   ========================================================================== */
+._button.-small {
+  padding: calc(var(--unit-tiny)/2) var(--unit-tiny);
+}
+
+._button.-large {
+  padding: var(--unit-small) var(--unit);
+}
+
+._button.-micro {
+  padding: 0.2em 0.6em;
+  font-size: 0.625em;
+  box-shadow: none;
+}
+
+/* Ghost buttons
+   ========================================================================== */
+/**
+ * Ghost buttons have see-through backgrounds and are bordered.
+ */
+._button.-ghost {
+  background: none;
+  border-width: 2px;
+  padding: calc(var(--unit-tiny) - $btn-ghost-border-width) calc(var(--unit-small) - $btn-ghost-border-width);
+}
+._button.-ghost:hover, ._button.-ghost:focus {
+  box-shadow: none;
+}
+._button.-ghost.-small {
+  padding: calc(var(--unit-tiny)/2 - $btn-ghost-border-width) calc(var(--unit-tiny) - $btn-ghost-border-width);
+}
+._button.-ghost.-large {
+  padding: calc(var(--unit-small) - $btn-ghost-border-width) calc(var(--unit) - $btn-ghost-border-width);
+}
+
+/* Icon on hover
+   ========================================================================== */
+._button.-hover-icon {
+  position: relative;
+}
+._button.-hover-icon > span {
+  position: absolute;
+  top: 0.5em;
+  right: 0.5em;
+  opacity: 0;
+  transition: opacity 0.5s, top 0.5s, right 0.5s;
+}
+._button.-hover-icon:hover, ._button.-hover-icon:active, ._button.-hover-icon.-active, ._button.-hover-icon:focus {
+  padding-left: 5px;
+  padding-right: 2em;
+}
+._button.-hover-icon:hover > span, ._button.-hover-icon:active > span, ._button.-hover-icon.-active > span, ._button.-hover-icon:focus > span {
+  opacity: 1;
+}
+
+/*
+ * Group of buttons in a row
+ */
+._button-group {
+  display: inline-flex;
+  justify-content: center;
+}
+._button-group ._button {
+  margin: 0 var(--unit-tiny);
+}
+@media (min-width: 61.25em) {
+  ._button-group {
+    justify-content: space-around;
+  }
+}
+
+/**
+ * _notificaions.scss
+ *
+ * Component: Notification messages displayed like banners.
+ */
+@keyframes slideDown {
+  from {
+    transform: translateY(-100px);
+  }
+  to {
+    transform: translateY(100px);
+  }
+}
+.slideDown, .notification {
+  top: -100px;
+  animation: slideDown 1.5s 0.1s 1 ease-in-out forwards;
+}
+
+.slideUp {
+  transition: top 1.5s 0.1s ease-in-out;
+  top: -500px;
+}
+
+/**
+ * The base notification class
+ *
+ * 1. Set vars for bg and text colour; these can be customized depending on 
+ *    notification type.
+ * 2. "Dismissable" notifications will have an X link added via JS.
+ * 3. 
+ */
+.notification {
+  --bg: #3c2438;
+  /* 1 */
+  --colour: #f8f8f8;
+  padding: var(--unit-small) var(--unit-small) var(--unit-small) var(--unit-large);
+  position: fixed;
+  width: 100vw;
+  z-index: 1000;
+  background-color: var(--bg);
+  box-shadow: 0 5px 5px 0 rgba(0, 0, 0, 0.5);
+  opacity: 0.8;
+  color: var(--colour);
+  font-family: Fjalla One, Verdana, sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  line-height: calc(var(--baseline) * 0.75 * 1rem);
+  text-align: center;
+}
+.notification.-dismissable {
+  padding-right: var(--unit-large);
+  /* 2 */
+}
+.notification > .dismiss {
+  /* 2 */
+  display: block;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: var(--unit);
+  margin: auto;
+  background-image: url("/assets/images/icons/sprite--ffffff.svg");
+  width: 1.0625em;
+  height: 1.0625em;
+  background-position: -20em -14em;
+  cursor: pointer;
+  font-size: 0.8em;
+}
+.notification.-error {
+  --bg: #993835;
+}
+.notification.-success {
+  --bg: #6c9e5b;
+}
+
+/* Icons that indicate type of notification */
+/**
+ * _page-title.scss
+ *
+ * Masthead with page title/subtitle
+ *
+ * 1. h1.title has a faux border via bg-gradient
+ * 2. This "bites" a chunk out of the border.
+ */
+.page-title {
+  background-color: #e8e8e8;
+  box-shadow: inset 0 -12px 20px -10px rgba(0, 0, 0, 0.5);
+  padding-bottom: var(--unit-small);
+}
+.page-title > .title {
+  margin: 0;
+  padding: 0 var(--unit) var(--unit-small) var(--unit-small);
+  line-height: calc(var(--baseline) * 1.4 * 1rem);
+}
+.page-title > .subtitle {
+  margin: 0;
+  padding: var(--unit) var(--unit-small) 0 var(--unit-small);
+  font-family: Fjalla One, Verdana, sans-serif;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+}
+.page-title > .subtitle:after {
+  content: " »";
+}
+@media (min-width: 46.25em) {
+  .page-title > .title {
+    grid-column: content-start/content-end;
+    grid-row: 3;
+  }
+  .page-title > .subtitle {
+    grid-column: content-start/content-end;
+    grid-row: 2;
+  }
+  .page-title > .site-nav {
+    grid-column: left-margin/right-margin;
+    grid-row: 1;
+  }
+}
+
+.site-nav {
+  background-color: #3c2438;
+  border-bottom: 1px solid #6e6e6e;
+  color: #f8f8f8;
+}
+.site-nav a {
+  color: #e8e8e8;
+  font-family: Fjalla One, Verdana, sans-serif;
+  text-transform: uppercase;
+}
+.site-nav small {
+  font-size: 0.6em;
+}
+
+.site-nav > .user-greeting {
+  margin-bottom: -1rem;
+  padding-bottom: var(--unit-small);
+  border-bottom: 1px solid #6e6e6e;
+  font-weight: bold;
+  text-align: center;
+}
+.site-nav > .user-greeting > .name, .site-nav > .user-greeting > a {
+  display: inline-block;
+  margin: var(--unit-tiny);
+}
+.site-nav > .user-greeting .lastname {
+  display: none;
+}
+.site-nav > .user-greeting img {
+  border-radius: 5px;
+  box-shadow: 0 0 2px #ffffff;
+  margin-right: calc(var(--unit-tiny)/2);
+  max-height: 1.5em;
+  vertical-align: middle;
+}
+@media (min-width: 46.25em) {
+  .site-nav > .user-greeting {
+    grid-column: span 2/content-end;
+    grid-row: 1;
+    margin: 0;
+    padding: var(--unit-tiny);
+    text-align: right;
+  }
+}
+@media (min-width: 61.25em) {
+  .site-nav > .user-greeting {
+    display: grid;
+    grid-template-columns: max-content 2.5em;
+    grid-template-rows: 1.2em 1.2em;
+    justify-content: end;
+    align-items: center;
+    align-self: center;
+    padding: var(--unit-tiny) var(--unit-large);
+    border-bottom: 0;
+    font-size: 0.8em;
+  }
+  .site-nav > .user-greeting > .name {
+    grid-column: 1;
+  }
+  .site-nav > .user-greeting .lastname {
+    display: inline;
+  }
+  .site-nav > .user-greeting > a {
+    grid-column: 1;
+    grid-row: 2;
+  }
+  .site-nav > .user-greeting img {
+    grid-column: 2;
+    grid-row: 1/-1;
+    max-height: 2.5em;
+  }
+}
+
+.site-nav > .navlist {
+  list-style: none;
+  display: flex;
+  flex-flow: row wrap;
+  margin: 0;
+  padding: 0;
+}
+.site-nav > .navlist > li {
+  flex: 1 1 5em;
+  height: calc(var(--unit)*2);
+}
+@media (min-width: 61.25em) {
+  .site-nav > .navlist > li {
+    flex-grow: 0;
+    height: auto;
+  }
+}
+.site-nav > .navlist .navlink {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--unit-tiny);
+  height: 100%;
+  border: solid #6e6e6e;
+  border-width: 0 1px 1px 0;
+  font-size: 0.75em;
+  text-align: center;
+}
+.site-nav > .navlist .navlink:hover {
+  background-color: #8c5383;
+}
+.site-nav > .navlist .navlink.-icon-before {
+  position: relative;
+}
+.site-nav > .navlist .navlink.-icon-before:before {
+  background-image: url("/assets/images/icons/sprite--ffffff.svg");
+  content: "";
+  flex: 0 0 auto;
+  margin: 0 var(--unit-tiny) 0 0;
+  font-size: 1.5em;
+}
+@media (min-width: 61.25em) {
+  .site-nav > .navlist .navlink.-icon-before {
+    flex-flow: column;
+  }
+  .site-nav > .navlist .navlink.-icon-before:before {
+    font-size: 1.5em;
+    margin: var(--unit-tiny) 0 0 0;
+  }
+}
+.site-nav > .navlist .submenu {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-basis: auto;
+  padding: var(--unit-small);
+}
+.site-nav > .navlist .submenu > span {
+  display: none;
+}
+.site-nav > .navlist .submenu .submenu-list {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.site-nav > .navlist .submenu-list li {
+  margin-right: var(--unit-tiny);
+}
+@media (min-width: 46.25em) {
+  .site-nav > .navlist {
+    grid-column: content-start/span 6;
+  }
+}
+@media (hover: hover) {
+  .site-nav > .navlist .submenu > span {
+    display: block;
+  }
+  .site-nav > .navlist .submenu > .submenu-list {
+    opacity: 0;
+    margin-left: -5em;
+    padding: 0;
+    transition: all 0.4s cubic-bezier(0.95, 0.05, 0.45, 0.22);
+  }
+  .site-nav > .navlist .submenu:hover > .submenu-list {
+    opacity: 1;
+    margin-left: var(--unit-tiny);
+  }
+  .site-nav > .navlist .submenu-list ._button {
+    font-size: 0.6em;
+    line-height: calc(var(--baseline) * 0.6 * 1rem);
+    padding: 0.2em 0.5em;
+  }
+}
+
+/*
+ * Signin form
+ *
+ * 1. By default, email input and button are stacked. On wider displays, switch to 
+ *    side-by-side.
+ */
+.signin-form {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+}
+.signin-form > .text {
+  margin: var(--unit-small);
+}
+.signin-form > .field {
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  padding: 0 var(--unit);
+  width: 100%;
+}
+.signin-form input[type=email] {
+  width: 100%;
+}
+@media (min-width: 61.25em) {
+  .signin-form > .field {
+    flex-direction: row;
+    /* 1 */
+  }
+}
+
+/*# sourceMappingURL=basic.css.map */

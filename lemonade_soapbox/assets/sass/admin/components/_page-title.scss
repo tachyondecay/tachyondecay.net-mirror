@@ -173,71 +173,71 @@
 
     &.-icon-before {
       position: relative;
-      padding-left: calc(var(--unit-small)*1.5);
 
       &:before {
         @include sprite-image($white);
         content: '';
+        flex: 0 0 auto;
+        margin: 0 var(--unit-tiny) 0 0;
         font-size: 1.5em;
-        position: absolute;
-        top: 0;
-        left: var(--unit-small);
-        bottom: 0;
-        margin: auto;
       }
     }
 
     @include mq($from: desktop) {
       &.-icon-before {
-        padding-left: var(--unit-tiny);
-        padding-top: 2em;
+        flex-flow: column;
 
         &:before {
           font-size: 1.5em;
-          top: var(--unit-tiny);
-          left: 0;
-          right: 0;
-          bottom: auto;
+          margin: var(--unit-tiny) 0 0 0;
         }
       }
     }
   }
 
   .submenu {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-basis: auto;
+    padding: var(--unit-small);
+  }
+
+  .submenu > span {
     display: none;
+  }
+
+  .submenu  .submenu-list {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .submenu-list li {
+    margin-right: var(--unit-tiny);
   }
 
   @include mq($from: tablet) {
     grid-column: content-start / span 6;
   }
 
-  @include mq($from: desktop) {
-    .submenu {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-basis: auto;
-      padding: var(--unit-small);
+  @media (hover: hover) {
+    .submenu > span {
+      display: block;
     }
 
     .submenu > .submenu-list {
-      display: flex;
       opacity: 0;
       margin-left: -5em;
       padding: 0;
       transition: all 0.4s cubic-bezier(.95,.05,.45,.22);
-      list-style: none;
-      // width: 0;
     }
 
     .submenu:hover > .submenu-list {
       opacity: 1;
       margin-left: var(--unit-tiny);
       // width: 100%;
-    }
-
-    .submenu-list li {
-      margin-right: var(--unit-tiny);
     }
 
     .submenu-list ._button {

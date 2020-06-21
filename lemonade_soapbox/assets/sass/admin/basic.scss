@@ -9,51 +9,18 @@
 
 @import "settings";
 @import "../common/normalize";
-@import "../vendor/mq";
+@import "../vendor/sass-mq/mq";
 @import "../common/functions";
 @import "../common/sprites";
+@import "helpers";
+
+@import "grid";
 @import "typography";
 
+@import "components/buttons";
 @import "components/notifications";
+@import "components/page-title";
 
-
-/*
- * Body centres contents
- */
-body {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  margin: 0;
-  min-height: 100vh;
-
-  background: $charcoal 
-    linear-gradient(120deg, $charcoal, 25%, $blue);
-}
-
-/**
- * Main page container. Since the page is "basic", not much to see here.
- *
- * 1. On wider displays, vertical centering looks weird
- */
-.page-wrapper {
-  padding-bottom: var(--unit);
-  max-width: $max-text-width;
-
-  background: $snow-white;
-  border: 1px solid $purple;
-  border-radius: $global-radius;
-  box-shadow: 0 0 25px 5px rgba($black, 0.4);
-
-  @include mq($from: desktop) {
-    margin-top: -25vh; /* 1 */
-  }
-
-  > .notification {
-    margin: var(--unit-small) var(--unit);
-  }
-}
 
 
 /*
