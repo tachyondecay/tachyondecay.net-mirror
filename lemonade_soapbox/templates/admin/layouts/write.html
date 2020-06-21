@@ -86,7 +86,7 @@
         </div>
 
         <div class="form-field -span">
-            {{ render_field(form.tags, {'class': 'tag-lookup', 'data-url': url_for('api.tags_lookup', type=post.type, 'autocomplete': 'off'}) }}
+            {{ render_field(form.tags, {'class': 'tag-lookup', 'data-url': url_for('api.tags_lookup', type=post.type), 'autocomplete': 'off'}) }}
         </div>
 
         {% include "admin/posts/revision_history.html" %}

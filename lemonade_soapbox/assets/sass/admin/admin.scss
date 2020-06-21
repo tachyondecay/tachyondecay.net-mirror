@@ -8,7 +8,7 @@
 
 @import "settings";
 @import "../common/normalize";
-@import "../vendor/mq";
+@import "../vendor/sass-mq/mq";
 @import "../common/functions";
 @import "../common/sprites";
 @import "helpers";
@@ -26,12 +26,3 @@
 @import "components/postform";
 @import "components/results-grid";
 @import "components/tag-lookup";
-
-@import "../vendor/jquery-tagit/jquery.tagit";
-@import "../vendor/jquery-timepicker/jquery.timepicker";
-@import "../vendor/jquery-ui/jquery-ui";
-@import "../vendor/jquery-ui/jquery-ui.structure";
-@import "../vendor/jquery-ui/jquery-ui.theme";
-@import "../vendor/easymde/easymde.min";
-@import "../vendor/MonthPicker/MonthPicker";
-@import "../vendor/daterangepicker/daterangepicker";

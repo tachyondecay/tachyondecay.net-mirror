@@ -2,16 +2,25 @@ const application_root = '';
 /*
  * Reload CSRF token periodically in case page has been sitting there
  */
-function refreshCSRF() {
-    $.get('/api/csrf/').done(function(token) {
-        csrf_token = token;
-        console.log('New token ' + token);
-        $('input[name=csrf_token]').val(token);
-    });
+async function refreshCSRF() {
+    const input = document.querySelectorAll('[name=csrf_token]');
+    if(input) {
+        const response = await fetch('/api/csrf/');
+        data = await response.text();
+        if(response.ok) {
+            csrf_token = data;
+            input.forEach(el => {
+                el.value = data;
+            });
+            console.log('New token ' + data);
+        } else {
+            console.log('Could not fetch CSRF token: ' + data);
+        }
+    }
 }
 
 function BackendInit() {
-    $('body').removeClass('no-js');
+    document.querySelector('body').classList.remove('no-js');
 
     /*
      * AJAX configuration
@@ -54,11 +63,11 @@ function BackendInit() {
     //     });
 
     // Add timepickers to the time inputs, courtesy jquery-timepicker
-    $('input[type=time]').timepicker({
-        scrollDefault: 'now',
-        step: 15,
-        timeFormat: 'H:i'
-    });
+    // $('input[type=time]').timepicker({
+    //     scrollDefault: 'now',
+    //     step: 15,
+    //     timeFormat: 'H:i'
+    // });
 
     // Add text input classes to these inputs
     $('input[type=date], input[type=time]').addClass('textinput -blend');
@@ -253,11 +262,14 @@ function BackendInit() {
         sort_order.checked = (qs.get('order') == 'asc');
     }
 
-    document.getElementById('search-posts').addEventListener('keydown', function(e) {
-        if(e.key == 'Enter') {
-            newSearchOptions('q', this.value);
-        }
-    });
+    const search_posts = document.getElementById('search-posts');
+    if(search_posts) {
+        search_posts.addEventListener('keydown', function(e) {
+            if(e.key == 'Enter') {
+                newSearchOptions('q', this.value);
+            }
+        });
+    }
 }
 
 
@@ -498,7 +510,7 @@ $(function() {
     var prevent_csrf_expiry = setInterval(refreshCSRF, 1000 * 3600);
 
     // Largely deals with article autosaving
-    if($('#write').size() > 0) {
+    if($('#write').length > 0) {
         article = new PostForm('#write');
     }
 });

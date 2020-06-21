@@ -10,23 +10,22 @@
         {% endblock %}
 
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fjalla+One|PT+Sans:400,700"/>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+        <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css">
         <link rel="stylesheet" href="{{ url_for('static', filename='css/admin/admin.css') }}"/>
         {% block styles %}{% endblock %}
 
         <script type="text/javascript">
-            var csrf_token = "{{ csrf_token() }}";
+            let csrf_token = "{{ csrf_token() }}";
         </script>
 
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-        <script src="{{ url_for('static', filename='js/vendor/jquery-ui.min.js') }}"></script>
-        <script src="{{ url_for('static', filename='js/vendor/moment.min.js') }}"></script>
-        <script src="{{ url_for('static', filename='js/vendor/daterangepicker.js') }}"></script>
-        <script src="{{ url_for('static', filename='js/vendor/jquery.timepicker.min.js') }}"></script>
-        <script src="{{ url_for('static', filename='js/vendor/MonthPicker.js') }}"></script>
-        <script src="{{ url_for('static', filename='js/vendor/tag-it.min.js') }}"></script>
+        {# <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script> #}
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
         <script src="{{ url_for('static', filename='js/vendor/paste.js') }}"></script>
         <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
-        <script src="{{ url_for('static', filename='js/vendor/easymde.min.js') }}"></script>
         {% block scripts %} {% endblock %}
     </head>
     <body class="no-js {% block body_classes %}{% endblock %}">

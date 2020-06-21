@@ -75,10 +75,12 @@
  * css-tricks.com/inheriting-box-sizing-probably-slightly-better-best-practice
  */
 html {
-  box-sizing: border-box; }
+  box-sizing: border-box;
+}
 
 *, *:before, *:after {
-  box-sizing: inherit; }
+  box-sizing: inherit;
+}
 
 /*! normalize.css v7.0.0 | MIT License | github.com/necolas/normalize.css */
 /* Document
@@ -94,7 +96,8 @@ html {
   -ms-text-size-adjust: 100%;
   /* 2 */
   -webkit-text-size-adjust: 100%;
-  /* 2 */ }
+  /* 2 */
+}
 
 /* Sections
    ========================================================================== */
@@ -102,7 +105,8 @@ html {
  * Remove the margin in all browsers (opinionated).
  */
 body {
-  margin: 0; }
+  margin: 0;
+}
 
 /**
  * Add the correct display in IE 9-.
@@ -113,7 +117,8 @@ footer,
 header,
 nav,
 section {
-  display: block; }
+  display: block;
+}
 
 /**
  * Correct the font size and margin on `h1` elements within `section` and
@@ -121,7 +126,8 @@ section {
  */
 h1 {
   font-size: 2em;
-  margin: 0.67em 0; }
+  margin: 0.67em 0;
+}
 
 /* Grouping content
    ========================================================================== */
@@ -133,13 +139,15 @@ figcaption,
 figure,
 main {
   /* 1 */
-  display: block; }
+  display: block;
+}
 
 /**
  * Add the correct margin in IE 8.
  */
 figure {
-  margin: 1em 40px; }
+  margin: 1em 40px;
+}
 
 /**
  * 1. Add the correct box sizing in Firefox.
@@ -151,7 +159,8 @@ hr {
   height: 0;
   /* 1 */
   overflow: visible;
-  /* 2 */ }
+  /* 2 */
+}
 
 /**
  * 1. Correct the inheritance and scaling of font size in all browsers.
@@ -161,7 +170,8 @@ pre {
   font-family: monospace, monospace;
   /* 1 */
   font-size: 1em;
-  /* 2 */ }
+  /* 2 */
+}
 
 /* Text-level semantics
    ========================================================================== */
@@ -173,7 +183,8 @@ a {
   background-color: transparent;
   /* 1 */
   -webkit-text-decoration-skip: objects;
-  /* 2 */ }
+  /* 2 */
+}
 
 /**
  * 1. Remove the bottom border in Chrome 57- and Firefox 39-.
@@ -185,21 +196,24 @@ abbr[title] {
   text-decoration: underline;
   /* 2 */
   text-decoration: underline dotted;
-  /* 2 */ }
+  /* 2 */
+}
 
 /**
  * Prevent the duplicate application of `bolder` by the next rule in Safari 6.
  */
 b,
 strong {
-  font-weight: inherit; }
+  font-weight: inherit;
+}
 
 /**
  * Add the correct font weight in Chrome, Edge, and Safari.
  */
 b,
 strong {
-  font-weight: bolder; }
+  font-weight: bolder;
+}
 
 /**
  * 1. Correct the inheritance and scaling of font size in all browsers.
@@ -211,26 +225,30 @@ samp {
   font-family: monospace, monospace;
   /* 1 */
   font-size: 1em;
-  /* 2 */ }
+  /* 2 */
+}
 
 /**
  * Add the correct font style in Android 4.3-.
  */
 dfn {
-  font-style: italic; }
+  font-style: italic;
+}
 
 /**
  * Add the correct background and color in IE 9-.
  */
 mark {
   background-color: #ff0;
-  color: #000; }
+  color: #000;
+}
 
 /**
  * Add the correct font size in all browsers.
  */
 small {
-  font-size: 80%; }
+  font-size: 80%;
+}
 
 /**
  * Prevent `sub` and `sup` elements from affecting the line height in
@@ -241,13 +259,16 @@ sup {
   font-size: 75%;
   line-height: 0;
   position: relative;
-  vertical-align: baseline; }
+  vertical-align: baseline;
+}
 
 sub {
-  bottom: -0.25em; }
+  bottom: -0.25em;
+}
 
 sup {
-  top: -0.5em; }
+  top: -0.5em;
+}
 
 /* Embedded content
    ========================================================================== */
@@ -256,26 +277,30 @@ sup {
  */
 audio,
 video {
-  display: inline-block; }
+  display: inline-block;
+}
 
 /**
  * Add the correct display in iOS 4-7.
  */
 audio:not([controls]) {
   display: none;
-  height: 0; }
+  height: 0;
+}
 
 /**
  * Remove the border on images inside links in IE 10-.
  */
 img {
-  border-style: none; }
+  border-style: none;
+}
 
 /**
  * Hide the overflow in IE.
  */
 svg:not(:root) {
-  overflow: hidden; }
+  overflow: hidden;
+}
 
 /* Forms
    ========================================================================== */
@@ -295,7 +320,8 @@ textarea {
   line-height: 1.15;
   /* 1 */
   margin: 0;
-  /* 2 */ }
+  /* 2 */
+}
 
 /**
  * Show the overflow in IE.
@@ -304,7 +330,8 @@ textarea {
 button,
 input {
   /* 1 */
-  overflow: visible; }
+  overflow: visible;
+}
 
 /**
  * Remove the inheritance of text transform in Edge, Firefox, and IE.
@@ -313,7 +340,8 @@ input {
 button,
 select {
   /* 1 */
-  text-transform: none; }
+  text-transform: none;
+}
 
 /**
  * 1. Prevent a WebKit bug where (2) destroys native `audio` and `video`
@@ -321,36 +349,40 @@ select {
  * 2. Correct the inability to style clickable types in iOS and Safari.
  */
 button,
-html [type="button"],
-[type="reset"],
-[type="submit"] {
+html [type=button],
+[type=reset],
+[type=submit] {
   -webkit-appearance: button;
-  /* 2 */ }
+  /* 2 */
+}
 
 /**
  * Remove the inner border and padding in Firefox.
  */
 button::-moz-focus-inner,
-[type="button"]::-moz-focus-inner,
-[type="reset"]::-moz-focus-inner,
-[type="submit"]::-moz-focus-inner {
+[type=button]::-moz-focus-inner,
+[type=reset]::-moz-focus-inner,
+[type=submit]::-moz-focus-inner {
   border-style: none;
-  padding: 0; }
+  padding: 0;
+}
 
 /**
  * Restore the focus styles unset by the previous rule.
  */
 button:-moz-focusring,
-[type="button"]:-moz-focusring,
-[type="reset"]:-moz-focusring,
-[type="submit"]:-moz-focusring {
-  outline: 1px dotted ButtonText; }
+[type=button]:-moz-focusring,
+[type=reset]:-moz-focusring,
+[type=submit]:-moz-focusring {
+  outline: 1px dotted ButtonText;
+}
 
 /**
  * Correct the padding in Firefox.
  */
 fieldset {
-  padding: 0.35em 0.75em 0.625em; }
+  padding: 0.35em 0.75em 0.625em;
+}
 
 /**
  * 1. Correct the text wrapping in Edge and IE.
@@ -370,7 +402,8 @@ legend {
   padding: 0;
   /* 3 */
   white-space: normal;
-  /* 1 */ }
+  /* 1 */
+}
 
 /**
  * 1. Add the correct display in IE 9-.
@@ -380,48 +413,54 @@ progress {
   display: inline-block;
   /* 1 */
   vertical-align: baseline;
-  /* 2 */ }
+  /* 2 */
+}
 
 /**
  * Remove the default vertical scrollbar in IE.
  */
 textarea {
-  overflow: auto; }
+  overflow: auto;
+}
 
 /**
  * 1. Add the correct box sizing in IE 10-.
  * 2. Remove the padding in IE 10-.
  */
-[type="checkbox"],
-[type="radio"] {
+[type=checkbox],
+[type=radio] {
   box-sizing: border-box;
   /* 1 */
   padding: 0;
-  /* 2 */ }
+  /* 2 */
+}
 
 /**
  * Correct the cursor style of increment and decrement buttons in Chrome.
  */
-[type="number"]::-webkit-inner-spin-button,
-[type="number"]::-webkit-outer-spin-button {
-  height: auto; }
+[type=number]::-webkit-inner-spin-button,
+[type=number]::-webkit-outer-spin-button {
+  height: auto;
+}
 
 /**
  * 1. Correct the odd appearance in Chrome and Safari.
  * 2. Correct the outline style in Safari.
  */
-[type="search"] {
+[type=search] {
   -webkit-appearance: textfield;
   /* 1 */
   outline-offset: -2px;
-  /* 2 */ }
+  /* 2 */
+}
 
 /**
  * Remove the inner padding and cancel buttons in Chrome and Safari on macOS.
  */
-[type="search"]::-webkit-search-cancel-button,
-[type="search"]::-webkit-search-decoration {
-  -webkit-appearance: none; }
+[type=search]::-webkit-search-cancel-button,
+[type=search]::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
 
 /**
  * 1. Correct the inability to style clickable types in iOS and Safari.
@@ -431,7 +470,8 @@ textarea {
   -webkit-appearance: button;
   /* 1 */
   font: inherit;
-  /* 2 */ }
+  /* 2 */
+}
 
 /* Interactive
    ========================================================================== */
@@ -441,13 +481,15 @@ textarea {
  */
 details,
 menu {
-  display: block; }
+  display: block;
+}
 
 /*
  * Add the correct display in all browsers.
  */
 summary {
-  display: list-item; }
+  display: list-item;
+}
 
 /* Scripting
    ========================================================================== */
@@ -455,13 +497,15 @@ summary {
  * Add the correct display in IE 9-.
  */
 canvas {
-  display: inline-block; }
+  display: inline-block;
+}
 
 /**
  * Add the correct display in IE.
  */
 template {
-  display: none; }
+  display: none;
+}
 
 /* Hidden
    ========================================================================== */
@@ -469,7 +513,8 @@ template {
  * Add the correct display in IE 10-.
  */
 [hidden] {
-  display: none; }
+  display: none;
+}
 
 /* ==========================================================================
    #RESET
@@ -485,21 +530,24 @@ figure,
 hr,
 fieldset, legend {
   margin: 0;
-  padding: 0; }
+  padding: 0;
+}
 
 /**
  * Remove trailing margins from nested lists.
  */
 li > ol,
 li > ul {
-  margin-bottom: 0; }
+  margin-bottom: 0;
+}
 
 /**
  * Remove default table spacing.
  */
 table {
   border-collapse: collapse;
-  border-spacing: 0; }
+  border-spacing: 0;
+}
 
 /**
  * 1. Reset Chrome and Firefox behaviour which sets a `min-width: min-content;`
@@ -508,7 +556,8 @@ table {
 fieldset {
   min-width: 0;
   /* [1] */
-  border: 0; }
+  border: 0;
+}
 
 /* ==========================================================================
    #SHARED
@@ -529,13 +578,15 @@ figure,
 hr,
 table,
 fieldset {
-  margin-bottom: 24px; }
+  margin-bottom: 24px;
+}
 
 /**
  * Consistent indentation for lists.
  */
 dd, ol, ul {
-  margin-left: 24px; }
+  margin-left: 24px;
+}
 
 /* stylelint-enable selector-list-comma-newline-after */
 /* ==========================================================================
@@ -564,29 +615,37 @@ html {
   overflow-y: scroll;
   /* [2] */
   min-height: 100%;
-  /* [3] */ }
+  /* [3] */
+}
 
 .c-page__title {
-  text-align: center; }
+  text-align: center;
+}
 
 blockquote {
   border-left: 2px solid #aa4465;
   margin-left: 1em;
   margin-right: 2em;
-  padding-left: 1em; }
+  padding-left: 1em;
+}
 
 figure {
   display: flex;
   flex-flow: column;
   align-items: center;
-  margin: 24px auto; }
-  figure a:not(:last-child) {
-    margin: 0 0 12px 0; }
+  margin: 24px auto;
+}
+figure a:not(:last-child) {
+  margin: 0 0 12px 0;
+}
+figure img {
+  box-shadow: rgba(35, 35, 35, 0.75) 0 0 10px;
+}
+@media (min-width: 81.25em) {
   figure img {
-    box-shadow: rgba(35, 35, 35, 0.75) 0 0 10px; }
-    @media (min-width: 81.25em) {
-      figure img {
-        max-width: initial; } }
+    max-width: initial;
+  }
+}
 
 figcaption {
   margin: 12px 24px 24px;
@@ -596,7 +655,8 @@ figcaption {
   font-size: 0.7777777778rem;
   line-height: 1.9285714286;
   text-align: center;
-  text-shadow: rgba(96, 131, 154, 0.5) 1px 1px 2px; }
+  text-shadow: rgba(96, 131, 154, 0.5) 1px 1px 2px;
+}
 
 /* ==========================================================================
    #HEADINGS
@@ -608,37 +668,44 @@ figcaption {
  */
 h1, h2, h3, h4, h5, h6 {
   font-family: Oswald, Verdana, Arial, sans-serif;
-  font-weight: 500; }
+  font-weight: 500;
+}
 
 h1 {
   font-size: 36px;
   font-size: 2rem;
-  line-height: 1.5; }
+  line-height: 1.5;
+}
 
 h2 {
   font-size: 28px;
   font-size: 1.5555555556rem;
-  line-height: 1.9285714286; }
+  line-height: 1.9285714286;
+}
 
 h3 {
   font-size: 24px;
   font-size: 1.3333333333rem;
-  line-height: 1.125; }
+  line-height: 1.125;
+}
 
 h4 {
   font-size: 20px;
   font-size: 1.1111111111rem;
-  line-height: 1.35; }
+  line-height: 1.35;
+}
 
 h5 {
   font-size: 18px;
   font-size: 1rem;
-  line-height: 1.5; }
+  line-height: 1.5;
+}
 
 h6 {
   font-size: 16px;
   font-size: 0.8888888889rem;
-  line-height: 1.6875; }
+  line-height: 1.6875;
+}
 
 /* ==========================================================================
    #IMAGES
@@ -657,7 +724,8 @@ img {
   /* [2] */
   vertical-align: middle;
   /* [3] */
-  max-height: 80vh; }
+  max-height: 80vh;
+}
 
 /**
  * If a `width` and/or `height` attribute has been explicitly defined, let’s
@@ -665,16 +733,20 @@ img {
  */
 img[width],
 img[height] {
-  max-width: none; }
+  max-width: none;
+}
 
 a {
   color: #800080;
   text-decoration-skip: ink;
-  transition: color 0.5s ease; }
-  a:hover, a:focus {
-    color: #aa4465; }
-  a:active {
-    text-shadow: 1px 1px rgba(0, 0, 0, 0.5); }
+  transition: color 0.5s ease;
+}
+a:hover, a:focus {
+  color: #aa4465;
+}
+a:active {
+  text-shadow: 1px 1px rgba(0, 0, 0, 0.5);
+}
 
 /* ==========================================================================
    #TABLES
@@ -684,7 +756,8 @@ a {
  */
 table {
   width: 100%;
-  /* [1] */ }
+  /* [1] */
+}
 
 /* ==========================================================================
    #WRAPPER
@@ -699,14 +772,17 @@ table {
   padding-left: 24px;
   margin-right: auto;
   margin-left: auto;
-  max-width: 1200px; }
-  .o-wrapper:after, .o-wrapper--text:after {
-    content: "" !important;
-    display: block !important;
-    clear: both !important; }
+  max-width: 1200px;
+}
+.o-wrapper:after, .o-wrapper--text:after {
+  content: "" !important;
+  display: block !important;
+  clear: both !important;
+}
 
 .o-wrapper--text {
-  max-width: 35em; }
+  max-width: 35em;
+}
 
 /* ==========================================================================
    #LAYOUT
@@ -777,7 +853,8 @@ table {
   /* [1] */
   margin-left: -24px;
   /* [3] */
-  font-size: 0; }
+  font-size: 0;
+}
 
 /**
  * 1. Required in order to combine fluid widths with fixed gutters.
@@ -803,34 +880,45 @@ table {
   /* [5] */
   font-size: 18px;
   /* [6] */
-  font-size: 1rem; }
+  font-size: 1rem;
+}
 
 /* Gutter size modifiers
    ========================================================================== */
 .o-layout--flush {
-  margin-left: 0; }
-  .o-layout--flush > .o-layout__item {
-    padding-left: 0; }
+  margin-left: 0;
+}
+.o-layout--flush > .o-layout__item {
+  padding-left: 0;
+}
 
 .o-layout--tiny {
-  margin-left: -6px; }
-  .o-layout--tiny > .o-layout__item {
-    padding-left: 6px; }
+  margin-left: -6px;
+}
+.o-layout--tiny > .o-layout__item {
+  padding-left: 6px;
+}
 
 .o-layout--small {
-  margin-left: -12px; }
-  .o-layout--small > .o-layout__item {
-    padding-left: 12px; }
+  margin-left: -12px;
+}
+.o-layout--small > .o-layout__item {
+  padding-left: 12px;
+}
 
 .o-layout--large {
-  margin-left: -48px; }
-  .o-layout--large > .o-layout__item {
-    padding-left: 48px; }
+  margin-left: -48px;
+}
+.o-layout--large > .o-layout__item {
+  padding-left: 48px;
+}
 
 .o-layout--huge {
-  margin-left: -96px; }
-  .o-layout--huge > .o-layout__item {
-    padding-left: 96px; }
+  margin-left: -96px;
+}
+.o-layout--huge > .o-layout__item {
+  padding-left: 96px;
+}
 
 /* Vertical alignment modifiers
    ========================================================================== */
@@ -838,13 +926,15 @@ table {
  * Align all grid items to the middles of each other.
  */
 .o-layout--middle > .o-layout__item {
-  vertical-align: middle; }
+  vertical-align: middle;
+}
 
 /**
  * Align all grid items to the bottoms of each other.
  */
 .o-layout--bottom > .o-layout__item {
-  vertical-align: bottom; }
+  vertical-align: bottom;
+}
 
 /**
  * Stretch all grid items of each row to have an equal-height.
@@ -853,15 +943,20 @@ table {
  */
 .o-layout--stretch {
   display: flex;
-  flex-wrap: wrap; }
-  .o-layout--stretch > .o-layout__item {
-    display: flex; }
-  .o-layout--stretch.o-layout--center {
-    justify-content: center; }
-  .o-layout--stretch.o-layout--right {
-    justify-content: flex-end; }
-  .o-layout--stretch.o-layout--left {
-    justify-content: flex-start; }
+  flex-wrap: wrap;
+}
+.o-layout--stretch > .o-layout__item {
+  display: flex;
+}
+.o-layout--stretch.o-layout--center {
+  justify-content: center;
+}
+.o-layout--stretch.o-layout--right {
+  justify-content: flex-end;
+}
+.o-layout--stretch.o-layout--left {
+  justify-content: flex-start;
+}
 
 /* Fill order modifiers
    ========================================================================== */
@@ -869,34 +964,42 @@ table {
  * Fill up the layout system from the centre.
  */
 .o-layout--center {
-  text-align: center; }
-  .o-layout--center > .o-layout__item {
-    text-align: left; }
+  text-align: center;
+}
+.o-layout--center > .o-layout__item {
+  text-align: left;
+}
 
 /**
  * Fill up the layout system from the right-hand side.
  */
 .o-layout--right {
-  text-align: right; }
-  .o-layout--right > .o-layout__item {
-    text-align: left; }
+  text-align: right;
+}
+.o-layout--right > .o-layout__item {
+  text-align: left;
+}
 
 /**
  * Fill up the layout system from the left-hand side. This will likely only be
  * needed when using in conjunction with `.o-layout--reverse`.
  */
 .o-layout--left {
-  text-align: left; }
-  .o-layout--left > .o-layout__item {
-    text-align: left; }
+  text-align: left;
+}
+.o-layout--left > .o-layout__item {
+  text-align: left;
+}
 
 /**
  * Reverse the rendered order of the grid system.
  */
 .o-layout--reverse {
-  direction: rtl; }
-  .o-layout--reverse > .o-layout__item {
-    direction: ltr; }
+  direction: rtl;
+}
+.o-layout--reverse > .o-layout__item {
+  direction: ltr;
+}
 
 /* Auto-widths modifier
    ========================================================================== */
@@ -904,7 +1007,8 @@ table {
  * Cause layout items to take up a non-explicit amount of width.
  */
 .o-layout--auto > .o-layout__item {
-  width: auto; }
+  width: auto;
+}
 
 /* ==========================================================================
    #GRID
@@ -949,7 +1053,8 @@ table {
   display: flex;
   flex-flow: row wrap;
   list-style: none;
-  padding: 0; }
+  padding: 0;
+}
 
 /**
  * 1. Cells are full-width and stack on top of each other by default.
@@ -957,17 +1062,20 @@ table {
 .o-grid__cell {
   flex: 0 1 auto;
   width: 100%;
-  /* [1] */ }
+  /* [1] */
+}
 
 .o-grid--column {
   display: flex;
   flex-flow: column wrap;
   list-stlye: none;
   padding: 0;
-  margin-top: -24px; }
-  .o-grid--column > .o-grid__cell {
-    padding-left: 0;
-    padding-top: 24px; }
+  margin-top: -24px;
+}
+.o-grid--column > .o-grid__cell {
+  padding-left: 0;
+  padding-top: 24px;
+}
 
 /* Gutters
    ========================================================================== */
@@ -981,85 +1089,106 @@ table {
 .o-grid {
   /* [1] */
   margin-left: -24px;
-  /* [2] */ }
-  .o-grid > .o-grid__cell {
-    padding-left: 24px;
-    /* [3] */ }
+  /* [2] */
+}
+.o-grid > .o-grid__cell {
+  padding-left: 24px;
+  /* [3] */
+}
 
 .o-grid--tiny {
   /* [1] */
   margin-left: -6px;
-  /* [2] */ }
-  .o-grid--tiny > .o-grid__cell {
-    padding-left: 6px;
-    /* [3] */ }
+  /* [2] */
+}
+.o-grid--tiny > .o-grid__cell {
+  padding-left: 6px;
+  /* [3] */
+}
 
 .o-grid--small {
   /* [1] */
   margin-left: -12px;
-  /* [2] */ }
-  .o-grid--small > .o-grid__cell {
-    padding-left: 12px;
-    /* [3] */ }
+  /* [2] */
+}
+.o-grid--small > .o-grid__cell {
+  padding-left: 12px;
+  /* [3] */
+}
 
 .o-grid--large {
   /* [1] */
   margin-left: -48px;
-  /* [2] */ }
-  .o-grid--large > .o-grid__cell {
-    padding-left: 48px;
-    /* [3] */ }
+  /* [2] */
+}
+.o-grid--large > .o-grid__cell {
+  padding-left: 48px;
+  /* [3] */
+}
 
 .o-grid--huge {
   /* [1] */
   margin-left: -96px;
-  /* [2] */ }
-  .o-grid--huge > .o-grid__cell {
-    padding-left: 96px;
-    /* [3] */ }
+  /* [2] */
+}
+.o-grid--huge > .o-grid__cell {
+  padding-left: 96px;
+  /* [3] */
+}
 
 .o-grid--flush {
   /* [1] */
   margin-left: 0;
-  /* [2] */ }
-  .o-grid--flush > .o-grid__cell {
-    padding-left: 0;
-    /* [3] */ }
+  /* [2] */
+}
+.o-grid--flush > .o-grid__cell {
+  padding-left: 0;
+  /* [3] */
+}
 
 /* Automatically size cells by distributing them equally
    ========================================================================== */
 .o-grid--auto > .o-grid__cell {
-  flex: 1 0 0; }
+  flex: 1 0 0;
+}
 
 /* Horizontal alignment
    ========================================================================== */
 .o-grid--center {
-  justify-content: center; }
+  justify-content: center;
+}
 
 .o-grid--right {
-  justify-content: flex-end; }
+  justify-content: flex-end;
+}
 
 .o-grid--left {
-  justify-content: flex-start; }
+  justify-content: flex-start;
+}
 
 /* Vertical alignment
    ========================================================================== */
 .o-grid--middle {
-  align-items: center; }
+  align-items: center;
+}
 
 .o-grid--bottom {
-  align-items: flex-end; }
+  align-items: flex-end;
+}
 
 /* Content distribution
    ========================================================================== */
 .o-grid--around {
-  justify-content: space-around; }
+  justify-content: space-around;
+}
 
 .o-grid--between {
-  justify-content: space-between; }
+  justify-content: space-between;
+}
 
 .o-grid--reverse {
-  flex-direction: row-reverse; }
+  flex-direction: row-reverse;
+}
 
 /**
  * If we’re using Sass-MQ, automatically generate classes which start as a 
@@ -1072,87 +1201,115 @@ table {
   .o-grid.o-grid--flip\@mobile {
     flex-flow: column wrap;
     margin-left: 0;
-    margin-top: -24px; }
-    .o-grid.o-grid--flip\@mobile > .o-grid__cell {
-      padding-left: 0;
-      padding-top: 24px; }
+    margin-top: -24px;
+  }
+  .o-grid.o-grid--flip\@mobile > .o-grid__cell {
+    padding-left: 0;
+    padding-top: 24px;
+  }
 
   .o-grid--column.o-grid--flip\@mobile {
     flex-flow: row wrap;
     margin-left: -24px;
-    margin-top: 0; }
-    .o-grid--column.o-grid--flip\@mobile > .o-grid__cell {
-      padding-left: 24px;
-      padding-top: 0; } }
+    margin-top: 0;
+  }
+  .o-grid--column.o-grid--flip\@mobile > .o-grid__cell {
+    padding-left: 24px;
+    padding-top: 0;
+  }
+}
 @media (min-width: 46.25em) {
   .o-grid.o-grid--flip\@tablet {
     flex-flow: column wrap;
     margin-left: 0;
-    margin-top: -24px; }
-    .o-grid.o-grid--flip\@tablet > .o-grid__cell {
-      padding-left: 0;
-      padding-top: 24px; }
+    margin-top: -24px;
+  }
+  .o-grid.o-grid--flip\@tablet > .o-grid__cell {
+    padding-left: 0;
+    padding-top: 24px;
+  }
 
   .o-grid--column.o-grid--flip\@tablet {
     flex-flow: row wrap;
     margin-left: -24px;
-    margin-top: 0; }
-    .o-grid--column.o-grid--flip\@tablet > .o-grid__cell {
-      padding-left: 24px;
-      padding-top: 0; } }
+    margin-top: 0;
+  }
+  .o-grid--column.o-grid--flip\@tablet > .o-grid__cell {
+    padding-left: 24px;
+    padding-top: 0;
+  }
+}
 @media (min-width: 61.25em) {
   .o-grid.o-grid--flip\@desktop {
     flex-flow: column wrap;
     margin-left: 0;
-    margin-top: -24px; }
-    .o-grid.o-grid--flip\@desktop > .o-grid__cell {
-      padding-left: 0;
-      padding-top: 24px; }
+    margin-top: -24px;
+  }
+  .o-grid.o-grid--flip\@desktop > .o-grid__cell {
+    padding-left: 0;
+    padding-top: 24px;
+  }
 
   .o-grid--column.o-grid--flip\@desktop {
     flex-flow: row wrap;
     margin-left: -24px;
-    margin-top: 0; }
-    .o-grid--column.o-grid--flip\@desktop > .o-grid__cell {
-      padding-left: 24px;
-      padding-top: 0; } }
+    margin-top: 0;
+  }
+  .o-grid--column.o-grid--flip\@desktop > .o-grid__cell {
+    padding-left: 24px;
+    padding-top: 0;
+  }
+}
 @media (min-width: 81.25em) {
   .o-grid.o-grid--flip\@wide {
     flex-flow: column wrap;
     margin-left: 0;
-    margin-top: -24px; }
-    .o-grid.o-grid--flip\@wide > .o-grid__cell {
-      padding-left: 0;
-      padding-top: 24px; }
+    margin-top: -24px;
+  }
+  .o-grid.o-grid--flip\@wide > .o-grid__cell {
+    padding-left: 0;
+    padding-top: 24px;
+  }
 
   .o-grid--column.o-grid--flip\@wide {
     flex-flow: row wrap;
     margin-left: -24px;
-    margin-top: 0; }
-    .o-grid--column.o-grid--flip\@wide > .o-grid__cell {
-      padding-left: 24px;
-      padding-top: 0; } }
+    margin-top: 0;
+  }
+  .o-grid--column.o-grid--flip\@wide > .o-grid__cell {
+    padding-left: 24px;
+    padding-top: 0;
+  }
+}
 .o-site-grid {
   display: flex;
   flex-flow: column wrap;
-  justify-content: center; }
+  justify-content: center;
+}
+.o-site-grid .c-sidebar {
+  margin-bottom: 24px;
+}
+@media (min-width: 46.25em) {
+  .o-site-grid {
+    flex-flow: row wrap;
+  }
   .o-site-grid .c-sidebar {
-    margin-bottom: 24px; }
-  @media (min-width: 46.25em) {
-    .o-site-grid {
-      flex-flow: row wrap; }
-      .o-site-grid .c-sidebar {
-        display: flex;
-        flex-flow: column wrap;
-        flex: 1 1 15em;
-        align-items: center;
-        max-width: 20em;
-        margin-top: 96px; }
-        body.index .o-site-grid .c-sidebar {
-          margin-top: 0; } }
-  @media (min-width: 81.25em) {
-    .o-site-grid .c-sidebar--left {
-      order: -1; } }
+    display: flex;
+    flex-flow: column wrap;
+    flex: 1 1 15em;
+    align-items: center;
+    max-width: 20em;
+    margin-top: 96px;
+  }
+  body.index .o-site-grid .c-sidebar {
+    margin-top: 0;
+  }
+}
+@media (min-width: 81.25em) {
+  .o-site-grid .c-sidebar--left {
+    order: -1;
+  }
+}
 
 /* ==========================================================================
    #MEDIA
@@ -1162,24 +1319,30 @@ table {
  * http://www.stubbornella.org/content/2010/06/25/the-media-object-saves-hundreds-of-lines-of-code
  */
 .o-media {
-  display: block; }
-  .o-media:after {
-    content: "" !important;
-    display: block !important;
-    clear: both !important; }
+  display: block;
+}
+.o-media:after {
+  content: "" !important;
+  display: block !important;
+  clear: both !important;
+}
 
 .o-media__img {
   float: left;
-  margin-right: 24px; }
-  .o-media__img > img {
-    display: block; }
+  margin-right: 24px;
+}
+.o-media__img > img {
+  display: block;
+}
 
 .o-media__body {
   overflow: hidden;
-  display: block; }
-  .o-media__body,
-  .o-media__body > :last-child {
-    margin-bottom: 0; }
+  display: block;
+}
+.o-media__body,
+.o-media__body > :last-child {
+  margin-bottom: 0;
+}
 
 /* Size variants
    ========================================================================== */
@@ -1189,38 +1352,48 @@ table {
  */
 .o-media--flush > .o-media__img {
   margin-right: 0;
-  margin-left: 0; }
+  margin-left: 0;
+}
 
 .o-media--tiny > .o-media__img {
-  margin-right: 6px; }
+  margin-right: 6px;
+}
 .o-media--tiny.o-media--reverse > .o-media__img {
   margin-right: 0;
-  margin-left: 6px; }
+  margin-left: 6px;
+}
 
 .o-media--small > .o-media__img {
-  margin-right: 12px; }
+  margin-right: 12px;
+}
 .o-media--small.o-media--reverse > .o-media__img {
   margin-right: 0;
-  margin-left: 12px; }
+  margin-left: 12px;
+}
 
 .o-media--large > .o-media__img {
-  margin-right: 48px; }
+  margin-right: 48px;
+}
 .o-media--large.o-media--reverse > .o-media__img {
   margin-right: 0;
-  margin-left: 48px; }
+  margin-left: 48px;
+}
 
 .o-media--huge > .o-media__img {
-  margin-right: 96px; }
+  margin-right: 96px;
+}
 .o-media--huge.o-media--reverse > .o-media__img {
   margin-right: 0;
-  margin-left: 96px; }
+  margin-left: 96px;
+}
 
 /* Reversed media objects
    ========================================================================== */
 .o-media--reverse > .o-media__img {
   float: right;
   margin-right: 0;
-  margin-left: 24px; }
+  margin-left: 24px;
+}
 
 /* ==========================================================================
    #FLAG
@@ -1243,7 +1416,8 @@ table {
   width: 100%;
   /* [2] */
   border-spacing: 0;
-  /* [3] */ }
+  /* [3] */
+}
 
 /**
  * Items within a flag object. There should only ever be one of each.
@@ -1254,7 +1428,8 @@ table {
 .o-flag__body {
   display: table-cell;
   vertical-align: middle;
-  /* [1] */ }
+  /* [1] */
+}
 
 /**
  * Flag images have a space between them and the body of the object.
@@ -1282,10 +1457,12 @@ table {
    *          <img src="./link/to/image.jpg" alt="image alt text">
    *        </div>
    *      </a>
-   */ }
-  .o-flag__img > img {
-    max-width: none;
-    /* [1] */ }
+   */
+}
+.o-flag__img > img {
+  max-width: none;
+  /* [1] */
+}
 
 /**
  * The container for the main content of the flag object.
@@ -1294,40 +1471,51 @@ table {
  */
 .o-flag__body {
   width: auto;
-  /* [1] */ }
-  .o-flag__body,
-  .o-flag__body > :last-child {
-    margin-bottom: 0; }
+  /* [1] */
+}
+.o-flag__body,
+.o-flag__body > :last-child {
+  margin-bottom: 0;
+}
 
 /* Size variants
    ========================================================================== */
 .o-flag--flush > .o-flag__img {
   padding-right: 0;
-  padding-left: 0; }
+  padding-left: 0;
+}
 
 .o-flag--tiny > .o-flag__img {
-  padding-right: 6px; }
+  padding-right: 6px;
+}
 .o-flag--tiny.o-flag--reverse > .o-flag__img {
   padding-right: 0;
-  padding-left: 6px; }
+  padding-left: 6px;
+}
 
 .o-flag--small > .o-flag__img {
-  padding-right: 12px; }
+  padding-right: 12px;
+}
 .o-flag--small.o-flag--reverse > .o-flag__img {
   padding-right: 0;
-  padding-left: 12px; }
+  padding-left: 12px;
+}
 
 .o-flag--large > .o-flag__img {
-  padding-right: 48px; }
+  padding-right: 48px;
+}
 .o-flag--large.o-flag--reverse > .o-flag__img {
   padding-right: 0;
-  padding-left: 48px; }
+  padding-left: 48px;
+}
 
 .o-flag--huge > .o-flag__img {
-  padding-right: 96px; }
+  padding-right: 96px;
+}
 .o-flag--huge.o-flag--reverse > .o-flag__img {
   padding-right: 0;
-  padding-left: 96px; }
+  padding-left: 96px;
+}
 
 /* Reversed flag
    ========================================================================== */
@@ -1338,16 +1526,19 @@ table {
  */
 .o-flag--reverse {
   direction: rtl;
-  /* [1] */ }
-  .o-flag--reverse > .o-flag__img,
-  .o-flag--reverse > .o-flag__body {
-    direction: ltr;
-    /* [2] */ }
-  .o-flag--reverse > .o-flag__img {
-    padding-right: 0;
-    /* [3] */
-    padding-left: 24px;
-    /* [3] */ }
+  /* [1] */
+}
+.o-flag--reverse > .o-flag__img,
+.o-flag--reverse > .o-flag__body {
+  direction: ltr;
+  /* [2] */
+}
+.o-flag--reverse > .o-flag__img {
+  padding-right: 0;
+  /* [3] */
+  padding-left: 24px;
+  /* [3] */
+}
 
 /* Alignment variants
    ========================================================================== */
@@ -1356,58 +1547,76 @@ table {
  */
 .o-flag--top > .o-flag__img,
 .o-flag--top > .o-flag__body {
-  vertical-align: top; }
+  vertical-align: top;
+}
 
 .o-flag--bottom > .o-flag__img,
 .o-flag--bottom > .o-flag__body {
-  vertical-align: bottom; }
+  vertical-align: bottom;
+}
 
 .o-gallery > figcaption {
   width: 100%;
   font-size: 18px;
   font-size: 1rem;
   line-height: 1.5;
-  text-align: center; }
-  .o-gallery > figcaption:first-child {
-    border-bottom: 1px solid #1f5673; }
-  .o-gallery > figcaption:last-child {
-    border-top: 1px solid #1f5673; }
+  text-align: center;
+}
+.o-gallery > figcaption:first-child {
+  border-bottom: 1px solid #1f5673;
+}
+.o-gallery > figcaption:last-child {
+  border-top: 1px solid #1f5673;
+}
 .o-gallery figcaption {
-  margin: 0 24px; }
+  margin: 0 24px;
+}
 @media (min-width: 46.25em) {
   .o-gallery {
     flex-flow: row;
     flex-wrap: wrap;
     align-items: baseline;
     justify-content: center;
-    margin: 24px -24px; }
-    .o-gallery figure {
-      display: block;
-      flex: 1;
-      margin: 12px; }
-      .o-gallery figure img {
-        max-width: 100%; } }
+    margin: 24px -24px;
+  }
+  .o-gallery figure {
+    display: block;
+    flex: 1;
+    margin: 12px;
+  }
+  .o-gallery figure img {
+    max-width: 100%;
+  }
+}
 @media (min-width: 81.25em) {
   .o-gallery {
-    margin: 24px -96px; } }
+    margin: 24px -96px;
+  }
+}
 
 .o-gallery--1 figure {
-  flex: 0 1 calc(100% / 1 - 2 * 12px); }
+  flex: 0 1 calc(100% / 1 - 2 * 12px);
+}
 
 .o-gallery--2 figure {
-  flex: 0 1 calc(100% / 2 - 2 * 12px); }
+  flex: 0 1 calc(100% / 2 - 2 * 12px);
+}
 
 .o-gallery--3 figure {
-  flex: 0 1 calc(100% / 3 - 2 * 12px); }
+  flex: 0 1 calc(100% / 3 - 2 * 12px);
+}
 
 .o-gallery--4 figure {
-  flex: 0 1 calc(100% / 4 - 2 * 12px); }
+  flex: 0 1 calc(100% / 4 - 2 * 12px);
+}
 
 .o-gallery--5 figure {
-  flex: 0 1 calc(100% / 5 - 2 * 12px); }
+  flex: 0 1 calc(100% / 5 - 2 * 12px);
+}
 
 .o-gallery--6 figure {
-  flex: 0 1 calc(100% / 6 - 2 * 12px); }
+  flex: 0 1 calc(100% / 6 - 2 * 12px);
+}
 
 /* ==========================================================================
    #LIST-BARE
@@ -1421,10 +1630,12 @@ table {
  */
 .o-list-bare {
   list-style: none;
-  margin-left: 0; }
+  margin-left: 0;
+}
 
 .o-list-bare__item {
-  margin-left: 0; }
+  margin-left: 0;
+}
 
 /* ==========================================================================
    #LIST-INLINE
@@ -1434,10 +1645,12 @@ table {
  */
 .o-list-inline {
   margin-left: 0;
-  list-style: none; }
+  list-style: none;
+}
 
 .o-list-inline__item {
-  display: inline-block; }
+  display: inline-block;
+}
 
 /* ==========================================================================
    #LIST-INLINE-FLEX
@@ -1451,20 +1664,24 @@ table {
   justify-content: center;
   align-items: center;
   margin-left: 0;
-  list-style: none; }
+  list-style: none;
+}
 
 .o-list-split__item {
   display: flex;
   flex-flow: row;
-  justify-content: center; }
+  justify-content: center;
+}
 
 .o-list-split__left {
   flex: 0 1 25%;
   padding-right: 12px;
-  text-align: right; }
+  text-align: right;
+}
 
 .o-list-split__right {
-  flex: 1 1 50%; }
+  flex: 1 1 50%;
+}
 
 /* ==========================================================================
    #BOX
@@ -1478,30 +1695,38 @@ table {
 .o-box {
   display: block;
   /* [1] */
-  padding: 24px; }
-  .o-box:after {
-    content: "" !important;
-    display: block !important;
-    clear: both !important; }
-  .o-box > :last-child {
-    margin-bottom: 0; }
+  padding: 24px;
+}
+.o-box:after {
+  content: "" !important;
+  display: block !important;
+  clear: both !important;
+}
+.o-box > :last-child {
+  margin-bottom: 0;
+}
 
 /* Size variants
    ========================================================================== */
 .o-box--flush {
-  padding: 0; }
+  padding: 0;
+}
 
 .o-box--tiny {
-  padding: 6px; }
+  padding: 6px;
+}
 
 .o-box--small {
-  padding: 12px; }
+  padding: 12px;
+}
 
 .o-box--large {
-  padding: 48px; }
+  padding: 48px;
+}
 
 .o-box--huge {
-  padding: 96px; }
+  padding: 96px;
+}
 
 /* ==========================================================================
    #BLOCK
@@ -1512,33 +1737,43 @@ table {
  */
 .o-block {
   display: block;
-  text-align: center; }
+  text-align: center;
+}
 
 .o-block__img {
   margin-bottom: 24px;
   /* Size variants
-     ====================================================================== */ }
-  .o-block--flush > .o-block__img {
-    margin-bottom: 0; }
-  .o-block--tiny > .o-block__img {
-    margin-bottom: 6px; }
-  .o-block--small > .o-block__img {
-    margin-bottom: 12px; }
-  .o-block--large > .o-block__img {
-    margin-bottom: 48px; }
-  .o-block--huge > .o-block__img {
-    margin-bottom: 96px; }
+     ====================================================================== */
+}
+.o-block--flush > .o-block__img {
+  margin-bottom: 0;
+}
+.o-block--tiny > .o-block__img {
+  margin-bottom: 6px;
+}
+.o-block--small > .o-block__img {
+  margin-bottom: 12px;
+}
+.o-block--large > .o-block__img {
+  margin-bottom: 48px;
+}
+.o-block--huge > .o-block__img {
+  margin-bottom: 96px;
+}
 
 .o-block__body {
-  display: block; }
+  display: block;
+}
 
 /* Alignment variants
    ========================================================================== */
 .o-block--right {
-  text-align: right; }
+  text-align: right;
+}
 
 .o-block--left {
-  text-align: left; }
+  text-align: left;
+}
 
 /* ==========================================================================
    #RATIO
@@ -1553,13 +1788,15 @@ table {
  */
 .o-ratio {
   position: relative;
-  display: block; }
-  .o-ratio:before {
-    content: "";
-    display: block;
-    width: 100%;
-    padding-bottom: 100%;
-    /* [1] */ }
+  display: block;
+}
+.o-ratio:before {
+  content: "";
+  display: block;
+  width: 100%;
+  padding-bottom: 100%;
+  /* [1] */
+}
 
 .o-ratio__content,
 .o-ratio > iframe,
@@ -1570,7 +1807,8 @@ table {
   bottom: 0;
   left: 0;
   height: 100%;
-  width: 100%; }
+  width: 100%;
+}
 
 /* stylelint-disable */
 /* Ratio variants.
@@ -1582,16 +1820,20 @@ table {
  *
  */
 .o-ratio--2\:1:before {
-  padding-bottom: 50%; }
+  padding-bottom: 50%;
+}
 
 .o-ratio--4\:3:before {
-  padding-bottom: 75%; }
+  padding-bottom: 75%;
+}
 
 .o-ratio--16\:9:before {
-  padding-bottom: 56.25%; }
+  padding-bottom: 56.25%;
+}
 
 .o-ratio--1\.618\:1:before {
-  padding-bottom: 61.804697157%; }
+  padding-bottom: 61.804697157%;
+}
 
 /* stylelint-enable */
 /* ==========================================================================
@@ -1609,7 +1851,8 @@ table {
   /* [1] */
   display: block;
   overflow: hidden;
-  /* [2] */ }
+  /* [2] */
+}
 
 /**
  * Apply this class to the content (usually `img`) that needs cropping.
@@ -1624,53 +1867,63 @@ table {
   left: 0;
   /* [1] */
   max-width: none;
-  /* [2] */ }
+  /* [2] */
+}
 
 /**
  * We can position the media in different locations within the cropping area.
  */
 .o-crop__content--left-top {
-  left: 0; }
+  left: 0;
+}
 
 .o-crop__content--left-center {
   top: 50%;
-  transform: translateY(-50%); }
+  transform: translateY(-50%);
+}
 
 .o-crop__content--left-bottom {
   top: auto;
-  bottom: 0; }
+  bottom: 0;
+}
 
 .o-crop__content--right-top {
   right: 0;
-  left: auto; }
+  left: auto;
+}
 
 .o-crop__content--right-center {
   top: 50%;
   right: 0;
   left: auto;
-  transform: translateY(-50%); }
+  transform: translateY(-50%);
+}
 
 .o-crop__content--right-bottom {
   top: auto;
   right: 0;
   bottom: 0;
-  left: auto; }
+  left: auto;
+}
 
 .o-crop__content--center-top {
   left: 50%;
-  transform: translateX(-50%); }
+  transform: translateX(-50%);
+}
 
 .o-crop__content--center,
 .o-crop__content--center-center {
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%); }
+  transform: translate(-50%, -50%);
+}
 
 .o-crop__content--center-bottom {
   top: auto;
   bottom: 0;
   left: 50%;
-  transform: translateX(-50%); }
+  transform: translateX(-50%);
+}
 
 /* stylelint-disable */
 /* Crop-ratio variants
@@ -1682,16 +1935,20 @@ table {
  *
  */
 .o-crop--2\:1 {
-  padding-bottom: 50%; }
+  padding-bottom: 50%;
+}
 
 .o-crop--4\:3 {
-  padding-bottom: 75%; }
+  padding-bottom: 75%;
+}
 
 .o-crop--16\:9 {
-  padding-bottom: 56.25%; }
+  padding-bottom: 56.25%;
+}
 
 .o-crop--1\.618\:1 {
-  padding-bottom: 61.804697157%; }
+  padding-bottom: 61.804697157%;
+}
 
 /* stylelint-enable */
 /* Fill modifier
@@ -1701,7 +1958,8 @@ table {
  */
 .o-crop--fill > .o-crop__content {
   min-height: 100%;
-  min-width: 100%; }
+  min-width: 100%;
+}
 
 /* ==========================================================================
    #TABLE
@@ -1710,7 +1968,8 @@ table {
  * A simple object for manipulating the structure of HTML `table`s.
  */
 .o-table {
-  width: 100%; }
+  width: 100%;
+}
 
 /* Equal-width table cells
    ========================================================================== */
@@ -1722,25 +1981,30 @@ table {
  * https://developer.mozilla.org/en-US/docs/Web/CSS/table-layout#Values
  */
 .o-table--fixed {
-  table-layout: fixed; }
+  table-layout: fixed;
+}
 
 /* Size variants
    ========================================================================== */
 .o-table--tiny th,
 .o-table--tiny td {
-  padding: 6px; }
+  padding: 6px;
+}
 
 .o-table--small th,
 .o-table--small td {
-  padding: 12px; }
+  padding: 12px;
+}
 
 .o-table--large th,
 .o-table--large td {
-  padding: 48px; }
+  padding: 48px;
+}
 
 .o-table--huge th,
 .o-table--huge td {
-  padding: 96px; }
+  padding: 96px;
+}
 
 /* ==========================================================================
    #PACK
@@ -1760,7 +2024,8 @@ table {
   /* [2] */
   display: table;
   table-layout: fixed;
-  /* [3] */ }
+  /* [3] */
+}
 
 /**
  * 1. Cause children to adopt table-like structure.
@@ -1772,88 +2037,109 @@ table {
   vertical-align: top;
   /* [2] */
   /* Vertical alignment variants
-     ====================================================================== */ }
-  .o-pack--middle > .o-pack__item {
-    vertical-align: middle; }
-  .o-pack--bottom > .o-pack__item {
-    vertical-align: bottom; }
+     ====================================================================== */
+}
+.o-pack--middle > .o-pack__item {
+  vertical-align: middle;
+}
+.o-pack--bottom > .o-pack__item {
+  vertical-align: bottom;
+}
 
 /* Unequal-width items
    ========================================================================== */
 .o-pack--auto {
-  table-layout: auto; }
+  table-layout: auto;
+}
 
 /* Size variants
    ========================================================================== */
 .o-pack--tiny {
-  border-spacing: 6px; }
+  border-spacing: 6px;
+}
 
 .o-pack--small {
-  border-spacing: 12px; }
+  border-spacing: 12px;
+}
 
 .o-pack--default {
-  border-spacing: 24px; }
+  border-spacing: 24px;
+}
 
 .o-pack--large {
-  border-spacing: 48px; }
+  border-spacing: 48px;
+}
 
 .o-pack--huge {
-  border-spacing: 96px; }
+  border-spacing: 96px;
+}
 
 /* Reversed order packs
    ========================================================================== */
 .o-pack--reverse {
-  direction: rtl; }
-  .o-pack--reverse > .o-pack__item {
-    direction: ltr; }
+  direction: rtl;
+}
+.o-pack--reverse > .o-pack__item {
+  direction: ltr;
+}
 
 .o-post__details {
   font-family: Oswald, Verdana, Arial, sans-serif;
   font-size: 14px;
   font-size: 0.7777777778rem;
-  line-height: 1.9285714286; }
+  line-height: 1.9285714286;
+}
 
 .o-post__pubinfo {
   color: #800080;
-  border-bottom: 1px solid #800080; }
+  border-bottom: 1px solid #800080;
+}
 
 .o-post__tags {
-  text-align: center; }
+  text-align: center;
+}
 
 .o-post__title {
   margin: 0 12px;
-  text-align: left; }
+  text-align: left;
+}
 
 .o-post__content h2 {
   margin: 24px 12px 12px;
   font-size: 28px;
   font-size: 1.5555555556rem;
-  line-height: 1.9285714286; }
+  line-height: 1.9285714286;
+}
 
 .o-post__content h3,
 .o-post--excerpt .o-post__content h2,
 .o-post--excerpt .o-post__summary h2 {
   font-size: 24px;
   font-size: 1.3333333333rem;
-  line-height: 1.125; }
+  line-height: 1.125;
+}
 
 .o-post--excerpt .o-post__content h3,
 .o-post--excerpt .o-post__summary h3 {
   font-size: 20px;
   font-size: 1.1111111111rem;
-  line-height: 1.35; }
+  line-height: 1.35;
+}
 
 .o-post__content p {
-  margin: 0 12px 24px; }
-  .o-post--single .o-post__content p {
-    font-size: 20px;
-    font-size: 1.1111111111rem;
-    line-height: 1.35; }
+  margin: 0 12px 24px;
+}
+.o-post--single .o-post__content p {
+  font-size: 20px;
+  font-size: 1.1111111111rem;
+  line-height: 1.35;
+}
 
 .o-post__summary {
   margin: 12px;
   color: #706967;
-  font-family: Oswald, Verdana, Arial, sans-serif; }
+  font-family: Oswald, Verdana, Arial, sans-serif;
+}
 
 .o-post__prevnext {
   display: flex;
@@ -1863,23 +2149,31 @@ table {
   padding: 12px 6px;
   border-top: 2px solid #60839a;
   color: #60839a;
-  text-align: center; }
-  .o-post__prevnext a {
-    color: #60839a; }
-  .o-post__prevnext h2 {
-    color: #1f5673; }
-  @media (min-width: 46.25em) {
-    .o-post__prevnext {
-      flex-flow: row;
-      text-align: left; } }
+  text-align: center;
+}
+.o-post__prevnext a {
+  color: #60839a;
+}
+.o-post__prevnext h2 {
+  color: #1f5673;
+}
+@media (min-width: 46.25em) {
+  .o-post__prevnext {
+    flex-flow: row;
+    text-align: left;
+  }
+}
 
 .o-post__next {
   flex: 1;
-  margin-top: 12px; }
-  @media (min-width: 46.25em) {
-    .o-post__next {
-      margin-top: 0;
-      text-align: right; } }
+  margin-top: 12px;
+}
+@media (min-width: 46.25em) {
+  .o-post__next {
+    margin-top: 0;
+    text-align: right;
+  }
+}
 
 .o-post__note {
   margin: 12px;
@@ -1888,7 +2182,8 @@ table {
   font-family: Oswald, Verdana, Arial, sans-serif;
   font-size: 12px;
   font-size: 0.6666666667rem;
-  line-height: 2.25; }
+  line-height: 2.25;
+}
 
 /* ==========================================================================
    #BUTTONS
@@ -1919,47 +2214,60 @@ table {
   line-height: 1.6875;
   text-decoration: none;
   opacity: 0.5;
-  transition: opacity 0.5s ease; }
-  .c-btn:hover, .c-btn:focus, .c-btn:active {
-    background: #aa4465;
-    color: #fff;
-    opacity: 1; }
+  transition: opacity 0.5s ease;
+}
+.c-btn:hover, .c-btn:focus, .c-btn:active {
+  background: #aa4465;
+  color: #fff;
+  opacity: 1;
+}
 
 /* Style variants
    ========================================================================== */
 .c-btn--primary {
-  background-color: #4a8ec2; }
-  .c-btn--primary, .c-btn--primary:hover, .c-btn--primary:active, .c-btn--primary:focus {
-    text-decoration: none;
-    /* [4] */
-    color: #fff; }
-  .c-btn--primary:hover, .c-btn--primary:focus {
-    background-color: #3774a2; }
+  background-color: #4a8ec2;
+}
+.c-btn--primary, .c-btn--primary:hover, .c-btn--primary:active, .c-btn--primary:focus {
+  text-decoration: none;
+  /* [4] */
+  color: #fff;
+}
+.c-btn--primary:hover, .c-btn--primary:focus {
+  background-color: #3774a2;
+}
 
 .c-btn--secondary {
-  background-color: #2f4054; }
-  .c-btn--secondary, .c-btn--secondary:hover, .c-btn--secondary:active, .c-btn--secondary:focus {
-    text-decoration: none;
-    color: #fff; }
-  .c-btn--secondary:hover, .c-btn--secondary:focus {
-    background-color: #1d2733; }
+  background-color: #2f4054;
+}
+.c-btn--secondary, .c-btn--secondary:hover, .c-btn--secondary:active, .c-btn--secondary:focus {
+  text-decoration: none;
+  color: #fff;
+}
+.c-btn--secondary:hover, .c-btn--secondary:focus {
+  background-color: #1d2733;
+}
 
 .c-btn--tertiary {
   background-color: #fff;
-  color: #4a8ec2; }
-  .c-btn--tertiary, .c-btn--tertiary:hover, .c-btn--tertiary:active, .c-btn--tertiary:focus {
-    text-decoration: none;
-    color: #4a8ec2; }
-  .c-btn--tertiary:hover, .c-btn--tertiary:focus {
-    color: #3774a2; }
+  color: #4a8ec2;
+}
+.c-btn--tertiary, .c-btn--tertiary:hover, .c-btn--tertiary:active, .c-btn--tertiary:focus {
+  text-decoration: none;
+  color: #4a8ec2;
+}
+.c-btn--tertiary:hover, .c-btn--tertiary:focus {
+  color: #3774a2;
+}
 
 /* Size variants
    ========================================================================== */
 .c-btn--small {
-  padding: 6px 12px; }
+  padding: 6px 12px;
+}
 
 .c-btn--large {
-  padding: 24px 48px; }
+  padding: 24px 48px;
+}
 
 /* Ghost buttons
    ========================================================================== */
@@ -1968,49 +2276,66 @@ table {
  */
 .c-btn--ghost {
   border: 2px solid currentColor;
-  padding: 10px 22px; }
-  .c-btn--ghost, .c-btn--ghost:hover, .c-btn--ghost:active, .c-btn--ghost:focus {
-    background: none; }
-  .c-btn--ghost.c-btn--small {
-    padding: 4px 10px; }
-  .c-btn--ghost.c-btn--large {
-    padding: 22px 46px; }
-  .c-btn--ghost.c-btn--primary {
-    color: #4a8ec2; }
-    .c-btn--ghost.c-btn--primary:hover, .c-btn--ghost.c-btn--primary:focus {
-      color: #3774a2; }
-  .c-btn--ghost.c-btn--secondary {
-    color: #2f4054; }
-    .c-btn--ghost.c-btn--secondary:hover, .c-btn--ghost.c-btn--secondary:focus {
-      color: #1d2733; }
-  .c-btn--ghost.c-btn--tertiary {
-    color: #fff; }
-    .c-btn--ghost.c-btn--tertiary:hover, .c-btn--ghost.c-btn--tertiary:focus {
-      color: #fff; }
+  padding: 10px 22px;
+}
+.c-btn--ghost, .c-btn--ghost:hover, .c-btn--ghost:active, .c-btn--ghost:focus {
+  background: none;
+}
+.c-btn--ghost.c-btn--small {
+  padding: 4px 10px;
+}
+.c-btn--ghost.c-btn--large {
+  padding: 22px 46px;
+}
+.c-btn--ghost.c-btn--primary {
+  color: #4a8ec2;
+}
+.c-btn--ghost.c-btn--primary:hover, .c-btn--ghost.c-btn--primary:focus {
+  color: #3774a2;
+}
+.c-btn--ghost.c-btn--secondary {
+  color: #2f4054;
+}
+.c-btn--ghost.c-btn--secondary:hover, .c-btn--ghost.c-btn--secondary:focus {
+  color: #1d2733;
+}
+.c-btn--ghost.c-btn--tertiary {
+  color: #fff;
+}
+.c-btn--ghost.c-btn--tertiary:hover, .c-btn--ghost.c-btn--tertiary:focus {
+  color: #fff;
+}
 
 .c-calendar-nav {
   display: flex;
   flex-flow: row wrap;
-  border-bottom: 2px solid #1f5673; }
-  @media (min-width: 46.25em) {
-    .c-calendar-nav {
-      flex-flow: column; } }
+  border-bottom: 2px solid #1f5673;
+}
+@media (min-width: 46.25em) {
+  .c-calendar-nav {
+    flex-flow: column;
+  }
+}
 
 .c-calendar-nav__item {
   display: flex;
   flex-flow: row;
   flex: 1 1 33%;
-  margin: 0 0 24px; }
+  margin: 0 0 24px;
+}
 
 .c-calendar-nav__year {
   flex: 0;
   padding-right: 12px;
-  font-family: Oswald, Verdana, Arial, sans-serif; }
-  .c-calendar-nav__year a {
-    color: #1f5673;
-    text-decoration: none; }
-  .c-calendar-nav__year a:hover, .c-calendar-nav__year a:focus, .c-calendar-nav__year a:active {
-    color: #aa4465; }
+  font-family: Oswald, Verdana, Arial, sans-serif;
+}
+.c-calendar-nav__year a {
+  color: #1f5673;
+  text-decoration: none;
+}
+.c-calendar-nav__year a:hover, .c-calendar-nav__year a:focus, .c-calendar-nav__year a:active {
+  color: #aa4465;
+}
 
 .c-calendar-nav__months {
   flex: 1;
@@ -2018,80 +2343,97 @@ table {
   font-family: Oswald, Verdana, Arial, sans-serif;
   font-size: 16px;
   font-size: 0.8888888889rem;
-  line-height: 1.6875; }
-  .c-calendar-nav__months a {
-    color: #60839a; }
-  .c-calendar-nav__months a:hover, .c-calendar-nav__months a:focus, .c-calendar-nav__months a:active {
-    color: #aa4465; }
-  .c-calendar-nav__months li {
-    margin-right: 6px; }
+  line-height: 1.6875;
+}
+.c-calendar-nav__months a {
+  color: #60839a;
+}
+.c-calendar-nav__months a:hover, .c-calendar-nav__months a:focus, .c-calendar-nav__months a:active {
+  color: #aa4465;
+}
+.c-calendar-nav__months li {
+  margin-right: 6px;
+}
 
 .c-calendar-nav__more {
-  text-align: center; }
+  text-align: center;
+}
 
 .c-colophon {
   margin-top: 48px;
-  color: #1f5673; }
+  color: #1f5673;
+}
 
 .c-colophon:before {
   display: block;
   content: "";
   height: 20vh;
   margin: 48px auto 24px;
-  background: url("/assets/images/layout/knitting-ball.svg") center/15vh no-repeat; }
+  background: url("/assets/images/layout/knitting-ball.svg") center/15vh no-repeat;
+}
 
 .c-colophon__copyright {
   display: flex;
   flex-direction: column;
-  align-items: center; }
-  .c-colophon__copyright::after {
-    color: #3d3d3d;
-    content: " # ";
-    margin-top: 24px;
-    text-align: center; }
+  align-items: center;
+}
+.c-colophon__copyright::after {
+  color: #3d3d3d;
+  content: " # ";
+  margin-top: 24px;
+  text-align: center;
+}
 
 .c-colophon p {
   margin: 12px;
   font-family: Oswald, Verdana, Arial, sans-serif;
   font-size: 0.9em;
-  font-weight: 200; }
+  font-weight: 200;
+}
 
 .c-copyright__body p {
   margin: 6px;
   font-family: Oswald, Verdana, Arial, sans-serif;
   font-size: 12px;
   font-weight: 200;
-  text-align: center; }
+  text-align: center;
+}
 
 .c-masthead {
   margin-bottom: 48px;
   padding-top: 48px;
-  background: linear-gradient(#fff, transparent); }
+  background: linear-gradient(#fff, transparent);
+}
 
 .c-masthead__title {
   display: flex;
   justify-content: center;
-  color: #1f5673; }
-  .c-masthead__title h1 {
-    font-size: 48px;
-    font-size: 2.6666666667rem;
-    line-height: 1.125;
-    font-weight: 700;
-    font-variant: small-caps;
-    text-align: center; }
-  .c-masthead__title img {
-    height: 100px;
-    width: 100px;
-    margin: 0 12px 12px;
-    vertical-align: baseline;
-    border: 1px solid #1f5673; }
+  color: #1f5673;
+}
+.c-masthead__title h1 {
+  font-size: 48px;
+  font-size: 2.6666666667rem;
+  line-height: 1.125;
+  font-weight: 700;
+  font-variant: small-caps;
+  text-align: center;
+}
+.c-masthead__title img {
+  height: 100px;
+  width: 100px;
+  margin: 0 12px 12px;
+  vertical-align: baseline;
+  border: 1px solid #1f5673;
+}
 
 .c-masthead__tagline {
   color: #232323;
-  font-style: italic; }
+  font-style: italic;
+}
 
 .c-masthead__nav {
-  background: #60839a; }
+  background: #60839a;
+}
 
 .c-masthead__nav a {
   display: block;
@@ -2104,23 +2446,28 @@ table {
   font-variant: all-small-caps;
   text-align: center;
   text-decoration: none;
-  transition: background-color 0.5s ease-in; }
-  .c-masthead__nav a:hover, .c-masthead__nav a:focus {
-    background-color: #1f5673; }
+  transition: background-color 0.5s ease-in;
+}
+.c-masthead__nav a:hover, .c-masthead__nav a:focus {
+  background-color: #1f5673;
+}
 
 .c-social-media {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-evenly;
-  align-items: center; }
+  align-items: center;
+}
 
 .c-social-media__icon {
   display: flex;
   max-height: 48px;
-  margin: 6px 12px; }
+  margin: 6px 12px;
+}
 
 .c-results__item {
-  border-bottom: 1px solid #800080; }
+  border-bottom: 1px solid #800080;
+}
 
 .c-skip-links {
   position: fixed;
@@ -2128,25 +2475,33 @@ table {
   width: 100%;
   z-index: 1000;
   background: #232323;
-  box-shadow: 0 0 15px rgba(35, 35, 35, 0.75); }
+  box-shadow: 0 0 15px rgba(35, 35, 35, 0.75);
+}
 
 .c-skip-links ul {
-  text-align: right; }
-  @media (min-width: 61.25em) {
-    .c-skip-links ul {
-      justify-content: flex-end; }
-      .c-skip-links ul li {
-        padding: 0 12px; } }
+  text-align: right;
+}
+@media (min-width: 61.25em) {
+  .c-skip-links ul {
+    justify-content: flex-end;
+  }
+  .c-skip-links ul li {
+    padding: 0 12px;
+  }
+}
 
 .c-skip-links a {
   color: #fff;
   font-family: Oswald, Verdana, Arial, sans-serif;
   font-size: 0.9em;
-  text-transform: uppercase; }
-  .c-skip-links a:hover, .c-skip-links a:focus {
-    text-decoration: none; }
-  .c-skip-links a::after {
-    content: "↘"; }
+  text-transform: uppercase;
+}
+.c-skip-links a:hover, .c-skip-links a:focus {
+  text-decoration: none;
+}
+.c-skip-links a::after {
+  content: "↘";
+}
 
 /* ==========================================================================
    #CLEARFIX
@@ -2157,7 +2512,8 @@ table {
 .u-clearfix:after {
   content: "" !important;
   display: block !important;
-  clear: both !important; }
+  clear: both !important;
+}
 
 /* ==========================================================================
    #WIDTHS
@@ -2199,7 +2555,8 @@ table {
  * defined in the `$inuit-fractions` list.
  */
 .u-1\/1 {
-  width: 100% !important; }
+  width: 100% !important;
+}
 
 /**
  * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -2208,16 +2565,19 @@ table {
   position: relative !important;
   right: auto !important;
   /* [1] */
-  left: 100% !important; }
+  left: 100% !important;
+}
 
 .u-pull-1\/1 {
   position: relative !important;
   right: 100% !important;
   left: auto !important;
-  /* [1] */ }
+  /* [1] */
+}
 
 .u-1\/2 {
-  width: 50% !important; }
+  width: 50% !important;
+}
 
 /**
  * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -2226,16 +2586,19 @@ table {
   position: relative !important;
   right: auto !important;
   /* [1] */
-  left: 50% !important; }
+  left: 50% !important;
+}
 
 .u-pull-1\/2 {
   position: relative !important;
   right: 50% !important;
   left: auto !important;
-  /* [1] */ }
+  /* [1] */
+}
 
 .u-2\/2 {
-  width: 100% !important; }
+  width: 100% !important;
+}
 
 /**
  * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -2244,16 +2607,19 @@ table {
   position: relative !important;
   right: auto !important;
   /* [1] */
-  left: 100% !important; }
+  left: 100% !important;
+}
 
 .u-pull-2\/2 {
   position: relative !important;
   right: 100% !important;
   left: auto !important;
-  /* [1] */ }
+  /* [1] */
+}
 
 .u-1\/3 {
-  width: 33.3333333333% !important; }
+  width: 33.3333333333% !important;
+}
 
 /**
  * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -2262,16 +2628,19 @@ table {
   position: relative !important;
   right: auto !important;
   /* [1] */
-  left: 33.3333333333% !important; }
+  left: 33.3333333333% !important;
+}
 
 .u-pull-1\/3 {
   position: relative !important;
   right: 33.3333333333% !important;
   left: auto !important;
-  /* [1] */ }
+  /* [1] */
+}
 
 .u-2\/3 {
-  width: 66.6666666667% !important; }
+  width: 66.6666666667% !important;
+}
 
 /**
  * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -2280,16 +2649,19 @@ table {
   position: relative !important;
   right: auto !important;
   /* [1] */
-  left: 66.6666666667% !important; }
+  left: 66.6666666667% !important;
+}
 
 .u-pull-2\/3 {
   position: relative !important;
   right: 66.6666666667% !important;
   left: auto !important;
-  /* [1] */ }
+  /* [1] */
+}
 
 .u-3\/3 {
-  width: 100% !important; }
+  width: 100% !important;
+}
 
 /**
  * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -2298,16 +2670,19 @@ table {
   position: relative !important;
   right: auto !important;
   /* [1] */
-  left: 100% !important; }
+  left: 100% !important;
+}
 
 .u-pull-3\/3 {
   position: relative !important;
   right: 100% !important;
   left: auto !important;
-  /* [1] */ }
+  /* [1] */
+}
 
 .u-1\/4 {
-  width: 25% !important; }
+  width: 25% !important;
+}
 
 /**
  * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -2316,16 +2691,19 @@ table {
   position: relative !important;
   right: auto !important;
   /* [1] */
-  left: 25% !important; }
+  left: 25% !important;
+}
 
 .u-pull-1\/4 {
   position: relative !important;
   right: 25% !important;
   left: auto !important;
-  /* [1] */ }
+  /* [1] */
+}
 
 .u-2\/4 {
-  width: 50% !important; }
+  width: 50% !important;
+}
 
 /**
  * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -2334,16 +2712,19 @@ table {
   position: relative !important;
   right: auto !important;
   /* [1] */
-  left: 50% !important; }
+  left: 50% !important;
+}
 
 .u-pull-2\/4 {
   position: relative !important;
   right: 50% !important;
   left: auto !important;
-  /* [1] */ }
+  /* [1] */
+}
 
 .u-3\/4 {
-  width: 75% !important; }
+  width: 75% !important;
+}
 
 /**
  * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -2352,16 +2733,19 @@ table {
   position: relative !important;
   right: auto !important;
   /* [1] */
-  left: 75% !important; }
+  left: 75% !important;
+}
 
 .u-pull-3\/4 {
   position: relative !important;
   right: 75% !important;
   left: auto !important;
-  /* [1] */ }
+  /* [1] */
+}
 
 .u-4\/4 {
-  width: 100% !important; }
+  width: 100% !important;
+}
 
 /**
  * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -2370,16 +2754,19 @@ table {
   position: relative !important;
   right: auto !important;
   /* [1] */
-  left: 100% !important; }
+  left: 100% !important;
+}
 
 .u-pull-4\/4 {
   position: relative !important;
   right: 100% !important;
   left: auto !important;
-  /* [1] */ }
+  /* [1] */
+}
 
 .u-1\/5 {
-  width: 20% !important; }
+  width: 20% !important;
+}
 
 /**
  * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -2388,16 +2775,19 @@ table {
   position: relative !important;
   right: auto !important;
   /* [1] */
-  left: 20% !important; }
+  left: 20% !important;
+}
 
 .u-pull-1\/5 {
   position: relative !important;
   right: 20% !important;
   left: auto !important;
-  /* [1] */ }
+  /* [1] */
+}
 
 .u-2\/5 {
-  width: 40% !important; }
+  width: 40% !important;
+}
 
 /**
  * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -2406,16 +2796,19 @@ table {
   position: relative !important;
   right: auto !important;
   /* [1] */
-  left: 40% !important; }
+  left: 40% !important;
+}
 
 .u-pull-2\/5 {
   position: relative !important;
   right: 40% !important;
   left: auto !important;
-  /* [1] */ }
+  /* [1] */
+}
 
 .u-3\/5 {
-  width: 60% !important; }
+  width: 60% !important;
+}
 
 /**
  * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -2424,16 +2817,19 @@ table {
   position: relative !important;
   right: auto !important;
   /* [1] */
-  left: 60% !important; }
+  left: 60% !important;
+}
 
 .u-pull-3\/5 {
   position: relative !important;
   right: 60% !important;
   left: auto !important;
-  /* [1] */ }
+  /* [1] */
+}
 
 .u-4\/5 {
-  width: 80% !important; }
+  width: 80% !important;
+}
 
 /**
  * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -2442,16 +2838,19 @@ table {
   position: relative !important;
   right: auto !important;
   /* [1] */
-  left: 80% !important; }
+  left: 80% !important;
+}
 
 .u-pull-4\/5 {
   position: relative !important;
   right: 80% !important;
   left: auto !important;
-  /* [1] */ }
+  /* [1] */
+}
 
 .u-5\/5 {
-  width: 100% !important; }
+  width: 100% !important;
+}
 
 /**
  * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -2460,13 +2859,15 @@ table {
   position: relative !important;
   right: auto !important;
   /* [1] */
-  left: 100% !important; }
+  left: 100% !important;
+}
 
 .u-pull-5\/5 {
   position: relative !important;
   right: 100% !important;
   left: auto !important;
-  /* [1] */ }
+  /* [1] */
+}
 
 /**
  * If we’re using Sass-MQ, automatically generate grid system(s) for each of our
@@ -2476,7 +2877,8 @@ table {
  */
 @media (min-width: 20em) {
   .u-1\/1\@mobile {
-    width: 100% !important; }
+    width: 100% !important;
+  }
 
   /**
    * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -2485,16 +2887,19 @@ table {
     position: relative !important;
     right: auto !important;
     /* [1] */
-    left: 100% !important; }
+    left: 100% !important;
+  }
 
   .u-pull-1\/1\@mobile {
     position: relative !important;
     right: 100% !important;
     left: auto !important;
-    /* [1] */ }
+    /* [1] */
+  }
 
   .u-1\/2\@mobile {
-    width: 50% !important; }
+    width: 50% !important;
+  }
 
   /**
    * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -2503,16 +2908,19 @@ table {
     position: relative !important;
     right: auto !important;
     /* [1] */
-    left: 50% !important; }
+    left: 50% !important;
+  }
 
   .u-pull-1\/2\@mobile {
     position: relative !important;
     right: 50% !important;
     left: auto !important;
-    /* [1] */ }
+    /* [1] */
+  }
 
   .u-2\/2\@mobile {
-    width: 100% !important; }
+    width: 100% !important;
+  }
 
   /**
    * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -2521,16 +2929,19 @@ table {
     position: relative !important;
     right: auto !important;
     /* [1] */
-    left: 100% !important; }
+    left: 100% !important;
+  }
 
   .u-pull-2\/2\@mobile {
     position: relative !important;
     right: 100% !important;
     left: auto !important;
-    /* [1] */ }
+    /* [1] */
+  }
 
   .u-1\/3\@mobile {
-    width: 33.3333333333% !important; }
+    width: 33.3333333333% !important;
+  }
 
   /**
    * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -2539,16 +2950,19 @@ table {
     position: relative !important;
     right: auto !important;
     /* [1] */
-    left: 33.3333333333% !important; }
+    left: 33.3333333333% !important;
+  }
 
   .u-pull-1\/3\@mobile {
     position: relative !important;
     right: 33.3333333333% !important;
     left: auto !important;
-    /* [1] */ }
+    /* [1] */
+  }
 
   .u-2\/3\@mobile {
-    width: 66.6666666667% !important; }
+    width: 66.6666666667% !important;
+  }
 
   /**
    * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -2557,16 +2971,19 @@ table {
     position: relative !important;
     right: auto !important;
     /* [1] */
-    left: 66.6666666667% !important; }
+    left: 66.6666666667% !important;
+  }
 
   .u-pull-2\/3\@mobile {
     position: relative !important;
     right: 66.6666666667% !important;
     left: auto !important;
-    /* [1] */ }
+    /* [1] */
+  }
 
   .u-3\/3\@mobile {
-    width: 100% !important; }
+    width: 100% !important;
+  }
 
   /**
    * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -2575,16 +2992,19 @@ table {
     position: relative !important;
     right: auto !important;
     /* [1] */
-    left: 100% !important; }
+    left: 100% !important;
+  }
 
   .u-pull-3\/3\@mobile {
     position: relative !important;
     right: 100% !important;
     left: auto !important;
-    /* [1] */ }
+    /* [1] */
+  }
 
   .u-1\/4\@mobile {
-    width: 25% !important; }
+    width: 25% !important;
+  }
 
   /**
    * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -2593,16 +3013,19 @@ table {
     position: relative !important;
     right: auto !important;
     /* [1] */
-    left: 25% !important; }
+    left: 25% !important;
+  }
 
   .u-pull-1\/4\@mobile {
     position: relative !important;
     right: 25% !important;
     left: auto !important;
-    /* [1] */ }
+    /* [1] */
+  }
 
   .u-2\/4\@mobile {
-    width: 50% !important; }
+    width: 50% !important;
+  }
 
   /**
    * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -2611,16 +3034,19 @@ table {
     position: relative !important;
     right: auto !important;
     /* [1] */
-    left: 50% !important; }
+    left: 50% !important;
+  }
 
   .u-pull-2\/4\@mobile {
     position: relative !important;
     right: 50% !important;
     left: auto !important;
-    /* [1] */ }
+    /* [1] */
+  }
 
   .u-3\/4\@mobile {
-    width: 75% !important; }
+    width: 75% !important;
+  }
 
   /**
    * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -2629,16 +3055,19 @@ table {
     position: relative !important;
     right: auto !important;
     /* [1] */
-    left: 75% !important; }
+    left: 75% !important;
+  }
 
   .u-pull-3\/4\@mobile {
     position: relative !important;
     right: 75% !important;
     left: auto !important;
-    /* [1] */ }
+    /* [1] */
+  }
 
   .u-4\/4\@mobile {
-    width: 100% !important; }
+    width: 100% !important;
+  }
 
   /**
    * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -2647,16 +3076,19 @@ table {
     position: relative !important;
     right: auto !important;
     /* [1] */
-    left: 100% !important; }
+    left: 100% !important;
+  }
 
   .u-pull-4\/4\@mobile {
     position: relative !important;
     right: 100% !important;
     left: auto !important;
-    /* [1] */ }
+    /* [1] */
+  }
 
   .u-1\/5\@mobile {
-    width: 20% !important; }
+    width: 20% !important;
+  }
 
   /**
    * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -2665,16 +3097,19 @@ table {
     position: relative !important;
     right: auto !important;
     /* [1] */
-    left: 20% !important; }
+    left: 20% !important;
+  }
 
   .u-pull-1\/5\@mobile {
     position: relative !important;
     right: 20% !important;
     left: auto !important;
-    /* [1] */ }
+    /* [1] */
+  }
 
   .u-2\/5\@mobile {
-    width: 40% !important; }
+    width: 40% !important;
+  }
 
   /**
    * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -2683,16 +3118,19 @@ table {
     position: relative !important;
     right: auto !important;
     /* [1] */
-    left: 40% !important; }
+    left: 40% !important;
+  }
 
   .u-pull-2\/5\@mobile {
     position: relative !important;
     right: 40% !important;
     left: auto !important;
-    /* [1] */ }
+    /* [1] */
+  }
 
   .u-3\/5\@mobile {
-    width: 60% !important; }
+    width: 60% !important;
+  }
 
   /**
    * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -2701,16 +3139,19 @@ table {
     position: relative !important;
     right: auto !important;
     /* [1] */
-    left: 60% !important; }
+    left: 60% !important;
+  }
 
   .u-pull-3\/5\@mobile {
     position: relative !important;
     right: 60% !important;
     left: auto !important;
-    /* [1] */ }
+    /* [1] */
+  }
 
   .u-4\/5\@mobile {
-    width: 80% !important; }
+    width: 80% !important;
+  }
 
   /**
    * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -2719,16 +3160,19 @@ table {
     position: relative !important;
     right: auto !important;
     /* [1] */
-    left: 80% !important; }
+    left: 80% !important;
+  }
 
   .u-pull-4\/5\@mobile {
     position: relative !important;
     right: 80% !important;
     left: auto !important;
-    /* [1] */ }
+    /* [1] */
+  }
 
   .u-5\/5\@mobile {
-    width: 100% !important; }
+    width: 100% !important;
+  }
 
   /**
    * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -2737,22 +3181,28 @@ table {
     position: relative !important;
     right: auto !important;
     /* [1] */
-    left: 100% !important; }
+    left: 100% !important;
+  }
 
   .u-pull-5\/5\@mobile {
     position: relative !important;
     right: 100% !important;
     left: auto !important;
-    /* [1] */ }
+    /* [1] */
+  }
 
   .u-push-none\@mobile {
-    left: auto !important; }
+    left: auto !important;
+  }
 
   .u-pull-none\@mobile {
-    right: auto !important; } }
+    right: auto !important;
+  }
+}
 @media (min-width: 46.25em) {
   .u-1\/1\@tablet {
-    width: 100% !important; }
+    width: 100% !important;
+  }
 
   /**
    * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -2761,16 +3211,19 @@ table {
     position: relative !important;
     right: auto !important;
     /* [1] */
-    left: 100% !important; }
+    left: 100% !important;
+  }
 
   .u-pull-1\/1\@tablet {
     position: relative !important;
     right: 100% !important;
     left: auto !important;
-    /* [1] */ }
+    /* [1] */
+  }
 
   .u-1\/2\@tablet {
-    width: 50% !important; }
+    width: 50% !important;
+  }
 
   /**
    * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -2779,16 +3232,19 @@ table {
     position: relative !important;
     right: auto !important;
     /* [1] */
-    left: 50% !important; }
+    left: 50% !important;
+  }
 
   .u-pull-1\/2\@tablet {
     position: relative !important;
     right: 50% !important;
     left: auto !important;
-    /* [1] */ }
+    /* [1] */
+  }
 
   .u-2\/2\@tablet {
-    width: 100% !important; }
+    width: 100% !important;
+  }
 
   /**
    * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -2797,16 +3253,19 @@ table {
     position: relative !important;
     right: auto !important;
     /* [1] */
-    left: 100% !important; }
+    left: 100% !important;
+  }
 
   .u-pull-2\/2\@tablet {
     position: relative !important;
     right: 100% !important;
     left: auto !important;
-    /* [1] */ }
+    /* [1] */
+  }
 
   .u-1\/3\@tablet {
-    width: 33.3333333333% !important; }
+    width: 33.3333333333% !important;
+  }
 
   /**
    * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -2815,16 +3274,19 @@ table {
     position: relative !important;
     right: auto !important;
     /* [1] */
-    left: 33.3333333333% !important; }
+    left: 33.3333333333% !important;
+  }
 
   .u-pull-1\/3\@tablet {
     position: relative !important;
     right: 33.3333333333% !important;
     left: auto !important;
-    /* [1] */ }
+    /* [1] */
+  }
 
   .u-2\/3\@tablet {
-    width: 66.6666666667% !important; }
+    width: 66.6666666667% !important;
+  }
 
   /**
    * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -2833,16 +3295,19 @@ table {
     position: relative !important;
     right: auto !important;
     /* [1] */
-    left: 66.6666666667% !important; }
+    left: 66.6666666667% !important;
+  }
 
   .u-pull-2\/3\@tablet {
     position: relative !important;
     right: 66.6666666667% !important;
     left: auto !important;
-    /* [1] */ }
+    /* [1] */
+  }
 
   .u-3\/3\@tablet {
-    width: 100% !important; }
+    width: 100% !important;
+  }
 
   /**
    * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -2851,16 +3316,19 @@ table {
     position: relative !important;
     right: auto !important;
     /* [1] */
-    left: 100% !important; }
+    left: 100% !important;
+  }
 
   .u-pull-3\/3\@tablet {
     position: relative !important;
     right: 100% !important;
     left: auto !important;
-    /* [1] */ }
+    /* [1] */
+  }
 
   .u-1\/4\@tablet {
-    width: 25% !important; }
+    width: 25% !important;
+  }
 
   /**
    * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -2869,16 +3337,19 @@ table {
     position: relative !important;
     right: auto !important;
     /* [1] */
-    left: 25% !important; }
+    left: 25% !important;
+  }
 
   .u-pull-1\/4\@tablet {
     position: relative !important;
     right: 25% !important;
     left: auto !important;
-    /* [1] */ }
+    /* [1] */
+  }
 
   .u-2\/4\@tablet {
-    width: 50% !important; }
+    width: 50% !important;
+  }
 
   /**
    * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -2887,16 +3358,19 @@ table {
     position: relative !important;
     right: auto !important;
     /* [1] */
-    left: 50% !important; }
+    left: 50% !important;
+  }
 
   .u-pull-2\/4\@tablet {
     position: relative !important;
     right: 50% !important;
     left: auto !important;
-    /* [1] */ }
+    /* [1] */
+  }
 
   .u-3\/4\@tablet {
-    width: 75% !important; }
+    width: 75% !important;
+  }
 
   /**
    * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -2905,16 +3379,19 @@ table {
     position: relative !important;
     right: auto !important;
     /* [1] */
-    left: 75% !important; }
+    left: 75% !important;
+  }
 
   .u-pull-3\/4\@tablet {
     position: relative !important;
     right: 75% !important;
     left: auto !important;
-    /* [1] */ }
+    /* [1] */
+  }
 
   .u-4\/4\@tablet {
-    width: 100% !important; }
+    width: 100% !important;
+  }
 
   /**
    * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -2923,16 +3400,19 @@ table {
     position: relative !important;
     right: auto !important;
     /* [1] */
-    left: 100% !important; }
+    left: 100% !important;
+  }
 
   .u-pull-4\/4\@tablet {
     position: relative !important;
     right: 100% !important;
     left: auto !important;
-    /* [1] */ }
+    /* [1] */
+  }
 
   .u-1\/5\@tablet {
-    width: 20% !important; }
+    width: 20% !important;
+  }
 
   /**
    * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -2941,16 +3421,19 @@ table {
     position: relative !important;
     right: auto !important;
     /* [1] */
-    left: 20% !important; }
+    left: 20% !important;
+  }
 
   .u-pull-1\/5\@tablet {
     position: relative !important;
     right: 20% !important;
     left: auto !important;
-    /* [1] */ }
+    /* [1] */
+  }
 
   .u-2\/5\@tablet {
-    width: 40% !important; }
+    width: 40% !important;
+  }
 
   /**
    * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -2959,16 +3442,19 @@ table {
     position: relative !important;
     right: auto !important;
     /* [1] */
-    left: 40% !important; }
+    left: 40% !important;
+  }
 
   .u-pull-2\/5\@tablet {
     position: relative !important;
     right: 40% !important;
     left: auto !important;
-    /* [1] */ }
+    /* [1] */
+  }
 
   .u-3\/5\@tablet {
-    width: 60% !important; }
+    width: 60% !important;
+  }
 
   /**
    * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -2977,16 +3463,19 @@ table {
     position: relative !important;
     right: auto !important;
     /* [1] */
-    left: 60% !important; }
+    left: 60% !important;
+  }
 
   .u-pull-3\/5\@tablet {
     position: relative !important;
     right: 60% !important;
     left: auto !important;
-    /* [1] */ }
+    /* [1] */
+  }
 
   .u-4\/5\@tablet {
-    width: 80% !important; }
+    width: 80% !important;
+  }
 
   /**
    * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -2995,16 +3484,19 @@ table {
     position: relative !important;
     right: auto !important;
     /* [1] */
-    left: 80% !important; }
+    left: 80% !important;
+  }
 
   .u-pull-4\/5\@tablet {
     position: relative !important;
     right: 80% !important;
     left: auto !important;
-    /* [1] */ }
+    /* [1] */
+  }
 
   .u-5\/5\@tablet {
-    width: 100% !important; }
+    width: 100% !important;
+  }
 
   /**
    * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -3013,22 +3505,28 @@ table {
     position: relative !important;
     right: auto !important;
     /* [1] */
-    left: 100% !important; }
+    left: 100% !important;
+  }
 
   .u-pull-5\/5\@tablet {
     position: relative !important;
     right: 100% !important;
     left: auto !important;
-    /* [1] */ }
+    /* [1] */
+  }
 
   .u-push-none\@tablet {
-    left: auto !important; }
+    left: auto !important;
+  }
 
   .u-pull-none\@tablet {
-    right: auto !important; } }
+    right: auto !important;
+  }
+}
 @media (min-width: 61.25em) {
   .u-1\/1\@desktop {
-    width: 100% !important; }
+    width: 100% !important;
+  }
 
   /**
    * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -3037,16 +3535,19 @@ table {
     position: relative !important;
     right: auto !important;
     /* [1] */
-    left: 100% !important; }
+    left: 100% !important;
+  }
 
   .u-pull-1\/1\@desktop {
     position: relative !important;
     right: 100% !important;
     left: auto !important;
-    /* [1] */ }
+    /* [1] */
+  }
 
   .u-1\/2\@desktop {
-    width: 50% !important; }
+    width: 50% !important;
+  }
 
   /**
    * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -3055,16 +3556,19 @@ table {
     position: relative !important;
     right: auto !important;
     /* [1] */
-    left: 50% !important; }
+    left: 50% !important;
+  }
 
   .u-pull-1\/2\@desktop {
     position: relative !important;
     right: 50% !important;
     left: auto !important;
-    /* [1] */ }
+    /* [1] */
+  }
 
   .u-2\/2\@desktop {
-    width: 100% !important; }
+    width: 100% !important;
+  }
 
   /**
    * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -3073,16 +3577,19 @@ table {
     position: relative !important;
     right: auto !important;
     /* [1] */
-    left: 100% !important; }
+    left: 100% !important;
+  }
 
   .u-pull-2\/2\@desktop {
     position: relative !important;
     right: 100% !important;
     left: auto !important;
-    /* [1] */ }
+    /* [1] */
+  }
 
   .u-1\/3\@desktop {
-    width: 33.3333333333% !important; }
+    width: 33.3333333333% !important;
+  }
 
   /**
    * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -3091,16 +3598,19 @@ table {
     position: relative !important;
     right: auto !important;
     /* [1] */
-    left: 33.3333333333% !important; }
+    left: 33.3333333333% !important;
+  }
 
   .u-pull-1\/3\@desktop {
     position: relative !important;
     right: 33.3333333333% !important;
     left: auto !important;
-    /* [1] */ }
+    /* [1] */
+  }
 
   .u-2\/3\@desktop {
-    width: 66.6666666667% !important; }
+    width: 66.6666666667% !important;
+  }
 
   /**
    * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -3109,16 +3619,19 @@ table {
     position: relative !important;
     right: auto !important;
     /* [1] */
-    left: 66.6666666667% !important; }
+    left: 66.6666666667% !important;
+  }
 
   .u-pull-2\/3\@desktop {
     position: relative !important;
     right: 66.6666666667% !important;
     left: auto !important;
-    /* [1] */ }
+    /* [1] */
+  }
 
   .u-3\/3\@desktop {
-    width: 100% !important; }
+    width: 100% !important;
+  }
 
   /**
    * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -3127,16 +3640,19 @@ table {
     position: relative !important;
     right: auto !important;
     /* [1] */
-    left: 100% !important; }
+    left: 100% !important;
+  }
 
   .u-pull-3\/3\@desktop {
     position: relative !important;
     right: 100% !important;
     left: auto !important;
-    /* [1] */ }
+    /* [1] */
+  }
 
   .u-1\/4\@desktop {
-    width: 25% !important; }
+    width: 25% !important;
+  }
 
   /**
    * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -3145,16 +3661,19 @@ table {
     position: relative !important;
     right: auto !important;
     /* [1] */
-    left: 25% !important; }
+    left: 25% !important;
+  }
 
   .u-pull-1\/4\@desktop {
     position: relative !important;
     right: 25% !important;
     left: auto !important;
-    /* [1] */ }
+    /* [1] */
+  }
 
   .u-2\/4\@desktop {
-    width: 50% !important; }
+    width: 50% !important;
+  }
 
   /**
    * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -3163,16 +3682,19 @@ table {
     position: relative !important;
     right: auto !important;
     /* [1] */
-    left: 50% !important; }
+    left: 50% !important;
+  }
 
   .u-pull-2\/4\@desktop {
     position: relative !important;
     right: 50% !important;
     left: auto !important;
-    /* [1] */ }
+    /* [1] */
+  }
 
   .u-3\/4\@desktop {
-    width: 75% !important; }
+    width: 75% !important;
+  }
 
   /**
    * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -3181,16 +3703,19 @@ table {
     position: relative !important;
     right: auto !important;
     /* [1] */
-    left: 75% !important; }
+    left: 75% !important;
+  }
 
   .u-pull-3\/4\@desktop {
     position: relative !important;
     right: 75% !important;
     left: auto !important;
-    /* [1] */ }
+    /* [1] */
+  }
 
   .u-4\/4\@desktop {
-    width: 100% !important; }
+    width: 100% !important;
+  }
 
   /**
    * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -3199,16 +3724,19 @@ table {
     position: relative !important;
     right: auto !important;
     /* [1] */
-    left: 100% !important; }
+    left: 100% !important;
+  }
 
   .u-pull-4\/4\@desktop {
     position: relative !important;
     right: 100% !important;
     left: auto !important;
-    /* [1] */ }
+    /* [1] */
+  }
 
   .u-1\/5\@desktop {
-    width: 20% !important; }
+    width: 20% !important;
+  }
 
   /**
    * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -3217,16 +3745,19 @@ table {
     position: relative !important;
     right: auto !important;
     /* [1] */
-    left: 20% !important; }
+    left: 20% !important;
+  }
 
   .u-pull-1\/5\@desktop {
     position: relative !important;
     right: 20% !important;
     left: auto !important;
-    /* [1] */ }
+    /* [1] */
+  }
 
   .u-2\/5\@desktop {
-    width: 40% !important; }
+    width: 40% !important;
+  }
 
   /**
    * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -3235,16 +3766,19 @@ table {
     position: relative !important;
     right: auto !important;
     /* [1] */
-    left: 40% !important; }
+    left: 40% !important;
+  }
 
   .u-pull-2\/5\@desktop {
     position: relative !important;
     right: 40% !important;
     left: auto !important;
-    /* [1] */ }
+    /* [1] */
+  }
 
   .u-3\/5\@desktop {
-    width: 60% !important; }
+    width: 60% !important;
+  }
 
   /**
    * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -3253,16 +3787,19 @@ table {
     position: relative !important;
     right: auto !important;
     /* [1] */
-    left: 60% !important; }
+    left: 60% !important;
+  }
 
   .u-pull-3\/5\@desktop {
     position: relative !important;
     right: 60% !important;
     left: auto !important;
-    /* [1] */ }
+    /* [1] */
+  }
 
   .u-4\/5\@desktop {
-    width: 80% !important; }
+    width: 80% !important;
+  }
 
   /**
    * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -3271,16 +3808,19 @@ table {
     position: relative !important;
     right: auto !important;
     /* [1] */
-    left: 80% !important; }
+    left: 80% !important;
+  }
 
   .u-pull-4\/5\@desktop {
     position: relative !important;
     right: 80% !important;
     left: auto !important;
-    /* [1] */ }
+    /* [1] */
+  }
 
   .u-5\/5\@desktop {
-    width: 100% !important; }
+    width: 100% !important;
+  }
 
   /**
    * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -3289,22 +3829,28 @@ table {
     position: relative !important;
     right: auto !important;
     /* [1] */
-    left: 100% !important; }
+    left: 100% !important;
+  }
 
   .u-pull-5\/5\@desktop {
     position: relative !important;
     right: 100% !important;
     left: auto !important;
-    /* [1] */ }
+    /* [1] */
+  }
 
   .u-push-none\@desktop {
-    left: auto !important; }
+    left: auto !important;
+  }
 
   .u-pull-none\@desktop {
-    right: auto !important; } }
+    right: auto !important;
+  }
+}
 @media (min-width: 81.25em) {
   .u-1\/1\@wide {
-    width: 100% !important; }
+    width: 100% !important;
+  }
 
   /**
    * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -3313,16 +3859,19 @@ table {
     position: relative !important;
     right: auto !important;
     /* [1] */
-    left: 100% !important; }
+    left: 100% !important;
+  }
 
   .u-pull-1\/1\@wide {
     position: relative !important;
     right: 100% !important;
     left: auto !important;
-    /* [1] */ }
+    /* [1] */
+  }
 
   .u-1\/2\@wide {
-    width: 50% !important; }
+    width: 50% !important;
+  }
 
   /**
    * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -3331,16 +3880,19 @@ table {
     position: relative !important;
     right: auto !important;
     /* [1] */
-    left: 50% !important; }
+    left: 50% !important;
+  }
 
   .u-pull-1\/2\@wide {
     position: relative !important;
     right: 50% !important;
     left: auto !important;
-    /* [1] */ }
+    /* [1] */
+  }
 
   .u-2\/2\@wide {
-    width: 100% !important; }
+    width: 100% !important;
+  }
 
   /**
    * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -3349,16 +3901,19 @@ table {
     position: relative !important;
     right: auto !important;
     /* [1] */
-    left: 100% !important; }
+    left: 100% !important;
+  }
 
   .u-pull-2\/2\@wide {
     position: relative !important;
     right: 100% !important;
     left: auto !important;
-    /* [1] */ }
+    /* [1] */
+  }
 
   .u-1\/3\@wide {
-    width: 33.3333333333% !important; }
+    width: 33.3333333333% !important;
+  }
 
   /**
    * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -3367,16 +3922,19 @@ table {
     position: relative !important;
     right: auto !important;
     /* [1] */
-    left: 33.3333333333% !important; }
+    left: 33.3333333333% !important;
+  }
 
   .u-pull-1\/3\@wide {
     position: relative !important;
     right: 33.3333333333% !important;
     left: auto !important;
-    /* [1] */ }
+    /* [1] */
+  }
 
   .u-2\/3\@wide {
-    width: 66.6666666667% !important; }
+    width: 66.6666666667% !important;
+  }
 
   /**
    * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -3385,16 +3943,19 @@ table {
     position: relative !important;
     right: auto !important;
     /* [1] */
-    left: 66.6666666667% !important; }
+    left: 66.6666666667% !important;
+  }
 
   .u-pull-2\/3\@wide {
     position: relative !important;
     right: 66.6666666667% !important;
     left: auto !important;
-    /* [1] */ }
+    /* [1] */
+  }
 
   .u-3\/3\@wide {
-    width: 100% !important; }
+    width: 100% !important;
+  }
 
   /**
    * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -3403,16 +3964,19 @@ table {
     position: relative !important;
     right: auto !important;
     /* [1] */
-    left: 100% !important; }
+    left: 100% !important;
+  }
 
   .u-pull-3\/3\@wide {
     position: relative !important;
     right: 100% !important;
     left: auto !important;
-    /* [1] */ }
+    /* [1] */
+  }
 
   .u-1\/4\@wide {
-    width: 25% !important; }
+    width: 25% !important;
+  }
 
   /**
    * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -3421,16 +3985,19 @@ table {
     position: relative !important;
     right: auto !important;
     /* [1] */
-    left: 25% !important; }
+    left: 25% !important;
+  }
 
   .u-pull-1\/4\@wide {
     position: relative !important;
     right: 25% !important;
     left: auto !important;
-    /* [1] */ }
+    /* [1] */
+  }
 
   .u-2\/4\@wide {
-    width: 50% !important; }
+    width: 50% !important;
+  }
 
   /**
    * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -3439,16 +4006,19 @@ table {
     position: relative !important;
     right: auto !important;
     /* [1] */
-    left: 50% !important; }
+    left: 50% !important;
+  }
 
   .u-pull-2\/4\@wide {
     position: relative !important;
     right: 50% !important;
     left: auto !important;
-    /* [1] */ }
+    /* [1] */
+  }
 
   .u-3\/4\@wide {
-    width: 75% !important; }
+    width: 75% !important;
+  }
 
   /**
    * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -3457,16 +4027,19 @@ table {
     position: relative !important;
     right: auto !important;
     /* [1] */
-    left: 75% !important; }
+    left: 75% !important;
+  }
 
   .u-pull-3\/4\@wide {
     position: relative !important;
     right: 75% !important;
     left: auto !important;
-    /* [1] */ }
+    /* [1] */
+  }
 
   .u-4\/4\@wide {
-    width: 100% !important; }
+    width: 100% !important;
+  }
 
   /**
    * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -3475,16 +4048,19 @@ table {
     position: relative !important;
     right: auto !important;
     /* [1] */
-    left: 100% !important; }
+    left: 100% !important;
+  }
 
   .u-pull-4\/4\@wide {
     position: relative !important;
     right: 100% !important;
     left: auto !important;
-    /* [1] */ }
+    /* [1] */
+  }
 
   .u-1\/5\@wide {
-    width: 20% !important; }
+    width: 20% !important;
+  }
 
   /**
    * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -3493,16 +4069,19 @@ table {
     position: relative !important;
     right: auto !important;
     /* [1] */
-    left: 20% !important; }
+    left: 20% !important;
+  }
 
   .u-pull-1\/5\@wide {
     position: relative !important;
     right: 20% !important;
     left: auto !important;
-    /* [1] */ }
+    /* [1] */
+  }
 
   .u-2\/5\@wide {
-    width: 40% !important; }
+    width: 40% !important;
+  }
 
   /**
    * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -3511,16 +4090,19 @@ table {
     position: relative !important;
     right: auto !important;
     /* [1] */
-    left: 40% !important; }
+    left: 40% !important;
+  }
 
   .u-pull-2\/5\@wide {
     position: relative !important;
     right: 40% !important;
     left: auto !important;
-    /* [1] */ }
+    /* [1] */
+  }
 
   .u-3\/5\@wide {
-    width: 60% !important; }
+    width: 60% !important;
+  }
 
   /**
    * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -3529,16 +4111,19 @@ table {
     position: relative !important;
     right: auto !important;
     /* [1] */
-    left: 60% !important; }
+    left: 60% !important;
+  }
 
   .u-pull-3\/5\@wide {
     position: relative !important;
     right: 60% !important;
     left: auto !important;
-    /* [1] */ }
+    /* [1] */
+  }
 
   .u-4\/5\@wide {
-    width: 80% !important; }
+    width: 80% !important;
+  }
 
   /**
    * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -3547,16 +4132,19 @@ table {
     position: relative !important;
     right: auto !important;
     /* [1] */
-    left: 80% !important; }
+    left: 80% !important;
+  }
 
   .u-pull-4\/5\@wide {
     position: relative !important;
     right: 80% !important;
     left: auto !important;
-    /* [1] */ }
+    /* [1] */
+  }
 
   .u-5\/5\@wide {
-    width: 100% !important; }
+    width: 100% !important;
+  }
 
   /**
    * 1. Reset any leftover or conflicting `left`/`right` values.
@@ -3565,19 +4153,24 @@ table {
     position: relative !important;
     right: auto !important;
     /* [1] */
-    left: 100% !important; }
+    left: 100% !important;
+  }
 
   .u-pull-5\/5\@wide {
     position: relative !important;
     right: 100% !important;
     left: auto !important;
-    /* [1] */ }
+    /* [1] */
+  }
 
   .u-push-none\@wide {
-    left: auto !important; }
+    left: auto !important;
+  }
 
   .u-pull-none\@wide {
-    right: auto !important; } }
+    right: auto !important;
+  }
+}
 /* ==========================================================================
    #FLEX HELPER CLASSES
    ========================================================================== */
@@ -3585,233 +4178,312 @@ table {
  * Classes that help us define how much space a flexbox item takes up.
  */
 .u-flex-1\/1 {
-  flex: 1 1 100% !important; }
+  flex: 1 1 100% !important;
+}
 
 .u-flex-1\/2 {
-  flex: 1 1 50% !important; }
+  flex: 1 1 50% !important;
+}
 
 .u-flex-2\/2 {
-  flex: 1 1 100% !important; }
+  flex: 1 1 100% !important;
+}
 
 .u-flex-1\/3 {
-  flex: 1 1 33.3333333333% !important; }
+  flex: 1 1 33.3333333333% !important;
+}
 
 .u-flex-2\/3 {
-  flex: 1 1 66.6666666667% !important; }
+  flex: 1 1 66.6666666667% !important;
+}
 
 .u-flex-3\/3 {
-  flex: 1 1 100% !important; }
+  flex: 1 1 100% !important;
+}
 
 .u-flex-1\/4 {
-  flex: 1 1 25% !important; }
+  flex: 1 1 25% !important;
+}
 
 .u-flex-2\/4 {
-  flex: 1 1 50% !important; }
+  flex: 1 1 50% !important;
+}
 
 .u-flex-3\/4 {
-  flex: 1 1 75% !important; }
+  flex: 1 1 75% !important;
+}
 
 .u-flex-4\/4 {
-  flex: 1 1 100% !important; }
+  flex: 1 1 100% !important;
+}
 
 .u-flex-1\/5 {
-  flex: 1 1 20% !important; }
+  flex: 1 1 20% !important;
+}
 
 .u-flex-2\/5 {
-  flex: 1 1 40% !important; }
+  flex: 1 1 40% !important;
+}
 
 .u-flex-3\/5 {
-  flex: 1 1 60% !important; }
+  flex: 1 1 60% !important;
+}
 
 .u-flex-4\/5 {
-  flex: 1 1 80% !important; }
+  flex: 1 1 80% !important;
+}
 
 .u-flex-5\/5 {
-  flex: 1 1 100% !important; }
+  flex: 1 1 100% !important;
+}
 
 /**
  * Generate flex-width classes for Sass MQ breakpoints
  */
 @media (min-width: 20em) {
   .u-flex-1\/1\@mobile {
-    flex: 1 1 100% !important; }
+    flex: 1 1 100% !important;
+  }
 
   .u-flex-1\/2\@mobile {
-    flex: 1 1 50% !important; }
+    flex: 1 1 50% !important;
+  }
 
   .u-flex-2\/2\@mobile {
-    flex: 1 1 100% !important; }
+    flex: 1 1 100% !important;
+  }
 
   .u-flex-1\/3\@mobile {
-    flex: 1 1 33.3333333333% !important; }
+    flex: 1 1 33.3333333333% !important;
+  }
 
   .u-flex-2\/3\@mobile {
-    flex: 1 1 66.6666666667% !important; }
+    flex: 1 1 66.6666666667% !important;
+  }
 
   .u-flex-3\/3\@mobile {
-    flex: 1 1 100% !important; }
+    flex: 1 1 100% !important;
+  }
 
   .u-flex-1\/4\@mobile {
-    flex: 1 1 25% !important; }
+    flex: 1 1 25% !important;
+  }
 
   .u-flex-2\/4\@mobile {
-    flex: 1 1 50% !important; }
+    flex: 1 1 50% !important;
+  }
 
   .u-flex-3\/4\@mobile {
-    flex: 1 1 75% !important; }
+    flex: 1 1 75% !important;
+  }
 
   .u-flex-4\/4\@mobile {
-    flex: 1 1 100% !important; }
+    flex: 1 1 100% !important;
+  }
 
   .u-flex-1\/5\@mobile {
-    flex: 1 1 20% !important; }
+    flex: 1 1 20% !important;
+  }
 
   .u-flex-2\/5\@mobile {
-    flex: 1 1 40% !important; }
+    flex: 1 1 40% !important;
+  }
 
   .u-flex-3\/5\@mobile {
-    flex: 1 1 60% !important; }
+    flex: 1 1 60% !important;
+  }
 
   .u-flex-4\/5\@mobile {
-    flex: 1 1 80% !important; }
+    flex: 1 1 80% !important;
+  }
 
   .u-flex-5\/5\@mobile {
-    flex: 1 1 100% !important; } }
+    flex: 1 1 100% !important;
+  }
+}
 @media (min-width: 46.25em) {
   .u-flex-1\/1\@tablet {
-    flex: 1 1 100% !important; }
+    flex: 1 1 100% !important;
+  }
 
   .u-flex-1\/2\@tablet {
-    flex: 1 1 50% !important; }
+    flex: 1 1 50% !important;
+  }
 
   .u-flex-2\/2\@tablet {
-    flex: 1 1 100% !important; }
+    flex: 1 1 100% !important;
+  }
 
   .u-flex-1\/3\@tablet {
-    flex: 1 1 33.3333333333% !important; }
+    flex: 1 1 33.3333333333% !important;
+  }
 
   .u-flex-2\/3\@tablet {
-    flex: 1 1 66.6666666667% !important; }
+    flex: 1 1 66.6666666667% !important;
+  }
 
   .u-flex-3\/3\@tablet {
-    flex: 1 1 100% !important; }
+    flex: 1 1 100% !important;
+  }
 
   .u-flex-1\/4\@tablet {
-    flex: 1 1 25% !important; }
+    flex: 1 1 25% !important;
+  }
 
   .u-flex-2\/4\@tablet {
-    flex: 1 1 50% !important; }
+    flex: 1 1 50% !important;
+  }
 
   .u-flex-3\/4\@tablet {
-    flex: 1 1 75% !important; }
+    flex: 1 1 75% !important;
+  }
 
   .u-flex-4\/4\@tablet {
-    flex: 1 1 100% !important; }
+    flex: 1 1 100% !important;
+  }
 
   .u-flex-1\/5\@tablet {
-    flex: 1 1 20% !important; }
+    flex: 1 1 20% !important;
+  }
 
   .u-flex-2\/5\@tablet {
-    flex: 1 1 40% !important; }
+    flex: 1 1 40% !important;
+  }
 
   .u-flex-3\/5\@tablet {
-    flex: 1 1 60% !important; }
+    flex: 1 1 60% !important;
+  }
 
   .u-flex-4\/5\@tablet {
-    flex: 1 1 80% !important; }
+    flex: 1 1 80% !important;
+  }
 
   .u-flex-5\/5\@tablet {
-    flex: 1 1 100% !important; } }
+    flex: 1 1 100% !important;
+  }
+}
 @media (min-width: 61.25em) {
   .u-flex-1\/1\@desktop {
-    flex: 1 1 100% !important; }
+    flex: 1 1 100% !important;
+  }
 
   .u-flex-1\/2\@desktop {
-    flex: 1 1 50% !important; }
+    flex: 1 1 50% !important;
+  }
 
   .u-flex-2\/2\@desktop {
-    flex: 1 1 100% !important; }
+    flex: 1 1 100% !important;
+  }
 
   .u-flex-1\/3\@desktop {
-    flex: 1 1 33.3333333333% !important; }
+    flex: 1 1 33.3333333333% !important;
+  }
 
   .u-flex-2\/3\@desktop {
-    flex: 1 1 66.6666666667% !important; }
+    flex: 1 1 66.6666666667% !important;
+  }
 
   .u-flex-3\/3\@desktop {
-    flex: 1 1 100% !important; }
+    flex: 1 1 100% !important;
+  }
 
   .u-flex-1\/4\@desktop {
-    flex: 1 1 25% !important; }
+    flex: 1 1 25% !important;
+  }
 
   .u-flex-2\/4\@desktop {
-    flex: 1 1 50% !important; }
+    flex: 1 1 50% !important;
+  }
 
   .u-flex-3\/4\@desktop {
-    flex: 1 1 75% !important; }
+    flex: 1 1 75% !important;
+  }
 
   .u-flex-4\/4\@desktop {
-    flex: 1 1 100% !important; }
+    flex: 1 1 100% !important;
+  }
 
   .u-flex-1\/5\@desktop {
-    flex: 1 1 20% !important; }
+    flex: 1 1 20% !important;
+  }
 
   .u-flex-2\/5\@desktop {
-    flex: 1 1 40% !important; }
+    flex: 1 1 40% !important;
+  }
 
   .u-flex-3\/5\@desktop {
-    flex: 1 1 60% !important; }
+    flex: 1 1 60% !important;
+  }
 
   .u-flex-4\/5\@desktop {
-    flex: 1 1 80% !important; }
+    flex: 1 1 80% !important;
+  }
 
   .u-flex-5\/5\@desktop {
-    flex: 1 1 100% !important; } }
+    flex: 1 1 100% !important;
+  }
+}
 @media (min-width: 81.25em) {
   .u-flex-1\/1\@wide {
-    flex: 1 1 100% !important; }
+    flex: 1 1 100% !important;
+  }
 
   .u-flex-1\/2\@wide {
-    flex: 1 1 50% !important; }
+    flex: 1 1 50% !important;
+  }
 
   .u-flex-2\/2\@wide {
-    flex: 1 1 100% !important; }
+    flex: 1 1 100% !important;
+  }
 
   .u-flex-1\/3\@wide {
-    flex: 1 1 33.3333333333% !important; }
+    flex: 1 1 33.3333333333% !important;
+  }
 
   .u-flex-2\/3\@wide {
-    flex: 1 1 66.6666666667% !important; }
+    flex: 1 1 66.6666666667% !important;
+  }
 
   .u-flex-3\/3\@wide {
-    flex: 1 1 100% !important; }
+    flex: 1 1 100% !important;
+  }
 
   .u-flex-1\/4\@wide {
-    flex: 1 1 25% !important; }
+    flex: 1 1 25% !important;
+  }
 
   .u-flex-2\/4\@wide {
-    flex: 1 1 50% !important; }
+    flex: 1 1 50% !important;
+  }
 
   .u-flex-3\/4\@wide {
-    flex: 1 1 75% !important; }
+    flex: 1 1 75% !important;
+  }
 
   .u-flex-4\/4\@wide {
-    flex: 1 1 100% !important; }
+    flex: 1 1 100% !important;
+  }
 
   .u-flex-1\/5\@wide {
-    flex: 1 1 20% !important; }
+    flex: 1 1 20% !important;
+  }
 
   .u-flex-2\/5\@wide {
-    flex: 1 1 40% !important; }
+    flex: 1 1 40% !important;
+  }
 
   .u-flex-3\/5\@wide {
-    flex: 1 1 60% !important; }
+    flex: 1 1 60% !important;
+  }
 
   .u-flex-4\/5\@wide {
-    flex: 1 1 80% !important; }
+    flex: 1 1 80% !important;
+  }
 
   .u-flex-5\/5\@wide {
-    flex: 1 1 100% !important; } }
+    flex: 1 1 100% !important;
+  }
+}
 /* ==========================================================================
    #HEADINGS
    ========================================================================== */
@@ -3826,91 +4498,116 @@ table {
 .u-h1 {
   font-size: 36px !important;
   font-size: 2rem !important;
-  line-height: 1.5 !important; }
+  line-height: 1.5 !important;
+}
 
 .u-h2 {
   font-size: 28px !important;
   font-size: 1.5555555556rem !important;
-  line-height: 1.9285714286 !important; }
+  line-height: 1.9285714286 !important;
+}
 
 .u-h3 {
   font-size: 24px !important;
   font-size: 1.3333333333rem !important;
-  line-height: 1.125 !important; }
+  line-height: 1.125 !important;
+}
 
 .u-h4 {
   font-size: 20px !important;
   font-size: 1.1111111111rem !important;
-  line-height: 1.35 !important; }
+  line-height: 1.35 !important;
+}
 
 .u-h5 {
   font-size: 18px !important;
   font-size: 1rem !important;
-  line-height: 1.5 !important; }
+  line-height: 1.5 !important;
+}
 
 .u-h6 {
   font-size: 16px !important;
   font-size: 0.8888888889rem !important;
-  line-height: 1.6875 !important; }
+  line-height: 1.6875 !important;
+}
 
 .u-aside {
   font-size: 18px;
   font-size: 1rem;
   line-height: 1.5;
   text-align: center;
-  text-transform: uppercase; }
+  text-transform: uppercase;
+}
 
 .u-flow-left {
   display: block;
-  margin: 12px auto; }
-  @media (min-width: 46.25em) {
-    .u-flow-left {
-      float: right;
-      margin-right: -120px;
-      margin-left: 24px;
-      max-width: 25vw; }
-      .u-flow-left img {
-        max-width: 25vw; } }
-  @media (min-width: 81.25em) {
-    .u-flow-left {
-      float: left;
-      margin-left: -120px;
-      margin-right: 24px; } }
+  margin: 12px auto;
+}
+@media (min-width: 46.25em) {
+  .u-flow-left {
+    float: right;
+    margin-right: -120px;
+    margin-left: 24px;
+    max-width: 25vw;
+  }
+  .u-flow-left img {
+    max-width: 25vw;
+  }
+}
+@media (min-width: 81.25em) {
+  .u-flow-left {
+    float: left;
+    margin-left: -120px;
+    margin-right: 24px;
+  }
+}
 
 .u-flow-right {
   display: block;
-  margin: 12px auto; }
-  @media (min-width: 46.25em) {
-    .u-flow-right {
-      float: right;
-      margin-right: -120px;
-      margin-left: 24px;
-      max-width: 25vw; }
-      .u-flow-right img {
-        max-width: 25vw; } }
-  @media (min-width: 81.25em) {
-    .u-flow-right {
-      float: right;
-      margin-right: -120px;
-      margin-left: 24px; } }
+  margin: 12px auto;
+}
+@media (min-width: 46.25em) {
+  .u-flow-right {
+    float: right;
+    margin-right: -120px;
+    margin-left: 24px;
+    max-width: 25vw;
+  }
+  .u-flow-right img {
+    max-width: 25vw;
+  }
+}
+@media (min-width: 81.25em) {
+  .u-flow-right {
+    float: right;
+    margin-right: -120px;
+    margin-left: 24px;
+  }
+}
 
 .u-all-caps {
-  text-transform: uppercase; }
+  text-transform: uppercase;
+}
 
 .u-text-center {
-  text-align: center; }
+  text-align: center;
+}
 
 .u-text-right {
-  text-align: right; }
+  text-align: right;
+}
 
 .u-text-shadow {
-  text-shadow: 1px 1px 2px rgba(96, 131, 154, 0.5); }
+  text-shadow: 1px 1px 2px rgba(96, 131, 154, 0.5);
+}
 
 .u-img-circle {
-  border-radius: 50%; }
+  border-radius: 50%;
+}
 
 .u-box-shadow {
-  box-shadow: rgba(35, 35, 35, 0.75) 0 0 10px; }
+  box-shadow: rgba(35, 35, 35, 0.75) 0 0 10px;
+}
 
 /* ==========================================================================
    #FONT-SIZING
@@ -3921,35 +4618,42 @@ table {
 .u-font--tiny {
   font-size: 9px;
   font-size: 0.5rem;
-  line-height: 3; }
+  line-height: 3;
+}
 
 .u-font--smaller {
   font-size: 12.006px;
   font-size: 0.667rem;
-  line-height: 2.2488755622; }
+  line-height: 2.2488755622;
+}
 
 .u-font--small {
   font-size: 16.002px;
   font-size: 0.889rem;
-  line-height: 1.6872890889; }
+  line-height: 1.6872890889;
+}
 
 .u-font--large {
   font-size: 20.25px;
   font-size: 1.125rem;
-  line-height: 1.3333333333; }
+  line-height: 1.3333333333;
+}
 
 .u-font--larger {
   font-size: 27px;
   font-size: 1.5rem;
-  line-height: 1; }
+  line-height: 1;
+}
 
 .u-font--huge {
   font-size: 36px;
   font-size: 2rem;
-  line-height: 1.5; }
+  line-height: 1.5;
+}
 
 .u-accent {
-  font-family: Oswald, Verdana, Arial, sans-serif !important; }
+  font-family: Oswald, Verdana, Arial, sans-serif !important;
+}
 
 /* ==========================================================================
    #SPACINGS
@@ -3968,280 +4672,364 @@ table {
  */
 /* stylelint-disable string-quotes */
 .u-padding {
-  padding: 24px !important; }
+  padding: 24px !important;
+}
 
 .u-padding-tiny {
-  padding: 6px !important; }
+  padding: 6px !important;
+}
 
 .u-padding-small {
-  padding: 12px !important; }
+  padding: 12px !important;
+}
 
 .u-padding-large {
-  padding: 48px !important; }
+  padding: 48px !important;
+}
 
 .u-padding-huge {
-  padding: 96px !important; }
+  padding: 96px !important;
+}
 
 .u-padding-none {
-  padding: 0 !important; }
+  padding: 0 !important;
+}
 
 .u-padding-top {
-  padding-top: 24px !important; }
+  padding-top: 24px !important;
+}
 
 .u-padding-top-tiny {
-  padding-top: 6px !important; }
+  padding-top: 6px !important;
+}
 
 .u-padding-top-small {
-  padding-top: 12px !important; }
+  padding-top: 12px !important;
+}
 
 .u-padding-top-large {
-  padding-top: 48px !important; }
+  padding-top: 48px !important;
+}
 
 .u-padding-top-huge {
-  padding-top: 96px !important; }
+  padding-top: 96px !important;
+}
 
 .u-padding-top-none {
-  padding-top: 0 !important; }
+  padding-top: 0 !important;
+}
 
 .u-padding-right {
-  padding-right: 24px !important; }
+  padding-right: 24px !important;
+}
 
 .u-padding-right-tiny {
-  padding-right: 6px !important; }
+  padding-right: 6px !important;
+}
 
 .u-padding-right-small {
-  padding-right: 12px !important; }
+  padding-right: 12px !important;
+}
 
 .u-padding-right-large {
-  padding-right: 48px !important; }
+  padding-right: 48px !important;
+}
 
 .u-padding-right-huge {
-  padding-right: 96px !important; }
+  padding-right: 96px !important;
+}
 
 .u-padding-right-none {
-  padding-right: 0 !important; }
+  padding-right: 0 !important;
+}
 
 .u-padding-bottom {
-  padding-bottom: 24px !important; }
+  padding-bottom: 24px !important;
+}
 
 .u-padding-bottom-tiny {
-  padding-bottom: 6px !important; }
+  padding-bottom: 6px !important;
+}
 
 .u-padding-bottom-small {
-  padding-bottom: 12px !important; }
+  padding-bottom: 12px !important;
+}
 
 .u-padding-bottom-large {
-  padding-bottom: 48px !important; }
+  padding-bottom: 48px !important;
+}
 
 .u-padding-bottom-huge {
-  padding-bottom: 96px !important; }
+  padding-bottom: 96px !important;
+}
 
 .u-padding-bottom-none {
-  padding-bottom: 0 !important; }
+  padding-bottom: 0 !important;
+}
 
 .u-padding-left {
-  padding-left: 24px !important; }
+  padding-left: 24px !important;
+}
 
 .u-padding-left-tiny {
-  padding-left: 6px !important; }
+  padding-left: 6px !important;
+}
 
 .u-padding-left-small {
-  padding-left: 12px !important; }
+  padding-left: 12px !important;
+}
 
 .u-padding-left-large {
-  padding-left: 48px !important; }
+  padding-left: 48px !important;
+}
 
 .u-padding-left-huge {
-  padding-left: 96px !important; }
+  padding-left: 96px !important;
+}
 
 .u-padding-left-none {
-  padding-left: 0 !important; }
+  padding-left: 0 !important;
+}
 
 .u-padding-horizontal {
   padding-left: 24px !important;
-  padding-right: 24px !important; }
+  padding-right: 24px !important;
+}
 
 .u-padding-horizontal-tiny {
   padding-left: 6px !important;
-  padding-right: 6px !important; }
+  padding-right: 6px !important;
+}
 
 .u-padding-horizontal-small {
   padding-left: 12px !important;
-  padding-right: 12px !important; }
+  padding-right: 12px !important;
+}
 
 .u-padding-horizontal-large {
   padding-left: 48px !important;
-  padding-right: 48px !important; }
+  padding-right: 48px !important;
+}
 
 .u-padding-horizontal-huge {
   padding-left: 96px !important;
-  padding-right: 96px !important; }
+  padding-right: 96px !important;
+}
 
 .u-padding-horizontal-none {
   padding-left: 0 !important;
-  padding-right: 0 !important; }
+  padding-right: 0 !important;
+}
 
 .u-padding-vertical {
   padding-top: 24px !important;
-  padding-bottom: 24px !important; }
+  padding-bottom: 24px !important;
+}
 
 .u-padding-vertical-tiny {
   padding-top: 6px !important;
-  padding-bottom: 6px !important; }
+  padding-bottom: 6px !important;
+}
 
 .u-padding-vertical-small {
   padding-top: 12px !important;
-  padding-bottom: 12px !important; }
+  padding-bottom: 12px !important;
+}
 
 .u-padding-vertical-large {
   padding-top: 48px !important;
-  padding-bottom: 48px !important; }
+  padding-bottom: 48px !important;
+}
 
 .u-padding-vertical-huge {
   padding-top: 96px !important;
-  padding-bottom: 96px !important; }
+  padding-bottom: 96px !important;
+}
 
 .u-padding-vertical-none {
   padding-top: 0 !important;
-  padding-bottom: 0 !important; }
+  padding-bottom: 0 !important;
+}
 
 .u-margin {
-  margin: 24px !important; }
+  margin: 24px !important;
+}
 
 .u-margin-tiny {
-  margin: 6px !important; }
+  margin: 6px !important;
+}
 
 .u-margin-small {
-  margin: 12px !important; }
+  margin: 12px !important;
+}
 
 .u-margin-large {
-  margin: 48px !important; }
+  margin: 48px !important;
+}
 
 .u-margin-huge {
-  margin: 96px !important; }
+  margin: 96px !important;
+}
 
 .u-margin-none {
-  margin: 0 !important; }
+  margin: 0 !important;
+}
 
 .u-margin-top {
-  margin-top: 24px !important; }
+  margin-top: 24px !important;
+}
 
 .u-margin-top-tiny {
-  margin-top: 6px !important; }
+  margin-top: 6px !important;
+}
 
 .u-margin-top-small {
-  margin-top: 12px !important; }
+  margin-top: 12px !important;
+}
 
 .u-margin-top-large {
-  margin-top: 48px !important; }
+  margin-top: 48px !important;
+}
 
 .u-margin-top-huge {
-  margin-top: 96px !important; }
+  margin-top: 96px !important;
+}
 
 .u-margin-top-none {
-  margin-top: 0 !important; }
+  margin-top: 0 !important;
+}
 
 .u-margin-right {
-  margin-right: 24px !important; }
+  margin-right: 24px !important;
+}
 
 .u-margin-right-tiny {
-  margin-right: 6px !important; }
+  margin-right: 6px !important;
+}
 
 .u-margin-right-small {
-  margin-right: 12px !important; }
+  margin-right: 12px !important;
+}
 
 .u-margin-right-large {
-  margin-right: 48px !important; }
+  margin-right: 48px !important;
+}
 
 .u-margin-right-huge {
-  margin-right: 96px !important; }
+  margin-right: 96px !important;
+}
 
 .u-margin-right-none {
-  margin-right: 0 !important; }
+  margin-right: 0 !important;
+}
 
 .u-margin-bottom {
-  margin-bottom: 24px !important; }
+  margin-bottom: 24px !important;
+}
 
 .u-margin-bottom-tiny {
-  margin-bottom: 6px !important; }
+  margin-bottom: 6px !important;
+}
 
 .u-margin-bottom-small {
-  margin-bottom: 12px !important; }
+  margin-bottom: 12px !important;
+}
 
 .u-margin-bottom-large {
-  margin-bottom: 48px !important; }
+  margin-bottom: 48px !important;
+}
 
 .u-margin-bottom-huge {
-  margin-bottom: 96px !important; }
+  margin-bottom: 96px !important;
+}
 
 .u-margin-bottom-none {
-  margin-bottom: 0 !important; }
+  margin-bottom: 0 !important;
+}
 
 .u-margin-left {
-  margin-left: 24px !important; }
+  margin-left: 24px !important;
+}
 
 .u-margin-left-tiny {
-  margin-left: 6px !important; }
+  margin-left: 6px !important;
+}
 
 .u-margin-left-small {
-  margin-left: 12px !important; }
+  margin-left: 12px !important;
+}
 
 .u-margin-left-large {
-  margin-left: 48px !important; }
+  margin-left: 48px !important;
+}
 
 .u-margin-left-huge {
-  margin-left: 96px !important; }
+  margin-left: 96px !important;
+}
 
 .u-margin-left-none {
-  margin-left: 0 !important; }
+  margin-left: 0 !important;
+}
 
 .u-margin-horizontal {
   margin-left: 24px !important;
-  margin-right: 24px !important; }
+  margin-right: 24px !important;
+}
 
 .u-margin-horizontal-tiny {
   margin-left: 6px !important;
-  margin-right: 6px !important; }
+  margin-right: 6px !important;
+}
 
 .u-margin-horizontal-small {
   margin-left: 12px !important;
-  margin-right: 12px !important; }
+  margin-right: 12px !important;
+}
 
 .u-margin-horizontal-large {
   margin-left: 48px !important;
-  margin-right: 48px !important; }
+  margin-right: 48px !important;
+}
 
 .u-margin-horizontal-huge {
   margin-left: 96px !important;
-  margin-right: 96px !important; }
+  margin-right: 96px !important;
+}
 
 .u-margin-horizontal-none {
   margin-left: 0 !important;
-  margin-right: 0 !important; }
+  margin-right: 0 !important;
+}
 
 .u-margin-vertical {
   margin-top: 24px !important;
-  margin-bottom: 24px !important; }
+  margin-bottom: 24px !important;
+}
 
 .u-margin-vertical-tiny {
   margin-top: 6px !important;
-  margin-bottom: 6px !important; }
+  margin-bottom: 6px !important;
+}
 
 .u-margin-vertical-small {
   margin-top: 12px !important;
-  margin-bottom: 12px !important; }
+  margin-bottom: 12px !important;
+}
 
 .u-margin-vertical-large {
   margin-top: 48px !important;
-  margin-bottom: 48px !important; }
+  margin-bottom: 48px !important;
+}
 
 .u-margin-vertical-huge {
   margin-top: 96px !important;
-  margin-bottom: 96px !important; }
+  margin-bottom: 96px !important;
+}
 
 .u-margin-vertical-none {
   margin-top: 0 !important;
-  margin-bottom: 0 !important; }
+  margin-bottom: 0 !important;
+}
 
 /* stylelint-enable string-quotes */
 /* ==========================================================================
@@ -4262,16 +5050,24 @@ table {
 /* stylelint-disable max-nesting-depth */
 @media (min-width: 20em) {
   .u-margin-bottom-none\@mobile {
-    margin-bottom: 0 !important; } }
+    margin-bottom: 0 !important;
+  }
+}
 @media (min-width: 46.25em) {
   .u-margin-bottom-none\@tablet {
-    margin-bottom: 0 !important; } }
+    margin-bottom: 0 !important;
+  }
+}
 @media (min-width: 61.25em) {
   .u-margin-bottom-none\@desktop {
-    margin-bottom: 0 !important; } }
+    margin-bottom: 0 !important;
+  }
+}
 @media (min-width: 81.25em) {
   .u-margin-bottom-none\@wide {
-    margin-bottom: 0 !important; } }
+    margin-bottom: 0 !important;
+  }
+}
 /* stylelint-enable max-nesting-depth */
 /* ==========================================================================
    #PRINT
@@ -4286,59 +5082,71 @@ table {
    * 1. Black prints faster: http://www.sanbeiji.com/archives/953
    */
   *,
-  *:before,
-  *:after {
+*:before,
+*:after {
     background: transparent !important;
     color: #000 !important;
     /* [1] */
     box-shadow: none !important;
-    text-shadow: none !important; }
+    text-shadow: none !important;
+  }
 
   a,
-  a:visited {
-    text-decoration: underline; }
+a:visited {
+    text-decoration: underline;
+  }
 
   a[href]:after {
-    content: " (" attr(href) ")"; }
+    content: " (" attr(href) ")";
+  }
 
   abbr[title]:after {
-    content: " (" attr(title) ")"; }
+    content: " (" attr(title) ")";
+  }
 
   /**
    * Don’t show links that are fragment identifiers, or use the `javascript:`
    * pseudo protocol.
    */
   a[href^="#"]:after,
-  a[href^="javascript:"]:after {
-    content: ""; }
+a[href^="javascript:"]:after {
+    content: "";
+  }
 
   pre,
-  blockquote {
+blockquote {
     border: 1px solid #999;
-    page-break-inside: avoid; }
+    page-break-inside: avoid;
+  }
 
   /**
    * Printing Tables: http://css-discuss.incutio.com/wiki/Printing_Tables
    */
   thead {
-    display: table-header-group; }
+    display: table-header-group;
+  }
 
   tr,
-  img {
-    page-break-inside: avoid; }
+img {
+    page-break-inside: avoid;
+  }
 
   img {
-    max-width: 100% !important; }
+    max-width: 100% !important;
+  }
 
   p,
-  h2,
-  h3 {
+h2,
+h3 {
     orphans: 3;
-    widows: 3; }
+    widows: 3;
+  }
 
   h2,
-  h3 {
-    page-break-after: avoid; } }
+h3 {
+    page-break-after: avoid;
+  }
+}
 /* ==========================================================================
    #HIDE
    ========================================================================== */
@@ -4356,15 +5164,18 @@ table {
   padding: 0 !important;
   position: absolute !important;
   white-space: nowrap !important;
-  width: 1px !important; }
+  width: 1px !important;
+}
 
 /**
  * Hide visually and from screen readers.
  */
 .u-hidden {
-  display: none !important; }
+  display: none !important;
+}
 
 .u-no-underline {
-  text-decoration: none; }
+  text-decoration: none;
+}
 
 /*# sourceMappingURL=main.css.map */
