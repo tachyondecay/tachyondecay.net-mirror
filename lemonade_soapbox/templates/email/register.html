@@ -1,9 +1,0 @@
-<p>Hello!</p>
-
-<p>Someone just tried to just tried to create an account on <a href="{{ url_for('blog.index') }}">{{ config['BLOG_NAME'] }}</a>. If that was you, then follow the link below to verify your email and sign in.</p>
-
-<p><a href="{{ signin_link }}">{{ signin_link }}</a></p>
-
-<p>This link expires in {{ config['LOGIN_TOKEN_EXPIRY']//60 }} minutes.</p>
-
-<p>If you did not try to create an account, please ignore this email.</p>

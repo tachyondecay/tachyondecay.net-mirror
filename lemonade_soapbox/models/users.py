@@ -8,6 +8,9 @@ from itsdangerous import (
 )
 from lemonade_soapbox import db, login_manager
 from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy_utils import force_auto_coercion, PasswordType
+
+force_auto_coercion()  # Needed for use of PasswordType
 
 
 class User(UserMixin, db.Model):
@@ -16,6 +19,7 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(64), unique=True)
     name = db.Column(db.String(64))
+    password = db.Column(PasswordType(schemes=['bcrypt']))
     url = db.Column(db.String(100))
 
     @property

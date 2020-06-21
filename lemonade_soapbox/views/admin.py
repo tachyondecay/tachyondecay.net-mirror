@@ -1,5 +1,6 @@
 import arrow
 import base64
+import bcrypt
 import os
 import random
 from flask import (
@@ -142,88 +143,23 @@ def signin():
     if current_user.is_authenticated:
         return redirect(url_for('.index'))
 
-    token = request.args.get('token', None)
-    if token:
-        try:
-            u = User.verify(token)
-            if u:
-                if getattr(u, 'id', False):
-                    login_user(u, remember=True)
-                    current_app.logger.info('New signin: {}.'.format(u.name))
-                    return redirect(url_for('.index'))
-                else:
-                    # Add user to the database and welcome them
-                    db.session.add(u)
-                    db.session.commit()
-                    login_user(u, remember=True)
-                    current_app.logger.info('New account created: {}.'.format(u.email))
-                    flash(
-                        'Welcome to the blog. Take a moment to fill out your '
-                        'profile, if you please.',
-                        'success',
-                    )
-                    return redirect(url_for('.edit_user', user_id=u.id))
-        except Exception as e:
-            flash(e, 'error')
-
     form = SignInForm(request.form)
     if form.validate_on_submit():
-        msg = None
-
-        # Flood control
-        signin_email_time = session.get('signin_email_time', None)
-        if signin_email_time and arrow.get(signin_email_time) > arrow.utcnow():
-            flash(
-                'You can only request a signin link once every '
-                '{} minutes.'.format(current_app.config['LOGIN_EMAIL_FLOOD']),
-                'error',
-            )
+        user = User.query.filter_by(email=form.email.data).first()
+        if not user or user.password != form.password.data:
+            flash('Incorrect email address or password.', 'error')
+            return redirect(url_for('.signin'))
         else:
-            # Check if user exists
-            u = User.query.filter_by(email=form.email.data).first()
-            if u:
-                # User found, generate an auth token
-                token = u.generate_token(id=u.id, email=u.email)
-                msg = compose(
-                    form.email.data,
-                    'Sign Into {}'.format(current_app.config['BLOG_NAME']),
-                    'email/signin',
-                    signin_link=url_for('.signin', token=token, _external=True),
-                    name=u.name,
-                )
-            elif current_app.config['LOGIN_ALLOW_NEW']:
-                # Generate a registration token
-                token = User.generate_token(email=form.email.data, register=True)
-                msg = compose(
-                    form.email.data,
-                    'Confirm Registration at {}'.format(
-                        current_app.config['BLOG_NAME']
-                    ),
-                    'email/register',
-                    signin_link=url_for('.signin', token=token, _external=True),
-                )
-            else:
-                flash(
-                    'Your email doesn’t match any existing users, and registration is closed.',
-                    'error',
-                )
-
-            if msg:
-                mail.send(msg)
-                session['signin_email_time'] = arrow.utcnow().replace(
-                    minute=current_app.config['LOGIN_EMAIL_FLOOD']
-                )
-                flash('Verification link sent to {}'.format(form.email.data), 'success')
-                current_app.logger.info('Auth link sent to {}'.format(form.email.data))
-        return redirect(url_for('.signin'))
+            login_user(user)
+            return redirect(url_for('.index'))
     else:
         current_app.logger.debug(form.errors)
 
     return render_template(
         'admin/views/signin.html',
-        signin_form=form,
-        page_title='Sign In',
-        subtitle='Secret Lair',
+        form=form,
+        page_title='Lemonade Soapbox Dashboard',
+        subtitle='Sign In',
     )
 
 

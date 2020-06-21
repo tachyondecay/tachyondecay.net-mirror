@@ -11,6 +11,7 @@ from wtforms import (
     DateTimeField,
     HiddenField,
     IntegerField,
+    PasswordField,
     RadioField,
     SelectField,
     StringField,
@@ -206,3 +207,4 @@ class SignInForm(Form):
     email = EmailField(
         'Email address', validators=[validators.InputRequired(), validators.Email()]
     )
+    password = PasswordField('Password', validators=[validators.InputRequired()])
