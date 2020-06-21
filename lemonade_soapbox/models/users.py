@@ -4,9 +4,10 @@ from flask_login import UserMixin
 from itsdangerous import (
     BadSignature,
     SignatureExpired,
-    TimedJSONWebSignatureSerializer as Serializer
+    TimedJSONWebSignatureSerializer as Serializer,
 )
 from lemonade_soapbox import db, login_manager
+from sqlalchemy.ext.hybrid import hybrid_property
 
 
 class User(UserMixin, db.Model):
@@ -21,11 +22,21 @@ class User(UserMixin, db.Model):
     def email_hash(self):
         return md5(self.email.encode('UTF-8')).hexdigest()
 
+    @hybrid_property
+    def first_name(self):
+        return self.name.split(' ')[0]
+
+    @hybrid_property
+    def last_name(self):
+        return self.name.split(' ')[1]
+
     @classmethod
     def serializer(cls):
         """Return an itsdangerous JSON Web Signature Token serializer."""
-        return Serializer(current_app.config['SECRET_KEY'],
-                          expires_in=current_app.config['LOGIN_TOKEN_EXPIRY'])
+        return Serializer(
+            current_app.config['SECRET_KEY'],
+            expires_in=current_app.config['LOGIN_TOKEN_EXPIRY'],
+        )
 
     @classmethod
     def generate_token(cls, **kwargs):

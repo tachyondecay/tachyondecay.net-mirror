@@ -7,9 +7,9 @@
 //
 // Names come from $icons mapping.
 //
-$included-icons: ("box-add", "bin", "calendar", "checkmark", "clock", "earth", 
+$included-icons: ("box-add", "bin", "book", "calendar", "checkmark", "clock", "earth", 
                   "eye-blocked", "floppy-disk", "link", "newspaper", "new-tab", 
-                  "pencil", "spinner", "star-empty", "star-full") !default;
+                  "pencil", "plus", "price-tags", "spinner", "star-empty", "star-full") !default;
 
 @each $i in $included-icons {
     .i--#{$i} {
