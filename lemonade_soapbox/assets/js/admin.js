@@ -141,7 +141,9 @@ function BackendInit() {
             s.className = 'tag';
             s.title = 'Delete tag';
             s.innerText = tag.trim();
-            container.insertBefore(s, input);
+            if(s.innerText != "") {
+                container.insertBefore(s, input);
+            }
         }
 
         container.addEventListener('click', (e) => {

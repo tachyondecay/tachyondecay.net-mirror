@@ -106,7 +106,7 @@
 
   @include mq($from: desktop) {
     display: grid;
-    grid-template-columns: 2.5em max-content;
+    grid-template-columns: max-content 2.5em;
     grid-template-rows: 1.2em 1.2em;
     justify-content: end;
     align-items: center;
@@ -118,15 +118,19 @@
 
     font-size: 0.8em;
 
+    > .name {
+      grid-column: 1;
+    }
     .lastname {
       display: inline;
     }
     > a {
-      grid-column: 2;
+      grid-column: 1;
       grid-row: 2;
     }
 
     img {
+      grid-column: 2;
       grid-row: 1 / -1;
       max-height: 2.5em;
     }
