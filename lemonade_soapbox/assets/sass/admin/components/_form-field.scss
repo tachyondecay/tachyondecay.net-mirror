@@ -8,6 +8,10 @@
   display: flex;
   flex-flow: column wrap;
   margin: var(--unit-small) 0;
+
+  &.-collapse {
+    margin-top: calc(-2*var(--unit-small));
+  }
 }
 
 .form-field .-icon-before {

@@ -1,10 +1,10 @@
 {% extends 'admin/layouts/write.html' %}
 
 {% block page_title %}
-{% if post.title %}Editing “{{ post.title }}”{% else %}Writing{% endif %} {{ super() }}
+{% if post.title %}Editing “{{ post.title }}”{% else %}Writing a new post{% endif %} {{ super() }}
 {% endblock %}
 
 {% block field__title %}
-<label for="title" class="u-hidden-visually">Title</label>
-{{ form.title(**{'aria-label': 'Title', 'class': 'o-text-input o-text-input--blend c-page-title__input', 'placeholder': 'Add title…'}) }}
+<label for="title" class="_hide">Title</label>
+{{ form.title(**{'aria-label': 'Title', 'class': 'textinput -blend -title', 'placeholder': 'Add title…'}) }}
 {% endblock %}

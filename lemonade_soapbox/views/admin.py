@@ -32,62 +32,62 @@ def before_request():
     g.search_query = request.args.get('q', '')
 
 
+def posts_index(post_type, template, **kwargs):
+    """
+    Helper method that contains most of the logic common to both blog posts and reviews 
+    index.
+    """
+    post_class = globals()[post_type.capitalize()]
+    status = request.args.getlist('status') or ['published']
+    page = request.args.get('page', 1, int)
+    sort_by = request.args.get(
+        'sort_by', ('date_published' if status == 'published' else 'date_updated')
+    )
+    order = 'asc' if request.args.get('order') == 'asc' else 'desc'
+    q = request.args.get('q')
+    posts = Pagination(None, page=page, per_page=50, total=0, items=[])
+
+    if q:
+        search_params = {
+            'pagenum': page,
+            'pagelen': 50,
+            'sort_field': sort_by,
+            'sort_order': order,
+            'filter': whoosh_or([whoosh_term('status', x) for x in status]),
+        }
+        results = post_class.search(q, **search_params)
+        current_app.logger.debug(results)
+        if results is not None and results['query'] is not None:
+            posts.items = results['query'].all()
+            posts.total = results['total']
+    else:
+        posts = (
+            post_class.query.filter(post_class.status.in_(status))
+            .order_by(getattr(getattr(post_class, sort_by), order)())
+            .paginate(page=int(page), per_page=50)
+        )
+
+    status_count = (
+        db.session.query(post_class.status, func.count(post_class.id))
+        .group_by(post_class.status)
+        .all()
+    )
+    subtitle = f"{posts.total} {post_type}" + ("s" if posts.total != 1 else "")
+
+    return render_template(
+        template,
+        posts=posts,
+        status_breakdown=status_count,
+        status=status,
+        subtitle=subtitle,
+        **kwargs,
+    )
+
+
 @bp.route('/')
 @login_required
 def index():
     return redirect('/meta/blog/')
-
-
-@bp.route('/search/')
-@login_required
-def search():
-    """Search for articles."""
-    next_year = str(arrow.utcnow().shift(years=+1).year)
-    q = request.args.get('q', 'date_created:<' + next_year).strip()
-    results = None
-    articles = None
-    subtitle = 'No results found'
-
-    if q:
-        if q.startswith('id:') or q.startswith('revision:'):
-            comp = q.split(':')
-            return redirect(url_for('.edit_article', **{comp[0]: comp[1]}))
-        elif q.startswith('tag:'):
-            tag = Tag.query.filter_by(handle=q.split(':')[1]).first()
-            if tag:
-                articles = sorted(
-                    tag.articles,
-                    key=lambda k: k.date_published
-                    if k.date_published
-                    else arrow.utcnow(),
-                    reverse=True,
-                )
-                subtitle = 'Tag: {}'.format(tag.label)
-        else:
-            search_params = {
-                'pagenum': request.args.get('page', 1, int),
-                'pagelen': request.args.get('per_page', 50, int),
-                'sort_field': request.args.get('order_by', 'date_created'),
-                'sort_order': request.args.get('order', 'desc'),
-            }
-            current_app.logger.debug('Searching for "{}"'.format(q))
-            results = Article.search(q, **search_params)
-            if results is not None and results['query'] is not None:
-                articles = results['query'].all()
-                subtitle = 'Showing {} – {} of {}'.format(
-                    results['offset'] + 1,
-                    results['offset'] + results['pagelen'],
-                    results['total'],
-                )
-    return render_template(
-        'admin/views/search.html',
-        articles=articles,
-        mode='admin.search',
-        page_title='Search Results',
-        query_string=q,
-        results=results,
-        subtitle=subtitle,
-    )
 
 
 @bp.route('/signin/', methods=['POST', 'GET'])
@@ -190,32 +190,6 @@ def signout():
     return redirect(url_for('.signin'))
 
 
-@bp.route('/people/', defaults={'user_id': None})
-@bp.route('/people/<int:user_id>/')
-@login_required
-def show_users(user_id):
-    if not user_id:
-        # Show all users
-        return 'List of all users'
-
-    u = User.query.get(user_id)
-    if not u:
-        abort(404)
-    return 'Profile for {}'.format(u.name)
-
-
-@login_required
-@bp.route('/people/<int:user_id>/edit/', methods=['GET', 'POST'])
-def edit_user(user_id):
-    u = User.query.get(user_id)
-    if not u:
-        abort(404)
-
-    if u.id != current_user.id:
-        abort(403)
-    return 'Editing {}'.format(u.name)
-
-
 #
 # Blog endpoints
 #
@@ -292,54 +266,6 @@ def edit_article(id, revision_id):
 #
 # Review endpoints
 #
-
-
-def posts_index(post_type, template, **kwargs):
-    post_class = globals()[post_type.capitalize()]
-    status = request.args.getlist('status') or ['published']
-    page = request.args.get('page', 1, int)
-    sort_by = request.args.get(
-        'sort_by', ('date_published' if status == 'published' else 'date_updated')
-    )
-    order = 'asc' if request.args.get('order') == 'asc' else 'desc'
-    q = request.args.get('q')
-    posts = Pagination(None, page=page, per_page=50, total=0, items=[])
-
-    if q:
-        search_params = {
-            'pagenum': page,
-            'pagelen': 50,
-            'sort_field': sort_by,
-            'sort_order': order,
-            'filter': whoosh_or([whoosh_term('status', x) for x in status]),
-        }
-        results = post_class.search(q, **search_params)
-        current_app.logger.debug(results)
-        if results is not None and results['query'] is not None:
-            posts.items = results['query'].all()
-            posts.total = results['total']
-    else:
-        posts = (
-            post_class.query.filter(post_class.status.in_(status))
-            .order_by(getattr(getattr(post_class, sort_by), order)())
-            .paginate(page=int(page), per_page=50)
-        )
-
-    status_count = (
-        db.session.query(post_class.status, func.count(post_class.id))
-        .group_by(post_class.status)
-        .all()
-    )
-    subtitle = f"{posts.total} {post_type}" + ("s" if posts.total != 1 else "")
-
-    return render_template(
-        template,
-        posts=posts,
-        status_breakdown=status_count,
-        status=status,
-        subtitle=subtitle,
-        **kwargs,
-    )
 
 
 @bp.route('/reviews/')

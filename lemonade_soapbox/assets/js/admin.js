@@ -229,14 +229,16 @@ function BackendInit() {
      * Notifications
      */
 
-    // Add a link to dismiss notifications
-    $('<a title="Clear notification" class="dismiss" tabindex></a>')
-        .appendTo('.-dismissable')
-        .click(function(e) {
-            $(this).parents('.notification').hide('scale', { origin: ["top", "center"], percent: 5, easing: "easeInOutBack" }, 750);
-            e.preventDefault();
+    document.querySelectorAll('.-dismissable').forEach(el => {
+        const a = document.createElement('a');
+        a.className = 'dismiss';
+        a.title = 'Clear notification';
+        a.setAttribute('tabindex', true);
+        el.addEventListener('click', e => {
+            el.classList.add('slideUp');
         });
-
+        el.appendChild(a);
+    });
 
     /*
      * Sort form options

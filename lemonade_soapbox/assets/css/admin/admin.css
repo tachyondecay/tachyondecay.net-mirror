@@ -292,7 +292,7 @@ summary {
  * Mixins and functions that allow us to apply a SVG sprite icon.
  * Largely cribbed from https://github.com/liquidlight/sass-gulp-svg-sprite
  */
-.result-item .star.-empty, .result-item .star.-full, .notification.-success:before, .notification.-error:before, .notification:before, .notification > .dismiss, .i-after--star-full:after, .i-before--star-full:before, .i--star-full, .i-after--star-empty:after, .i-before--star-empty:before, .i--star-empty, .i-after--spinner:after, .i-before--spinner:before, .i--spinner, .i-after--pencil:after, .i-before--pencil:before, .i--pencil, .i-after--new-tab:after, .i-before--new-tab:before, .i--new-tab, .i-after--newspaper:after, .i-before--newspaper:before, .i--newspaper, .i-after--link:after, .i-before--link:before, .i--link, .i-after--floppy-disk:after, .i-before--floppy-disk:before, .i--floppy-disk, .i-after--eye-blocked:after, .i-before--eye-blocked:before, .i--eye-blocked, .i-after--earth:after, .i-before--earth:before, .i--earth, .i-after--clock:after, .i-before--clock:before, .i--clock, .i-after--checkmark:after, .i-before--checkmark:before, .i--checkmark, .i-after--calendar:after, .i-before--calendar:before, .i--calendar, .i-after--bin:after, .i-before--bin:before, .i--bin, .i-after--box-add:after, .i-before--box-add:before, .i--box-add, .rating-input input:checked ~ label:not(:last-child), .rating-input:not(:checked) label:not(:last-child):hover, .rating-input:not(:checked) label:not(:last-child):hover ~ label:not(:last-child), .rating-input label:not(:last-child) {
+.result-item .star.-empty, .result-item .star.-full, .notification > .dismiss, .i-after--star-full:after, .i-before--star-full:before, .i--star-full, .i-after--star-empty:after, .i-before--star-empty:before, .i--star-empty, .i-after--spinner:after, .i-before--spinner:before, .i--spinner, .i-after--pencil:after, .i-before--pencil:before, .i--pencil, .i-after--new-tab:after, .i-before--new-tab:before, .i--new-tab, .i-after--newspaper:after, .i-before--newspaper:before, .i--newspaper, .i-after--link:after, .i-before--link:before, .i--link, .i-after--floppy-disk:after, .i-before--floppy-disk:before, .i--floppy-disk, .i-after--eye-blocked:after, .i-before--eye-blocked:before, .i--eye-blocked, .i-after--earth:after, .i-before--earth:before, .i--earth, .i-after--clock:after, .i-before--clock:before, .i--clock, .i-after--checkmark:after, .i-before--checkmark:before, .i--checkmark, .i-after--calendar:after, .i-before--calendar:before, .i--calendar, .i-after--bin:after, .i-before--bin:before, .i--bin, .i-after--box-add:after, .i-before--box-add:before, .i--box-add, .rating-input input:checked ~ label:not(:last-child), .rating-input:not(:checked) label:not(:last-child):hover, .rating-input:not(:checked) label:not(:last-child):hover ~ label:not(:last-child), .rating-input label:not(:last-child) {
   display: inline-block;
   background-size: 31em 21em;
 }
@@ -1272,6 +1272,24 @@ input[type=time] {
  *
  * Component: Notification messages displayed like banners.
  */
+@keyframes slideDown {
+  from {
+    transform: translateY(-100px);
+  }
+  to {
+    transform: translateY(100px);
+  }
+}
+.slideDown, .notification {
+  top: -100px;
+  animation: slideDown 1.5s 0.1s 1 ease-in-out forwards;
+}
+
+.slideUp {
+  transition: top 1.5s 0.1s ease-in-out;
+  top: -500px;
+}
+
 /**
  * The base notification class
  *
@@ -1281,31 +1299,36 @@ input[type=time] {
  * 3. 
  */
 .notification {
-  --bg: #f0f0f0;
+  --bg: #242424;
   /* 1 */
-  --colour: #657177;
-  padding: var(--unit-tiny) var(--unit-small) var(--unit-tiny) var(--unit-large);
-  position: relative;
+  --colour: #f8f8f8;
+  padding: var(--unit-small) var(--unit-small) var(--unit-small) var(--unit-large);
+  position: fixed;
+  width: 100vw;
+  z-index: 1000;
   background-color: var(--bg);
-  background: linear-gradient(120deg, var(--bg), #f8f8f8);
-  border: 1px solid var(--colour);
-  border-radius: 5px;
+  box-shadow: 0 5px 5px 0 rgba(0, 0, 0, 0.5);
+  opacity: 0.8;
   color: var(--colour);
   font-family: Fjalla One, Verdana, sans-serif;
   font-size: 0.75rem;
+  letter-spacing: 0.05em;
   line-height: calc(var(--baseline) * 0.75 * 1rem);
+  text-align: center;
 }
 .notification.-dismissable {
-  padding-right: var(--unit);
+  padding-right: var(--unit-large);
   /* 2 */
 }
 .notification > .dismiss {
   /* 2 */
   display: block;
   position: absolute;
-  top: 3px;
-  right: 3px;
-  background-image: url("/assets/images/icons/sprite--657177.svg");
+  top: 0;
+  bottom: 0;
+  right: var(--unit);
+  margin: auto;
+  background-image: url("/assets/images/icons/sprite--ffffff.svg");
   width: 1.0625em;
   height: 1.0625em;
   background-position: -20em -14em;
@@ -1313,41 +1336,13 @@ input[type=time] {
   font-size: 0.8em;
 }
 .notification.-error {
-  --colour: #993835;
+  --bg: #993835;
 }
 .notification.-success {
-  --colour: #6c9e5b;
+  --bg: #6c9e5b;
 }
 
 /* Icons that indicate type of notification */
-.notification:before {
-  content: "";
-  height: 1em;
-  position: absolute;
-  left: var(--unit-tiny);
-  top: 50%;
-  transform: translate(0, -50%);
-  background-image: url("/assets/images/icons/sprite--657177.svg");
-  width: 1.0625em;
-  height: 1.0625em;
-  background-position: -14em -14em;
-  font-size: 1.4rem;
-}
-
-.notification.-error:before {
-  background-image: url("/assets/images/icons/sprite--993835.svg");
-  width: 1.0625em;
-  height: 1.0625em;
-  background-position: -4em -14em;
-}
-
-.notification.-success:before {
-  background-image: url("/assets/images/icons/sprite--6c9e5b.svg");
-  width: 1.0625em;
-  height: 1.0625em;
-  background-position: -22em -14em;
-}
-
 /**
  * _pagination.scss
  *
@@ -1440,6 +1435,9 @@ input[type=time] {
   display: flex;
   flex-flow: column wrap;
   margin: var(--unit-small) 0;
+}
+.form-field.-collapse {
+  margin-top: calc(-2*var(--unit-small));
 }
 
 .form-field .-icon-before {

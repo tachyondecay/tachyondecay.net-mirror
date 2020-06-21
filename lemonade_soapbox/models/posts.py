@@ -573,7 +573,7 @@ class RevisionMixin:
 
 
 class Article(
-    UniqueHandleMixin, TagMixin, Searchable, RevisionMixin, PostMixin, db.Model
+    UniqueHandleMixin, TagMixin, RevisionMixin, PostMixin, Searchable, db.Model
 ):
     """Blog posts."""
 

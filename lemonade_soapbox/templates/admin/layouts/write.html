@@ -51,7 +51,6 @@
 
         <div class="fields">
         {% block post_contents %}
-    <!-- contenteditable = true makes Firefox's spellchecker work with SimpleMDE, and I prefer this to the built-in spellchecker -->
         <div class="form-field -span" contenteditable="true">
             <label for="body" class="_hide">Body</label>
         {{ form.body(**{'aria-label': 'Body', 'cols': 80, 'rows': 5, 'placeholder': 'Lorem ipsum, baby…', 'data-revision': (post.selected_revision.id if post.selected_revision else '')}) }}
@@ -71,12 +70,12 @@
         <legend class="_hide">Post Metadata</legend>
 
         {% block post_metadata %}
-        <div class="form-field -span{{ ' u-margin-bottom-none' if post.status == 'published' }}">
+        <div class="form-field -span">
             {{ render_field(form.date_published, {'class': 'textinput js-breaks-url', 'date_class': '-icon-before i-before--calendar', 'time_class': '-icon-before i-before--clock' }, label='Publish Date') }}
         </div>
 
         {% if post.status == 'published' %}
-        <div class="form-field -span">
+        <div class="form-field -span -collapse">
             {{ checkbox_toggle(form.show_updated, label='Show post was updated', size='small')}}
         </div>
         {% endif %}
