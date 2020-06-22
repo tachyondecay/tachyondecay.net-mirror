@@ -5,4 +5,4 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 
 
 app = create_app()
-app.wsgi_app = ProxyFix(app)
+app = ProxyFix(app)
