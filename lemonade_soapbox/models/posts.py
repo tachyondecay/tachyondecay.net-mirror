@@ -76,12 +76,12 @@ class Searchable:
         fields = self.schema.names()
         current_app.logger.debug(fields)
         for field in fields:
-            current_app.logger.debug('Processing {}'.format(field))
+            # current_app.logger.debug('Processing {}'.format(field))
             value = getattr(self, field)
             if field in filters:
                 value = filters[field](value)
             idx_info[field] = value
-            current_app.logger.debug(value)
+            # current_app.logger.debug(value)
         # current_app.logger.debug(idx_info)
         writer.update_document(**idx_info)
 
@@ -268,8 +268,6 @@ class AuthorMixin:
 class TagMixin:
     """Any posts that are taggable."""
 
-    tag_list = association_proxy('_tags', 'label')
-
     @declared_attr
     def _tags(cls):
         return db.relationship(
@@ -278,7 +276,8 @@ class TagMixin:
             backref=db.backref(cls.__tablename__, lazy='dynamic'),
         )
 
-    def _find_or_create_tag(self, tag):
+    @staticmethod
+    def _find_or_create_tag(tag):
         with db.session.no_autoflush:
             q = Tag.query.filter_by(handle=Tag.slugify(tag))
             t = q.first()
@@ -289,16 +288,17 @@ class TagMixin:
                 t = Tag(tag)
         return t
 
-    @property
-    def tags(self):
-        """Return list of tag objects associated with this article."""
-        tag_list = getattr(self, 'tag_list', [])
-        return tag_list if (tag_list != ['']) else []
+    tags = association_proxy('_tags', 'label', creator=_find_or_create_tag.__func__)
+    # @property
+    # def tags(self):
+    #     """Return list of tag objects associated with this article."""
+    #     tag_list = getattr(self, 'tag_list', [])
+    #     return tag_list if (tag_list != ['']) else []
 
-    @tags.setter
-    def tags(self, tag_list):
-        """Set list of tag objects associated with this article."""
-        self._tags = [self._find_or_create_tag(t) for t in tag_list]
+    # @tags.setter
+    # def tags(self, tag_list):
+    #     """Set list of tag objects associated with this article."""
+    #     self._tags = [self._find_or_create_tag(t) for t in tag_list if t.strip() != '']
 
 
 class PostMixin(AuthorMixin):
@@ -408,7 +408,6 @@ class PostMixin(AuthorMixin):
         def get_datetime(d):
             return getattr(d, 'datetime', None)
 
-        current_app.logger.debug('hello')
         exceptions = {
             'id': str,
             'author': lambda x: getattr(x, 'name', None),

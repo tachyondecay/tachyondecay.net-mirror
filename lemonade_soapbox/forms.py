@@ -86,17 +86,20 @@ class DateTimeLocalField(DateTimeField):
         current_app.logger.debug(valuelist)
         if valuelist:
             date_str = ' '.join(valuelist)
-            try:
-                self.data = (
-                    arrow.get(date_str)
-                    .replace(tzinfo=current_app.config['TIMEZONE'])
-                    .to('UTC')
-                )
-            except arrow.parser.ParserError as e:
-                current_app.logger.warn('Invalid datetime value submitted: %s', e)
-                raise ValueError(
-                    'Not a valid datetime value. Looking for YYYY-MM-DD HH:mm.'
-                )
+            if date_str.strip():
+                try:
+                    self.data = (
+                        arrow.get(date_str)
+                        .replace(tzinfo=current_app.config['TIMEZONE'])
+                        .to('UTC')
+                    )
+                except arrow.parser.ParserError as e:
+                    current_app.logger.warn(
+                        f'Invalid datetime value submitted: {date_str} - {e}'
+                    )
+                    raise ValueError(
+                        'Not a valid datetime value. Looking for YYYY-MM-DD HH:mm.'
+                    )
 
 
 class TagListField(StringField):
@@ -121,7 +124,7 @@ class TagListField(StringField):
 
     def process_formdata(self, valuelist):
         if valuelist:
-            self.data = [x.strip() for x in valuelist[0].split(',')]
+            self.data = [x.strip() for x in valuelist[0].split(',') if x.strip() != '']
         else:
             self.data = []
 
