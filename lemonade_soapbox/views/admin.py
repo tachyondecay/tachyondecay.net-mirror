@@ -19,7 +19,7 @@ from lemonade_soapbox.forms import ArticleForm, ReviewForm, SignInForm
 from lemonade_soapbox.models import Article, Review
 from lemonade_soapbox.models.users import User
 from sqlalchemy import func
-from werkzeug import secure_filename
+from werkzeug.utils import secure_filename
 from whoosh.query import Term as whoosh_term, Or as whoosh_or
 
 bp = Blueprint('admin', __name__)

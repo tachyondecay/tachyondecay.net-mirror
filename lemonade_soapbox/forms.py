@@ -2,10 +2,8 @@ import arrow
 from flask import current_app
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileAllowed, FileField
-from intervals import DateInterval
 from lemonade_soapbox import db
 from lemonade_soapbox.models import Article, Review
-from werkzeug.utils import secure_filename
 from wtforms import (
     BooleanField,
     DateTimeField,
@@ -13,7 +11,6 @@ from wtforms import (
     IntegerField,
     PasswordField,
     RadioField,
-    SelectField,
     StringField,
     SubmitField,
     validators,

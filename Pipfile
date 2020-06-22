@@ -1,0 +1,29 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+
+[packages]
+flask = "*"
+python-dotenv = "*"
+flask-sqlalchemy = "*"
+arrow = "*"
+flask-wtf = "*"
+wtforms-alchemy = "*"
+beautifulsoup4 = "*"
+flask-login = "*"
+markdown = "*"
+sqlalchemy-utils = "*"
+diff-match-patch = "*"
+python-slugify = "*"
+whoosh = "*"
+passlib = "*"
+bcrypt = "*"
+wtforms = {extras = ["email"], version = "*"}
+email-validator = "*"
+gunicorn = "*"
+
+[requires]
+python_version = "3.8"
