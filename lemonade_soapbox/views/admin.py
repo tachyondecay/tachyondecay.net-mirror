@@ -377,7 +377,7 @@ def edit_review(id, revision_id):
             if form.delete.data:
                 if review.status == 'deleted':
                     # Permanently deleting review
-                    review.status == 'removed'
+                    review.status = 'removed'
                     db.session.delete(review)
                     message = 'Review permanently deleted.'
                     redirect_url = url_for('.reviews')
