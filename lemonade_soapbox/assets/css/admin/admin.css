@@ -1448,6 +1448,7 @@ input[type=time] {
   padding: var(--unit-small) var(--unit-small) var(--unit-small) var(--unit-large);
   position: fixed;
   width: 100vw;
+  left: 0;
   z-index: 1000;
   background-color: var(--bg);
   box-shadow: 0 5px 5px 0 rgba(0, 0, 0, 0.5);
@@ -1477,6 +1478,9 @@ input[type=time] {
   background-position: -20em -14em;
   cursor: pointer;
   font-size: 0.8em;
+}
+.notification.-removed {
+  --bg: #fc814a;
 }
 .notification.-error {
   --bg: #993835;
@@ -1789,9 +1793,9 @@ input[type=time] {
  */
 .upload-widget {
   display: grid;
-  grid-template-columns: auto fit-content(100px);
+  grid-template-columns: auto 100px;
   grid-template-areas: "fileselect thumbnail" "remove thumbnail";
-  align-items: center;
+  align-items: start;
 }
 .upload-widget > .fileselect {
   grid-area: fileselect;
@@ -1816,7 +1820,7 @@ input[type=time] {
 }
 @media (min-width: 46.25em) and (max-width: 61.24em) {
   .upload-widget {
-    grid-template-columns: 12em fit-content(100px);
+    grid-template-columns: 12em 100px;
   }
 }
 
@@ -1826,6 +1830,7 @@ input[type=time] {
   display: flex;
   justify-content: center;
   align-items: center;
+  min-height: 100px;
   padding: 0 var(--unit-tiny);
   text-align: center;
 }
@@ -1834,14 +1839,10 @@ input[type=time] {
   position: relative;
   z-index: 5;
 }
-.thumbnail-preview > .thumbnail.-none {
-  display: none;
-}
 .thumbnail-preview > .placeholder {
   display: flex;
   justify-content: center;
   align-items: center;
-  flex: 0 100%;
   height: 100%;
   width: 100%;
   position: absolute;
@@ -1857,9 +1858,11 @@ input[type=time] {
 .thumbnail-preview > .placeholder:hover {
   cursor: crosshair;
 }
-.thumbnail-preview > .placeholder:hover, .thumbnail-preview > .placeholder:active, .-none + .thumbnail-preview > .placeholder, .thumbnail:hover + .thumbnail-preview > .placeholder {
+.thumbnail-preview > .placeholder:hover, .thumbnail-preview > .placeholder:active, .thumbnail-preview > .-none + .placeholder, .thumbnail-preview > .thumbnail:hover + .placeholder {
   top: 0;
   left: 0;
+  right: 0;
+  margin: auto;
   z-index: 100;
 }
 

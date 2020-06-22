@@ -38,7 +38,7 @@ function BackendInit() {
         if(settings.url == (application_root + '/api/posts/autosave/')) {
             console.log('Sending autosave request.');
             var current = $('.js-revisions__current:not(.js-is-autosave)');
-            if(current.size() > 0) {
+            if(current.length > 0) {
                 console.log('Updating revision history');
                 var rev = current.data('view');
                 current
@@ -454,7 +454,7 @@ var MagnificentUpload = function(container) {
                     } else {
                         self.image.addClass(self.css_no_img);
                     }
-                    self.resetRemoveToggle(false);
+                    self.resetRemoveToggle((self.original_src));
                     $(this).text('Paste image here');
 
                     self.pasted.val('');

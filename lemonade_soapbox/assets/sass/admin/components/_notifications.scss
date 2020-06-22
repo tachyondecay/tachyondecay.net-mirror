@@ -38,6 +38,7 @@
   padding: var(--unit-small) var(--unit-small) var(--unit-small) var(--unit-large);
   position: fixed;
   width: 100vw;
+  left: 0;
   z-index: 1000;
 
   background-color: var(--bg);
@@ -69,6 +70,10 @@
     @include sprite(cross, $colour: '#ffffff');
     cursor: pointer;
     font-size: 0.8em;
+  }
+
+  &.-removed {
+    --bg: #{$orange};
   }
 
   &.-error {

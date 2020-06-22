@@ -97,7 +97,9 @@
         {% if post.date_created %}
         <small>Created <time datetime="{{ post.date_created.isoformat() }}">{{ post.date_created.to(config['TIMEZONE']).format('MMM DD, YYYY HH:mm')}}</time></small>
         {% endif %}
-        {% if post.status != 'deleted' %}
+        {% if post.status == 'deleted' %}
+        {{ form.delete(label='Permanently Delete', class='_button -micro -danger') }}
+        {% else %}
         {{ form.delete(class='_button -micro -danger') }}
         {% endif %}
     </p>

@@ -211,6 +211,7 @@ def edit_article(id, revision_id):
     if form.validate_on_submit():
         message = ''
         message_category = 'success'
+        redirect_url = None
         # Save a copy of the original body before we overwrite it
         old_body = article.body
         form.populate_obj(article)
@@ -224,17 +225,25 @@ def edit_article(id, revision_id):
         else:
             message = article.update_post()
             if form.delete.data:
-                article.status = 'deleted'
-                message = 'Article moved to the trash.'
+                if article.status == 'deleted':
+                    # Permanently deleting article
+                    article.status = 'removed'
+                    db.session.delete(article)
+                    message = 'Article permanently deleted.'
+                    redirect_url = url_for('.blog')
+                else:
+                    article.status = 'deleted'
+                    message = 'Article moved to the trash.'
                 message_category = 'removed'
             elif form.drafts.data:
                 article.status = 'draft'
                 article.date_published = None
                 message = 'Article moved to drafts.'
-        db.session.add(article)
+        if article.status != 'removed':
+            db.session.add(article)
         db.session.commit()
         flash(message, message_category)
-        return redirect(url_for('.edit_article', id=article.id))
+        return redirect(redirect_url or url_for('.edit_article', id=article.id))
     elif form.errors:
         current_app.logger.debug(form.errors)
         flash('You need to fix a few things before you can save your changes.', 'error')
@@ -283,12 +292,15 @@ def edit_review(id, revision_id):
     else:
         review = Review()
 
+    current_app.logger.debug(f'Review handle: {review.handle}')
+
     # Copy revisions section from edit_article when revisions enabled for reviews
 
     form = ReviewForm(obj=review)
     if form.validate_on_submit():
         message = ''
         message_category = 'success'
+        redirect_url = None
         # Save a copy of the original body before we overwrite it
         old_body = review.body
         old_handle = review.handle
@@ -340,7 +352,9 @@ def edit_review(id, revision_id):
                 flash('There was a problem uploading the book cover. Try again?')
             else:
                 review.book_cover = filename
-        if form.remove_cover.data and review.book_cover:
+        if review.book_cover and (
+            form.remove_cover.data or (review.status == 'deleted' and form.delete.data)
+        ):
             try:
                 os.remove(
                     os.path.join(
@@ -361,17 +375,25 @@ def edit_review(id, revision_id):
         else:
             message = review.update_post()
             if form.delete.data:
-                review.status = 'deleted'
-                message = 'Review moved to the trash.'
+                if review.status == 'deleted':
+                    # Permanently deleting review
+                    review.status == 'removed'
+                    db.session.delete(review)
+                    message = 'Review permanently deleted.'
+                    redirect_url = url_for('.reviews')
+                else:
+                    review.status = 'deleted'
+                    message = 'Review moved to the trash.'
                 message_category = 'removed'
             elif form.drafts.data:
                 review.status = 'draft'
                 review.date_published = None
                 message = 'Review moved to drafts.'
-        db.session.add(review)
+        if review.status != 'removed':
+            db.session.add(review)
         db.session.commit()
         flash(message, message_category)
-        return redirect(url_for('.edit_review', id=review.id))
+        return redirect(redirect_url or url_for('.edit_review', id=review.id))
     elif form.errors:
         current_app.logger.debug(form.errors)
         flash('You need to fix a few things before you can save your changes.', 'error')

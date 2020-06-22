@@ -6,11 +6,11 @@
  */
 .upload-widget {
   display: grid;
-  grid-template-columns: auto fit-content(100px);
+  grid-template-columns: auto 100px;
   grid-template-areas: 
     "fileselect thumbnail"
     "remove thumbnail";
-  align-items: center;
+  align-items: start;
 
   > .fileselect {
     grid-area: fileselect;
@@ -40,7 +40,7 @@
   }
 
   @include mq(tablet, desktop) {
-    grid-template-columns: 12em fit-content(100px);
+    grid-template-columns: 12em 100px;
   }
 }
 
@@ -52,6 +52,7 @@
     justify-content: center;
     align-items: center;
 
+    min-height: 100px;
     padding: 0 var(--unit-tiny);
 
     text-align: center;
@@ -64,14 +65,13 @@
     }
 
     > .thumbnail.-none {
-      display: none;
+      // display: none;
     }
 
     > .placeholder {
       display: flex;
       justify-content: center;
       align-items: center;
-      flex: 0 100%;
 
       height: 100%;
       width: 100%;
@@ -90,13 +90,16 @@
       &:hover {
           cursor: crosshair;
       }
+    }
 
-      &:hover, &:active, 
-      .-none + &,
-      .thumbnail:hover + & {
-          top: 0;
-          left: 0;
-          z-index: 100;
-      }
+    & > .placeholder:hover,
+    & > .placeholder:active, 
+    & > .-none + .placeholder,
+    & > .thumbnail:hover + .placeholder {
+      top: 0;
+      left: 0;
+      right: 0;
+      margin: auto;
+      z-index: 100;
     }
   }

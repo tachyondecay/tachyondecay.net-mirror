@@ -822,6 +822,7 @@ h4, ._h4 {
   padding: var(--unit-small) var(--unit-small) var(--unit-small) var(--unit-large);
   position: fixed;
   width: 100vw;
+  left: 0;
   z-index: 1000;
   background-color: var(--bg);
   box-shadow: 0 5px 5px 0 rgba(0, 0, 0, 0.5);
@@ -851,6 +852,9 @@ h4, ._h4 {
   background-position: -20em -14em;
   cursor: pointer;
   font-size: 0.8em;
+}
+.notification.-removed {
+  --bg: #fc814a;
 }
 .notification.-error {
   --bg: #993835;

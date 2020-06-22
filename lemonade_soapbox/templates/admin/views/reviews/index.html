@@ -25,9 +25,9 @@
                             <dd><time datetime="{{ post.date_finished.format('YYYY-MM-DD') }}">{{ post.date_finished.format('MMM DD, YYYY') }}</time></dd>
 
                             <dt class="_hide">Rating</dt>
-                            <dd title="{{ post.rating }} of 5 stars">
-                                {% for star in range(5) %}
-                                    {% if star <= post.rating %}
+                            <dd title="{{ post.rating ~ ' out of 5 stars' if post.rating > 0 else 'Unrated' }}">
+                                {% for star in range(0,5) %}
+                                    {% if star < post.rating %}
                                     <i class="star -full"></i>
                                     {% else %}
                                     <i class="star -empty"></i>
