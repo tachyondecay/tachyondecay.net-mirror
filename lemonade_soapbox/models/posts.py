@@ -531,7 +531,7 @@ class RevisionMixin:
         """
 
         r = None
-        if not self.revision_id:
+        if not self.revision_id or not self.selected_revision:
             r = Revision(self, new=self.body, old='')
         else:
             # Check Levenshtein distance and generate patches while we're at it.
