@@ -300,7 +300,38 @@ var PostForm = function(form) {
     this.editor = new EasyMDE({
         'element': this.body[0],
         'spellChecker': true,
-        'toolbar': ['preview', 'side-by-side', 'fullscreen']
+        'toolbar': [
+            'preview',
+            'side-by-side',
+            'fullscreen',
+            {
+                name: 'copy-for-gr',
+                action: function(editor) {
+                    let text = editor.markdown(editor.value());
+                    const replacements = [
+                        ['<cite>', '<em>'],
+                        ['</cite>', '</em>'],
+                        ['<ol>', ''],
+                        ['</ol>', '\r\n'],
+                        ['<p>', ''],
+                        ['</p>', '\r\n'],
+                        ['<ul>', '\r\n'],
+                        ['<li>', '  *'],
+                        ['</li>', ''],
+                        ['</ul>', '']
+                    ];
+                    replacements.forEach(item => {
+                        text = text.replaceAll(item[0], item[1]);
+                    });
+
+                    text += '\r\n<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/"><img alt="Creative Commons BY-NC License" width="88" height="31" src="http://i.creativecommons.org/l/by-nc/4.0/88x31.png" /></a>';
+                    navigator.clipboard.writeText(text);
+                    return;
+                },
+                className: 'fa fa-copy',
+                title: 'Copy for Goodreads'
+            }
+        ]
     });
 }
 
