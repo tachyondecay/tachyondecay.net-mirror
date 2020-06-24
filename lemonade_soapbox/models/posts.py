@@ -713,6 +713,11 @@ class Review(
         except Exception:
             raise Exception('Dates read must be a valid date range.')
 
+    @property
+    def short_title(self):
+        """Returns the shortened book title without subtitle."""
+        return self.title.split(":")[0]
+
     def get_permalink(self, relative=True):
         """Generate a permanent link to the review."""
         if not self.id:

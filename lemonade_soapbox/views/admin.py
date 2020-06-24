@@ -308,7 +308,7 @@ def edit_review(id, revision_id):
         if old_handle != review.handle and not (
             form.handle.data and review.unique_check(review.handle)
         ):
-            review.handle = review.slugify(review.title)
+            review.handle = review.slugify(review.short_title)
 
         #
         # Book cover uploading
