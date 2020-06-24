@@ -28,7 +28,7 @@
 
                     <ul class="tags _inline-list">
                     {% for t in post._tags|sort(attribute='handle') %}
-                        <li><a class="_button -micro" href="">{{ t.label }}</a></li>
+                        <li><a class="_button -micro" href="{{ url_for('.blog', q='tags:"' ~ t.label ~ '"') }}">{{ t.label }}</a></li>
                     {% endfor %}
                     </ul>
 
