@@ -221,22 +221,25 @@ class UniqueHandleMixin:
         return db.Column(db.String(255), nullable=False, default='')
 
     @classmethod
-    def unique_check(cls, text):
+    def unique_check(cls, text=None):
         """Query database to check if handle is unique."""
-        unique = None
-        with db.session.no_autoflush:
-            unique = not cls.query.filter_by(handle=text).first()
-        return unique
+        if text:
+            unique = None
+            with db.session.no_autoflush:
+                unique = not cls.query.filter_by(handle=text).first()
+            return unique
+        return False
 
-    def slugify(self, text, max_length=100, to_lower=True, **kwargs):
-        slug = original = slugify(text, max_length=max_length, lowercase=to_lower)
+    def slugify(self, text='', max_length=100, to_lower=True, **kwargs):
+        slug = ''
+        if text:
+            slug = original = slugify(text, max_length=max_length, lowercase=to_lower)
 
-        # Check if unique
-        i = 1
-        while not self.unique_check(slug):
-            slug = f'{original}-{i}'
-            i += 1
-
+            # Check if unique
+            i = 1
+            while not self.unique_check(slug):
+                slug = f'{original}-{i}'
+                i += 1
         return slug
 
     def __init__(self, **kwargs):
@@ -329,10 +332,21 @@ class PostMixin(AuthorMixin):
         """Generate an edit link for this post."""
         raise NotImplementedError
 
+    def __repr__(self):
+        return f'<{type(self).__name__} "{self.id} {self.title}">'
+
     @property
     def type(self):
         """Expose what type of post this is to the wider world."""
         return type(self).__name__.lower()
+
+    @hybrid_property
+    def sort_title(self):
+        return self.title.lstrip(' The').lstrip('A ').lstrip('An ')
+
+    @sort_title.expression
+    def title_sort(cls):
+        return func.ltrim(func.ltrim(func.ltrim(cls.title, 'The '), 'A '), 'An ')
 
     @cached_property
     def body_html(self):
@@ -670,6 +684,7 @@ class Review(
     ]
 
     book_author = db.Column(db.String(255), nullable=False)
+    book_author_sort = db.Column(db.String)
     book_cover = db.Column(db.String(255))
     book_id = db.Column(db.String(255))  # ISBN or ASIN
 

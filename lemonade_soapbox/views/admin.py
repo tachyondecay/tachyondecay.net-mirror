@@ -303,11 +303,9 @@ def edit_review(id, revision_id):
         redirect_url = None
         # Save a copy of the original body before we overwrite it
         old_body = review.body
-        old_handle = review.handle
+
         form.populate_obj(review)
-        if old_handle != review.handle and not (
-            form.handle.data and review.unique_check(review.handle)
-        ):
+        if not review.handle:
             review.handle = review.slugify(review.short_title)
 
         #

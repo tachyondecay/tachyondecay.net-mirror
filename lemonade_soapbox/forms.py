@@ -141,6 +141,16 @@ class ArticleForm(ModelForm):
     drafts = SubmitField('Unpublish', widget=ButtonWidget())
 
 
+def validate_book_author_sort(form, field):
+    if not field.data:
+        fullname = form.book_author.data.split()
+        current_app.logger.debug(fullname)
+        if len(fullname) > 1:
+            field.data = fullname[-1] + ', ' + ' '.join(fullname[0:-1])
+        else:
+            field.data = fullname[0]
+
+
 class ReviewForm(ModelForm):
     class Meta:
         model = Review
@@ -151,6 +161,7 @@ class ReviewForm(ModelForm):
             'summary',
             'handle',
             'book_author',
+            'book_author_sort',
             'title',
             'book_id',
             'goodreads_id',
@@ -159,6 +170,9 @@ class ReviewForm(ModelForm):
             'spoilers',
         ]
 
+    book_author_sort = StringField(
+        'Author (Sort by)', validators=[validate_book_author_sort]
+    )
     dates_read = StringField('Dates Read')
 
     date_published = DateTimeLocalField(
