@@ -992,7 +992,22 @@ input[type=time] {
   background-image: url("/assets/images/icons/sprite--756a73.svg");
   font-size: 1.2em;
 }
+.dashboard-report ._info {
+  font-size: 0.75rem;
+  line-height: calc(var(--baseline) * 0.75 * 1rem);
+  text-align: right;
+  min-width: 6em;
+}
 
+@media (min-width: 46.25em) {
+  #wip {
+    grid-column: content-start/span 4;
+  }
+
+  #scheduled {
+    grid-column: span 4/content-end;
+  }
+}
 /* ==========================================================================
    #ICON CLASSES
    ========================================================================== */

@@ -1,6 +1,7 @@
 import base64
 import os
 import random
+from datetime import datetime
 from flask import (
     abort,
     Blueprint,
@@ -18,7 +19,7 @@ from lemonade_soapbox import db
 from lemonade_soapbox.forms import ArticleForm, ReviewForm, SignInForm
 from lemonade_soapbox.models import Article, Review
 from lemonade_soapbox.models.users import User
-from sqlalchemy import func
+from sqlalchemy import and_, func
 from werkzeug.utils import secure_filename
 from whoosh.query import Term as whoosh_term, Or as whoosh_or
 
@@ -114,22 +115,36 @@ def index():
         for post_class in [Article, Review]
     }
 
-    # Fetch drafts
+    # Fetch drafts and upcoming posts
     drafts = []
+    scheduled = []
     for post_class in [Article, Review]:
         drafts.extend(
             post_class.query.filter_by(status='draft')
             .order_by(post_class.date_updated)
-            .limit(5)
+            .limit(10)
+            .all()
+        )
+        scheduled.extend(
+            post_class.query.filter(
+                and_(
+                    post_class.status == 'published',
+                    post_class.date_published > datetime.utcnow(),
+                )
+            )
+            .order_by(post_class.date_published)
+            .limit(10)
             .all()
         )
     drafts.sort(key=lambda x: x.date_updated, reverse=True)
+    drafts.sort(key=lambda x: x.date_published)
 
     return render_template(
         'admin/views/index.html',
         drafts=drafts,
         page_title=page_title,
         published=published_count,
+        scheduled=scheduled,
         subtitle='Lemonade Soapbox Dashboard',
     )
 

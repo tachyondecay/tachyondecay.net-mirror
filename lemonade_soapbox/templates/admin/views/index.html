@@ -16,7 +16,7 @@
 {% endif %}
 
 {% if drafts %}
-<div class="dashboard-card">
+<div class="dashboard-card" id="wip">
     <h3 class="title">Works in Progress</h3>
     <p>Here's a few things you've been working on!</p>
     <table class="dashboard-report">
@@ -30,6 +30,27 @@
         <tr class="row -{{d.type}}">
             <th scope="row" class="_left"><span class="i--{{ 'book' if d.type == 'review' else 'newspaper' }} icon"></span> <a href="{{ d.get_editlink() }}">{{ d.title }}</a></th>
             <td class="_info">{{ d.date_updated.humanize() }}</td>
+        </tr>
+    {% endfor %}
+    </table>
+</div>
+{% endif %}
+
+{% if scheduled %}
+<div class="dashboard-card" id="scheduled">
+    <h3 class="title">Scheduled Posts</h3>
+    <p>Here's what you scheduled to be published in the future!</p>
+    <table class="dashboard-report">
+    <thead>
+        <tr class="header _hide">
+            <th scope="col">Title</th>
+            <th scope="col">Last Updated</th>
+        </tr>
+    </thead>
+    {% for d in scheduled %}
+        <tr class="row -{{d.type}}">
+            <th scope="row" class="_left"><span class="i--{{ 'book' if d.type == 'review' else 'newspaper' }} icon"></span> <a href="{{ d.get_editlink() }}">{{ d.title }}</a></th>
+            <td class="_info">{{ d.date_published.to(config['TIMEZONE']).format('MMM DD [at] h:MM a') }}</td>
         </tr>
     {% endfor %}
     </table>

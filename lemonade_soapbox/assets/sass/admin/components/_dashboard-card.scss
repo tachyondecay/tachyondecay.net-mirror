@@ -48,4 +48,21 @@
     @include sprite-image($purple-grey);
     font-size: 1.2em;
   }
+
+  ._info {
+    font-size: 0.75rem;
+    line-height: rvr(0.75);
+    text-align: right;
+    min-width: 6em;
+  }
+}
+
+@include mq($from: tablet) {
+  #wip {
+    grid-column: content-start / span 4;
+  }
+
+  #scheduled {
+    grid-column: span 4 / content-end;
+  }
 }
