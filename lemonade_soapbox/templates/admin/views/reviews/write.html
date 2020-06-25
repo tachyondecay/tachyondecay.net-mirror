@@ -1,7 +1,7 @@
 {% extends 'admin/layouts/write.html' %}
 
 {% block page_title %}
-{% if post.title %}Editing review of “{{ post.title }}”{% else %}Writing a new review{% endif %} {{ super() }}
+{% if post.title %}Editing review of “{{ post.short_title }}”{% else %}Writing a new review{% endif %} {{ super() }}
 {% endblock %}
 
 {% block field__title %}

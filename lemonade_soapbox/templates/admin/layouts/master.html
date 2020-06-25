@@ -23,6 +23,7 @@
         <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
         <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
         <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mustache@latest/mustache.min.js"></script>
 <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
         <script src="{{ url_for('static', filename='js/vendor/paste.js') }}"></script>
         <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
@@ -34,6 +35,17 @@
 
         <header class="page-title grid-layout -max -slim-rows" id="top">
             <nav class="site-nav grid-layout">
+                <div class="quick-search">
+                    <input type="text" class="quicksearch" id="quicksearch" placeholder="Quick post search…">
+                    <div class="results"></div>
+                    <script id="quicksearch-template" type="x-tmpl-mustache">
+                        <div class="resultitem -<%type%>">
+                            <strong><% title %></strong>
+                            <a href="<% edit %>" target="_blank" title="Edit <% type %>"><span class="i--pencil"></span></a>
+                            <a href="<% copy %>" title="Copy link"><span class="i--copy"></span></a>
+                        </div>
+                    </script>
+                </div>
                 <div class="user-greeting">
                     <img src="https://www.gravatar.com/avatar/{{ current_user.email_hash }}.jpg" alt="Gravatar">
                     <div class="name">

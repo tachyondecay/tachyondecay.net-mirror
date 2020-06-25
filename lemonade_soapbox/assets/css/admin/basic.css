@@ -293,7 +293,7 @@ summary {
  * Mixins and functions that allow us to apply a SVG sprite icon.
  * Largely cribbed from https://github.com/liquidlight/sass-gulp-svg-sprite
  */
-.notification > .dismiss {
+.site-nav > .quick-search > .results > .resultitem.-review:after, .site-nav > .quick-search > .results > .resultitem.-article:after, .notification > .dismiss {
   display: inline-block;
   background-size: 31em 21em;
 }
@@ -921,6 +921,88 @@ h4, ._h4 {
   font-size: 0.6em;
 }
 
+.site-nav > .quick-search {
+  display: none;
+  position: relative;
+}
+.site-nav > .quick-search > .quicksearch {
+  padding: var(--unit-small) 0;
+  width: 100%;
+  opacity: 0.5;
+}
+.site-nav > .quick-search > .quicksearch:focus {
+  opacity: 0.85;
+}
+.site-nav > .quick-search > .results {
+  display: none;
+}
+.site-nav > .quick-search > .results.-display {
+  display: block;
+  position: absolute;
+  top: calc(100% - 0.5em);
+  max-height: 50vh;
+  overflow: scroll;
+  width: 100%;
+  z-index: 10;
+  background: #eff2f3;
+  border-color: #4b7c91;
+  border-width: 0 1px 1px 1px;
+  border-style: solid;
+  box-shadow: 3px 3px 5px 5px rgba(0, 0, 0, 0.5);
+  color: #393b3c;
+}
+.site-nav > .quick-search > .results > .resultitem {
+  display: flex;
+  align-items: center;
+  transition: none;
+}
+.site-nav > .quick-search > .results > .resultitem:hover {
+  background-color: #cdd9de;
+}
+.site-nav > .quick-search > .results > .resultitem:after {
+  content: "";
+  padding-right: var(--unit-tiny);
+  font-size: 1.25em;
+}
+.site-nav > .quick-search > .results > .resultitem.-article:after {
+  background-image: url("/assets/images/icons/sprite--000000.svg");
+  width: 1.0625em;
+  height: 1.0625em;
+  background-position: -2em 0em;
+  background-image: url("/assets/images/icons/sprite--657177.svg");
+}
+.site-nav > .quick-search > .results > .resultitem.-review:after {
+  background-image: url("/assets/images/icons/sprite--000000.svg");
+  width: 1.0625em;
+  height: 1.0625em;
+  background-position: -24em 0em;
+  background-image: url("/assets/images/icons/sprite--657177.svg");
+}
+.site-nav > .quick-search > .results strong {
+  flex: 1;
+  font-family: Fjalla One, Verdana, sans-serif;
+  font-size: 0.75rem;
+}
+.site-nav > .quick-search > .results strong, .site-nav > .quick-search a {
+  padding: var(--unit-tiny);
+}
+.site-nav > .quick-search > .results > .resultitem a {
+  color: #6c9e5b;
+  opacity: 0;
+  outline: 0;
+}
+.site-nav > .quick-search > .results > .resultitem:hover a {
+  opacity: 1;
+}
+@media (min-width: 61.25em) {
+  .site-nav > .quick-search {
+    display: flex;
+    align-items: center;
+    grid-column: 5/7;
+    grid-row: 1;
+  }
+}
+
 .site-nav > .user-greeting {
   margin-bottom: -1rem;
   padding-bottom: var(--unit-small);
@@ -1052,6 +1134,11 @@ h4, ._h4 {
 @media (min-width: 46.25em) {
   .site-nav > .navlist {
     grid-column: content-start/span 6;
+  }
+}
+@media (min-width: 46.25em) {
+  .site-nav > .navlist {
+    grid-column: content-start/span 4;
   }
 }
 @media (hover: hover) {

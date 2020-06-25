@@ -274,6 +274,67 @@ function BackendInit() {
             }
         });
     }
+
+    /*
+     * Quick search for posts to edit or copy view link
+     */
+    Mustache.tags = ['<%', '%>'];
+    const quicksearch = document.getElementById('quicksearch');
+    const container = quicksearch.nextElementSibling;
+    document.addEventListener('click', e => {
+        if(!container.contains(e.target)) {
+            container.classList.remove('-display');
+        }
+    });
+    container.addEventListener('click', e => {
+        if(e.target.parentNode.title == 'Copy link') {
+            e.preventDefault();
+            navigator.clipboard.writeText(e.target.parentNode.href);
+            e.target.classList = 'i--checkmark';
+            const copied = document.createElement('span');
+            copied.innerText = 'Copied';
+            copied.style.fontSize = '0.75em';
+            copied.style.transition = 'all 300ms ease-in-out';
+            e.target.parentNode.append(copied);
+            window.setTimeout(() => { 
+                copied.style.opacity = 0; 
+                window.setTimeout(() => {
+                    copied.style.display = 'none';
+                    e.target.classList = 'i--copy';
+                }, 400);
+            }, 2000);
+        }
+    });
+    quicksearch.addEventListener('keydown', e => {
+        if(e.key == "Enter") {
+            e.preventDefault();
+            quicksearch.value = quicksearch.value.trim();
+            if(quicksearch.value) {
+                fetch('/api/posts/search/?q=' + quicksearch.value)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data);
+                        container.textContent = '';
+                        if(data.length > 0) {
+                            data.forEach(item => {
+                                const result = Mustache.render(
+                                    document.getElementById('quicksearch-template').innerHTML, 
+                                    item
+                                );
+                                container.innerHTML += result;
+                            });
+                        } else {
+                            container.textContent = 'No results found.';
+                        }
+                        container.classList.add('-display');
+                        container.focus();
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    });
+            }
+        }
+    });
 }
 
 
@@ -324,8 +385,32 @@ var PostForm = function(form) {
                         text = text.replaceAll(item[0], item[1]);
                     });
 
-                    text += '\r\n<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/"><img alt="Creative Commons BY-NC License" width="88" height="31" src="http://i.creativecommons.org/l/by-nc/4.0/88x31.png" /></a>';
-                    navigator.clipboard.writeText(text);
+                    // Get anything that might be a link to another review
+                    const review_links = text.matchAll(/href="\/(\S+)\/+"/g);
+                    let q = '';
+                    for(const link of review_links) {
+                        q += '&q=' + link[1];
+                    }
+                    if(q) {
+                        fetch('/api/posts/goodreads-link/?' + q)
+                            .then(response => response.json())
+                            .then(data => {
+                                if(data) {
+                                    console.log(data);
+                                    data.forEach(link => {
+                                        text = text.replace(
+                                            '/' + link[0],
+                                            'https://www.goodreads.com/review/show/' + link[1]
+                                        );
+                                    });
+                                }
+                                text += '\n<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/"><img alt="Creative Commons BY-NC License" width="88" height="31" src="http://i.creativecommons.org/l/by-nc/4.0/88x31.png" /></a>';
+                                navigator.clipboard.writeText(text);
+                            })
+                            .catch(error => {
+                                console.log(error);
+                            });
+                    }
                     return;
                 },
                 className: 'fa fa-copy',

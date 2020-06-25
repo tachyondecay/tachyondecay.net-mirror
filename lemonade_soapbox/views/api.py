@@ -64,6 +64,44 @@ def autosave():
         )
 
 
+@bp.route('/posts/goodreads-link/')
+@login_required
+def goodreads_link():
+    """Given a review handle, return the Goodreads ID."""
+    if q := request.args.getlist('q'):
+        reviews = (
+            db.session.query(Review.handle, Review.goodreads_id)
+            .filter(Review.handle.in_(q))
+            .all()
+        )
+        return jsonify(reviews)
+    return jsonify('')
+
+
+@bp.route('/posts/search/')
+@login_required
+def posts_lookup():
+    """Quick lookup of post by title."""
+    data = "No results found."
+    if term := request.args.get('q'):
+        articles = Article.query.filter(Article.title.like(f'%{term}%')).all()
+        reviews = Review.query.filter(Review.title.like(f'%{term}%')).all()
+        posts = articles + reviews
+        posts.sort(key=lambda x: x.title)
+
+        data = [
+            {
+                "type": post.type,
+                "title": getattr(post, 'short_title', post.title),
+                "edit": post.get_editlink(),
+                "copy": post.get_permalink(),
+            }
+            for post in posts
+        ]
+
+    return jsonify(data)
+
+
 @bp.route('/tags/search/')
 @login_required
 def tags_lookup():
