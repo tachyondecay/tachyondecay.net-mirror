@@ -304,9 +304,14 @@ def edit_review(id, revision_id):
         # Save a copy of the original body before we overwrite it
         old_body = review.body
 
-        form.populate_obj(review)
-        if not review.handle:
+        if not form.handle.data or (
+            form.handle.data != review.handle
+            and not review.unique_check(form.handle.data)
+        ):
+            form.populate_obj(review)
             review.handle = review.slugify(review.short_title)
+        else:
+            form.populate_obj(review)
 
         #
         # Book cover uploading
