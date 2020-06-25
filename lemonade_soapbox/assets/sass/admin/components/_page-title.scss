@@ -94,7 +94,7 @@
     position: absolute;
     top: calc(100% - 0.5em);
     max-height: 50vh;
-    overflow: scroll;
+    overflow-y: scroll;
     width: 100%;
     z-index: 10;
 
@@ -111,23 +111,26 @@
     align-items: center;
     transition: none;
 
+    border-bottom: 1px solid mix($blue, $snow-white, 25);
+
     &:hover {
       background-color: mix($blue, $snow-white, 25);
     }
   }
 
-  > .results > .resultitem:after {
+  > .results > .resultitem:before {
     content: '';
-    padding-right: var(--unit-tiny);
+    opacity: 0.3;
+    margin-left: var(--unit-tiny);
     font-size: 1.25em;
   }
 
-  > .results > .resultitem.-article:after {
+  > .results > .resultitem.-article:before {
     @include sprite("newspaper");
     @include sprite-image($blue-grey);
   }
 
-  > .results > .resultitem.-review:after {
+  > .results > .resultitem.-review:before {
     @include sprite("book");
     @include sprite-image($blue-grey);
   }
@@ -135,7 +138,10 @@
   > .results strong {
     flex: 1;
     font-family: $f-accent;
-    font-size: 0.75rem;
+    font-size: 0.6rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   > .results strong, a {

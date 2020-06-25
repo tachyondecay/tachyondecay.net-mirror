@@ -84,8 +84,16 @@ def posts_lookup():
     """Quick lookup of post by title."""
     data = "No results found."
     if term := request.args.get('q'):
-        articles = Article.query.filter(Article.title.like(f'%{term}%')).all()
-        reviews = Review.query.filter(Review.title.like(f'%{term}%')).all()
+        articles = (
+            Article.query.filter(Article.title.like(f'%{term}%'))
+            .order_by(Article.title_sort)
+            .all()
+        )
+        reviews = (
+            Review.query.filter(Review.title.like(f'%{term}%'))
+            .order_by(Review.title_sort)
+            .all()
+        )
         posts = articles + reviews
         posts.sort(key=lambda x: x.title)
 
@@ -93,6 +101,7 @@ def posts_lookup():
             {
                 "type": post.type,
                 "title": getattr(post, 'short_title', post.title),
+                "full_title": post.title,
                 "edit": post.get_editlink(),
                 "copy": post.get_permalink(),
             }
