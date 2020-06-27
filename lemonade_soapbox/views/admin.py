@@ -137,7 +137,7 @@ def index():
             .all()
         )
     drafts.sort(key=lambda x: x.date_updated, reverse=True)
-    drafts.sort(key=lambda x: x.date_published)
+    scheduled.sort(key=lambda x: x.date_published)
 
     return render_template(
         'admin/views/index.html',
