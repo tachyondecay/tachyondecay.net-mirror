@@ -19,10 +19,12 @@
                     <footer>
                         <dl class="details">
                             <dt class="_hide">Author</dt>
-                            <dd><a href="{{ url_for('.reviews', book_author=post.book_author) }}">{{ post.book_author }}</a></dd>
+                            <dd><a href="{{ url_for('.reviews', q='author:"' ~ post.book_author ~ '"') }}">{{ post.book_author }}</a></dd>
 
+                            {% if post.date_finished %}
                             <dt>Finished</dt>
                             <dd><time datetime="{{ post.date_finished.format('YYYY-MM-DD') }}">{{ post.date_finished.format('MMM DD, YYYY') }}</time></dd>
+                            {% endif %}
 
                             <dt class="_hide">Rating</dt>
                             <dd title="{{ post.rating ~ ' out of 5 stars' if post.rating > 0 else 'Unrated' }}">
