@@ -3,9 +3,12 @@
     <head>
         <title>{% block page_title %}{{ page_title }} | Kara Babcock{% endblock %}</title>
 
-        {% block meta_tags %}
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        <meta name="twitter:site" content="@tachyondecay">
+        <meta name="twitter:creator" content="@tachyondecay">
+        {% block meta_tags %}
         {% endblock %}
 
         {% block styles %}

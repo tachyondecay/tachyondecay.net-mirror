@@ -129,7 +129,15 @@ class TagListField(StringField):
 class ArticleForm(ModelForm):
     class Meta:
         model = Article
-        only = ['body', 'date_published', 'show_updated', 'title', 'summary', 'handle']
+        only = [
+            'body',
+            'cover',
+            'date_published',
+            'show_updated',
+            'title',
+            'summary',
+            'handle',
+        ]
 
     date_published = DateTimeLocalField(
         'Published', format='%Y-%M-%D %H:%m', validators=[validators.Optional()]
@@ -139,6 +147,13 @@ class ArticleForm(ModelForm):
     save = SubmitField('Save', widget=ButtonWidget())
     delete = SubmitField('Delete', widget=ButtonWidget())
     drafts = SubmitField('Unpublish', widget=ButtonWidget())
+    cover = FileField(
+        validators=[FileAllowed(['jpg', 'jpeg', 'png', 'gif']), validators.Optional()]
+    )
+    remove_cover = BooleanField(
+        'Remove uploaded cover', validators=[validators.Optional()]
+    )
+    pasted_cover = HiddenField(validators=[validators.Optional()])
 
 
 def validate_book_author_sort(form, field):

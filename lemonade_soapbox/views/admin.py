@@ -234,6 +234,58 @@ def edit_article(id, revision_id):
         if not form.handle.data:
             article.handle = article.slugify(article.title)
 
+        #
+        # Cover image uploading
+        #
+        # First, check if we uploaded a file the old-fashioned way
+        if form.cover.data and request.files.get(form.cover.name):
+            cover = request.files[form.book_cover.name]
+            filename = secure_filename(
+                article.handle + '-cover.' + cover.filename.rsplit('.', 1)[1].lower()
+            )
+            try:
+                cover.save(
+                    os.path.join(current_app.instance_path, 'media', 'blog', filename)
+                )
+            except Exception as e:
+                current_app.logger.warn(f'Could not upload cover image: {e}.')
+                flash(
+                    'There was a problem uploading the cover image. Try again?', 'error'
+                )
+            else:
+                article.cover = filename
+        elif form.pasted_cover.data and not form.remove_cover.data:
+            # We're uploading a pasted image, so decode the base64
+            # and see if we can save it as an image file
+            try:
+                filename = secure_filename(f'{article.handle}-cover.png')
+                current_app.logger.info('Creating new book image from pasted data.')
+                with open(
+                    os.path.join(current_app.instance_path, 'media', 'blog', filename),
+                    'wb',
+                ) as f:
+                    # Decode Base64 dataURL. The split is there to grab the
+                    # "data" portion of the dataURL
+                    f.write(base64.b64decode(form.pasted_cover.data.split(",")[1]))
+            except Exception as e:
+                current_app.logger.warn(f'Could not save cover image: {e}.')
+                flash('There was a problem uploading the cover image. Try again?')
+            else:
+                article.cover = filename
+        if article.cover and (
+            form.remove_cover.data or (article.status == 'deleted' and form.delete.data)
+        ):
+            try:
+                os.remove(
+                    os.path.join(
+                        current_app.instance_path, 'media', 'blog', article.cover,
+                    )
+                )
+                article.cover = ''
+            except Exception as e:
+                current_app.logger.warn(f'Could not delete cover image: {e}')
+                flash('Could not delete cover image.', 'error')
+
         article.new_revision(old_body)
         if form.publish.data:
             message = article.publish_post()

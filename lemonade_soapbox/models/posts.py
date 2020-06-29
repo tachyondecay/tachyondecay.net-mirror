@@ -595,6 +595,7 @@ class Article(
 
     summary = db.Column(db.Text)
     handle = db.Column(db.String(255), unique=True)
+    cover = db.Column(db.String(255))
 
     schema = Schema(
         id=ID(stored=True, unique=True),
