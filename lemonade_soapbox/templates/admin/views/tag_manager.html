@@ -1,0 +1,93 @@
+{% extends 'admin/layouts/master.html' %}
+{% from 'macros.html' import render_field, render_pagination %}
+
+{% block body_main %}
+{{ super() }}
+
+<div class="grid-layout results-grid tag-manager -max">
+{#     <div class="filter-bar">
+        <h2 class="_hide">Filter Results</h2>
+
+        <div class="filter -type">
+            <h3 class="label _h4">Post Type</h3>
+            <ul class="buttonlist">
+                {% for p in ['Article', 'Review'] %}
+                    {% set query_args = request.args.to_dict(false) %}
+                    <li>
+                        {% if p == post_type -%}
+                            {% if 'filter' in query_args %}
+                                {% set update = query_args['filter'].remove(p) %}
+                            {% else %}
+
+                            {% endif %}
+                            <a href="{{ url_for(request.endpoint, **query_args) }}" class="_button -small -active" title="Remove filter">
+                        {% else -%}
+                            {% if 'filter' in query_args %}
+                                {% set update = query_args['filter'].append(p) %}
+                            {% else %}
+                                {% set update = query_args.update({'filter': ['p']}) %}
+                            {% endif %}
+                            <a href="{{ url_for(request.endpoint, **query_args) }}" class="_button -small" title="Add filter">
+                        {% endif %}
+                            {{ p }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="filter -sort">
+            <h3 class="label _h4">Sort by</h3>
+            <select id="sort_by" data-default="label">
+                <option value="frequency">Frequency</option>
+                <option value="label">Label</option>
+            </select>
+            <div class="checkbox-toggle">
+                <input id="order" name="order" type="checkbox" value="asc">
+                <label for="order">
+                    <div class="switch" data-checked="Asc" data-unchecked="Desc"></div>
+                    <div class="labeltext"></div>
+                </label>
+            </div>
+        </div>
+
+        <div class="filter -search">
+            <input type="text" id="search-tags" placeholder="Filter by label…" class="textinput" value="{{ request.args.get('startswith', '') }}"/>
+        </div>
+    </div> #}
+
+    {% if tags and tags.pages > 1 %}
+        {{ render_pagination(tags) }}
+    {% endif %}
+
+    <section class="results-view">
+    {% if tags %}
+        <h2 class="_hide">Results</h2>
+
+        <div class="tag-display">
+        {% for tag in tags.items %}
+        <div class="tag-item">
+            <span class="label" data-oldlabel="{{ tag['Tag'].label}}">{{ tag['Tag'].label }}</span>
+
+            {% if 'Article' in post_types %}
+            <a href="{{ url_for('.blog', q='tags:"' ~ tag['Tag'].label ~ '"') }}" class="count -article i-before--newspaper" title="{{ tag['article_count'] }} articles">{{ tag['article_count'] }}</a>
+            {% endif %}
+
+            {% if 'Review' in post_types %}
+            <a href="{{ url_for('.reviews', q='tags:"' ~ tag['Tag'].label ~ '"') }}" class="count -review i-before--book" title="{{ tag['review_count'] }} reviews">{{ tag['review_count'] }}</a>
+            {% endif %}
+        </div>
+        {% endfor %}
+        </div>
+
+    {% else %}
+        <div class="noresults">No results found for the selected criteria.</div>
+    {% endif %}
+    </section>
+
+{% if tags.pages > 1 %}
+    {{ render_pagination(tags) }}
+    <p class="jumplink"><a href="#top">Back to Top</a></p>
+{% endif %}
+
+{% endblock body_main %}

@@ -10,9 +10,9 @@
     <div class="filter-bar">
         <h2 class="_hide">Filter Results</h2>
 
-        <div class="filter -status">
+        <div class="filter -type">
             <h3 class="label _h4">Status</h3>
-            <ul class="statuslist">
+            <ul class="buttonlist">
                 {% for s in status_breakdown %}
                     {% set query_args = request.args.to_dict(false) %}
                     <li>

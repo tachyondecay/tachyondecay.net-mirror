@@ -8,7 +8,7 @@ from lemonade_soapbox import db
 from lemonade_soapbox.helpers import Timer
 from markdown import markdown
 from slugify import slugify
-from sqlalchemy import asc, desc, event, func, orm
+from sqlalchemy import asc, desc, event, func, orm, text
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -886,23 +886,26 @@ class Tag(db.Model):
         self.label = label
         self.handle = self.slugify(label)
 
+    def __repr__(self):
+        return f'<Tag {self.handle}>'
+
     @classmethod
-    def frequency(cls, parent, order_by='handle', status=['published']):
+    def frequency(cls, post_types=['Article', 'Review'], status=['published']):
         """Returns tuples of tags and their frequencies."""
-        rel = tag_relationships[parent.__name__]
-        if order_by == 'count':
-            order_by = func.count().desc()
-        else:
-            order_by = cls.handle
-        return (
-            db.session.query(cls, func.count())
-            .outerjoin(
-                (rel, rel.c.tag_id == cls.id), (parent, parent.id == rel.c.post_id)
+        subqueries = [cls]
+        current_app.logger.debug(post_types)
+        for p in post_types:
+            assoc_table = tag_relationships[p]
+            q = (
+                db.session.query(func.count(assoc_table.c.post_id))
+                .select_from(assoc_table)
+                .filter(assoc_table.c.tag_id == Tag.id)
             )
-            .filter(parent.status.in_(status))
-            .group_by(cls.id)
-            .order_by(order_by)
-        )
+            if status:
+                q = q.outerjoin(globals()[p]).filter(globals()[p].status.in_(status))
+            subqueries.append(q.subquery().as_scalar().label(f'{p.lower()}_count'))
+        main_query = db.session.query(*subqueries).group_by(cls.handle)
+        return main_query
 
     @classmethod
     def slugify(cls, text):

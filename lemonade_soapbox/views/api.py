@@ -111,6 +111,44 @@ def posts_lookup():
     return jsonify(data)
 
 
+@bp.route('/tags/delete/', methods=['POST'])
+@login_required
+def tags_delete():
+    """Deletes a given tag."""
+    label = request.json.get('tag')
+    if tag := Tag.query.filter_by(label=label).first():
+        db.session.delete(tag)
+        db.session.commit()
+        return jsonify(message='Tag deleted.')
+    else:
+        return jsonify(message='No tag found.')
+
+
+@bp.route('/tags/rename/', methods=['POST'])
+@login_required
+def tags_rename():
+    """Renames a given tag."""
+    old = request.json.get('old')
+    new = request.json.get('new')
+    if tag := Tag.query.filter_by(label=old).first():
+        # Check if a tag with the new label already exists
+        if conflict := Tag.query.filter_by(label=new).first():
+            for a in tag.articles:
+                a._tags.append(conflict)
+            for r in tag.reviews:
+                r._tags.append(conflict)
+            db.session.delete(tag)
+            db.session.add(conflict)
+        else:
+            tag.label = new
+            tag.handle = tag.slugify(new)
+            db.session.add(tag)
+        db.session.commit()
+        return jsonify(message='Tag updated.')
+    else:
+        return jsonify(message='No tag found.')
+
+
 @bp.route('/tags/search/')
 @login_required
 def tags_lookup():

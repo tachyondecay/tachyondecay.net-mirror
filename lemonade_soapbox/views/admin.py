@@ -17,7 +17,7 @@ from flask_login import current_user, login_user, login_required, logout_user
 from flask_sqlalchemy import Pagination
 from lemonade_soapbox import db
 from lemonade_soapbox.forms import ArticleForm, ReviewForm, SignInForm
-from lemonade_soapbox.models import Article, Review
+from lemonade_soapbox.models import Article, Review, Tag
 from lemonade_soapbox.models.users import User
 from sqlalchemy import and_, func
 from werkzeug.utils import secure_filename
@@ -182,6 +182,34 @@ def signout():
         logout_user()
         flash('Goodbye, {}. You have been signed out.'.format(name), 'success')
     return redirect(url_for('.signin'))
+
+
+@bp.route('/tags/')
+@login_required
+def tag_manager():
+    """Bulk management of all post tags."""
+    page = request.args.get('page', 1, int)
+    sort_by = request.args.get('sort_by', 'label')
+    order = 'asc' if request.args.get('order') == 'asc' else 'desc'
+    post_types = request.args.getlist('filter') or ['Article', 'Review']
+    tags = None
+
+    tags = Tag.frequency(post_types=post_types, status=None)
+    # if sort_by == 'label':
+    #     current_app.logger.debug('Sorting by label')
+    #     tags = tags.order_by(getattr(Tag.label, order)())
+    # elif sort_by == 'frequency':
+
+    tags = tags.paginate(page=page, per_page=100)
+    tags.items = [dict(zip(i.keys(), i)) for i in tags.items]
+
+    return render_template(
+        'admin/views/tag_manager.html',
+        page_title='Tag Manager',
+        post_types=post_types,
+        subtitle=f'{tags.total} tags found',
+        tags=tags,
+    )
 
 
 #

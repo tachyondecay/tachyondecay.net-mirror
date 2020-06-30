@@ -27,13 +27,13 @@
       flex: 1;
     }
 
-    .filter-bar > .filter.-status {
+    .filter-bar > .filter.-type {
       flex: 0 0 100%;
     }
   }
 
   @include mq($from: desktop) {
-    .filter-bar > .filter.-status {
+    .filter-bar > .filter.-type {
       flex: 1 1 0;
     }
   }
@@ -246,7 +246,7 @@
   font-size: 1em;
 }
 
-.filter > .statuslist {
+.filter > .buttonlist {
   display: flex;
   justify-content: center;
   list-style: none;

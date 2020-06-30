@@ -19,6 +19,20 @@ async function refreshCSRF() {
     }
 }
 
+function notify(message, category='') {
+    const notification = document.createElement('div');
+    notification.classList = 'notification';
+    if(category) {
+        notification.classList.add('-' + category);
+    }
+    notification.innerHTML = message;
+
+    document.body.prepend(notification);
+    window.setTimeout(() => {
+        notification.classList.add('slideUp');
+    }, 3000);
+}
+
 function BackendInit() {
     document.querySelector('body').classList.remove('no-js');
 
@@ -254,10 +268,10 @@ function BackendInit() {
             sort_order = document.getElementById('order'),
             qs = new URLSearchParams(location.search);
     if(sort_by) {
-    sort_by.addEventListener('change', function() {
-        newSearchOptions(this.id, this.value);
-    });
-        sort_by.value = qs.get('sort_by') || 'date_updated';
+        sort_by.addEventListener('change', function() {
+            newSearchOptions(this.id, this.value);
+        });
+        sort_by.value = qs.get('sort_by') || sort_by.dataset.default;
     }
     if(sort_order) {
         sort_order.addEventListener('change', function() {
@@ -335,6 +349,70 @@ function BackendInit() {
             }
         }
     });
+
+
+    const tag_manager = document.querySelector('.tag-display');
+    if(tag_manager) {
+        Array.from(tag_manager.children).forEach(tag => {
+            const label = tag.querySelector('.label');
+            label.addEventListener('click', e => {
+                label.setAttribute('contentEditable', true);
+            });
+            label.addEventListener('keydown', e => {
+                if(e.key == 'Enter') {
+                    e.preventDefault();
+                    label.blur();
+                }
+            });
+            label.addEventListener('blur', e => {
+                label.removeAttribute('contentEditable');
+                fetch('/api/tags/rename/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrf_token
+                    },
+                    body: JSON.stringify({
+                        'old': label.dataset.oldlabel,
+                        'new': label.innerText
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    label.dataset.oldlabel = label.innerText;
+                    notify('Tag updated.', 'success');
+                    console.log(data.message)
+                })
+                .catch(error => {
+                    notify(error.message, 'error');
+                });
+            });
+
+
+            const del = document.createElement('a');
+            del.classList = 'delete i-before--bin';
+            del.innerText = '';
+            del.addEventListener('click', e => {
+                fetch('/api/tags/delete/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrf_token
+                    },
+                    body: JSON.stringify({'tag': label.innerText})
+                })
+                .then(response => response.json())
+                .then(data => {
+                    tag.remove();
+                    notify('Tag deleted.', 'removed');
+                })
+                .catch(error => {
+                    notify(error.message, 'error');
+                });
+            })
+            tag.append(del);
+        });
+    }
 }
 
 
