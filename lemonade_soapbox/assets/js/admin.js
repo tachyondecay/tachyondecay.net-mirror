@@ -448,8 +448,6 @@ var PostForm = function(form) {
                 action: function(editor) {
                     let text = editor.markdown(editor.value());
                     const replacements = [
-                        ['<cite>', '<em>'],
-                        ['</cite>', '</em>'],
                         ['<ol>', ''],
                         ['</ol>', '\r\n'],
                         ['<p>', ''],
@@ -464,7 +462,7 @@ var PostForm = function(form) {
                     });
 
                     // Get anything that might be a link to another review
-                    const review_links = text.matchAll(/href="\/(\S+)\/+"/g);
+                    const review_links = text.matchAll(/href="\/(\S+)\/?"/g);
                     let q = '';
                     for(const link of review_links) {
                         q += '&q=' + link[1];
@@ -488,8 +486,10 @@ var PostForm = function(form) {
                             .catch(error => {
                                 console.log(error);
                             });
+                    } else {
+                        navigator.clipboard.writeText(text);
                     }
-                    return;
+                    notify('Review copied to clipboard.', 'success')
                 },
                 className: 'fa fa-copy',
                 title: 'Copy for Goodreads'
