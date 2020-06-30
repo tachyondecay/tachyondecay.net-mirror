@@ -276,6 +276,7 @@ class TagMixin:
         return db.relationship(
             'Tag',
             secondary=tag_relationships[cls.__name__],
+            sync_backref=False,
             backref=db.backref(cls.__tablename__, lazy='dynamic', viewonly=True),
         )
 
