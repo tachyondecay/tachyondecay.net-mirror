@@ -19,7 +19,7 @@
                     <footer>
                         <dl class="details">
                             <dt class="_hide">Author</dt>
-                            <dd><a href="{{ url_for('.reviews', q='author:"' ~ post.book_author ~ '"') }}">{{ post.book_author }}</a></dd>
+                            <dd><a href="{{ url_for('.reviews', q='book_author:"' ~ post.book_author ~ '"') }}">{{ post.book_author }}</a></dd>
 
                             {% if post.date_finished %}
                             <dt>Finished</dt>
