@@ -105,14 +105,16 @@ $colours: (
 }
 
 
+html, body {
+  font-size: 16px;
+  line-height: 1.4;
+}
 body {
   margin: 0 auto;
 
   color: hsl(var(--grey-900));
 
   font-family: Garamond, serif;
-  font-size: 16px;
-  line-height: 1.4;
 }
 
 h1, h2, h3, h4, h5, h6,
@@ -206,6 +208,12 @@ section{
   flex-flow: row;
   align-items: center;
   justify-content: center;
+
+  margin: 1.5em 0;
+
+  &:first-of-type {
+    margin-top: 0;
+  }
 }
 
 .shade {
@@ -237,6 +245,10 @@ section{
 }
 
 @media (min-width: 740px) {
+  html, body {
+    font-size: 18px;
+  }
+
   .columns {
     flex-flow: row;
     justify-content: space-around;
