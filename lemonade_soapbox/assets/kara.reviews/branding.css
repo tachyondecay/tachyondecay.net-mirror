@@ -1,0 +1,424 @@
+:root {
+  --red-900: 0, 75%, 15%;
+  --red-800: 0, 65%, 25%;
+  --red-700: 0, 65%, 30%;
+  --red-600: 0, 60%, 35%;
+  --red-500: 0, 60%, 40%;
+  --red-400: 0, 60%, 60%;
+  --red-300: 0, 50%, 75%;
+  --red-200: 0, 45%, 80%;
+  --red-100: 0, 40%, 90%;
+  --grey-900: 0, 5%, 10%;
+  --grey-800: 0, 5%, 22%;
+  --grey-700: 0, 5%, 35%;
+  --grey-600: 0, 5%, 45%;
+  --grey-500: 0, 5%, 55%;
+  --grey-400: 0, 5%, 65%;
+  --grey-300: 0, 5%, 75%;
+  --grey-200: 0, 5%, 85%;
+  --grey-100: 0, 5%, 97%;
+  --gold-900: 33, 62%, 20%;
+  --gold-800: 33, 62%, 28%;
+  --gold-700: 33, 62%, 37%;
+  --gold-600: 33, 62%, 45%;
+  --gold-500: 33, 62%, 55%;
+  --gold-400: 33, 62%, 65%;
+  --gold-300: 33, 62%, 78%;
+  --gold-200: 33, 62%, 85%;
+  --gold-100: 33, 62%, 92%;
+  --purple-900: 320, 50%, 20%;
+  --purple-800: 320, 55%, 25%;
+  --purple-700: 320, 60%, 25%;
+  --purple-600: 320, 60%, 33%;
+  --purple-500: 320, 71%, 33%;
+  --purple-400: 320, 40%, 50%;
+  --purple-300: 320, 40%, 60%;
+  --purple-200: 320, 25%, 70%;
+  --purple-100: 320, 10%, 90%;
+  --blue-900: 219, 70%, 20%;
+  --blue-800: 219, 65%, 22%;
+  --blue-700: 219, 60%, 25%;
+  --blue-600: 219, 50%, 28%;
+  --blue-500: 219, 50%, 32%;
+  --blue-400: 219, 50%, 40%;
+  --blue-300: 219, 40%, 60%;
+  --blue-200: 219, 35%, 70%;
+  --blue-100: 219, 30%, 80%;
+  --green-900: 90, 30%, 20%;
+  --green-800: 90, 27%, 30%;
+  --green-700: 90, 27%, 35%;
+  --green-600: 90, 25%, 40%;
+  --green-500: 90, 25%, 50%;
+  --green-400: 90, 25%, 55%;
+  --green-300: 90, 22%, 60%;
+  --green-200: 90, 22%, 70%;
+  --green-100: 90, 18%, 80%;
+}
+
+.-primary-red .shade.-s900 {
+  background-color: hsl(var(--red-900));
+}
+
+.-primary-red .shade.-s800 {
+  background-color: hsl(var(--red-800));
+}
+
+.-primary-red .shade.-s700 {
+  background-color: hsl(var(--red-700));
+}
+
+.-primary-red .shade.-s600 {
+  background-color: hsl(var(--red-600));
+}
+
+.-primary-red .shade.-s500 {
+  background-color: hsl(var(--red-500));
+  height: 2.5em;
+  width: 2.5em;
+}
+
+.-primary-red .shade.-s400 {
+  background-color: hsl(var(--red-400));
+}
+
+.-primary-red .shade.-s300 {
+  background-color: hsl(var(--red-300));
+}
+
+.-primary-red .shade.-s200 {
+  background-color: hsl(var(--red-200));
+}
+
+.-primary-red .shade.-s100 {
+  background-color: hsl(var(--red-100));
+}
+
+.-neutral-grey .shade.-s900 {
+  background-color: hsl(var(--grey-900));
+}
+
+.-neutral-grey .shade.-s800 {
+  background-color: hsl(var(--grey-800));
+}
+
+.-neutral-grey .shade.-s700 {
+  background-color: hsl(var(--grey-700));
+}
+
+.-neutral-grey .shade.-s600 {
+  background-color: hsl(var(--grey-600));
+}
+
+.-neutral-grey .shade.-s500 {
+  background-color: hsl(var(--grey-500));
+  height: 2.5em;
+  width: 2.5em;
+}
+
+.-neutral-grey .shade.-s400 {
+  background-color: hsl(var(--grey-400));
+}
+
+.-neutral-grey .shade.-s300 {
+  background-color: hsl(var(--grey-300));
+}
+
+.-neutral-grey .shade.-s200 {
+  background-color: hsl(var(--grey-200));
+}
+
+.-neutral-grey .shade.-s100 {
+  background-color: hsl(var(--grey-100));
+}
+
+.-accents-gold .shade.-s900 {
+  background-color: hsl(var(--gold-900));
+}
+
+.-accents-gold .shade.-s800 {
+  background-color: hsl(var(--gold-800));
+}
+
+.-accents-gold .shade.-s700 {
+  background-color: hsl(var(--gold-700));
+}
+
+.-accents-gold .shade.-s600 {
+  background-color: hsl(var(--gold-600));
+}
+
+.-accents-gold .shade.-s500 {
+  background-color: hsl(var(--gold-500));
+  height: 2.5em;
+  width: 2.5em;
+}
+
+.-accents-gold .shade.-s400 {
+  background-color: hsl(var(--gold-400));
+}
+
+.-accents-gold .shade.-s300 {
+  background-color: hsl(var(--gold-300));
+}
+
+.-accents-gold .shade.-s200 {
+  background-color: hsl(var(--gold-200));
+}
+
+.-accents-gold .shade.-s100 {
+  background-color: hsl(var(--gold-100));
+}
+
+.-accents-purple .shade.-s900 {
+  background-color: hsl(var(--purple-900));
+}
+
+.-accents-purple .shade.-s800 {
+  background-color: hsl(var(--purple-800));
+}
+
+.-accents-purple .shade.-s700 {
+  background-color: hsl(var(--purple-700));
+}
+
+.-accents-purple .shade.-s600 {
+  background-color: hsl(var(--purple-600));
+}
+
+.-accents-purple .shade.-s500 {
+  background-color: hsl(var(--purple-500));
+  height: 2.5em;
+  width: 2.5em;
+}
+
+.-accents-purple .shade.-s400 {
+  background-color: hsl(var(--purple-400));
+}
+
+.-accents-purple .shade.-s300 {
+  background-color: hsl(var(--purple-300));
+}
+
+.-accents-purple .shade.-s200 {
+  background-color: hsl(var(--purple-200));
+}
+
+.-accents-purple .shade.-s100 {
+  background-color: hsl(var(--purple-100));
+}
+
+.-accents-blue .shade.-s900 {
+  background-color: hsl(var(--blue-900));
+}
+
+.-accents-blue .shade.-s800 {
+  background-color: hsl(var(--blue-800));
+}
+
+.-accents-blue .shade.-s700 {
+  background-color: hsl(var(--blue-700));
+}
+
+.-accents-blue .shade.-s600 {
+  background-color: hsl(var(--blue-600));
+}
+
+.-accents-blue .shade.-s500 {
+  background-color: hsl(var(--blue-500));
+  height: 2.5em;
+  width: 2.5em;
+}
+
+.-accents-blue .shade.-s400 {
+  background-color: hsl(var(--blue-400));
+}
+
+.-accents-blue .shade.-s300 {
+  background-color: hsl(var(--blue-300));
+}
+
+.-accents-blue .shade.-s200 {
+  background-color: hsl(var(--blue-200));
+}
+
+.-accents-blue .shade.-s100 {
+  background-color: hsl(var(--blue-100));
+}
+
+.-accents-green .shade.-s900 {
+  background-color: hsl(var(--green-900));
+}
+
+.-accents-green .shade.-s800 {
+  background-color: hsl(var(--green-800));
+}
+
+.-accents-green .shade.-s700 {
+  background-color: hsl(var(--green-700));
+}
+
+.-accents-green .shade.-s600 {
+  background-color: hsl(var(--green-600));
+}
+
+.-accents-green .shade.-s500 {
+  background-color: hsl(var(--green-500));
+  height: 2.5em;
+  width: 2.5em;
+}
+
+.-accents-green .shade.-s400 {
+  background-color: hsl(var(--green-400));
+}
+
+.-accents-green .shade.-s300 {
+  background-color: hsl(var(--green-300));
+}
+
+.-accents-green .shade.-s200 {
+  background-color: hsl(var(--green-200));
+}
+
+.-accents-green .shade.-s100 {
+  background-color: hsl(var(--green-100));
+}
+
+body {
+  margin: 0 auto;
+  color: hsl(var(--grey-900));
+  font-family: Garamond, serif;
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+h1, h2, h3, h4, h5, h6,
+._h2, ._h3, ._h4 {
+  color: hsl(var(--red-700));
+  font-family: Oswald;
+}
+
+header {
+  padding: 2em 0 2em;
+  background: hsl(var(--purple-100));
+  text-align: center;
+}
+
+h1 {
+  display: inline-block;
+  margin: 0 auto;
+  /*max-width: 60em;*/
+  color: hsl(var(--red-900));
+  font-size: 3.5rem;
+  font-variant: small-caps;
+  text-align: center;
+  text-shadow: 1px 1px 5px hsla(var(--grey-700), 0.5);
+}
+
+h2, ._h2 {
+  margin: 1rem 1rem;
+  font-size: 2.5rem;
+  line-height: 1.2;
+  font-weight: 700;
+}
+
+h3, ._h3 {
+  margin: 1rem 1rem;
+  font-size: 1.6rem;
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+h4, ._h4 {
+  color: hsl(var(--grey-900));
+  margin: 0.25rem 1rem;
+  font-size: 1.3rem;
+  line-height: 1.2;
+}
+
+img {
+  align-self: center;
+  max-height: 20vh;
+  max-width: 100%;
+  margin: 10vh auto;
+}
+
+section {
+  padding: 2em calc(50vw - 30rem);
+}
+section:nth-child(2n) {
+  background-color: hsl(var(--grey-100));
+}
+
+.columns {
+  display: flex;
+  flex-flow: column;
+  margin: 1em auto;
+}
+
+.colour-palette {
+  border-top: 2px solid hsl(var(--grey-200));
+}
+
+.columns > h3 {
+  flex: 1;
+}
+
+.columns.-logo > h3 {
+  flex: 1 0 100%;
+  text-align: center;
+}
+
+.swatches {
+  flex: 2 0 0;
+}
+
+.swatch {
+  display: flex;
+  flex-flow: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.shade {
+  margin: 0.5em;
+  height: 2em;
+  width: 2em;
+  background-color: aliceblue;
+  box-shadow: 3px 3px 8px 0 hsla(var(--grey-700), 0.5);
+  border-radius: 2px;
+}
+
+.headings {
+  flex: 1;
+}
+
+.body {
+  flex: 2;
+}
+
+.body p {
+  margin: 1.5rem 1rem;
+  font-size: 1.3rem;
+}
+
+.body ._accent {
+  color: hsl(var(--grey-600));
+  font-size: 1rem;
+}
+
+@media (min-width: 740px) {
+  .columns {
+    flex-flow: row;
+    justify-content: space-around;
+  }
+
+  .-logo {
+    flex-wrap: wrap;
+  }
+
+  .swatches {
+    margin-top: 1em;
+  }
+}
+
+/*# sourceMappingURL=branding.css.map */
