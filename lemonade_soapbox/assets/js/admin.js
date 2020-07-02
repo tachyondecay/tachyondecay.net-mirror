@@ -462,7 +462,7 @@ var PostForm = function(form) {
                     });
 
                     // Get anything that might be a link to another review
-                    const review_links = text.matchAll(/href="\/(\S+)\/?"/g);
+                    const review_links = text.matchAll(/href="\/([^/]+)\/?"/g);
                     let q = '';
                     for(const link of review_links) {
                         q += '&q=' + link[1];
