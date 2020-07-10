@@ -4,4 +4,4 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 
 load_dotenv()  # Load environment vars
 app = create_app()
-app = ProxyFix(app)
+app.wsgi_app = ProxyFix(app.wsgi_app)
