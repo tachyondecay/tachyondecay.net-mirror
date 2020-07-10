@@ -89,7 +89,7 @@
         <p class="disclaimer -date"><strong>This review was published over 3 years ago.</strong> Some of its information or my opinions might be out of date.</p>
         {% endif %}
 
-        {% if review.status == "published" and review.date_published < config['TRANS_DATE'] %}
+        {% if review.status == "published" and review.date_published < arrow.get(config.TRANS_DATE) %}
         <p class="disclaimer -transition">I wrote this before <a href="/about/#trans"><strong>I came out as transgender</strong></a>.</p>
         {% endif %}
 

@@ -1,4 +1,3 @@
-import arrow
 import logging.config
 import os
 from lemonade_soapbox.logging_config import logging_config
@@ -18,7 +17,6 @@ class Config:
     LOGIN_TOKEN_EXPIRY = 1500
     REVISION_THRESHOLD = 0.25
     TIMEZONE = 'UTC'
-    TRANS_DATE = arrow.get('2020-02-28')
 
     @classmethod
     def init_app(cls, app):
