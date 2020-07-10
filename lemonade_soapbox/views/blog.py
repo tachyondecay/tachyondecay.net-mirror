@@ -118,6 +118,8 @@ def year_archive(year):
 
 @bp.route('/<int:year>/<month>/')
 def month_archive(year, month):
+    if int(month) not in range(1, 12):
+        abort(404)
     start, end = arrow.get(year, int(month), 1).span('month')
     articles = (
         Article.published()
