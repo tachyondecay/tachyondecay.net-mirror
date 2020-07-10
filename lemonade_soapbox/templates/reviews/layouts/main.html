@@ -31,6 +31,8 @@
         {% endblock %}
 
         {% block feeds %}
+        <link rel="alternate"  href="{{ url_for('reviews.show_feed', format='rss') }}" title="All Reviews - RSS"/>
+        <link rel="alternate" href="{{ url_for('reviews.show_feed', format='atom') }}" title="All Reviews - Atom"/>
         {% endblock %}
 
         <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('.static', filename='kara.reviews/apple-touch-icon.png') }}">

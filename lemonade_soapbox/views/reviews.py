@@ -2,7 +2,16 @@ import arrow
 import os
 import random
 import re
-from flask import abort, current_app, g, redirect, render_template, request, url_for
+from flask import (
+    abort,
+    current_app,
+    g,
+    redirect,
+    render_template,
+    Response,
+    request,
+    url_for,
+)
 from flask_login import current_user
 from flask_sqlalchemy import Pagination
 from lemonade_soapbox import db
@@ -82,6 +91,20 @@ def index():
 @bp.route('/about/')
 def about():
     return render_template('reviews/about.html', page_title='About This Site')
+
+
+@bp.route('/feed/posts.<format>')
+def show_feed(format):
+    reviews = Review.published().order_by(Review.date_published.desc()).limit(10).all()
+    return Response(
+        render_template(
+            'reviews/' + format + '.xml',
+            page_title='All Reviews from Kara.Reviews',
+            reviews=reviews,
+            url=url_for('reviews.show_feed', _external=True, format=format),
+        ),
+        mimetype='application/' + format + '+xml',
+    )
 
 
 @bp.route('/random/')
@@ -172,30 +195,43 @@ def all_tags():
 
 
 @bp.route('/shelves/<handle>/')
-def show_tag(handle):
+@bp.route('/shelves/<handle>/posts.<format>')
+def show_tag(handle, format=None):
     page = request.args.get('page', 1, int)
     shelf = Tag.query.filter_by(handle=handle).first_or_404()
-    reviews = (
-        shelf.reviews.filter_by(status='published')
-        .order_by(Review.date_published.desc())
-        .paginate(page=page, per_page=50)
+    reviews = shelf.reviews.filter_by(status='published').order_by(
+        Review.date_published.desc()
     )
 
-    filename = 'susan-yin-2JIvboGLeho-unsplash.jpg'
-    if os.path.exists(
-        os.path.join(
-            current_app.static_folder, 'images/layout/header_bg', handle + '.jpg'
+    if format:
+        return Response(
+            render_template(
+                'reviews/' + format + '.xml',
+                page_title=f'Kara.Reviews: {shelf.label.title()} Books',
+                reviews=reviews.all(),
+                url=url_for(
+                    'reviews.show_tag', _external=True, handle=handle, format=format,
+                ),
+            ),
+            mimetype='application/' + format + '+xml',
         )
-    ):
-        filename = handle + '.jpg'
-
-    return render_template(
-        'reviews/views/review_list.html',
-        read_more_length=75,
-        reviews=reviews,
-        page_title=f'Books shelved under “{shelf.label.title()}”',
-        cover=url_for('.static', filename='images/layout/header_bg/' + filename,),
-    )
+    else:
+        reviews = reviews.paginate(page=page, per_page=50)
+        filename = 'susan-yin-2JIvboGLeho-unsplash.jpg'
+        if os.path.exists(
+            os.path.join(
+                current_app.static_folder, 'images/layout/header_bg', handle + '.jpg'
+            )
+        ):
+            filename = handle + '.jpg'
+        return render_template(
+            'reviews/views/review_list.html',
+            handle=handle,
+            read_more_length=75,
+            reviews=reviews,
+            page_title=f'Books shelved under “{shelf.label.title()}”',
+            cover=url_for('.static', filename='images/layout/header_bg/' + filename,),
+        )
 
 
 @bp.route('/<handle>/')

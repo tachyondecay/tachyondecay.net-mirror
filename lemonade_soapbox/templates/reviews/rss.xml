@@ -1,0 +1,36 @@
+{% from 'macros.html' import read_more %}
+<?xml version="1.0" encoding="UTF-8"?>
+
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>{{ page_title }}</title>
+		<link>{{ url_for('reviews.index', _external=True) }}</link>
+		<atom:link rel="self" href="{{ url }}" type="application/rss+xml"/>
+
+
+		<description>12 years. {{ g.total }} books. And I keep reading.</description>
+
+		<lastBuildDate>{{ reviews[0].date_updated.strftime('%a, %d %b %Y %H:%M:%S UT') }}</lastBuildDate>
+
+		{% for review in reviews %}
+		<item>
+			<link>{{ review.get_permalink(relative=False) }}</link>
+			<guid isPermaLink="true">{{ review.get_permalink(relative=False) }}</guid>
+			<title>
+				{{ review.short_title|upper }} by {{ review.book_author }}  
+				{% if review.rating > 0 %}
+				    {% for i in range(0, review.rating) %}★{% endfor %}
+				{% endif %} 
+			</title>
+
+			<pubDate>{{ review.date_published.strftime('%a, %d %b %Y %H:%M:%S UT') }}</pubDate>
+
+			<description>{{ review.summary or read_more(review.body_html, length=50, link=False)|striptags }}</description>
+
+			{% for t in review._tags|sort(attribute='handle') %}
+			<category domain="{{ url_for('.show_tag', _external=True, handle=t.handle) }}">{{ t.label }}</category>
+			{% endfor %}
+		</item>
+		{% endfor %}
+	</channel>
+</rss>

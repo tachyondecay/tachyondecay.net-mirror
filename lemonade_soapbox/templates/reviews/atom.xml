@@ -1,0 +1,45 @@
+{% from 'macros.html' import read_more %}
+<?xml version="1.0" encoding="UTF-8"?>
+
+<feed xmlns="http://www.w3.org/2005/Atom">
+	<title>{{ page_title }}</title>
+	<id>{{ url_for('reviews.index', _external=True) }}</id>
+	<subtitle>{{ config['BLOG_TAGLINE'] }}</subtitle>
+
+	<link rel="self" href="{{ url }}"/>
+	<link rel="alternate" href="{{ url_for('reviews.index', _external=True) }}"/>
+
+	<updated>{{ reviews[0].date_updated.isoformat() }}</updated>
+
+	{% for review in reviews %}
+	<entry>
+		<id>{{ review.get_permalink(False) }}</id>
+		<link rel="alternate" href="{{ review.get_permalink(False) }}"/>
+		<title>
+			{{ review.short_title|upper }} by {{ review.book_author }}  
+			{% if review.rating > 0 %}
+			    {% for i in range(0, review.rating) %}★{% endfor %}
+			{% endif %} 
+		</title>
+
+		<updated>{{ review.date_updated.isoformat() }}</updated>
+		<published>{{ review.date_published.isoformat() }}</published>
+
+		<author>
+			<name>{{ review.author.name }}</name>
+			{% if review.author.url != None %}<uri>{{ review.author.url }}</uri>{% endif %}
+			{% if review.author.email != None %}<email>{{ review.author.email }}</email>{% endif %}
+		</author>
+
+		<summary>{{ review.summary or read_more(review.body_html, length=50, link=False)|striptags }}</summary>
+
+		<content type="html">
+			{{ review.body_html|forceescape }}
+		</content>
+
+		{% for t in review._tags|sort(attribute='handle') %}
+		<category term="{{ t.handle }}" label="{{ t.label }}" scheme="{{ url_for('.all_tags', _external=True) }}"/>
+		{% endfor %}
+	</entry>
+	{% endfor %}
+</feed>

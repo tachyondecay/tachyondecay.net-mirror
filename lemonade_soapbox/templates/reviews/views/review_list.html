@@ -16,6 +16,15 @@
     {{ pagetitle(title=page_title, cover=cover, description=('No reviews found' if not reviews else reviews.total ~ " reviews found"))}}
 {% endif %}
 
+{% if request.endpoint == 'show_tag' and reviews %}
+{% block feeds %}
+    {{ super() }}
+
+    <link rel="alternate"  href="{{ url_for('reviews.show_tag', format='rss', handle=handle) }}" title="Reviews for this shelf - RSS"/>
+    <link rel="alternate" href="{{ url_for('reviews.show_tag', format='atom', handle=handle) }}" title="Reviews for this shelf - Atom"/>
+{% endblock feeds %}
+{% endif %}
+
 {% if reviews and reviews.pages > 1 %}
     {{ render_pagination(reviews) }}
 {% endif %}
