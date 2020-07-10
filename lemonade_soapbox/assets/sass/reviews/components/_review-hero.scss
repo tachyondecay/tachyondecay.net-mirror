@@ -1,0 +1,112 @@
+/**
+ * _review-hero.scss
+ *
+ * Panel with covers of recent reviews.
+ */
+
+.review-hero {
+  margin: vr(2) vr(1);
+
+  .heading {
+    margin: vr(0.5);
+  }
+}
+
+.review-hero .hero {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-around;
+
+  .subheading {
+    flex: 0 0 100%;
+    margin: 0;
+    padding: vr(0.5);
+
+    color: var(--subheading-colour);
+  }
+
+  &.-fiction {
+    --pubdate-bg: var(--red-500);
+    --pubdate-colour: var(--red-200);
+    --subheading-colour: var(--red-500);
+  }
+
+  &.-nonfiction {
+    --pubdate-bg: var(--purple-600);
+    --pubdate-colour: var(--purple-200);
+    --subheading-colour: var(--purple-500);
+  }
+}
+
+.review-hero .review {
+  margin: vr(2) auto;
+  position: relative;
+
+  .coverimg {
+    max-width: 25vmin;
+    border-radius: 0 0 $global-radius $global-radius;
+    box-shadow: 2px 2px 4px alpha("grey", "500", "0.25");
+  }
+
+  .pubdate {
+    position: absolute;
+    top: vr(-1);
+    left: 0;
+    right: 0;
+    padding: vr(0.1);
+
+    background-color: var(--pubdate-bg);
+    border-radius: $global-radius $global-radius 0 0;
+
+    color: var(--pubdate-colour);
+    font-family: $f-sans;
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  a {
+    opacity: 0.8;
+    text-decoration: none;
+    transition: $global-transition;
+  }
+
+  a:hover, a:active, a:focus {
+    opacity: 1.0;
+  }
+}
+
+@include mq($from: tablet) {
+  .review-hero {
+    .heading {
+      @include hide();
+    }
+
+    .review .coverimg {
+      max-width: 20vw;
+    }
+  }
+}
+
+@include mq($from: desktop) {
+  .review-hero > .hero {
+    &:not(:only-of-type) {
+      margin: 0 0 vr(2) 0;
+      width: 100%;
+    }
+
+    .subheading {
+      font-size: 1rem;
+    }
+  }
+
+  .review-hero .review {
+    margin: vr(1) 0;
+    .coverimg {
+      max-width: 6rem;
+    }
+
+    .pubdate {
+      font-size: 0.8rem;
+    }
+  }
+}

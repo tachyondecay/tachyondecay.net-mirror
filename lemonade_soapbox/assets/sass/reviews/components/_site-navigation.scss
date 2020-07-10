@@ -1,0 +1,112 @@
+/**
+ * _site-navigation.scss
+ *
+ * Website main navigation
+ */
+
+.site-navigation {
+  display: flex;
+  flex-flow: column;
+
+  &.-header {
+    margin-top: calc(-1 * #{vr(1.5)}); // For .sticky-jumplinks magic
+    padding-bottom: vr(0.5);
+    position: relative;
+    z-index: 10;
+  }
+
+  background: var(--grey-200);
+
+  @include mq($from: tablet) {
+    flex-flow: row wrap;
+    align-items: flex-end;
+
+    background: var(--grey-100);
+
+    &.-header {
+      padding-top: vr(1);
+    }
+
+    &.-footer {
+      margin: vr(1);
+      justify-content: center;
+    }
+  }
+
+  @include mq($from: desktop) {
+    &.-header {
+      margin-top: 0;
+    }
+
+    &.-footer {
+      margin: 0;
+    }
+
+    flex: 2 1 auto;
+    padding-right: vr(2);
+  }
+
+  @include mq($from: wide) {
+    @include max-width-container($w: 100rem, $side: "right")
+  }
+}
+
+.site-navigation > ul {
+  @include inline-list();
+  justify-content: space-around;
+
+  margin: vr(1) 0;
+
+  > li {
+    margin: vr(0.5);
+  }
+
+  @include mq($from: tablet) {
+    flex: 1 1 auto;
+    justify-content: flex-end;
+    margin: 0 vr(0.5) 0 0;
+
+    > li {
+      margin: 0;
+    }
+  }
+}
+
+.site-navigation.-footer > ul {
+  @include mq($from: tablet) {
+    justify-content: center;
+  }
+
+  @include mq($from: tablet) {
+    justify-content: flex-end;
+    margin-right: 0;
+    @include typi('small');
+  }
+}
+
+.site-navigation .navlink {
+  border-bottom: 2px solid var(--link-colour);
+  color: var(--link-colour);
+  font-family: $f-sans;
+  text-decoration: none;
+  text-transform: uppercase;
+
+  @include mq($from: tablet) {
+    margin: 0 vr(0.5);
+  }
+
+  &.-active {
+    --link-colour: var(--gold-500);
+  }
+}
+
+.site-navigation .-jumplink {
+  display: inline-block;
+  flex: 1;
+  margin: 0 auto;
+  @include typi('small');
+
+  &:after {
+    content: "↴";
+  }
+}

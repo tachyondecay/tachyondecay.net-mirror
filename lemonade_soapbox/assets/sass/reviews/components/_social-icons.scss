@@ -1,0 +1,34 @@
+/**
+ * _social-icons.scss
+ *
+ * List of social media icons.
+ */
+
+.social-icons {
+  @include inline-list($justify-content: space-around);
+  margin: vr(2) auto vr(3);
+
+  li {
+    list-style: none;
+  }
+
+  img {
+    max-width: 50px;
+  }
+}
+
+@include mq($from: tablet) {
+  .social-icons {
+    justify-content: center;
+
+    li {
+      margin: 0 vr(1);
+    }
+  }
+}
+
+@include mq($from: desktop) {
+  .social-icons {
+    justify-content: flex-start;
+  }
+}

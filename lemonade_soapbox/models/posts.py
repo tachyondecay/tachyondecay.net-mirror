@@ -743,7 +743,7 @@ class Review(
             'handle': self.handle,
             '_external': not (relative),
         }
-        return url_for(f'reviews.show_{self.status}', **kwargs)
+        return url_for(f'reviews.show_review', **kwargs)
 
     def get_editlink(self, relative=True):
         if not self.id:

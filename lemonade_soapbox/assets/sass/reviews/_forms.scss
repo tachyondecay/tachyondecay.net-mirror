@@ -1,0 +1,147 @@
+/**
+ * _forms.scss
+ *
+ * Styling for generic or base form elements
+ */
+
+fieldset {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+label, legend {
+  font-weight: bold;
+}
+
+.textinput {
+  padding: vr(0.25);
+
+  background: var(--grey-100);
+  border: 1px solid var(--grey-500);
+  border-radius: $global-radius;
+  opacity: 0.5;
+  transition: $global-transition;
+
+  font-family: $f-sans;
+
+  &:focus {
+    border-color: var(--purple-500);
+    opacity: 1.0;
+  }
+}
+
+.button {
+  --button-bg: var(--blue-300);
+  --button-border: var(--blue-300);
+  --button-colour: var(--grey-100);
+
+  cursor: pointer;
+  display: inline-block;
+  margin: 5px 0;
+  padding: vr(0.5) vr(0.5);
+
+  background: var(--button-bg);
+  border: 1px solid var(--button-border);
+  border-radius: $global-radius;
+  box-shadow: 2px 2px 5px alpha("grey", "500", "0.5");
+
+  font-family: $f-sans;
+  color: var(--button-colour);
+  letter-spacing: 1px;
+  transition: $global-transition;
+  text-decoration: none;
+
+  &:hover {
+    opacity: 0.85;
+  }
+
+  &:focus, active {
+    box-shadow: inset 2px 2px 5px alpha("grey", "500", "0.75");
+  }
+
+  > img {
+    margin-right: 5px;
+    max-height: 1.5rem;
+    vertical-align: text-bottom;
+  }
+
+  > .icon {
+    @include sprite-image($colour: "#ffffff");
+    background-repeat: none;
+    height: 1em;
+    margin: 0.25em 0.25em 0 0;
+  }
+}
+
+@each $name, $shades in $colours {
+  @each $shade, $value in $shades {
+    .button.-#{$name}-#{$shade} {
+      --button-bg: var(--#{$name}-#{$shade});
+      --button-border: var(--#{$name}-#{$shade});
+    }
+    @if $shade == '400' {
+      .button.-#{$name} {
+        --button-bg: var(--#{$name}-#{$shade});
+        --button-border: var(--#{$name}-#{$shade});
+      }
+    }
+  }
+}
+
+.form-field {
+  display: flex;
+  flex-flow: column;
+  margin: vr(2) auto vr(0.5);
+
+  font-family: $f-sans;
+
+  > label {
+    font-weight: 400;
+  }
+
+  @include mq($from: tablet) {
+    flex-flow: row wrap;
+    justify-content: center;
+    align-items: baseline;
+
+    > label {
+      margin-right: vr(0.5);
+    }
+
+    button {
+      margin-left: vr(0.5);
+    }
+  }
+}
+
+.sortby {
+  margin: vr(1) auto;
+
+  border-bottom: 4px solid var(--purple-500);
+  color: var(--purple-500);
+
+  p,
+  .jumplinks {
+    text-align: center;
+  }
+
+  .list {
+    display: inline-flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    list-style: none;
+    margin: vr(1) auto;
+    padding: 0;
+  }
+
+  .list li {
+    font-size: 1.2rem;
+    margin: 0 vr(0.5);
+  }
+
+  @include mq($from: desktop) {
+    @include max-width;
+    margin-top: vr(1);
+  }
+}

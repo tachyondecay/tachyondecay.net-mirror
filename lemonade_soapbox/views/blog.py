@@ -1,18 +1,9 @@
 import arrow
 import calendar
-
-from flask import (
-    abort,
-    Blueprint,
-    current_app,
-    g,
-    redirect,
-    render_template,
-    Response,
-    url_for,
-)
+from flask import abort, current_app, g, redirect, render_template, Response, url_for
 from flask_login import login_required
 from gettext import ngettext
+from lemonade_soapbox.helpers import Blueprint
 from lemonade_soapbox.models import Article, Tag
 
 bp = Blueprint('blog', __name__)

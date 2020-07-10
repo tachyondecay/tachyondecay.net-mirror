@@ -53,6 +53,7 @@
 
 {% macro render_pagination(pagination) %}
   {% set query_args = request.args.to_dict(false) %}
+  {% set update = query_args.update(request.view_args) %}
   <div class="pagination-links">
   {%- for page in pagination.iter_pages() %}
     {% if page %}
@@ -67,4 +68,48 @@
     {% endif %}
   {%- endfor %}
   </div>
+{% endmacro %}
+
+{% macro pagetitle(title, cover='', description='', class='') %}
+<div class="page-title header {{ class }}" style="--cover-src: url('{{ cover }}');">
+    <h2 class="title">{{ title }}</h2>
+    {% if description %}
+    <p class="description">{{ description|safe }}</p>
+    {% endif %}
+</div>
+{% endmacro %}
+
+{% macro search(class='') %}
+<div class="site-search {{ class }}">
+    <form action="{{ url_for('.search') }}">
+        <input type="search" class="textinput" name="q" placeholder="Search reviews…" value="{{ request.args.get('q', '') }}">
+        <button type="submit" value="Go" title="Search"><span class="i--search"></span></button>
+    </form>
+</div>
+{% endmacro %}
+
+{% macro time(datetime, format='YYYY-MM-DD') -%}
+<time datetime="{{ datetime.isoformat() }}">{{ datetime.to(config.TIMEZONE).format(format) }}</time>
+{%- endmacro %}
+
+{% macro time_relative(datetime, granularity='') -%}
+{% set date = datetime.to(config.TIMEZONE).humanize(granularity=granularity) %}
+<time datetime="{{ datetime.isoformat() }}">
+    {% if date == '0 days ago' %}today
+    {% elif date == '1 day ago' %}yesterday
+    {% else %}{{ date }}{% endif %}
+</time>
+{%- endmacro %}
+
+
+{% macro toc(links) %}
+<nav class="sidebar-aside" aria-label="Table of Contents">
+    <h3 class="heading">On this page…</h3>
+
+    <ol class="list">
+        {% for id, text in links.items() %}
+        <li><a href="#{{id}}" class="navlink">{{ text }}</a>
+        {% endfor %}
+    </ol>
+</nav>
 {% endmacro %}

@@ -1,0 +1,316 @@
+/**
+ * _singe-review.scss
+ *
+ * One review shown on its own page.
+ * 
+ */
+
+.header .reviewtitle {
+  margin: vr(2) vr(0.5) vr(1);
+
+  .booktitle, .bookauthor {
+    display: block;
+  }
+
+  .booktitle {
+    color: var(--red-700);
+    font-style: normal;
+
+    @include mq($from: desktop) {
+      color: var(--grey-800);
+    }
+  }
+
+  .bookauthor {
+    margin-top: 0.125rem;
+    color: var(--grey-600);
+    font-weight: 400;
+  }
+}
+
+.single-review.-has-cover .header {
+  margin-bottom: vr(2);
+  text-align: center;
+
+  .reviewtitle {
+    display: none;
+  }
+
+  .coverimg {
+    box-shadow: 2px 2px 5px alpha("grey", "500", "0.5");
+    flex: 0 0 auto;
+    width: 75vmin;
+  }
+}
+
+.review-footer {
+  padding: 0 vr(1);
+
+  color: var(--grey-600);
+  font-family: $f-sans;
+  font-weight: 400;
+
+
+  .star {
+    height: 1em !important;
+
+    @include mq($from: desktop) {
+      font-size: 1.5rem;
+    }
+  }
+
+  .star.-full {
+    @include sprite(star-full);
+  }
+
+  .star.-empty {
+    @include sprite(star-empty);
+  }
+}
+
+.review-footer .taglistlabel {
+  display: inline;
+}
+
+.review-footer .tag-list {
+  .list {
+    display: inline;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .list li {
+    display: inline;
+  }
+
+  .list li:not(:last-child):after {
+    content: ', '
+  }
+
+  .list li:last-child:after {
+    content: '.';
+  }
+
+  a {
+    color: var(--grey-600);
+  }
+
+  a:hover {
+    color: var(--purple-400);
+  }
+
+  a:focus, a:active {
+    color: var(--gold-400);
+  }
+}
+
+.single-review .content {
+  > p:first-child:first-letter {
+    padding: 0.1em 0.1em 0 0;
+    float: left;
+    font-size: vr(3);
+    line-height: vr(3);
+  }
+
+  > p:not(:first-child) {
+    text-indent: 1em;
+  }
+
+  > p:last-child:after {
+    content: '';
+    @include sprite('books');
+    margin-left: 0.25em;
+    margin-top: -0.25em;
+    vertical-align: middle;
+  }
+
+  a {
+    color: var(--grey-900);
+  }
+
+  a:hover {
+    color: var(--purple-400);
+  }
+
+  a:focus, a:active {
+    color: var(--gold-400);
+  }
+}
+
+.single-review .disclaimers {
+  .disclaimer.-spoilers {
+    color: var(--blue-700);
+  }
+}
+
+.single-review .citations {
+  details > summary {
+    font-weight: 400;
+  }
+  details > p{
+    margin-left: 1em;
+    text-indent: -1em;
+  }
+}
+
+.related-reviews .list {
+  display: flex;
+  flex-flow: row wrap;
+}
+
+.related-reviews .review {
+  img {
+    margin: 0 5px;
+    height: 150px;
+    // width: calc(33% - 10px);
+    box-shadow: 2px 2px 2px alpha("grey", "500", "0.5");
+  }
+}
+
+@include mq($from: tablet, $until: desktop) {
+  .single-review.-has-cover {
+    display: grid;
+    grid-template-areas: 
+      "cover header"
+      "cover footer"
+      "disclaimers disclaimers"
+      "body body";
+    grid-template-columns: 25% 1fr;
+    grid-template-rows: repeat(6, auto);
+    grid-column-gap: vr(2);
+
+    .header {
+      display: contents;
+      text-align: left;
+
+      .reviewtitle {
+        display: block;
+        grid-area: header;
+        margin-top: 0;
+
+        @include typi('_h3');
+      }
+
+      .coverimg {
+        grid-area: cover;
+        margin-left: vr(1);
+        width: 100%;
+      }
+    }
+
+    .review-footer {
+      grid-area: footer;
+    }
+
+    .content {
+      grid-area: body;
+    }
+
+    .sidebar-aside {
+      margin: vr(1.5) vr(1);
+      grid-column: 1 / -1;
+    }
+
+    .related-reviews {
+      grid-column: 1 / -1;
+      grid-row: -2;
+    }
+
+    .disclaimers {
+      grid-area: disclaimers;
+    }
+
+    .hero-container {
+      grid-column: 1 / -1;
+    }
+  }
+}
+
+
+@include mq($from: desktop) {
+  .single-review,
+  .single-review.-has-cover {
+    .header {
+      grid-column: 1 / -1;
+      grid-row: 1;
+
+      .reviewtitle {
+        display: block;
+        @include max-width();
+        padding-left: vr(1);
+
+        @include typi('_h1');
+        text-align: left;
+      }
+
+      .coverimg {
+        display: none;
+      }
+    }
+
+    .content {
+      grid-row: 3 / -1;
+    }
+
+    .review-footer {
+      grid-column: content;
+      grid-row: 2;
+    }
+    
+    .disclaimers {
+      margin-top: 0;
+      grid-row: 2 / 4;
+    }
+
+    .related-reviews {
+      align-self: end;
+      grid-column: sidebar;
+      grid-row: 4;
+    }
+
+    .citations {
+      align-self: end;
+      grid-row: 5;
+    }
+
+    .hero-container {
+      grid-column: content-start / sidebar-end;
+      grid-row: 6;
+    }
+  }
+
+  .single-review.-has-cover {
+    grid-template-rows: auto auto 1fr auto auto;
+
+    .header {
+      padding-top: 45vh;
+      height: 100vh;
+      position: relative;
+      z-index: 10;
+      background:
+        linear-gradient(
+          alpha("grey", "900", 0.85),
+          alpha("grey", "900", 0.65),
+        ),
+        var(--cover-src);
+      background-attachment: fixed;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+    }
+
+    .reviewtitle {
+      margin-top: 0;
+    }
+
+    .booktitle {
+      color: var(--grey-200);
+    }
+
+    .bookauthor {
+      color: var(--grey-300);
+      margin-top: vr(0.25);
+    }
+  }
+}

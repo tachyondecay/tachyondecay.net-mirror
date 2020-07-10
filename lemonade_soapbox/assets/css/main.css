@@ -641,7 +641,7 @@ figure a:not(:last-child) {
 figure img {
   box-shadow: rgba(35, 35, 35, 0.75) 0 0 10px;
 }
-@media (min-width: 81.25em) {
+@media (min-width: 61.25em) {
   figure img {
     max-width: initial;
   }
@@ -1260,7 +1260,7 @@ table {
     padding-top: 0;
   }
 }
-@media (min-width: 81.25em) {
+@media (min-width: 125em) {
   .o-grid.o-grid--flip\@wide {
     flex-flow: column wrap;
     margin-left: 0;
@@ -1305,7 +1305,7 @@ table {
     margin-top: 0;
   }
 }
-@media (min-width: 81.25em) {
+@media (min-width: 61.25em) {
   .o-site-grid .c-sidebar--left {
     order: -1;
   }
@@ -1588,7 +1588,7 @@ table {
     max-width: 100%;
   }
 }
-@media (min-width: 81.25em) {
+@media (min-width: 125em) {
   .o-gallery {
     margin: 24px -96px;
   }
@@ -3847,7 +3847,7 @@ table {
     right: auto !important;
   }
 }
-@media (min-width: 81.25em) {
+@media (min-width: 125em) {
   .u-1\/1\@wide {
     width: 100% !important;
   }
@@ -4423,7 +4423,7 @@ table {
     flex: 1 1 100% !important;
   }
 }
-@media (min-width: 81.25em) {
+@media (min-width: 125em) {
   .u-flex-1\/1\@wide {
     flex: 1 1 100% !important;
   }
@@ -4554,7 +4554,7 @@ table {
     max-width: 25vw;
   }
 }
-@media (min-width: 81.25em) {
+@media (min-width: 125em) {
   .u-flow-left {
     float: left;
     margin-left: -120px;
@@ -4577,7 +4577,7 @@ table {
     max-width: 25vw;
   }
 }
-@media (min-width: 81.25em) {
+@media (min-width: 125em) {
   .u-flow-right {
     float: right;
     margin-right: -120px;
@@ -5063,7 +5063,7 @@ table {
     margin-bottom: 0 !important;
   }
 }
-@media (min-width: 81.25em) {
+@media (min-width: 125em) {
   .u-margin-bottom-none\@wide {
     margin-bottom: 0 !important;
   }

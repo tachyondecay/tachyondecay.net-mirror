@@ -1,0 +1,35 @@
+/**
+ * reviews.scss
+ *
+ * Corresponds to "main.html" layout for Kara.Reviews.
+ * 
+ * Most pages on the Kara.Reviews site will invoke this layout..
+ */
+
+@import "../common/normalize";
+@import "../vendor/sass-mq/mq";
+@import "settings";
+// @import "../common/functions";
+@import "../common/sprites";
+@import "helpers";
+@import "typography";
+
+@import "forms";
+@import "grid";
+
+@import "components/hero-container";
+@import "components/icon-classes";
+@import "components/indexed-year";
+@import "components/page-colophon";
+@import "components/page-title";
+@import "components/pagination-links";
+@import "components/review-hero";
+@import "components/review-preview";
+@import "components/shelf-list";
+@import "components/sidebar-aside";
+@import "components/single-review";
+@import "components/site-navigation";
+@import "components/site-search";
+@import "components/site-title";
+@import "components/social-icons";
+@import "components/sticky-jumplinks";

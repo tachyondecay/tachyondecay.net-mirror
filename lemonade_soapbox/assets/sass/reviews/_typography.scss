@@ -1,0 +1,179 @@
+/**
+ * _typography.scss
+ *
+ * Font, line-height, text-decoration, etc.
+ */
+
+@import "../vendor/typi/typi";
+$typi-breakpoint: mq;
+
+$typi: (
+  "base": (
+    null: (16px, 1.4),
+    "tablet": (18px),
+    "desktop": (20px)
+  ),
+
+  "body": (
+    null: (1.2em)
+  ),
+
+  "small": (
+    null: (0.75em),
+    desktop: (0.6em),
+  ),
+
+  "_h1": (
+    null: (2em, 1.125),
+    // tablet: (2em),
+    desktop: (3em)
+  ),
+
+  "_h2": (
+    null: (1.6em, 1.25),
+    "tablet": (1.75em),
+    "desktop": (2em)
+  ),
+
+  "_h3": (
+    null: (1.5em, 1.3),
+    "tablet": (1.5em),
+    "desktop": (1.75em)
+  ),
+
+  "_h4": (
+    null: (1em, 1.3),
+    "tablet": (1.1em),
+    "desktop": (1.25em)
+  ),
+);
+
+@include typi-init;
+@include typi-create-classes;
+
+
+:root {
+  --bg-colour: var(--grey-100);
+  --text-colour: var(--grey-700);
+  --text-accent-colour: var(--purple-400);
+}
+
+
+body {
+  background-color: var(--bg-colour);
+  color: var(--text-colour);
+  font-family: $f-serif;
+}
+
+
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: $f-sans;
+  font-weight: 700;
+}
+
+h1 {
+  @include typi('_h1');
+}
+
+h2 {
+  @include typi('_h2');
+}
+
+h3 {
+  @include typi('_h3');
+}
+
+h4 {
+  @include typi('_h4');
+}
+
+
+a {
+  --link-colour: var(--red-700);
+  color: var(--link-colour);
+
+  &:hover {
+    --link-colour: var(--purple-400);
+  }
+
+  &:active, &:focus {
+    --link-colour: var(--gold-500);
+  }
+}
+
+
+p {
+  color: var(--text-color);
+}
+
+
+blockquote {
+  padding: vr(0.5) 0;
+  border-left: 4px solid var(--purple-400);
+  border-radius: $global-radius;
+  box-shadow: 0 4px 6px alpha("grey", "500", "0.25");
+
+  > p {
+    margin: vr(0.5) vr(1);
+    text-indent: 1em;
+  }
+}
+
+
+._cozy {
+  margin-bottom: 0;
+
+  // & + p,
+  // ._textual & + p {
+  //   margin-top: 0;
+  // }
+}
+
+
+._textual {
+  > h3, > ._h3, 
+  > h4, > ._h4 {
+    margin: 0 vr(1) 0;
+    padding-top: vr(2);
+  }
+
+  > p, > ul {
+    @include typi('body');
+    margin: vr(1.5) vr(1);
+  }
+
+  > h3 + p, ._h3 + p {
+    margin-top: vr(0.5);
+  }
+
+  > ul {
+    list-style-type: '❖';
+
+    li {
+      padding-left: vr(0.5);
+    }
+  }
+
+  @include mq($from: desktop) {
+    blockquote {
+      margin-left: vr(-2);
+      margin-right: vr(-2);
+    }
+  }
+}
+
+
+._info {
+  color: var(--grey-500);
+  font-family: $f-sans;
+  text-align: right;
+
+  a {
+    color: var(--grey-500);
+  }
+
+  > small {
+    @include typi('small');
+  }
+}

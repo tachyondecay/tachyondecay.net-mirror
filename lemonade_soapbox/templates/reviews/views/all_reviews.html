@@ -1,0 +1,28 @@
+{% extends 'reviews/layouts/main.html' %}
+{% from 'macros.html' import pagetitle %}
+
+{% block body_main %}
+{{ super() }}
+
+{{ pagetitle(title="Reviews Index", cover=url_for('.static', filename='images/layout/header_bg/freestocks-OfaDD5o8hpk-unsplash.jpg'), description="All my reviews from now back to the beginning, 2008.")}}
+<main class="indexed-year">
+{% if reviews %}
+    {% for year, year_group in reviews|groupby("date_published.year")|reverse %}
+    <div class="year">
+    <h3 class="yeartitle">{{ year }}</h3>
+
+    {% for month, review_list in year_group|groupby("date_published.month") %}
+    <details class="month"{% if arrow.now().year == year and arrow.now().month == month %} open{% endif %}>
+        <summary><h4 class="monthtitle">{{ review_list[0].date_published.format("MMMM") }}</h4></summary>
+        <ol>
+            {% for review in review_list %}
+            <li><a href="{{ review.get_permalink() }}">{{ review.short_title }}</a></li>
+            {% endfor %}
+        </ol>
+    </details>
+    {% endfor %}
+    </div>
+    {% endfor %}
+{% endif %}
+</main>
+{% endblock body_main %}

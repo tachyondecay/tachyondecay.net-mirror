@@ -10,7 +10,7 @@ figure {
   }
 
   img {
-    @include mq($from: wide) {
+    @include mq($from: desktop) {
       max-width: initial;
     }
 

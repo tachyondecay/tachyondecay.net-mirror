@@ -1,0 +1,71 @@
+/**
+ * _hero-container.scss
+ *
+ * Styling for various hero items
+ * 
+ */
+
+.hero-container {
+  margin: vr(3) 0 vr(4);
+  padding: vr(0.5);
+  flex: 1 0 100%;
+
+  .hero:not(:only-of-type) {
+    margin: vr(2) auto;
+  }
+}
+
+@include mq($from: tablet) {
+  .hero-container {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: flex-start;
+    justify-content: center;
+    margin: vr(1) vr(2);
+
+    border-top: 6px solid var(--blue-400);
+    border-radius: $global-radius;
+    box-shadow: 0 4px 6px alpha("grey", "500", "0.25");
+
+    > .hero:not(:only-of-type) {
+      margin: 0 vr(1);
+    }
+
+    .action {
+      text-align: center;
+    }
+  }
+}
+
+@include mq($from: desktop) {
+  .hero-container {
+    margin: vr(3) 0;
+    border: none;
+    box-shadow: none;
+  }
+
+  .hero {
+    --border-colour: var(--blue-400);
+    border-top: 6px solid var(--border-colour);
+    border-radius: $global-radius;
+    box-shadow: 0 4px 6px alpha("grey", "500", "0.25");
+
+    padding: 0 vr(1);
+
+    .heading {
+      @include typi('base');
+    }
+
+    &.-gold {
+      --border-colour: var(--gold-400);
+    }
+
+    &.-purple {
+      --border-colour: var(--purple-400);
+    }
+
+    &.-red {
+      --border-colour: var(--red-400);
+    }
+  }
+}

@@ -1,0 +1,72 @@
+{% extends 'reviews/layouts/main.html' %}
+{% from 'macros.html' import pagetitle, time_relative with context %}
+
+{% block page_title %}Kara.Reviews All the Books{% endblock %}
+
+{% block body_classes %}homepage{% endblock body_classes %}
+
+{% block styles %}
+{{ super() }}
+<link href="{{ url_for('.static', filename='css/reviews/homepage.css')}}" rel="stylesheet">
+{% endblock styles %}
+
+{% block body_main %}
+
+{{ super() }}
+
+{{ pagetitle(title=('12 years. ' ~ total_reviews ~ ' reviews.'), description='Not sure where to start? Check out my latest!', cover=url_for('.static', filename='images/layout/header_bg/my_shelves.jpg'), class='-homepage')}}
+
+<section class="review-hero hero-container">
+    <h2 class="heading">Recent Reviews</h2>
+
+    {% if fiction %}
+    <div class="hero -red -fiction">
+        <h3 class="subheading">Fiction</h3>
+
+        {% for review in fiction %}
+        <div class="review">
+            <a href="{{ review.get_permalink() }}">
+            {% if review.book_cover %}
+                <img src="/media/book_covers/{{ review.book_cover }}" alt="Cover for {{ review.short_title }}" class="coverimg">
+            {% else %}
+                {{ review.short_title }}
+            {% endif %}
+            <span class="pubdate">{{ time_relative(review.date_published, granularity='day') }}</span>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if non_fiction %}
+    <div class="hero -purple -nonfiction">
+        <h3 class="subheading">Non-Fiction</h3>
+        {% for review in non_fiction %}
+        <div class="review">
+            <a href="{{ review.get_permalink() }}">
+            {% if review.book_cover %}
+                <img src="/media/book_covers/{{ review.book_cover }}" alt="Cover for {{ review.short_title }}" class="coverimg">
+            {% else %}
+                {{ review.short_title }}
+            {% endif %}
+            <span class="pubdate"><time datetime="{{ review.date_published.isoformat() }}">{{ time_relative(review.date_published, granularity='day') }}</time></span>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+        
+</section>
+
+<section class="intro _textual">
+    <h2 class="_h3">Hi, I’m Kara Babcock</h2>
+    <p>and I’m a queer girl from Canada who reviews <strong>every book she reads</strong>. In my spare time, I knit and code. <a href="/about/">Read more about me.</a></p>
+
+    <h3 class="_h4">On Social Media</h3>
+    <ul class="social-icons">
+        <li><a href="https://twitter.com/tachyondecay"><img src="{{ url_for('.static', filename='images/icons/twitter.png') }}" alt="Twitter"></a></li>
+        <li><a href="https://goodreads.com/tachyondecay"><img src="{{ url_for('.static', filename='images/icons/goodreads.png') }}" alt="Goodreads"></a></li>
+        <li><a href="https://ravelry.com/tachyondecay"><img src="{{ url_for('.static', filename='images/icons/ravelry.png') }}" alt="Ravelry"></a></li>
+    </ul>
+</section>
+{% endblock body_main %}

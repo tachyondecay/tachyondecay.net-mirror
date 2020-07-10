@@ -1,0 +1,89 @@
+/**
+ * _indexed-year.scss
+ *
+ * Display a list of all reviews from this year.
+ */
+
+.indexed-year {
+  display: flex;
+  flex-flow: column;
+  margin: vr(2) vr(0.5);
+
+  .year {
+    margin: vr(1) 0;
+  }
+
+  .yeartitle {
+    margin: 0
+  }
+
+  .monthtitle {
+    display: inline-block;
+    margin-bottom: 0;
+  }
+}
+
+@include mq($from: tablet) {
+  .indexed-year {
+    flex-flow: row wrap;
+    align-items: flex-start;
+    justify-content: center;
+    @include max-width-container();
+
+    .year {
+      flex: 1 0 25%;
+      margin: vr(1) vr(1);
+      // padding: 0 vr(1);
+
+      border-radius: $global-radius;
+      border-top: 6px solid var(--border-colour);
+      box-shadow: 4px 4px 6px alpha("grey", "500", "0.5");
+    }
+
+    .year:nth-child(n) {
+      --border-colour: var(--gold-600);
+    }
+
+    .year:nth-child(2n) {
+      --border-colour: var(--gold-500);
+    }
+
+    .year:nth-child(3n) {
+      --border-colour: var(--gold-400);
+    }
+
+    .yeartitle {
+      color: var(--border-colour);
+      text-align: center;
+    }
+
+    .monthtitle {
+      font-size: 1.1rem;
+      margin: 0;
+    }
+
+    details {
+      padding: vr(0.5) vr(0.5);
+      transition: $global-transition;
+    }
+
+    details:nth-child(2n+1) {
+      background: var(--grey-200);
+    }
+
+    details[open] {
+      background: var(--border-colour);
+      border-radius: $global-radius;
+      color: var(--grey-100);
+
+      a {
+        color: var(--grey-200);
+        text-decoration: none;
+      }
+    }
+
+    li {
+      margin: vr(0.5) 0;
+    }
+  }
+}

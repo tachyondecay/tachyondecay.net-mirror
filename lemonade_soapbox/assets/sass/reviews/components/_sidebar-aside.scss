@@ -1,0 +1,32 @@
+/**
+ * _sidebar-aside.scss
+ *
+ * Secondary content that will usually be in the sidebar
+ */
+
+.sidebar-aside {
+  margin: vr(3) vr(0.5);
+  font-family: $f-sans;
+  font-weight: 300;
+
+  > .heading:last-child {
+    display: none;
+  }
+
+  > .heading {
+    border-bottom: 4px solid var(--gold-300);
+    color: var(--grey-900);
+    letter-spacing: 5px;
+    @include typi("small");
+    text-transform: uppercase;
+  }
+
+  > .heading:before {
+    content: '»';
+    color: var(--gold-500);
+  }
+
+  .list li {
+    margin: vr(1) 0;
+  }
+}

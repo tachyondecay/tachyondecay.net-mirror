@@ -1,0 +1,110 @@
+{% extends 'reviews/layouts/main.html' %}
+{% from 'macros.html' import pagetitle, toc %}
+
+{% block body_main %}
+{{ super() }}
+
+<section class="grid-layout">
+    {{ pagetitle(title="About This Site", cover=url_for('.static', filename='images/layout/header_bg/sincerely-media-BfriYg0iOCs-unsplash.jpg'), description='Learn more about Kara and her approach to reviewing books.')}}
+
+<main class="content _textual">
+
+    <h3 id="me">Who Am I?</h3>
+    <p>My name is Kara Babcock (pronouns are she/her), and I’m a 30-year-old teacher from Thunder Bay, Canada. For a much more detailed bio, check out <a href="https://tachyondecay.net/">my personal site</a>.</p>
+
+    <p>I joined Goodreads in May 2008. Since then, I’ve reviewed <strong>every book I have read</strong>. Although I originally began writing these reviews to help jog my poor memory, over time writing them became an end to itself. Writing reviews has improved my skills as a writer (and as a teacher of writing) immensely.</p>
+
+    <p>I started Kara.Reviews because I wanted to establish a platform for my book reviews independent of Amazon-owned Goodreads. Thank you for taking the time to visit my site!</p>
+
+    <p>If you like my reviews, maybe <a href="https://wejustliketotalk.com/">check out the podcast</a> I do with one of my best friends.</p>
+
+    <p id="trans"><strong>Oh, one more thing:</strong> In 2020 I came out (to myself, and to the world) as transgender. Consequently, when you’re reading reviews prior to that date, you’ll see a little disclaimer. In the past, I might have written my reviews from the perspective of a cisgender man, because I thought I was one! So some of those views might have shifted over the years.</p>
+
+    <h3 id="contact">How to Contact Me</h3>
+    <p>I’m on Twitter as <a href="https://twitter.com/tachyondecay">@tachyondecay</a>. For longer inquiries, email me at <strong>kara@tachyondecay.net</strong></p>
+
+    <h3 id="review-policy">Review Policy</h3>
+    <p>I review every book I finish reading and rate it on a scale of 1 to 5 stars. Abandoned books are only reviewed if I think I have enough interesting things to say. These are usually left unrated and shelved under <a href="{{ url_for('.show_tag', handle='did-not-finish') }}">“did not finish.”</a> A book receives 1 star if I hated it or believe it has very few redeeming qualities. A 5-star book means I love it, although that doesn’t always mean it’s perfect.</p>
+
+    <p>I try to hold myself to a high standard when it comes to accuracy, grammar, punctuation, etc. If you notice a mistake—factual or typographic—in one of my reviews, please <a href="#contact">contact me using the info above</a>. I also try to provide trigger and content warnings on my more recent reviews; if you think I’ve missed such a warning, let me know.</p>
+
+    <p>All reviews continue to be cross-posted to Goodreads. <strong>In the event of any discrepancy between review versions, the review on this site is authoritative.</strong></p>
+
+    <h3 id="submissions">How to Submit Books for Review</h3>
+    <p>I love getting free books! I’m happy to accept both ebooks and physical books (if you can ship to Canada). I am open to books from indie authors as well as other authors and their agents or publishers.</p>
+
+    <p>However, if you only have a limited number of copies you can send out for review, <strong>please consider sending your book to someone else first</strong>. I can afford to buy books! I’d rather you send your book to a reviewer of colour, especially if they’re young.</p>
+
+    <p>If you’ve read the above paragraph and still think you’ve got a book for me, great! Hopefully you’ve already decided that your book matches my interests based on what I’ve reviewed in the past. If you need some guidance, here’s what I’m most likely to want to review:</p>
+
+    <ul>
+        <li>Science fiction and fantasy</li>
+        <li>Young adult novels featuring marginalized identities, and preferably where romance is not a central component</li>
+        <li>Non-fiction science or history, particularly of the “pop” variety but university press titles are also cool</li>
+        <li>Anything by a transgender and/or aro/ace author or with trans and/or aro/ace protagonists (I can provide an own-voices review)</li>
+    </ul>
+
+    <p>Email me using <a href="#contact">the contact info above</a>, and let me know how I can get your book (NetGalley is fine). If I agree to review your book, I’ll read it and then post my review according to whatever promotional schedule you like. I will indicate in the review I received a free copy of the book. I’m happy to post short versions of my reviews on Amazon, but you will probably have to nudge me, because I tend to forget about that.</p>
+
+    <p>I do not provide sensitivity reading or editing services.</p>
+
+    <h3 id="credits">Credits</h3>
+
+    <p>I custom-built this site using <a href="https://palletsprojects.com/p/flask/">Flask</a>.</p>
+
+    <p>The header backgrounds come from talented photographers on Unsplash, including:</p>
+
+    <ul class="_columned">
+        <li><a href="https://unsplash.com/photos/TNlHf4m4gpI">Aaron Burden</a></li>
+        <li><a href="https://unsplash.com/photos/hDcAjjkM-PU">Annie Spratt</a></li>
+        <li><a href="https://unsplash.com/photos/6Woj_wozqmA">Ardian Lumi</a></li>
+        <li><a href="https://unsplash.com/photos/GBHnQXbY2Ts">Casper Johansson</a></li>
+        <li><a href="https://unsplash.com/photos/pNEmlb1CMZM">Clay Banks</a></li>
+        <li><a href="https://unsplash.com/photos/lbekri_riMg">Craig Whitehead</a></li>
+        <li><a href="https://unsplash.com/photos/dQWtvAdlJ_8">Dean Maddocks</a></li>
+        <li><a href="https://unsplash.com/photos/bQxGg8Vx1Vc">Fabrizio Verrecchia</a></li>
+        <li><a href="https://unsplash.com/photos/OfaDD5o8hpk">freestocks</a></li>
+        <li><a href="https://unsplash.com/photos/OuLVg5ZKphI">Gabriel Barletta</a></li>
+        <li><a href="https://unsplash.com/photos/YzSZN3qvHeo">Gary Chan</a></li>
+        <li><a href="https://unsplash.com/photos/zeH-ljawHtg">Giammarco Boscaro</a></li>
+        <li><a href="https://unsplash.com/photos/RLw-UC03Gwc">Glenn Carstens-Peters</a></li>
+        <li><a href="https://unsplash.com/photos/ftPB9kKS4Ds">George Hiles</a></li>
+        <li><a href="https://unsplash.com/photos/EIWCd0414xQ">Guillaume Jaillet</a></li>
+        <li><a href="https://unsplash.com/photos/et5mfj1eB94">Kelly Sikkema</a></li>
+        <li><a href="https://unsplash.com/photos/vTKLujPJecw">Jez Timms</a></li>
+        <li><a href="https://unsplash.com/photos/rwvDMV5j1Q8">Lena Kudryavtseva</a></li>
+        <li><a href="https://unsplash.com/photos/ef3A5EDR7Jk">Manyu Varma</a></li>
+        <li><a href="https://unsplash.com/photos/wqLGlhjr6Og">Marco Oriolesi</a></li>
+        <li><a href="https://unsplash.com/photos/5gGcn2PRrtc">Markus Spiske</a></li>
+        <li><a href="https://unsplash.com/photos/HxnUC0qNzhs">Maria Oswalt</a></li>
+        <li><a href="https://unsplash.com/photos/OO8AEXFQtdI">Matt Riches</a></li>
+        <li><a href="https://unsplash.com/photos/1WS5fdi2MW0">Mélanie THESE</a></li>
+        <li><a href="https://unsplash.com/photos/HxnUC0qNzhs">Miika Laaksonen</a></li>
+        <li><a href="https://unsplash.com/photos/f5xddISq428">Natalia Y</a></li>
+        <li><a href="https://unsplash.com/photos/Oaqk7qqNh_c">Patrick Tomasso</a></li>
+        <li><a href="https://unsplash.com/photos/bBgYaSbEbWY">Paul Dufour</a></li>
+        <li><a href="https://unsplash.com/photos/3gC4gBnD3Xs">Perfecto Capucine</a></li>
+        <li><a href="hhttps://unsplash.com/photos/pAs8r_VZEWc">Regine Tholen</a></li>
+        <li><a href="https://unsplash.com/photos/Hba7In7vnoM">Reuben Teo</a></li>
+        <li><a href="https://unsplash.com/photos/BfriYg0iOCs">Sincerely Media</a></li>
+        <li><a href="https://unsplash.com/photos/l57vjomVK20">Surbhi B</a></li>
+        <li><a href="https://unsplash.com/photos/2JIvboGLeho">Susan Yin</a></li>
+        <li><a href="https://unsplash.com/photos/slItfWbhijc">Syd Wachs</a></li>
+        <li><a href="https://unsplash.com/photos/D9_QOTmbFAg">Taylor</a></li>
+        <li><a href="https://unsplash.com/photos/hHL08lF7Ikc">Thomas Kelley</a></li>
+        <li><a href="https://unsplash.com/photos/WE_Kv_ZB1l0">Thought Catalog</a></li>
+        <li><a href="https://unsplash.com/photos/WE_Kv_ZB1l0">Tim Mossholder</a></li>
+        <li><a href="https://unsplash.com/photos/val-94PYQ1o">Will Malott</a></li>
+    </ul>
+</main>
+
+{{ toc({
+    'me': 'Who Am I?',
+    'contact': 'How to Contact Me',
+    'review-policy': 'Review Policy',
+    'submissions': 'How to Submit Books for Review',
+    'credits': 'Credits'
+}) }}
+</section>
+
+{% endblock body_main %}

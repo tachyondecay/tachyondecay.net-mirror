@@ -31,7 +31,7 @@
     }
   }
 
-  @include mq($from: wide) {
+  @include mq($from: desktop) {
     .c-sidebar--left {
       order: -1;
     }

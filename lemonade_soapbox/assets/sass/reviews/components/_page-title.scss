@@ -1,0 +1,74 @@
+/**
+ * _page-title.scss
+ *
+ * Site header
+ */
+
+.page-title {
+  padding: vr(2) vr(0.5);
+  position: relative;
+  z-index: 10;
+  background:
+    linear-gradient(
+      alpha("grey", "900", 0.75),
+      alpha("grey", "900", 0.55),
+    ),
+    var(--cover-src);
+  // background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+
+  > .title {
+    color: var(--grey-200);
+  }
+
+  > .description {
+    color: var(--grey-300);
+    font-family: $f-sans;
+  }
+}
+
+@include mq($from: tablet) {
+  .page-title {
+    > .title {
+      @include typi('_h1');
+    }
+
+    > .description {
+      @include typi('_h3');
+    }
+  }
+}
+
+@include mq($from: desktop) {
+  .page-title {
+    @include max-width-container();
+    box-sizing:border-box;
+    height: 100vh;
+    // display: flex;
+    // flex-flow: column;
+    // justify-content: center;
+    padding-top: 45vh;
+
+    > .title {
+      margin-top: 0;
+      margin-bottom: 0;
+    }
+
+    > .description {
+      margin-top: vr(0.25);
+      margin-bottom: 0;
+    }
+
+    > .title, > .description {
+      padding-left: vr(1);
+    }
+  }
+
+  .page-title.-homepage {
+    height: auto;
+    padding-top: 0;
+    background: none;
+  }
+}

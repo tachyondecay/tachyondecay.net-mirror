@@ -292,7 +292,7 @@ summary {
  * Mixins and functions that allow us to apply a SVG sprite icon.
  * Largely cribbed from https://github.com/liquidlight/sass-gulp-svg-sprite
  */
-.result-item.-review .star.-empty, .result-item.-review .star.-full, .site-nav > .quick-search > .results > .resultitem.-review:before, .site-nav > .quick-search > .results > .resultitem.-article:before, .notification > .dismiss, .i-after--star-full:after, .i-before--star-full:before, .i--star-full, .i-after--star-empty:after, .i-before--star-empty:before, .i--star-empty, .i-after--spinner:after, .i-before--spinner:before, .i--spinner, .i-after--price-tags:after, .i-before--price-tags:before, .i--price-tags, .i-after--plus:after, .i-before--plus:before, .i--plus, .i-after--pencil:after, .i-before--pencil:before, .i--pencil, .i-after--new-tab:after, .i-before--new-tab:before, .i--new-tab, .i-after--newspaper:after, .i-before--newspaper:before, .i--newspaper, .i-after--link:after, .i-before--link:before, .i--link, .i-after--floppy-disk:after, .i-before--floppy-disk:before, .i--floppy-disk, .i-after--eye-blocked:after, .i-before--eye-blocked:before, .i--eye-blocked, .i-after--earth:after, .i-before--earth:before, .i--earth, .i-after--copy:after, .i-before--copy:before, .i--copy, .i-after--clock:after, .i-before--clock:before, .i--clock, .i-after--checkmark:after, .i-before--checkmark:before, .i--checkmark, .i-after--calendar:after, .i-before--calendar:before, .i--calendar, .i-after--book:after, .i-before--book:before, .i--book, .i-after--bin:after, .i-before--bin:before, .i--bin, .i-after--box-add:after, .i-before--box-add:before, .i--box-add, .rating-input input:checked ~ label:not(:last-child), .rating-input:not(:checked) label:not(:last-child):hover, .rating-input:not(:checked) label:not(:last-child):hover ~ label:not(:last-child), .rating-input label:not(:last-child) {
+.result-item.-review .star.-empty, .result-item.-review .star.-full, .site-nav > .quick-search > .results > .resultitem.-review:before, .site-nav > .quick-search > .results > .resultitem.-article:before, .notification > .dismiss, .i-after--star-full:after, .i-before--star-full:before, .i--star-full, .i-after--star-empty:after, .i-before--star-empty:before, .i--star-empty, .i-after--spinner:after, .i-before--spinner:before, .i--spinner, .i-after--search:after, .i-before--search:before, .i--search, .i-after--price-tags:after, .i-before--price-tags:before, .i--price-tags, .i-after--plus:after, .i-before--plus:before, .i--plus, .i-after--pencil:after, .i-before--pencil:before, .i--pencil, .i-after--new-tab:after, .i-before--new-tab:before, .i--new-tab, .i-after--newspaper:after, .i-before--newspaper:before, .i--newspaper, .i-after--link:after, .i-before--link:before, .i--link, .i-after--floppy-disk:after, .i-before--floppy-disk:before, .i--floppy-disk, .i-after--eye-blocked:after, .i-before--eye-blocked:before, .i--eye-blocked, .i-after--earth:after, .i-before--earth:before, .i--earth, .i-after--copy:after, .i-before--copy:before, .i--copy, .i-after--clock:after, .i-before--clock:before, .i--clock, .i-after--checkmark:after, .i-before--checkmark:before, .i--checkmark, .i-after--calendar:after, .i-before--calendar:before, .i--calendar, .i-after--books:after, .i-before--books:before, .i--books, .i-after--book:after, .i-before--book:before, .i--book, .i-after--bin:after, .i-before--bin:before, .i--bin, .i-after--box-add:after, .i-before--box-add:before, .i--box-add, .rating-input input:checked ~ label:not(:last-child), .rating-input:not(:checked) label:not(:last-child):hover, .rating-input:not(:checked) label:not(:last-child):hover ~ label:not(:last-child), .rating-input label:not(:last-child) {
   display: inline-block;
   background-size: 31em 21em;
 }
@@ -1080,6 +1080,29 @@ input[type=time] {
   background-position: -24em 0em;
 }
 
+.i--books {
+  background-image: url("/assets/images/icons/sprite--000000.svg");
+  width: 1.1875em;
+  height: 1.0625em;
+  background-position: -26em 0em;
+  margin-top: 0.1em;
+  vertical-align: text-top;
+}
+
+.i-before--books:before {
+  background-image: url("/assets/images/icons/sprite--000000.svg");
+  width: 1.1875em;
+  height: 1.0625em;
+  background-position: -26em 0em;
+}
+
+.i-after--books:after {
+  background-image: url("/assets/images/icons/sprite--000000.svg");
+  width: 1.1875em;
+  height: 1.0625em;
+  background-position: -26em 0em;
+}
+
 .i--calendar {
   background-image: url("/assets/images/icons/sprite--000000.svg");
   width: 1.0625em;
@@ -1377,6 +1400,29 @@ input[type=time] {
   width: 1.3125em;
   height: 1.0625em;
   background-position: -26em -2em;
+}
+
+.i--search {
+  background-image: url("/assets/images/icons/sprite--000000.svg");
+  width: 1.0625em;
+  height: 1.0625em;
+  background-position: -14em -8em;
+  margin-top: 0.1em;
+  vertical-align: text-top;
+}
+
+.i-before--search:before {
+  background-image: url("/assets/images/icons/sprite--000000.svg");
+  width: 1.0625em;
+  height: 1.0625em;
+  background-position: -14em -8em;
+}
+
+.i-after--search:after {
+  background-image: url("/assets/images/icons/sprite--000000.svg");
+  width: 1.0625em;
+  height: 1.0625em;
+  background-position: -14em -8em;
 }
 
 .i--spinner {

@@ -4,7 +4,6 @@ import random
 from datetime import datetime
 from flask import (
     abort,
-    Blueprint,
     current_app,
     flash,
     g,
@@ -17,6 +16,7 @@ from flask_login import current_user, login_user, login_required, logout_user
 from flask_sqlalchemy import Pagination
 from lemonade_soapbox import db
 from lemonade_soapbox.forms import ArticleForm, ReviewForm, SignInForm
+from lemonade_soapbox.helpers import Blueprint
 from lemonade_soapbox.models import Article, Review, Tag
 from lemonade_soapbox.models.users import User
 from sqlalchemy import and_, func

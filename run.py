@@ -1,8 +1,7 @@
-import os
-
+from flask.cli import load_dotenv
 from lemonade_soapbox.create_app import create_app
 from werkzeug.middleware.proxy_fix import ProxyFix
 
-
+load_dotenv()  # Load environment vars
 app = create_app()
 app = ProxyFix(app)

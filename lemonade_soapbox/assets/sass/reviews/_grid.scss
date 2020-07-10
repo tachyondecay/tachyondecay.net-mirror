@@ -1,0 +1,53 @@
+/**
+ * _grid.scss
+ *
+ * Grid layout logic for admin backend.
+ * 
+ */
+
+@include mq($from: desktop) {
+  .grid-layout {
+    display: grid;
+    grid-template-columns: 
+      calc(50vw - #{$max-width}/2)
+      [content-start]
+      // repeat(3, 3fr 2rem)
+      repeat(3, 1fr 2rem)
+      [content-end gutter-start]
+      2rem 0.5fr
+      [gutter-end sidebar-start]
+      repeat(4, 0.5rem 0.5fr)
+      [sidebar-end]
+      calc(50vw - #{$max-width}/2);
+    grid-template-rows: auto auto 1fr auto auto;
+    align-items: start;
+    grid-gap: 0;
+  }
+
+  .header {
+    grid-column: 1 / -1;
+  }
+
+  .content {
+    grid-column: content;
+    grid-row: 2 / -2;
+  }
+
+  .sidebar-aside {
+    grid-column: sidebar;
+    margin-top: 0;
+  }
+}
+
+// @include mq($from: desktop) {
+//   .grid-layout {
+//     grid-template-columns:
+//       [left-margin] 2rem
+//       // calc(50vw - #{$max-width}/2)
+//       [main-start] 1fr
+//         [content-start] repeat(3, 1fr 2rem) [content-end]
+//       1fr [main-end]
+//       // calc(50vw - #{$max-width}/2)
+//       2rem [right-margin]
+//   }
+// }

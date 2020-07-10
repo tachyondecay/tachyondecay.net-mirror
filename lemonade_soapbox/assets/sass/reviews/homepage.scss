@@ -1,0 +1,83 @@
+/*
+ * homepage.scss
+ * Special rules for the homepage
+ */
+@import "../vendor/sass-mq/mq";
+@import "../vendor/typi/typi";
+@import "settings";
+@import "helpers";
+
+@include mq($from: desktop) {
+  .homepage {
+    position: relative;
+    display: grid;
+    grid-template-columns: 
+      calc(50vw - 80rem/2)
+      repeat(8, 1fr 2rem)
+      calc(50vw - 80rem/2);
+    grid-template-rows: 20vh vr(4) auto;
+    min-height: 100vh;
+
+    background:
+      linear-gradient(
+        alpha("grey", "900", 0.85),
+        alpha("grey", "900", 0.65),
+      ),
+      url('/assets/images/layout/header_bg/my_shelves.jpg');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+  }
+
+  .intro {
+    grid-column: 2 / 10;
+    grid-row: 4;
+
+    color: var(--grey-100);
+
+    a {
+      color: var(--grey-100);
+    }
+
+    a:hover, a:focus, a:active {
+      color: var(--purple-300);
+    }
+  }
+
+  .page-colophon {
+    grid-column: 1 / -1;
+    grid-row: 5;
+    align-self: end;
+
+
+    .copyright {
+      margin-top: vr(0.5);
+    }
+  }
+
+  .footer, .hero {
+    background: alpha("grey", "100", "0.85");
+  }
+
+  .footer > .site-navigation {
+    background: none;
+  }
+
+  .page-title {
+    grid-column: 2 / 10;
+    grid-row: 3;
+  }
+
+  .review-hero {
+    grid-column: 11 / 18;
+    grid-row: 2 / 5;
+
+    margin-top: 0;
+  }
+
+  .sticky-jumplinks {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+}

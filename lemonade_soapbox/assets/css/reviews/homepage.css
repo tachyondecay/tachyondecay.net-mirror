@@ -1,0 +1,189 @@
+/*
+ * homepage.scss
+ * Special rules for the homepage
+ */
+/**
+ * _settings.scss
+ *
+ * Configurable elements common to all Kara.Reviews theming.
+ */
+/**
+ * Colours
+ *
+ */
+:root {
+  --red-900: hsl(0, 75%, 15%);
+  --red-800: hsl(0, 65%, 25%);
+  --red-700: hsl(0, 65%, 30%);
+  --red-600: hsl(0, 60%, 35%);
+  --red-500: hsl(0, 60%, 40%);
+  --red-400: hsl(0, 60%, 60%);
+  --red-300: hsl(0, 50%, 75%);
+  --red-200: hsl(0, 45%, 80%);
+  --red-100: hsl(0, 40%, 90%);
+  --grey-900: hsl(320, 8%, 10%);
+  --grey-800: hsl(320, 8%, 22%);
+  --grey-700: hsl(320, 8%, 35%);
+  --grey-600: hsl(320, 8%, 45%);
+  --grey-500: hsl(320, 8%, 55%);
+  --grey-400: hsl(320, 5%, 68%);
+  --grey-300: hsl(320, 5%, 80%);
+  --grey-200: hsl(320, 2%, 90%);
+  --grey-100: hsl(320, 2%, 97%);
+  --gold-900: hsl(33, 62%, 20%);
+  --gold-800: hsl(33, 62%, 28%);
+  --gold-700: hsl(33, 62%, 37%);
+  --gold-600: hsl(33, 62%, 45%);
+  --gold-500: hsl(33, 62%, 55%);
+  --gold-400: hsl(33, 62%, 65%);
+  --gold-300: hsl(33, 62%, 78%);
+  --gold-200: hsl(33, 62%, 85%);
+  --gold-100: hsl(33, 62%, 92%);
+  --purple-900: hsl(320, 50%, 20%);
+  --purple-800: hsl(320, 55%, 25%);
+  --purple-700: hsl(320, 60%, 25%);
+  --purple-600: hsl(320, 60%, 33%);
+  --purple-500: hsl(320, 71%, 33%);
+  --purple-400: hsl(320, 40%, 50%);
+  --purple-300: hsl(320, 40%, 60%);
+  --purple-200: hsl(320, 25%, 70%);
+  --purple-100: hsl(320, 10%, 90%);
+  --blue-900: hsl(219, 70%, 20%);
+  --blue-800: hsl(219, 65%, 22%);
+  --blue-700: hsl(219, 60%, 25%);
+  --blue-600: hsl(219, 50%, 28%);
+  --blue-500: hsl(219, 50%, 32%);
+  --blue-400: hsl(219, 50%, 40%);
+  --blue-300: hsl(219, 40%, 60%);
+  --blue-200: hsl(219, 35%, 70%);
+  --blue-100: hsl(219, 30%, 80%);
+  --green-900: hsl(90, 30%, 20%);
+  --green-800: hsl(90, 27%, 30%);
+  --green-700: hsl(90, 27%, 35%);
+  --green-600: hsl(90, 25%, 40%);
+  --green-500: hsl(90, 25%, 50%);
+  --green-400: hsl(90, 25%, 55%);
+  --green-300: hsl(90, 22%, 60%);
+  --green-200: hsl(90, 22%, 70%);
+  --green-100: hsl(90, 18%, 80%);
+}
+
+/**
+ * Font families
+ */
+/**
+ * Some UI components can be defined as variables for consistent styling.
+ */
+._center {
+  text-align: center;
+}
+
+._hide {
+  border: 0 !important;
+  clip: rect(0 0 0 0) !important;
+  clip-path: inset(50%) !important;
+  height: 1px !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+  position: absolute !important;
+  white-space: nowrap !important;
+  width: 1px !important;
+}
+
+._hide-totally {
+  display: none !important;
+}
+
+._bare-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+@media (min-width: 46.25em) {
+  ._columned {
+    display: flex;
+    flex-flow: column wrap;
+    max-height: 25rem;
+  }
+  ._columned > li {
+    margin-right: 1.5rem;
+  }
+}
+
+._left {
+  text-align: left;
+}
+
+._right {
+  text-align: right;
+}
+
+._wrapper {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 60rem;
+}
+
+@media (min-width: 61.25em) {
+  .homepage {
+    position: relative;
+    display: grid;
+    grid-template-columns: calc(50vw - 80rem/2) repeat(8, 1fr 2rem) calc(50vw - 80rem/2);
+    grid-template-rows: 20vh 6rem auto;
+    min-height: 100vh;
+    background: linear-gradient(hsla(320, 8%, 10%, 0.85), hsla(320, 8%, 10%, 0.65)), url("/assets/images/layout/header_bg/my_shelves.jpg");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+  }
+
+  .intro {
+    grid-column: 2/10;
+    grid-row: 4;
+    color: var(--grey-100);
+  }
+  .intro a {
+    color: var(--grey-100);
+  }
+  .intro a:hover, .intro a:focus, .intro a:active {
+    color: var(--purple-300);
+  }
+
+  .page-colophon {
+    grid-column: 1/-1;
+    grid-row: 5;
+    align-self: end;
+  }
+  .page-colophon .copyright {
+    margin-top: 0.75rem;
+  }
+
+  .footer, .hero {
+    background: hsla(320, 2%, 97%, 0.85);
+  }
+
+  .footer > .site-navigation {
+    background: none;
+  }
+
+  .page-title {
+    grid-column: 2/10;
+    grid-row: 3;
+  }
+
+  .review-hero {
+    grid-column: 11/18;
+    grid-row: 2/5;
+    margin-top: 0;
+  }
+
+  .sticky-jumplinks {
+    grid-column: 1/-1;
+    grid-row: 1;
+  }
+}
+
+/*# sourceMappingURL=homepage.css.map */

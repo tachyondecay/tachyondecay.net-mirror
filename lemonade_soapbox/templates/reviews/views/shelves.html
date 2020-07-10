@@ -1,0 +1,63 @@
+{% extends 'reviews/layouts/main.html' %}
+{% from 'macros.html' import pagetitle %}
+
+{% block body_main %}
+{{ super() }}
+
+{{ pagetitle(title="My Bookshelves", cover=url_for('.static', filename='images/layout/header_bg/bookshelves.jpg'), description="Come on into my library, browse my shelves—I’m sure you’ll find something to your liking.")}}
+
+<main>
+    <div class="sortby">
+        <p>Sort my shelves  
+        {% if sort_by != 'alphabetical' %}
+            <a href="?sort=alphabetical">alphabetically</a> 
+        {% else %}
+            <strong>alphabetically</strong>
+        {% endif %}
+        | 
+        {% if sort_by != 'frequency' %}
+        <a href="?sort=frequency">by number of books</a>
+        {% else %}
+            <strong>by number of books</strong>
+        {% endif %}
+        </p>
+
+        {% if shelves and sort_by != 'frequency' %}
+        <div class="jumplinks">
+            Jump to: 
+            <ul class="list">
+            {% for letter, shelves in shelves|groupby("0.handle.0") %}
+                <li><a href="#letter-{{ letter }}">{{ letter.upper() }}</a></li>
+            {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+    </div>
+
+    {% if shelves %}
+    <div class="shelf-list">
+        {% if sort_by == 'frequency' %}
+            <ul class="list -frequency">
+            {% for shelf in shelves|sort(attribute="1", reverse=True)|weight %}
+                <li>
+                    <a href="{{ url_for('.show_tag', handle=shelf[0].handle) }}" class="button -red" style="--weight: {{ shelf[2] }}">{{ shelf[0].label }}</span>
+                    <span class="count">({{ shelf[1] }})</span></a>
+                </li>
+            {% endfor %}
+            </ul>
+        {% else %}
+            {% for letter, shelf_list in shelves|groupby("0.handle.0") %}
+            <div class="shelf" id="letter-{{ letter }}">
+                <h2 class="letter"><span>{{ letter.upper() }}</span></h2>
+                <ul class="list">
+                {% for shelf in shelf_list %}
+                    <li><a class="button -red" href="{{ url_for('.show_tag', handle=shelf[0].handle) }}" title="{{ shelf[1] }} books shelved">{{ shelf[0].label }}</a></li>
+                {% endfor %}
+                </ul>
+            </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+    {% endif %}
+</main>
+{% endblock body_main %}

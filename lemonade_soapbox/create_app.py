@@ -1,3 +1,4 @@
+import arrow
 import click
 import os
 from flask import Flask
@@ -11,8 +12,13 @@ from werkzeug.middleware.shared_data import SharedDataMiddleware
 
 def create_app():
     """Factory for the application."""
-    config_name = os.environ.get('FLASK_ENV', 'production')
-    app = Flask('lemonade_soapbox', static_folder='assets',)
+    config_name = os.getenv('FLASK_ENV', 'production')
+    app = Flask(
+        'lemonade_soapbox',
+        static_folder='assets',
+        static_host=os.getenv('MAIN_HOST'),
+        host_matching=True,
+    )
     app.instance_path = os.path.join(app.instance_path, app.config['ENV'])
     app.config.from_object(config[config_name])
     app.config.from_json(os.path.join(app.instance_path, 'config.json'))
@@ -21,6 +27,7 @@ def create_app():
     # Nginx handles proxying the media dir in production
     # This emulates it when developing with Flask's built-in server
     if app.config['ENV'] == 'development':
+        app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
         app.wsgi_app = SharedDataMiddleware(
             app.wsgi_app, {'/media': os.path.join(app.instance_path, 'media')}
         )
@@ -49,12 +56,17 @@ def create_app():
 
     from lemonade_soapbox.views import admin, api, blog, frontend, reviews
 
-    app.register_blueprint(admin.bp, url_prefix='/meta')
-    app.register_blueprint(api.bp, url_prefix='/api')
-    app.register_blueprint(blog.bp, url_prefix='/blog')
-    app.register_blueprint(frontend.bp, url_prefix='')
-    app.register_blueprint(reviews.bp, url_prefix='/reviews')
+    # Register admin and API blueprints on both domains so we can log in to both
+    app.register_blueprint(admin.bp, host=os.getenv('MAIN_HOST'), url_prefix='/meta')
+    app.register_blueprint(api.bp, host=os.getenv('MAIN_HOST'), url_prefix='/api')
+    app.register_blueprint(blog.bp, host=os.getenv('MAIN_HOST'), url_prefix='/blog')
+    app.register_blueprint(frontend.bp, host=os.getenv('MAIN_HOST'), url_prefix='/')
 
+    app.register_blueprint(admin.bp, host=os.getenv('REVIEW_HOST'), url_prefix='/meta')
+    app.register_blueprint(api.bp, host=os.getenv('REVIEW_HOST'), url_prefix='/api')
+    app.register_blueprint(reviews.bp, host=os.getenv('REVIEW_HOST'), url_prefix='/')
+
+    app.template_context_processors[None].append(lambda: {'arrow': arrow})
     app.jinja_env.add_extension('jinja2.ext.i18n')
     app.jinja_env.lstrip_blocks = True
     app.jinja_env.trim_blocks = True

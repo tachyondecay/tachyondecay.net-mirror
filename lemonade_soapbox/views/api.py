@@ -1,7 +1,6 @@
 import json
 from flask import (
     abort,
-    Blueprint,
     current_app,
     jsonify,
     render_template,
@@ -13,6 +12,7 @@ from flask_login import login_required
 from flask_wtf import csrf
 from sqlalchemy import text
 from lemonade_soapbox import db
+from lemonade_soapbox.helpers import Blueprint
 from lemonade_soapbox.models import Article, Review, Tag, tag_relationships
 
 bp = Blueprint('api', __name__)

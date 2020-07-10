@@ -1,0 +1,72 @@
+/**
+ * _shelf-list.scss
+ *
+ * List of shelves!
+ */
+
+.shelf-list {
+  @include max-width-container();
+  > .shelf {
+    padding: vr(3) auto;
+  }
+
+  .letter {
+    text-align: center;
+  }
+
+  .letter span {
+    display: inline-block;
+    padding-bottom: vr(0.5);
+    width: 5rem;
+    background-image: url("/assets/images/icons/open-book.svg");
+    background-position: bottom center;
+    background-repeat: no-repeat;
+    background-size: 2em auto;
+
+    color: var(--purple-700);
+    font-family: $f-serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    text-align: center;
+  }
+
+  .list {
+    @include inline-list();
+
+    li {
+      margin: 0 vr(0.5);
+    }
+  }
+
+  .list.-frequency a {
+    font-size: calc(var(--weight) * 1.2rem);
+  }
+
+  .count {
+    color: var(--grey-300);
+  }
+}
+
+.shelf-list li:nth-child(2n+1) a {
+  --button-bg: var(--red-500);
+  --button-border: var(--red-500);
+}
+
+@include mq($from: desktop) {
+  .shelf-list .shelf {
+    display: flex;
+    flex-flow: row;
+    padding: vr(2) 0 0;
+  }
+
+  .shelf-list .letter {
+    text-align: right;
+    margin-right: vr(2);
+    width: 25%;
+  }
+
+  .shelf-list .list:not(.-frequency) {
+    justify-content: flex-start;
+    width: 75%;
+  }
+}

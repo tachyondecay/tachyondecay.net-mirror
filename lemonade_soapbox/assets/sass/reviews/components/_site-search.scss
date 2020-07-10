@@ -1,0 +1,85 @@
+/**
+ * _site-search.scss
+ *
+ * Search input for the whole site.
+ */
+
+.site-search {
+  display: flex;
+  flex-flow: row;
+
+  form {
+    display: contents;
+  }
+
+  .textinput, button {
+    opacity: 0.5;
+    transition: $global-transition;
+  }
+
+  .textinput:focus,
+  .textinput:focus + button {
+    opacity: 1.0;
+    color: var(--purple-700);
+  }
+
+  .textinput:focus + button,
+  button:focus {
+    background-color: var(--gold-100);
+
+    span {
+      @include sprite-image('#D39345');
+    }
+  }
+
+  .textinput {
+    flex: 3;
+    padding: vr(0.5);
+
+    border: none;
+    border-radius: 0;
+  }
+
+  button {
+    flex: 0 0 5em;
+
+    background: var(--grey-200);
+    border: none;
+  }
+
+  button > span {
+    font-size: 1.1rem;
+  }
+}
+
+.site-search.-nav {
+  border-bottom: 1px solid var(--grey-400);
+  box-shadow: 2px 2px 2px alpha("grey", "500", 0.25);
+
+  @include mq($from: tablet) {
+    flex: 1 1 20%;
+    margin-left: vr(1);
+
+    border-bottom: none;
+    border-radius: 6px;
+
+    .textinput {
+      border-radius: 6px 0 0 6px;
+    }
+
+    button {
+      border-radius: 0 6px 6px 0;
+      flex: 0 1 2.5em;
+    }
+  }
+
+  @include mq($from: desktop) {
+    flex-grow: 3;
+    margin-left: vr(1);
+    margin-right: vr(0.5);
+  }
+
+  @include mq($from: wide) {
+    flex-grow: 1;
+  }
+}

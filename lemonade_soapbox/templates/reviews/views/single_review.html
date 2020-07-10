@@ -1,0 +1,189 @@
+{% extends 'reviews/layouts/main.html' %}
+{% from 'macros.html' import read_more, time %}
+
+{% block open_graph %}
+<meta property="og:url" content="{{ review.get_permalink(False) }}" />
+<meta property="og:type" content="article">
+<meta property="og:title" content="{{ self.page_title() }}">
+<meta property="og:description" content="{{ review.summary or read_more(review.body_html, length=50, link=False)|striptags }}">
+{% if review.book_cover %}
+<meta property="og:image" content="{{ request.url_root ~ 'media/book_covers/' ~ review.book_cover }}">
+<meta name="twitter:card" content="summary_large_image">
+{% else %}
+<meta property="og:image" content="{{ url_for('.static', filename='images/kara.reviews-logo-alternate.png', external=True) }}">
+    <meta property="og:image:width" content="955">
+    <meta property="og:image:height" content="500">
+<meta name="twitter:card" content="summary">
+{% endif %}
+{% endblock open_graph %}
+
+{% block page_title %}{{ review.short_title|upper }} by {{ review.book_author }}  
+{% if review.rating > 0 %}
+    {% for i in range(0, review.rating) %}★{% endfor %}
+{% endif %} 
+| Kara.Reviews{% endblock page_title %}
+
+{% block body_classes %}review-view{% endblock body_classes %}
+
+{% block body_main %}
+{{ super() }}
+<article class="single-review{{' -has-cover' if review.book_cover }} grid-layout" id="review-{{ review.id }}" itemprop="review" itemscope itemtype="http://schema.org/Review" data-spoilers="{{ 'yes' if review.spoilers else 'no' }}">
+    <meta itemprop="author" content="Kara Babcock">
+    <meta itemprop="license" content="https://creativecommons.org/licenses/by-nc/4.0/">
+    <header class="header" itemprop="itemReviewed" itemscope itemtype="https://schema.org/Book"{% if review.book_cover %} style="--cover-src: url('/media/book_covers/{{ review.book_cover }}');"{% endif %}>
+        {% if review.book_id %}<meta itemprop="isbn" content="{{ review.book_id }}">{% endif %}
+        <h1 class="reviewtitle">
+            <span class="_hide">Review of </span>
+            <cite class="booktitle" itemprop="name">{{ review.title }}</cite>
+            <span class="bookauthor">by  
+            <span itemprop="author">{{ review.book_author }}</span></span>
+        </h1>
+
+        {% if review.book_cover %}
+        <img src="/media/book_covers/{{ review.book_cover }}" class="coverimg" alt="Book cover for {{ review.title }}" itemprop="image" title="{{ review.title }} by {{ review.book_author }}">
+        {% endif %}
+    </header>
+    <footer class="review-footer">
+        <p class="rating-display">
+            {% if review.rating > 0 %}
+            <span class="text _hide" itemprop="reviewRating" itemscope itemtype="http://schema.org/Rating">
+                <span itemprop="ratingValue">{{ review.rating }}</span> out of <span itemprop="bestRating">5</span> stars
+            </span>
+            {% else %}
+            <span class="text _hide">Unrated</span>
+            {% endif %}
+            <span class="stars">
+            {% for star in range(0,5) %}
+                {% if star < review.rating %}
+                <i class="star -full"></i>
+                {% else %}
+                <i class="star -empty"></i>
+                {% endif %}
+            {% endfor %}
+            </span>
+        </p>
+        <p class="pubdate">
+        {% if review.status != "published" or review.show_updated %}
+            Updated {{ time(review.date_updated, 'MMMM D, YYYY') }} | 
+        {% endif %}
+        {% if review.status == "published" %}
+            Reviewed {{ time(review.date_published, 'MMMM D, YYYY') }}
+        {% endif %}
+        </p>
+
+        {% if review.tags %}
+        <div class="tag-list">
+            Shelved under 
+            <ul class="list">
+            {% for t in review._tags|sort(attribute='handle') %}
+                <li><a class="tag" href="{{ url_for('reviews.show_tag', handle=t.handle) }}">{{ t.label }}</a></li>
+            {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+    </footer>
+
+    <aside class="sidebar-aside disclaimers">
+        <h3 class="heading">Heads Up</h3>
+        {% if review.status == "published" and review.date_published < arrow.utcnow().shift(years=-3) %}
+        <p class="disclaimer -date"><strong>This review was published over 3 years ago.</strong> Some of its information or my opinions might be out of date.</p>
+        {% endif %}
+
+        {% if review.status == "published" and review.date_published < config['TRANS_DATE'] %}
+        <p class="disclaimer -transition">I wrote this before <a href="/about/#trans"><strong>I came out as transgender</strong></a>.</p>
+        {% endif %}
+
+        {% if review.spoilers %}
+        <p class="disclaimer -spoilers"><strong>Spoiler alert!</strong> This review reveals significant plot details.</p>
+        {% endif %}
+    </aside>
+
+    <div class="content _textual" itemprop="reviewBody">
+        {{ review.body_html }}
+    </div>
+
+    <section class="hero-container">
+        <h2 class="_hide">Engagement</h2>
+        <div class="hero -blue">
+            <h3 class="heading">Share on the socials</h3>
+
+            <p class="action">
+                <a class="button" target="_blank" href="https://twitter.com/intent/tweet?text={{ ('Read this review of ' ~ review.short_title)|urlencode }}&url={{ review.get_permalink(False) }}&via=tachyondecay"><span class="icon i--twitter"></span>Tweet</a>
+                <a class="button" target="_blank" href="https://www.facebook.com/sharer/sharer.php?kid_directed_site=0&sdk=joey&u={{ review.get_permalink(False) }}&display=popup&ref=plugin&src=share_button"><span class="icon i--facebook2"></span> Facebook
+                </a>
+            </p>
+        </div>
+
+        {% if review.goodreads_id %}
+        <div class="hero -purple">
+            <h3 class="heading">Let me know what you think</h3>
+            <p class="action">
+                <a class="button -purple" target="_blank" href="https://www.goodreads.com/review/show/{{ review.goodreads_id }}"><span class="icon i--bubble"></span> Like/comment on Goodreads</a>
+            </p>
+            <p class="action">
+                <a class="button -purple" target="_blank" href="https://twitter.com/intent/tweet?text={{'@tachyondecay '|urlencode}}"><span class="icon i--twitter" title="Talk to me on Twitter"></span> Tweet</a>
+                <a class="button -purple" target="_blank" href="mailto:kara@tachyondecay.net{{('?subject=Your review of ' ~ review.short_title ~ '&body=Hi Kara!')|urlencode}}"><span class="icon i--envelop" title="Email me"></span> Email</a>
+            </p>
+        </div>
+        {% endif %}
+
+        <div class="hero -red">
+            <h3 class="heading">Enjoying my reviews?</h3>
+            <p class="action">
+            <a class="button -red" target="_blank" href="https://www.buymeacoffee.com/karababcock"><img src="https://cdn.buymeacoffee.com/buttons/bmc-new-btn-logo.svg" alt="Tip me">Buy me a tea</a>
+            </p>
+        </div>
+    </section>
+
+    {% if related_reviews %}
+    <aside class="related-reviews">
+    {% for type, revs in related_reviews.items() %}
+    {% if revs %}
+        <div class="sidebar-aside">
+            <h3 class="heading">{{ type }}</h3>
+
+            <div class="list">
+            {% for r in revs %}
+                <a class="review" href="{{ r.get_permalink() }}" title="{{ r.short_title }} by {{ r.book_author }}">
+                    {% if r.book_cover %}
+                    <img src="/media/book_covers/{{ r.book_cover }}" alt="Cover for {{ r.short_title }}">
+                    {% else %}
+                    <span class="booktitle">{{ r.short_title }}</span> by 
+                    <span class="bookauthor">{{ r.book_author }}</span>
+                    {% endif %}
+                </a>
+            {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+    {% endfor %}
+    </aside>
+    {% endif %}
+
+    {% if review.status == "published" %}
+    <aside class="sidebar-aside citations">
+        <h3 class="heading">Cite This Review</h3>
+
+        {% if review.show_updated %}
+            {% set cite_date = review.date_updated %}
+        {% else %}
+            {% set cite_date = review.date_published %}
+        {% endif %}
+        <details>
+            <summary>APA 7</summary>
+            <p>Babcock, K. ({{ cite_date.format("YYYY, MMM DD") }}). [Review of the book <cite>{{ review.title }}</cite>, by {{ review.book_author }}]. Kara.Reviews. {{ review.get_permalink(False) }}
+        </details>
+
+        <details>
+            <summary>Chicago/Turabian 17</summary>
+            <p>Babcock, Kara. Review of the book <cite>{{ review.title }}</cite>, by {{ review.book_author }}. Kara.Reviews, {{ cite_date.format("MMMM DD, YYYY") }}, accessed {{ arrow.now().format("MMMM DD, YYYY") }}. {{ review.get_permalink(False) }}
+        </details>
+
+        <details>
+            <summary>MLA 8</summary>
+            <p>Babcock, Kara. Review of <cite>{{ review.title }}</cite>, by {{ review.book_author }}. <cite>Kara.Reviews</cite>, {{ cite_date.format("DD MMM YYYY") }}, {{ review.get_permalink(False)|replace('https://', '') }}
+        </details>
+    </aside>
+    {% endif %}
+</article>
+{% endblock body_main %}

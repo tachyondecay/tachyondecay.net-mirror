@@ -1,0 +1,34 @@
+/**
+ * _pagination-links.scss
+ *
+ * List of search results.
+ */
+
+.pagination-links {
+  margin: vr(1) 0 vr(0.5);
+  text-align: center;
+
+  .current, .button {
+    margin: 0 vr(0.25);
+  }
+
+  .current {
+    padding: vr(0.5);
+
+    border: 1px solid var(--gold-500);
+    border-radius: $global-radius;
+    color: var(--gold-500);
+    font-family: $f-sans;
+  }
+
+  .button {
+    --button-bg: var(--purple-500);
+    --button-border: var(--purple-500);
+  }
+}
+
+@include mq($from: tablet) {
+  .pagination-links {
+    margin: vr(2) 0 vr(1);
+  }
+}

@@ -1,0 +1,155 @@
+/**
+ * _review-preview.scss
+ *
+ * List of search results.
+ */
+
+.review-preview {
+  display: grid;
+  grid-template-areas:
+    "cover title"
+    "cover author"
+    "cover footer";
+  grid-template-columns: 25% 1fr;
+  grid-column-gap: vr(1);
+  align-items: center;
+  margin: vr(2) vr(0.5);
+
+  header, 
+  header a {
+    display: contents;
+  }
+
+  .coverimg {
+    align-self: start;
+    grid-area: cover;
+    max-width: 100%;
+  }
+
+  .title {
+    grid-area: title;
+    margin: 0;
+    overflow: hidden;
+    @include typi('base');
+    text-overflow: ellipsis;
+  }
+
+  .bookauthor, 
+  .rating, 
+  .pubdate {
+    // align-self: center;
+    margin: 0;
+    font-family: $f-sans;
+    font-weight: 300;
+  }
+
+  .bookauthor {
+    grid-area: author;
+  }
+
+  footer {
+    grid-area: footer;
+  }
+
+  .content {
+    display: none;
+  }
+
+  .rating {
+    .text {
+      @include hide();
+    }
+
+    .star {
+      height: 1em !important;
+
+      @include mq($from: desktop) {
+        font-size: 1.25rem;
+      }
+    }
+
+    .star.-full {
+      @include sprite(star-full);
+    }
+
+    .star.-empty {
+      @include sprite(star-empty);
+    }
+  }
+}
+
+@include mq($from: tablet) {
+  .review-preview {
+    grid-template-areas:
+      "cover title"
+      "cover author"
+      "cover footer"
+      "cover summary";
+    // grid-column-gap: vr(0.5);
+
+    .coverimg {
+      width: 100%;
+    }
+
+    .content {
+      display: block;
+      grid-area: summary;
+
+      > p {
+        margin: vr(0.25) 0;
+      }
+    }
+
+    footer {
+      display: flex;
+      flex-flow: row;
+
+      margin: vr(0.25) 0;
+    }
+
+    .rating {
+      margin-right: vr(0.5);
+    }
+  }
+}
+
+@include mq($from: desktop) {
+  .review-preview {
+    --border-colour: var(--red-300);
+    @include max-width;
+    grid-template-areas:
+      "cover title footer"
+      "cover author footer"
+      "cover summary summary";
+    grid-template-columns: 10rem 1fr auto;
+    grid-template-rows: repeat(3, minmax(2rem, auto));
+    align-contents: baseline;
+    margin: vr(3) auto;
+    padding-right: vr(1);
+
+    opacity: 0.85;
+    border-radius: 6px;
+    border-right: 6px solid var(--border-colour);
+    box-shadow: 4px 4px 6px 1px alpha("grey", "500", "0.5");
+
+    .coverimg {
+      border-radius: 6px 0 0 6px;
+    }
+
+    &:hover {
+      --border-colour: var(--purple-300);
+      opacity: 1.0;
+    }
+
+    footer {
+      align-self: start;
+      flex-flow: row-reverse;
+      margin-top: vr(0.5);
+    }
+
+    .rating {
+      margin-left: vr(0.5);
+      margin-right: 0;
+    }
+  }
+}

@@ -4,6 +4,10 @@ import time
 from bs4 import BeautifulSoup
 from decimal import Decimal
 from flask import current_app, Markup
+from flask.blueprints import (
+    Blueprint as FlaskBlueprint,
+    BlueprintSetupState as FlaskBlueprintSetupState,
+)
 from flask.json import JSONEncoder as BaseJSONEncoder
 from fractions import Fraction
 from html.parser import HTMLParser
@@ -40,6 +44,39 @@ def weight(tag_list):
     return zip(tags, freqs, weights)
 
 
+class BlueprintSetupState(FlaskBlueprintSetupState):
+    """Adds the ability to set a hostname on all routes when registering the blueprint."""
+
+    def __init__(self, blueprint, app, options, first_registration):
+        super().__init__(blueprint, app, options, first_registration)
+
+        host = self.options.get("host")
+        if host is None:
+            host = self.blueprint.host
+
+        self.host = host
+
+        # This creates a 'blueprint_name.static' endpoint.
+        # The location of the static folder is shared with the app static folder,
+        # but all static resources will be served via the blueprint's hostname.
+        if app.url_map.host_matching and not self.blueprint.has_static_folder:
+            self.add_url_rule(
+                f"{app.static_url_path}/<path:filename>",
+                view_func=app.send_static_file,
+                endpoint="static",
+            )
+
+    def add_url_rule(self, rule, endpoint=None, view_func=None, **options):
+        # Ensure that every route registered by this blueprint has the host parameter
+        options.setdefault('host', self.host)
+        super().add_url_rule(rule, endpoint, view_func, **options)
+
+
+class Blueprint(FlaskBlueprint):
+    def make_setup_state(self, app, options, first_registration=False):
+        return BlueprintSetupState(self, app, options, first_registration)
+
+
 class JSONEncoder(BaseJSONEncoder):
     def default(self, obj):
         try:
@@ -53,7 +90,7 @@ class JSONEncoder(BaseJSONEncoder):
         return JSONEncoder.default(self, obj)
 
 
-whitespace = re.compile('(\S+)')
+whitespace = re.compile(r'(\S+)')
 
 
 class HTMLAbbrev(HTMLParser):

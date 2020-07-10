@@ -1,0 +1,118 @@
+{% from 'macros.html' import search %}
+<!doctype html>
+<html>
+    <head>
+        <title>{% block page_title %}{{ page_title }} | Kara.Reviews{% endblock %}</title>
+
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        <meta name="twitter:site" content="@tachyondecay">
+        <meta name="twitter:creator" content="@tachyondecay">
+        <meta property="fb:app_id" content="802871086913639">
+
+        {% block open_graph %}
+        <meta property="og:url" content="{{ request.url }}" />
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="{{ self.page_title() }} | Kara.Reviews" />
+        <meta property="og:description" content="12 years. {{ g.total }} reviews. And I keep on reading." >
+        <meta property="og:image:url" content="{{ url_for('.static', filename='images/kara.reviews-logo-alternate1.png', _external=True) }}">
+        <meta property="og:image:width" content="955">
+        <meta property="og:image:height" content="500">
+        <meta name="twitter:card" content="summary_large_image">
+        {% endblock %}
+
+        <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,700;1,400&family=Oswald:wght@300;400;700&display=swap" rel="stylesheet">
+        {% block styles %}
+        <link rel="stylesheet" href="{{ url_for('.static', filename='css/reviews/reviews.css') }}"/>
+        {% endblock %}
+
+        {% block scripts %}
+        {% endblock %}
+
+        {% block feeds %}
+        {% endblock %}
+
+        <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('.static', filename='kara.reviews/apple-touch-icon.png') }}">
+        <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('.static', filename='kara.reviews/favicon-32x32.png') }}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('.static', filename='kara.reviews/favicon-16x16.png') }}">
+        <link rel="manifest" href="{{ url_for('.static', filename='kara.reviews/site.webmanifest') }}">
+    </head>
+    <body class="{% block body_classes %}{%endblock body_classes %}">
+    <div class="sticky-jumplinks">
+        <span class="title">{{ self.page_title() }}</span>
+        <div class="links">
+            <a href="#top" title="Jump to top of page">Start</a>
+            <a href="#colophon" title="Jump to footer">End</a>
+        </div>
+    </div>
+    {% block body_main %}
+        <header class="site-title" id="top">
+            {% block navigation %}
+            <nav class="site-navigation -header" aria-label="Primary Site Navigation">
+                {{ search(class="-nav") }}
+
+                <ul>
+                    {% for link in sitenav %}
+                    <li>
+                        <a class="navlink{{ ' -active' if request.endpoint == link[1] }}" href="{{ url_for(link[1]) }}" title="{{ link[2] }}">{{ link[0] }}</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+
+                <a href="#colophon" class="navlink -jumplink">Jump to End</a>
+            </nav>
+            {% endblock navigation %}
+
+            <h1 class="title">
+                <a href="/">
+                    <img class="logo" src="{{ url_for('.static', filename='images/kara.reviews-logo.png') }}" alt="Kara.Reviews">
+                </a>
+            </h1>
+
+            {% block header_end %}{% endblock header_end %}
+        </header>
+    {% endblock body_main %}
+
+    {% block body_footer %}
+        <footer class="page-colophon" id="colophon">
+            <h2 class="_hide">Colophon</h2>
+
+            {% block newsletter %}
+            <div class="hero-container">
+                <div class="hero -gold">
+                <form action="https://tinyletter.com/karababcock" method="post" target="_blank">
+                    <input type="hidden" value="1" name="embed"/>
+
+                    <h3 class="heading">Want my reviews in your inbox?</h3>
+
+                    <p>Subscribe to my <abbr title="every two weeks">fortnightly</abbr> newsletter! You’ll receive a digest email of my latest reviews and a brief bookish thought or two.</p>
+                    <div class="form-field">
+                        <label for="tlemail">Enter your email address</label>
+                        <input type="text" class="textinput" name="email" id="tlemail" />
+                        <button type="submit" class="button -gold" value="Subscribe">Subscribe</button>
+                    </div>
+                    <p class="_info"><small><a href="https://tinyletter.com" target="_blank">Powered by TinyLetter</a>. Your email will not be used for anything other than this newsletter, nor will I share it with any third parties.</small></p>
+                </form>
+                </div>
+            {% endblock newsletter %}
+            </div>
+
+            <div class="footer">
+                <nav class="site-navigation -footer" arialabel="Secondary Site Navigation">
+                    <ul>
+                        <li><a href="/about/" class="navlink">About</a></li>
+                        <li><a href="/about/#contact" class="navlink">Contact</a></li>
+                        <li><a href="/about/#review-policy" class="navlink">Review Policy</a></li>
+                        <li><a href="/about/#submissions" class="navlink">Submit a Book for Review</a></li>
+                    </ul>
+                </nav>
+
+                <div class="copyright">
+                    Copyright ©2020 <a href="https://tachyondecay.net/">Kara Babcock</a>. All reviews are available under a <a href="https://creativecommons.org/licenses/by-nc/4.0">Creative Commons Attribution–NonCommercial License<img style="height:22px!important;margin-left: 3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg" /><img  style="height:22px!important;margin-left: 3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg" /><img  style="height:22px!important;margin-left: 3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nc.svg" /></a>
+                </div>
+            </div>
+
+        </footer>
+    {% endblock body_footer %}
+</html>
