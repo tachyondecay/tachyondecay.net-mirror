@@ -1941,6 +1941,7 @@ label, legend {
   .page-title.-homepage {
     height: auto;
     padding-top: 0;
+    z-index: 1;
     background: none;
   }
 }
