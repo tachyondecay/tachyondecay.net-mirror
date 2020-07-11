@@ -17,7 +17,7 @@ from flask_sqlalchemy import Pagination
 from lemonade_soapbox import db
 from lemonade_soapbox.helpers import Blueprint
 from lemonade_soapbox.models import Review, Tag
-from sqlalchemy import and_, func, or_
+from sqlalchemy import and_, func, or_, not_
 from whoosh.query import Term as whoosh_term
 
 bp = Blueprint('reviews', __name__)
@@ -66,7 +66,7 @@ def index():
     # Get most recent fiction and non-fiction reviews
     fiction = (
         Review.published()
-        .filter(Review.tags.notin_(['non-fiction']))
+        .filter(not_(Review.tags.in_(['non-fiction'])))
         .order_by(Review.date_published.desc())
         .limit(3)
         .all()

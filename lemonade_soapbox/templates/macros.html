@@ -93,10 +93,10 @@
 {%- endmacro %}
 
 {% macro time_relative(datetime, granularity='') -%}
-{% set date = datetime.to(config.TIMEZONE).humanize(granularity=granularity) %}
+{% set date = datetime.to(config.TIMEZONE).replace(hour=0, minute=0, second=0).humanize(granularity=granularity) %}
 <time datetime="{{ datetime.isoformat() }}">
     {% if date == '0 days ago' %}today
-    {% elif date == '1 day ago' %}yesterday
+    {% elif date == 'a day ago' %}yesterday
     {% else %}{{ date }}{% endif %}
 </time>
 {%- endmacro %}
