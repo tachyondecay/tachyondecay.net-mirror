@@ -1,7 +1,7 @@
 import arrow
 import calendar
 from flask import abort, current_app, g, redirect, render_template, Response, url_for
-from flask_login import login_required
+from flask_login import current_user, login_required
 from gettext import ngettext
 from lemonade_soapbox.helpers import Blueprint
 from lemonade_soapbox.models import Article, Tag
@@ -143,9 +143,9 @@ def month_archive(year, month):
 @bp.route('/<int:year>/<month>/<handle>/')
 def single_article(year, month, handle):
     start, end = arrow.get(year, int(month), 1).span('month')
+    article = Article.query if current_user.is_authenticated else Article.published()
     article = (
-        Article.published()
-        .filter(Article.date_published.between(start, end))
+        article.filter(Article.date_published.between(start, end))
         .filter_by(handle=handle)
         .first_or_404()
     )
