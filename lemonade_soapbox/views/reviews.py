@@ -199,9 +199,9 @@ def all_tags():
 def show_tag(handle, format=None):
     page = request.args.get('page', 1, int)
     shelf = Tag.query.filter_by(handle=handle).first_or_404()
-    reviews = shelf.reviews.filter_by(status='published').order_by(
-        Review.date_published.desc()
-    )
+    reviews = shelf.reviews.filter(
+        and_(Review.status == 'published', Review.date_published <= arrow.utcnow())
+    ).order_by(Review.date_published.desc())
 
     if format:
         return Response(
