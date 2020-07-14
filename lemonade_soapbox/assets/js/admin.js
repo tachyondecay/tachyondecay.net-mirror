@@ -480,13 +480,14 @@ var PostForm = function(form) {
                                         );
                                     });
                                 }
-                                text += '\n<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/"><img alt="Creative Commons BY-NC License" width="88" height="31" src="http://i.creativecommons.org/l/by-nc/4.0/88x31.png" /></a>';
+                                text += '\n<a rel="license" href="https://creativecommons.org/licenses/by-nc/4.0/"><img alt="Creative Commons BY-NC License" width="88" height="31" src="http://i.creativecommons.org/l/by-nc/4.0/88x31.png" /></a>';
                                 navigator.clipboard.writeText(text);
                             })
                             .catch(error => {
                                 console.log(error);
                             });
                     } else {
+                        text += '\n<a rel="license" href="https://creativecommons.org/licenses/by-nc/4.0/"><img alt="Creative Commons BY-NC License" width="88" height="31" src="http://i.creativecommons.org/l/by-nc/4.0/88x31.png" /></a>';
                         navigator.clipboard.writeText(text);
                     }
                     notify('Review copied to clipboard.', 'success')
