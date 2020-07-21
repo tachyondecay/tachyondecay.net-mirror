@@ -12,7 +12,7 @@
         <meta property="fb:app_id" content="802871086913639">
 
         {% block open_graph %}
-        <meta property="og:url" content="{{ request.url }}" />
+        <meta property="og:url" content="{{ request.base_url }}" />
         <meta property="og:type" content="website">
         <meta property="og:title" content="{{ self.page_title() }} | Kara.Reviews" />
         <meta property="og:description" content="12 years. {{ g.total }} reviews. And I keep on reading." >
