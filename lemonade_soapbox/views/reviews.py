@@ -41,14 +41,17 @@ def sitenav():
 @bp.errorhandler(404)
 def error_404(e):
     current_app.logger.info(f"404 not found: {e}")
-    return render_template(
-        'reviews/layouts/basic.html',
-        page_title="Page Not Found",
-        description="Looks like the link you followed doesn’t work anymore. Maybe try searching for what you want?",
-        cover=url_for(
-            '.static',
-            filename='images/layout/header_bg/syd-wachs-slItfWbhijc-unsplash.jpg',
+    return (
+        render_template(
+            'reviews/layouts/basic.html',
+            page_title="Page Not Found",
+            description="Looks like the link you followed doesn’t work anymore. Maybe try searching for what you want?",
+            cover=url_for(
+                '.static',
+                filename='images/layout/header_bg/syd-wachs-slItfWbhijc-unsplash.jpg',
+            ),
         ),
+        404,
     )
 
 
