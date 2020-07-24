@@ -233,7 +233,11 @@ def show_tag(handle, format=None):
             read_more_length=75,
             reviews=reviews,
             page_title=f'Books shelved under “{shelf.label.title()}”',
-            cover=url_for('.static', filename='images/layout/header_bg/' + filename,),
+            cover=url_for(
+                '.static',
+                filename='images/layout/header_bg/' + filename,
+                _external=True,
+            ),
         )
 
 
