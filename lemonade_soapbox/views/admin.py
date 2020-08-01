@@ -267,7 +267,7 @@ def edit_article(id, revision_id):
         #
         # First, check if we uploaded a file the old-fashioned way
         if form.cover.data and request.files.get(form.cover.name):
-            cover = request.files[form.book_cover.name]
+            cover = request.files[form.cover.name]
             filename = secure_filename(
                 article.handle + '-cover.' + cover.filename.rsplit('.', 1)[1].lower()
             )
