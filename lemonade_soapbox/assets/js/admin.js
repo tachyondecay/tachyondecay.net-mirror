@@ -474,10 +474,10 @@ var PostForm = function(form) {
                                 if(data) {
                                     console.log(data);
                                     data.forEach(link => {
-                                        text = text.replace(
-                                            'https://kara.reviews/' + link[0],
-                                            'https://www.goodreads.com/review/show/' + link[1]
-                                        );
+                                        // text = text.replace(
+                                        //     'https://kara.reviews/' + link[0],
+                                        //     'https://www.goodreads.com/review/show/' + link[1]
+                                        // );
                                         text = text.replace(
                                             '/' + link[0],
                                             'https://www.goodreads.com/review/show/' + link[1]
@@ -493,10 +493,10 @@ var PostForm = function(form) {
                     if(text) {
                         const handle = document.getElementById('handle').value;
                         text = text.replace('<head></head><body>', '').replace('</body>', 'Originally posted on <a href="https://kara.reviews/' + handle + '/">Kara.Reviews</a>, where you can easily browse all my reviews and subscribe to my newsletter.');
-                        text += '\n<a rel="license" href="https://creativecommons.org/licenses/by-nc/4.0/"><img alt="Creative Commons BY-NC License" width="88" height="31" src="http://i.creativecommons.org/l/by-nc/4.0/88x31.png" /></a>';
+                        text += '\n\n<a rel="license" href="https://creativecommons.org/licenses/by-nc/4.0/"><img alt="Creative Commons BY-NC License" width="88" height="31" src="http://i.creativecommons.org/l/by-nc/4.0/88x31.png" /></a>';
                         navigator.clipboard.writeText(text);
+                        notify('Review copied to clipboard.', 'success')
                     }
-                    notify('Review copied to clipboard.', 'success')
                 },
                 className: 'fa fa-copy',
                 title: 'Copy for Goodreads'
