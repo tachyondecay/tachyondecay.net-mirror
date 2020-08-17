@@ -69,6 +69,9 @@
         {% if review.status == "published" %}
             Reviewed {{ time(review.date_published, 'MMMM D, YYYY') }}
         {% endif %}
+        {% if current_user.is_authenticated %}
+            | <a href="{{ review.get_editlink() }}">Edit</a>
+        {% endif %}
         </p>
 
         {% if review.tags %}

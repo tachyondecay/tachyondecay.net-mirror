@@ -462,10 +462,10 @@ var PostForm = function(form) {
                     });
 
                     // Get anything that might be a link to another review
-                    const review_links = text.matchAll(/href="\/([^/]+)\/?"/g);
+                    const review_links = text.matchAll(/href="(https:\/\/kara\.reviews)?\/([^/]+)\/?"/g);
                     let q = '';
                     for(const link of review_links) {
-                        q += '&q=' + link[1];
+                        q += '&q=' + link[2];
                     }
                     if(q) {
                         fetch('/api/posts/goodreads-link/?' + q)
@@ -475,18 +475,24 @@ var PostForm = function(form) {
                                     console.log(data);
                                     data.forEach(link => {
                                         text = text.replace(
+                                            'https://kara.reviews/' + link[0],
+                                            'https://www.goodreads.com/review/show/' + link[1]
+                                        );
+                                        text = text.replace(
                                             '/' + link[0],
                                             'https://www.goodreads.com/review/show/' + link[1]
                                         );
                                     });
                                 }
-                                text += '\n<a rel="license" href="https://creativecommons.org/licenses/by-nc/4.0/"><img alt="Creative Commons BY-NC License" width="88" height="31" src="http://i.creativecommons.org/l/by-nc/4.0/88x31.png" /></a>';
-                                navigator.clipboard.writeText(text);
                             })
                             .catch(error => {
                                 console.log(error);
+                                text = null;
                             });
-                    } else {
+                    }
+                    if(text) {
+                        const handle = document.getElementById('handle').value;
+                        text = text.replace('<head></head><body>', '').replace('</body>', 'Originally posted on <a href="https://kara.reviews/' + handle + '/">Kara.Reviews</a>, where you can easily browse all my reviews and subscribe to my newsletter.');
                         text += '\n<a rel="license" href="https://creativecommons.org/licenses/by-nc/4.0/"><img alt="Creative Commons BY-NC License" width="88" height="31" src="http://i.creativecommons.org/l/by-nc/4.0/88x31.png" /></a>';
                         navigator.clipboard.writeText(text);
                     }
