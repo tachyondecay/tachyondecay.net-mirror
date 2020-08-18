@@ -359,7 +359,8 @@ class PostMixin(AuthorMixin):
         """Return the post published after this post."""
         if self.date_published:
             return (
-                self.query.filter(self.__class__.date_published > self.date_published)
+                self.published()
+                .filter(self.__class__.date_published > self.date_published)
                 .order_by(asc('date_published'))
                 .first()
             )
