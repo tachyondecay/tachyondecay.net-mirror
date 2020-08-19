@@ -19,7 +19,11 @@
         <meta property="og:url" content="{{ request.base_url }}">
         <meta property="og:type" content="website">
         <meta property="og:title" content="{{ self.page_title() }}">
+        {% if reviews.items %}
         <meta property="og:description" content="{{ reviews.total }} books on this shelf. Latest book: {{ reviews.items[0].short_title }}">
+        {% else %}
+        <meta property="og:description" content="No reviews found.">
+        {% endif %}
         <meta property="og:image" content="{{ cover }}">
         <meta name="twitter:card" content="summary_large_image">
     {% endblock %}

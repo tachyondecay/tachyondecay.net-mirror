@@ -17,11 +17,9 @@
 {% endif %}
 {% endblock open_graph %}
 
-{% block page_title %}{{ review.short_title|upper }} by {{ review.book_author }}  
-{% if review.rating > 0 %}
+{% block page_title -%}{{ review.short_title|upper }} by {{ review.book_author }} {% if review.rating > 0 %}
     {% for i in range(0, review.rating) %}★{% endfor %}
-{% endif %} 
-| Kara.Reviews{% endblock page_title %}
+{% endif %} | Kara.Reviews{%- endblock page_title %}
 
 {% block body_classes %}review-view{% endblock body_classes %}
 
