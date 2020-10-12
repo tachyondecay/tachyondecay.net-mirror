@@ -1,0 +1,18 @@
+/**
+ * _body-notification.scss
+ *
+ * List of search results.
+ */
+
+.body-notification {
+    @include max-width();
+    margin-top: vr(1.5);
+    margin-bottom: vr(1.5);
+
+    font-family: $f-sans;
+    font-size: 1.1rem;
+}
+
+.body-notification p {
+  margin: vr(0.5);
+}

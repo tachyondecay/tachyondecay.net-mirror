@@ -148,16 +148,22 @@ def search():
     page = request.args.get('page', 1, int)
     page_title = 'Search'
     reviews = None
+    mode = None
     if q:
         search_params = {
             'pagenum': page,
             'pagelen': 50,
-            'sort_field': 'date_published',
-            'sort_order': 'desc',
             'filter': whoosh_term(
                 'status', 'published'
             ),  # Only return published reviews
         }
+
+        # If query has no modifiers then search the title only
+        split_q = q.split(" ")
+        if split_q and ":" not in split_q[0]:
+            mode = 'title'
+            search_params['fields'] = 'title'
+
         results = Review.search(q, **search_params)
         current_app.logger.debug(results)
         if results is not None and results['query'] is not None:
@@ -179,6 +185,7 @@ def search():
             '.static',
             filename='images/layout/header_bg/regine-tholen-pAs8r_VZEWc-unsplash.jpg',
         ),
+        mode=mode,
         page_title=page_title,
         reviews=reviews,
     )

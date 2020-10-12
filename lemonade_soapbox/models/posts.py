@@ -609,7 +609,7 @@ class Article(
         handle=ID(unique=True),
         status=ID(),
         tags=KEYWORD(commas=True, scorable=True),
-        title=TEXT(analyzer=StemmingAnalyzer()),
+        title=TEXT(field_boost=2.0, analyzer=StemmingAnalyzer()),
     )
 
     @classmethod
@@ -702,7 +702,7 @@ class Review(
     schema = Schema(
         id=ID(stored=True, unique=True),
         book_author=TEXT(),
-        title=TEXT(),
+        title=TEXT(field_boost=10.0, analyzer=StemmingAnalyzer()),
         date_created=DATETIME(sortable=True),
         date_published=DATETIME(sortable=True),
         date_updated=DATETIME(sortable=True),

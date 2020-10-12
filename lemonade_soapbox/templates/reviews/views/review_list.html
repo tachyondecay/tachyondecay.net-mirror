@@ -43,6 +43,17 @@
 {% endif %}
 
 <main>
+
+<div class="body-notification">
+    {% if not reviews %}
+    <p>No results found.</p>
+    {% endif %}
+
+    {% if mode == "title" %}
+    <p>Currently searching by book title only. You can <a href="?q=body:{{ ('"' ~ request.args.get('q') ~ '"')|urlencode }}"">search within the text of reviews</a> instead, or <a href="?q=book_author:{{ ('"' ~ request.args.get('q') ~ '"')|urlencode }}">search for a book author</a>.</p>
+    {% endif %}
+</div>
+
 {% if reviews %}
 <ol class="_bare-list">
     {% for review in reviews.items %}
@@ -101,9 +112,6 @@
 {% if reviews and reviews.pages > 1 %}
     {{ render_pagination(reviews) }}
 {% endif %}
-
-{% else %}
-<p>Your search returned no results.</p>
 </main>
 {% endif %}
 {% endblock body_main %}
