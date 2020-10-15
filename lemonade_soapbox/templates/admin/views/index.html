@@ -50,7 +50,7 @@
     {% for d in scheduled %}
         <tr class="row -{{d.type}}">
             <th scope="row" class="_left"><span class="i--{{ 'book' if d.type == 'review' else 'newspaper' }} icon"></span> <a href="{{ d.get_editlink() }}">{{ d.title }}</a></th>
-            <td class="_info">{{ d.date_published.to(config['TIMEZONE']).format('MMM DD [at] h:MM a') }}</td>
+            <td class="_info">{{ d.date_published.to(config['TIMEZONE']).format('MMM DD [at] h:mm a') }}</td>
         </tr>
     {% endfor %}
     </table>
