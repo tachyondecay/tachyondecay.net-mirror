@@ -298,15 +298,18 @@ def show_review(handle):
         related_reviews['Mentioned in This Review'] = mentioned
     # If all else fails, grab books from the same shelf
     # if not (from_author or mentioned):
-    shelf = random.choice(review._tags)
-    shelved = (
-        shelf.reviews.filter(and_(Review.status == 'published', Review.id != review.id))
-        .order_by(func.random())
-        .limit(3)
-        .all()
-    )
-    if shelved:
-        related_reviews[f'More {shelf.label} Reviews'] = shelved
+    if review._tags:
+        shelf = random.choice(review._tags)
+        shelved = (
+            shelf.reviews.filter(
+                and_(Review.status == 'published', Review.id != review.id)
+            )
+            .order_by(func.random())
+            .limit(3)
+            .all()
+        )
+        if shelved:
+            related_reviews[f'More {shelf.label} Reviews'] = shelved
 
     # Make sure no review appears more than once in the related reviews
     ids = []
