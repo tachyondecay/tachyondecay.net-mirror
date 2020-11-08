@@ -14,7 +14,6 @@ def error404(e):
 
 @bp.route('/')
 def index():
-    print(url_for('frontend.static', filename='admin.css'))
     articles = (
         Article.published().order_by(Article.date_published.desc()).limit(5).all()
     )
