@@ -12,7 +12,7 @@
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fjalla+One|PT+Sans:400,700"/>
         <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
         <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css">
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/admin/admin.css') }}"/>
+        <link rel="stylesheet" href="{{ url_for('.static', filename='css/admin/admin.css') }}"/>
         {% block styles %}{% endblock %}
 
         <script type="text/javascript">
@@ -25,8 +25,8 @@
         <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
         <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mustache@latest/mustache.min.js"></script>
 <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
-        <script src="{{ url_for('static', filename='js/vendor/paste.js') }}"></script>
-        <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+        <script src="{{ url_for('.static', filename='js/vendor/paste.js') }}"></script>
+        <script src="{{ url_for('.static', filename='js/admin.js') }}"></script>
         {% block scripts %} {% endblock %}
     </head>
     <body class="no-js {% block body_classes %}{% endblock %}">

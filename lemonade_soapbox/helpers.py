@@ -60,11 +60,14 @@ class BlueprintSetupState(FlaskBlueprintSetupState):
         # The location of the static folder is shared with the app static folder,
         # but all static resources will be served via the blueprint's hostname.
         if app.url_map.host_matching and not self.blueprint.has_static_folder:
+            url_prefix = self.url_prefix
+            self.url_prefix = None
             self.add_url_rule(
                 f"{app.static_url_path}/<path:filename>",
                 view_func=app.send_static_file,
                 endpoint="static",
             )
+            self.url_prefix = url_prefix
 
     def add_url_rule(self, rule, endpoint=None, view_func=None, **options):
         # Ensure that every route registered by this blueprint has the host parameter

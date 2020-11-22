@@ -21,12 +21,12 @@
         {% endblock %}
 
         {% block styles %}
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}"/>
+        <link rel="stylesheet" href="{{ url_for('.static', filename='css/main.css') }}"/>
         {% endblock %}
 
         {% block scripts %}
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-        <script src="{{ url_for('static', filename='js/magic.js') }}"></script>
+        <script src="{{ url_for('.static', filename='js/magic.js') }}"></script>
         {% endblock %}
 
         {% block feeds %}
@@ -34,10 +34,10 @@
         <link rel="alternate" href="{{ url_for('blog.show_feed', format='atom') }}" title="Articles Atom feed"/>
         {% endblock %}
 
-        <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='images/icons/apple-touch-icon.png') }}">
-        <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/icons/favicon-32x32.png') }}">
-        <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='images/icons/favicon-16x16.png') }}">
-        <link rel="manifest" href="{{ url_for('static', filename='site.webmanifest') }}">
+        <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('.static', filename='images/icons/apple-touch-icon.png') }}">
+        <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('.static', filename='images/icons/favicon-32x32.png') }}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('.static', filename='images/icons/favicon-16x16.png') }}">
+        <link rel="manifest" href="{{ url_for('.static', filename='site.webmanifest') }}">
     </head>
     <body class="{% block body_classes %}{% endblock %}">
         <nav class="c-skip-links">
@@ -96,17 +96,17 @@
 
             <h2 class="u-aside u-margin-top-large">Find Me Elsewhere on the Web</h2>
             <div class="c-social-media">
-                <a href="https://twitter.com/tachyondecay/" title="I tweet, um, a lot"><img src="{{ url_for('static', filename='images/icons/twitter.png') }}" alt="Twitter" class="c-social-media__icon"/></a>
-                <a href="https://goodreads.com/tachyondecay/" title="I read way too many books, and I review them all"><img src="{{ url_for('static', filename='images/icons/goodreads.png') }}" alt="Goodreads" class="c-social-media__icon"/></a>
-                <a href="https://ravelry.com/tachyondecay" title="This is where I share my knitting"><img src="{{ url_for('static', filename='images/icons/ravelry_ball.png') }}" alt="Ravelry" title="Ravelry" class="c-social-media__icon"/></a>
-                <a href="https://instagram.com/tachyondecay/" title="I post knitting pics here"><img src="{{ url_for('static', filename='images/icons/instagram.png') }}" alt="Instagram" class="c-social-media__icon"/></a>                <a href="https://github.com/tachyondecay/" title="Occasionally I put some code here"><img src="{{ url_for('static', filename='images/icons/github.png') }}" alt="GitHub" class="c-social-media__icon"/></a>
-                <a href="https://flickr.com/tachyondecay/" title="This is where I share my photos"><img src="{{ url_for('static', filename='images/icons/flickr.png') }}" alt="Flickr" class="c-social-media__icon"/></a>
-                <a href="https://facebook.com/tachyondecay/" title="If you must"><img src="{{ url_for('static', filename='images/icons/facebook.png') }}" alt="Facebook" title="Facebook" class="c-social-media__icon"/></a>
-                <a href="mailto:kara@tachyondecay.net" title="My preferred medium of long-form communication"><img src="{{ url_for('static', filename='images/icons/email.png') }}" alt="Email" class="c-social-media__icon" /></a>
+                <a href="https://twitter.com/tachyondecay/" title="I tweet, um, a lot"><img src="{{ url_for('.static', filename='images/icons/twitter.png') }}" alt="Twitter" class="c-social-media__icon"/></a>
+                <a href="https://goodreads.com/tachyondecay/" title="I read way too many books, and I review them all"><img src="{{ url_for('.static', filename='images/icons/goodreads.png') }}" alt="Goodreads" class="c-social-media__icon"/></a>
+                <a href="https://ravelry.com/tachyondecay" title="This is where I share my knitting"><img src="{{ url_for('.static', filename='images/icons/ravelry_ball.png') }}" alt="Ravelry" title="Ravelry" class="c-social-media__icon"/></a>
+                <a href="https://instagram.com/tachyondecay/" title="I post knitting pics here"><img src="{{ url_for('.static', filename='images/icons/instagram.png') }}" alt="Instagram" class="c-social-media__icon"/></a>                <a href="https://github.com/tachyondecay/" title="Occasionally I put some code here"><img src="{{ url_for('.static', filename='images/icons/github.png') }}" alt="GitHub" class="c-social-media__icon"/></a>
+                <a href="https://flickr.com/tachyondecay/" title="This is where I share my photos"><img src="{{ url_for('.static', filename='images/icons/flickr.png') }}" alt="Flickr" class="c-social-media__icon"/></a>
+                <a href="https://facebook.com/tachyondecay/" title="If you must"><img src="{{ url_for('.static', filename='images/icons/facebook.png') }}" alt="Facebook" title="Facebook" class="c-social-media__icon"/></a>
+                <a href="mailto:kara@tachyondecay.net" title="My preferred medium of long-form communication"><img src="{{ url_for('.static', filename='images/icons/email.png') }}" alt="Email" class="c-social-media__icon" /></a>
             </div>
 
             <div class="c-colophon__copyright u-margin-top-large u-margin-horizontal-none u-margin-bottom">
-                <a class="c-copyright__img" href="http://creativecommons.org/licenses/by/4.0/"><img src="{{ url_for('static', filename='images/icons/cc_by.png') }}" alt="CC-BY 4.0" width="88" /></a>
+                <a class="c-copyright__img" href="http://creativecommons.org/licenses/by/4.0/"><img src="{{ url_for('.static', filename='images/icons/cc_by.png') }}" alt="CC-BY 4.0" width="88" /></a>
                 <div class="c-copyright__body u-margin-top">
                     <p>Copyright &#169; 2020 by <a href="mailto:kara@tachyondecay.net">Kara Babcock</a>.</p>
                     <p><strong>Except where otherwise noted</strong>, all original work available under a <a href="http://creativecommons.org/licenses/by/4.0/" rel="license">Creative Commons Attribution 4.0 Licence</a>.</p>
