@@ -5,6 +5,7 @@ from flask_login import current_user, login_required
 from gettext import ngettext
 from lemonade_soapbox.helpers import Blueprint
 from lemonade_soapbox.models import Article, Tag
+from sqlalchemy import and_
 
 bp = Blueprint('blog', __name__)
 
@@ -80,8 +81,15 @@ def all_tags():
 @bp.route('/tags/<handle>/')
 def show_tag(handle):
     tag = Tag.query.filter_by(handle=handle).first_or_404()
-    # articles = tag.articles.order_by(Article.date_published.desc()).all()
-    articles = sorted(tag.articles, key=lambda k: k.date_published, reverse=True)
+    articles = (
+        tag.articles.filter(
+            and_(
+                Article.status == 'published', Article.date_published <= arrow.utcnow()
+            )
+        )
+        .order_by(Article.date_published.desc())
+        .all()
+    )
     page_title = ngettext(
         '%(num)d Article Tagged with “%(t)s”',
         '%(num)d Articles Tagged with “%(t)s”',
