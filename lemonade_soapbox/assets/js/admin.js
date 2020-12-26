@@ -150,6 +150,7 @@ function BackendInit() {
 
         container.append(input, suggestions);
 
+        // Add a visible tag element to th widget
         function appendTag(tag) {
             const s = document.createElement('span');
             s.className = 'tag';
@@ -160,16 +161,19 @@ function BackendInit() {
             }
         }
 
+        // Clicking on a tag removes it from the list
         container.addEventListener('click', (e) => {
             if(e.target.classList.contains('tag')) {
                 const r = new RegExp(",? ?" + e.target.innerText + ",? ?");
-                self.value = self.value.replace(r, '');
+                self.value = self.value.replace(r, ',');
                 e.target.remove();
             }
         });
 
+        // Read the existing values in the list and create a visible tag for each
         self.value.split(',').forEach(appendTag);
 
+        // Actual lookup/search functionality
         let timer;
         input.addEventListener('input', (e) => {
             if(input.value.length >= 3) {
@@ -200,6 +204,7 @@ function BackendInit() {
             }
         });
 
+        // Keyboard navigation goodness for choosing a tag from the autocomplete suggestions
         function chooseTag(e) {
             const v = input.value.trim();
             if(e.key == 'Enter') {
