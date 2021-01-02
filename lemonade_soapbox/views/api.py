@@ -10,7 +10,6 @@ from flask import (
 )
 from flask_login import login_required
 from flask_wtf import csrf
-from sqlalchemy import text
 from lemonade_soapbox import db
 from lemonade_soapbox.helpers import Blueprint
 from lemonade_soapbox.models import Article, Review, Tag, tag_relationships
@@ -33,7 +32,7 @@ def autosave():
     if parent:
         post = getattr(globals()[post_type], 'from_revision')(parent)
         if not post:
-            abort(404)
+            abort(400)
         r = post.new_autosave(body)
         db.session.commit()
         date_created = r.date_created.to(current_app.config['TIMEZONE']).format(
@@ -75,7 +74,7 @@ def goodreads_link():
             .all()
         )
         return jsonify(reviews)
-    return jsonify('')
+    return '', 204
 
 
 @bp.route('/posts/search/')
@@ -121,7 +120,7 @@ def tags_delete():
         db.session.commit()
         return jsonify(message='Tag deleted.')
     else:
-        return jsonify(message='No tag found.')
+        return jsonify(message='No tag found.'), 400
 
 
 @bp.route('/tags/rename/', methods=['POST'])
@@ -146,7 +145,7 @@ def tags_rename():
         db.session.commit()
         return jsonify(message='Tag updated.')
     else:
-        return jsonify(message='No tag found.')
+        return jsonify(message='No tag found.'), 400
 
 
 @bp.route('/tags/search/')
@@ -170,7 +169,5 @@ def tags_lookup():
             }
             for t in matches.all()
         ]
-        return Response(json.dumps(just_tags), mimetype='application/json')
-    else:
-        return jsonify({'result': 'No search term specified.'}), 400
-    return jsonify({})
+        return jsonify(just_tags)
+    return jsonify({'result': 'No search term specified.'}), 400

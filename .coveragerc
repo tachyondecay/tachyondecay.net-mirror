@@ -1,0 +1,4 @@
+[run]
+    # Don't measure coverage of library code
+    command_line = -m pytest
+    omit = venv/*

@@ -17,14 +17,10 @@ def truncate_html(content, max_length=None):
     """Truncate HTML content to a certain number of words."""
     if not max_length:
         max_length = current_app.config['EXCERPT_LEN']
-    try:
-        bs = BeautifulSoup(str(content), "html.parser")
-        parser = HTMLAbbrev(max_length)
-        parser.feed(str(bs))
-        return Markup(parser.close())
-    except Exception as e:
-        current_app.logger.debug(e)
-        return "Could not truncate HTML"
+    bs = BeautifulSoup(str(content), "html.parser")
+    parser = HTMLAbbrev(max_length)
+    parser.feed(str(bs))
+    return Markup(parser.close())
 
 
 def weight(tag_list):
@@ -51,8 +47,8 @@ class BlueprintSetupState(FlaskBlueprintSetupState):
         super().__init__(blueprint, app, options, first_registration)
 
         host = self.options.get("host")
-        if host is None:
-            host = self.blueprint.host
+        # if host is None:
+        #     host = self.blueprint.host
 
         self.host = host
 
@@ -80,7 +76,7 @@ class Blueprint(FlaskBlueprint):
         return BlueprintSetupState(self, app, options, first_registration)
 
 
-class JSONEncoder(BaseJSONEncoder):
+class JSONEncoder(BaseJSONEncoder):  # pragma: no cover
     def default(self, obj):
         try:
             if isinstance(obj, arrow.Arrow):
@@ -96,7 +92,7 @@ class JSONEncoder(BaseJSONEncoder):
 whitespace = re.compile(r'(\S+)')
 
 
-class HTMLAbbrev(HTMLParser):
+class HTMLAbbrev(HTMLParser):  # pragma: no cover
     """
     Truncate HTML in a way that does not mangle tags. Adapted from Dan Crosta,
     http://late.am/post/2011/12/02/truncating-html-with-python.html

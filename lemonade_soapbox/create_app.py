@@ -4,32 +4,46 @@ import os
 from flask import Flask
 from gettext import gettext, ngettext
 from lemonade_soapbox import csrf, db, login_manager
-from lemonade_soapbox.config import config
+from lemonade_soapbox.logging_config import logging_config
 from lemonade_soapbox.helpers import JSONEncoder, truncate_html, weight
 from lemonade_soapbox.models import Article, Review, Searchable, User
+from logging.config import dictConfig
+from pathlib import Path
 from werkzeug.middleware.shared_data import SharedDataMiddleware
 
 
-def create_app():
+def create_app(config_name=None):
     """Factory for the application."""
-    config_name = os.getenv('FLASK_ENV', 'production')
+    config_name = config_name or os.getenv("FLASK_ENV", "production")
+
+    # Configure logging before creating the app
+    logging_path = Path("instance", config_name, "logs")
+    logging_path.mkdir(exist_ok=True)
+    for k in logging_config.get("handlers", {}):
+        h = logging_config["handlers"][k]
+        if "filename" in h:
+            h["filename"] = logging_path / h["filename"]
+    dictConfig(logging_config)
+
     app = Flask(
-        'lemonade_soapbox',
-        static_folder='assets',
-        static_host=os.getenv('MAIN_HOST'),
+        "lemonade_soapbox",
+        static_folder="assets",
+        static_host=os.getenv("MAIN_HOST"),
         host_matching=True,
     )
-    app.instance_path = os.path.join(app.instance_path, app.config['ENV'])
-    app.config.from_object(config[config_name])
-    app.config.from_json(os.path.join(app.instance_path, 'config.json'))
-    config[config_name].init_app(app)
+
+    # Load instance-specific config, create search index dir
+    app.instance_path = Path(app.instance_path, config_name)
+    app.config["INDEX_PATH"] = app.instance_path / "index"
+    app.config["INDEX_PATH"].mkdir(exist_ok=True)
+    app.config.from_json(app.instance_path / "config.json")
 
     # Nginx handles proxying the media dir in production
     # This emulates it when developing with Flask's built-in server
-    if app.config['ENV'] == 'development':
-        app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
+    if app.config["ENV"] == "production" or app.testing:
+        app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 0
         app.wsgi_app = SharedDataMiddleware(
-            app.wsgi_app, {'/media': os.path.join(app.instance_path, 'media')}
+            app.wsgi_app, {"/media": str(app.instance_path / "media")}
         )
 
     csrf.init_app(app)
@@ -53,6 +67,7 @@ def create_app():
             click.echo("Model is not Searchable.")
         else:
             model.build_index()
+            click.echo("Indexing complete.")
 
     from lemonade_soapbox.views import admin, api, blog, frontend, reviews
 
@@ -66,12 +81,13 @@ def create_app():
     app.register_blueprint(api.bp, host=os.getenv('REVIEW_HOST'), url_prefix='/api')
     app.register_blueprint(reviews.bp, host=os.getenv('REVIEW_HOST'), url_prefix='/')
 
-    app.template_context_processors[None].append(lambda: {'arrow': arrow})
+    # Configure Jinja env
     app.jinja_env.add_extension('jinja2.ext.i18n')
+    app.jinja_env.filters.update({'truncate_html': truncate_html, 'weight': weight})
+    app.jinja_env.globals.update({'arrow': arrow})
+    app.jinja_env.install_gettext_callables(gettext, ngettext, newstyle=True)
     app.jinja_env.lstrip_blocks = True
     app.jinja_env.trim_blocks = True
-    app.jinja_env.filters.update({'truncate_html': truncate_html, 'weight': weight})
-    app.jinja_env.install_gettext_callables(gettext, ngettext, newstyle=True)
 
     # Override Flask JSON encoder with our own
     app.json_encoder = JSONEncoder

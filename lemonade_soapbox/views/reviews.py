@@ -165,7 +165,7 @@ def search():
             search_params['fields'] = 'title'
 
         results = Review.search(q, **search_params)
-        current_app.logger.debug(results)
+        # current_app.logger.debug(results)
         if results is not None and results['query'] is not None:
             reviews = Pagination(
                 None,
@@ -283,16 +283,18 @@ def show_review(handle):
         matches = p.findall(review.body_html)
         if matches:
             titles_mentioned.extend(matches)
-    mentioned = (
-        Review.published()
-        .filter(
-            and_(
-                Review.id != review.id,
-                or_(*[Review.title.startswith(t) for t in titles_mentioned]),
+    if titles_mentioned:
+        mentioned = (
+            Review.published()
+            .filter(
+                and_(
+                    Review.id != review.id,
+                    or_(*[Review.title.startswith(t) for t in titles_mentioned]),
+                )
             )
+            .all()
         )
-        .all()
-    )
+    current_app.logger.debug(f"Titles mentioned: {titles_mentioned}")
     current_app.logger.debug(mentioned)
     if mentioned:
         related_reviews['Mentioned in This Review'] = mentioned

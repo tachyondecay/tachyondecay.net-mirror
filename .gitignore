@@ -8,6 +8,8 @@ venv
 *.pyc
 
 # dev
+.coverage
+htmlcov
 export.py
 import.py
 sandbox.py

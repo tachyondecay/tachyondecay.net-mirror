@@ -2,19 +2,15 @@ logging_config = {
     "version": 1,
     "disable_existing_loggers": False,
     "formatters": {
-        "simple": {
-            "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-        }
+        "simple": {"format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s"}
     },
-
     "handlers": {
         "console": {
             "class": 'logging.StreamHandler',
             "level": "DEBUG",
             "formatter": "simple",
-            "stream": "ext://sys.stdout"
+            "stream": "ext://sys.stdout",
         },
-
         "info_file_handler": {
             "class": 'logging.handlers.TimedRotatingFileHandler',
             "level": "INFO",
@@ -23,9 +19,8 @@ logging_config = {
             "when": "D",
             "interval": 7,
             "backupCount": 6,
-            "encoding": "utf8"
+            "encoding": "utf8",
         },
-
         "error_file_handler": {
             "class": 'logging.handlers.TimedRotatingFileHandler',
             "level": "ERROR",
@@ -34,19 +29,17 @@ logging_config = {
             "when": "D",
             "interval": 7,
             "backupCount": 6,
-            "encoding": "utf8"
-        }
+            "encoding": "utf8",
+        },
     },
-
-    "root": {
-        "level": "INFO",
-        "handlers": ["console", "info_file_handler", "error_file_handler"]
-    },
-
     "loggers": {
+        "lemonade_soapbox": {
+            "level": "DEBUG",
+            "handlers": ["console", "info_file_handler", "error_file_handler"],
+        },
         "werkzeug": {
             "level": "INFO",
-            "handlers": ["console", "info_file_handler", "error_file_handler"]
-        }
-    }
+            "handlers": ["console", "info_file_handler", "error_file_handler"],
+        },
+    },
 }

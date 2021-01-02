@@ -1,5 +1,5 @@
 import arrow
-from flask import current_app
+from flask import current_app, Markup
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileAllowed, FileField
 from lemonade_soapbox import db
@@ -16,7 +16,7 @@ from wtforms import (
     validators,
 )
 from wtforms.fields.html5 import EmailField
-from wtforms.widgets import HTMLString, html_params, TextInput
+from wtforms.widgets import html_params, TextInput
 from wtforms_alchemy import model_form_factory
 
 Form = FlaskForm
@@ -34,16 +34,16 @@ class ButtonWidget:
 
     def __call__(self, field, **kwargs):
         button_params = html_params(
-            class_=kwargs.get('class'), name=kwargs.get('name', field.name)
+            class_=kwargs.get("class", ""), name=kwargs.get("name", field.name)
         )
-        html = '<button type="submit" value="true" {}>'.format(button_params)
+        html = f'<button type="submit" value="true" {button_params}>'
         if 'icon_before' in kwargs:
-            html += '<span class="i--{}"></span> '.format(kwargs['icon_before'])
+            html += f'<span class="i--{kwargs["icon_before"]}"></span>'
         html += kwargs.get('label', field.label.text)
         if 'icon_after' in kwargs:
-            html += ' <span class="i--{}"></span>'.format(kwargs['icon_after'])
+            html += f'<span class="i--{kwargs["icon_after"]}"></span>'
         html += '</button>'
-        return HTMLString(html)
+        return Markup(html)
 
 
 class DateTimeWidget:
@@ -64,10 +64,8 @@ class DateTimeWidget:
         time_params = html_params(
             name=field.name, id=id + '-time', step='1', value=time, **kwargs
         )
-        return HTMLString(
-            '<span class="{}"><input type="date" {}/></span><span class="{}"><input type="time" {}/></span>'.format(
-                date_class, date_params, time_class, time_params
-            )
+        return Markup(
+            f'<span class="{date_class}"><input type="date" {date_params}/></span><span class="{time_class}"><input type="time" {time_params}/></span>'
         )
 
 
@@ -80,7 +78,6 @@ class DateTimeLocalField(DateTimeField):
     widget = DateTimeWidget()
 
     def process_formdata(self, valuelist):
-        current_app.logger.debug(valuelist)
         if valuelist:
             date_str = ' '.join(valuelist)
             if date_str.strip():
@@ -91,11 +88,8 @@ class DateTimeLocalField(DateTimeField):
                         .to('UTC')
                     )
                 except arrow.parser.ParserError as e:
-                    current_app.logger.warn(
+                    current_app.logger.warning(
                         f'Invalid datetime value submitted: {date_str} - {e}'
-                    )
-                    raise ValueError(
-                        'Not a valid datetime value. Looking for YYYY-MM-DD HH:mm.'
                     )
 
 
@@ -108,9 +102,9 @@ class TagListField(StringField):
     def _value(self):
         """Turn the list into a comma-separated string in alphabetical order."""
         if self.data:
-            return u', '.join(sorted(self.data, key=lambda s: s.lower()))
+            return ', '.join(sorted(self.data, key=lambda s: s.lower()))
         else:
-            return u''
+            return ''
 
     def process_data(self, value):
         """Form data should only have the actual tags, not the handles."""
@@ -159,7 +153,6 @@ class ArticleForm(ModelForm):
 def validate_book_author_sort(form, field):
     if not field.data:
         fullname = form.book_author.data.split()
-        current_app.logger.debug(fullname)
         if len(fullname) > 1:
             field.data = fullname[-1] + ', ' + ' '.join(fullname[0:-1])
         else:

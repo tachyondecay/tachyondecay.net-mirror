@@ -1,5 +1,4 @@
 import arrow
-import os
 from datetime import datetime
 from diff_match_patch import diff_match_patch
 from flask import current_app, Markup, url_for
@@ -45,6 +44,10 @@ class Searchable:
     @event.listens_for(db.session, 'after_flush')
     def _after_flush(session, flush_context):
         """Index models that are searchable."""
+        # Disable automatic indexing during testing to prevent warnings
+        # We will manually call the class's build_index() method instead
+        if current_app.testing:
+            return
         models = {}
         for obj in session.new | session.dirty | session.deleted:
             if isinstance(obj, Searchable):
@@ -55,18 +58,18 @@ class Searchable:
         # Create index if it does not exist.
         for model, instances in models.items():
             if not (index.exists_in(ix_path, indexname=model.__name__)):
-                model.build_index()
+                ix = index.create_in(
+                    ix_path, schema=model.schema, indexname=model.__name__
+                )
             ix = index.open_dir(ix_path, indexname=model.__name__)
             with ix.writer() as writer:
                 for obj in instances:
                     id = getattr(obj, 'id')
                     if obj in session.deleted:
-                        current_app.logger.info(
-                            'Removing {} {} from index.'.format(model, id)
-                        )
+                        current_app.logger.info(f"Removing {model} {id} from index.")
                         writer.delete_by_term('id', str(id))
                     else:
-                        current_app.logger.info('Indexing {} {}'.format(model, id))
+                        current_app.logger.info(f"Indexing {model} {id}")
                         obj.add_to_index(writer)
 
     def add_to_index(self, writer):
@@ -76,13 +79,10 @@ class Searchable:
         fields = self.schema.names()
         current_app.logger.debug(fields)
         for field in fields:
-            # current_app.logger.debug('Processing {}'.format(field))
             value = getattr(self, field)
             if field in filters:
                 value = filters[field](value)
             idx_info[field] = value
-            # current_app.logger.debug(value)
-        # current_app.logger.debug(idx_info)
         writer.update_document(**idx_info)
 
     @classmethod
@@ -90,22 +90,16 @@ class Searchable:
         """Build a clean index of this model."""
         with Timer() as t:
             current_app.logger.info(
-                'Beginning clean indexing operation of {}'.format(cls.__name__)
+                f"Beginning clean indexing operation of {cls.__name__}"
             )
             try:
                 ix_path = current_app.config['INDEX_PATH']
-                if not os.path.exists(ix_path):
-                    current_app.logger.info(
-                        'Index directory does not exist, '
-                        'attempting to create it at {}'.format(ix_path)
-                    )
-                    os.mkdir(ix_path)
 
                 ix = index.create_in(ix_path, schema=cls.schema, indexname=cls.__name__)
                 with ix.writer() as writer:
                     total = int(cls.query.order_by(None).count())
                     current_app.logger.info(
-                        'Indexing {}: {} rows found.'.format(cls.__name__, total)
+                        f"Indexing {cls.__name__}: {total} rows found."
                     )
                     done = 0
 
@@ -114,18 +108,14 @@ class Searchable:
                         done += 1
                         if done % per_pass == 0:
                             current_app.logger.info(
-                                'Indexed {}/{} ({:.1%})'.format(
-                                    done, total, done / total
-                                )
+                                f"Indexed {done}/{total} ({(done/total):.1%})"
                             )
 
-                    current_app.logger.info(
-                        'Finished: {}/{} indexed.'.format(done, total)
-                    )
+                    current_app.logger.info(f"Finished: {done}/{total} indexed.")
             except Exception:
                 raise
         current_app.logger.info(
-            'Built index for {} in {:.3f} seconds'.format(cls.__name__, t.interval)
+            f"Built index for {cls.__name__} in {t.interval:.3f} seconds"
         )
 
     @classmethod
@@ -153,7 +143,6 @@ class Searchable:
     def search(
         cls,
         query,
-        paginate=True,
         fields=None,
         pagenum=1,
         pagelen=50,
@@ -173,12 +162,9 @@ class Searchable:
                     kwargs['sortedby'] = sort_field
                     if sort_order == 'desc':
                         kwargs['reverse'] = True
-                if paginate:
-                    raw_results = searcher.search_page(
-                        parsed_query, pagenum, pagelen=pagelen, **kwargs
-                    )
-                else:
-                    raw_results = searcher.search(parsed_query, **kwargs)
+                raw_results = searcher.search_page(
+                    parsed_query, pagenum, pagelen=pagelen, **kwargs
+                )
                 if raw_results.total > 0:
                     query_obj = cls.query.filter(
                         cls.id.in_([r['id'] for r in raw_results])
@@ -205,7 +191,8 @@ class Searchable:
                 }
                 return results
         except Exception as e:
-            current_app.logger.info('Search error: {}'.format(e))
+            current_app.logger.info(f"Search error: {e}")
+            raise e
 
 
 class UniqueHandleMixin:
@@ -214,11 +201,15 @@ class UniqueHandleMixin:
     inherits from db.Model and has a column named `handle`.
     """
 
-    # Got to figure this out. Hybrid property?
+    @classmethod
+    def _default_handle(cls):
+        return cls.slugify(cls.title) if cls.title else None
 
     @declared_attr
     def handle(cls):
-        return db.Column(db.String(255), nullable=False, default='')
+        return db.Column(
+            db.String(255), nullable=False, default=cls._default_handle, unique=True
+        )
 
     @classmethod
     def unique_check(cls, text=None):
@@ -289,7 +280,7 @@ class TagMixin:
                 current_app.logger.info(
                     'Tag "{}" does not exist, creating.'.format(tag)
                 )
-                t = Tag(tag)
+                t = Tag(label=tag)
         return t
 
     tags = association_proxy('_tags', 'label', creator=_find_or_create_tag.__func__)
@@ -460,7 +451,7 @@ class RevisionMixin:
             lazy='select',
             uselist=True,
             post_update=True,
-            cascade='all',
+            cascade='all, delete, delete-orphan',
         )
 
     @declared_attr
@@ -497,7 +488,9 @@ class RevisionMixin:
             r.post.load_revision(r)
             return r.post
         else:
-            current_app.logger.warn('Revision {} does not exist.'.format(revision_id))
+            current_app.logger.warning(
+                'Revision {} does not exist.'.format(revision_id)
+            )
             return None
 
     def load_revision(self, target):
@@ -596,7 +589,6 @@ class Article(
     __sortable__ = ['author', 'date_created', 'date_published', 'date_updated', 'title']
 
     summary = db.Column(db.Text)
-    handle = db.Column(db.String(255), unique=True)
     cover = db.Column(db.String(255))
 
     schema = Schema(
@@ -611,10 +603,6 @@ class Article(
         tags=KEYWORD(commas=True, scorable=True),
         title=TEXT(field_boost=2.0, analyzer=StemmingAnalyzer()),
     )
-
-    @classmethod
-    def _default_handle(cls):
-        return cls.slugify(cls.title) if cls.title else None
 
     def get_permalink(self, relative=True):
         """Generate a permanent link to the article."""
@@ -634,7 +622,9 @@ class Article(
     def get_editlink(self, relative=True):
         if not self.id:
             return ""
-        return url_for('admin.edit_article', id=self.id, _external=not (relative))
+        return url_for(
+            'admin.edit_post', post_type="blog", id=self.id, _external=not (relative)
+        )
 
     @classmethod
     def post_breakdown(cls):
@@ -686,10 +676,10 @@ class Review(
         'book_author',
     ]
 
-    book_author = db.Column(db.String(255), nullable=False)
+    book_author = db.Column(db.String)
     book_author_sort = db.Column(db.String)
-    book_cover = db.Column(db.String(255))
-    book_id = db.Column(db.String(255))  # ISBN or ASIN
+    book_cover = db.Column(db.String)
+    book_id = db.Column(db.String)  # ISBN or ASIN
 
     # dates_read = db.Column(db.String(255))
     date_started = db.Column(ArrowType)
@@ -724,6 +714,8 @@ class Review(
         """Sets the start/finished date when given an appropriate string."""
         try:
             start, end = [arrow.get(x.strip()) for x in value.split('-')]
+            current_app.logger.debug(start)
+            current_app.logger.debug(end)
             if end < start:
                 raise Exception
             self.date_started = start
@@ -749,7 +741,9 @@ class Review(
     def get_editlink(self, relative=True):
         if not self.id:
             return ""
-        return url_for('admin.edit_review', id=self.id, _external=not (relative))
+        return url_for(
+            'admin.edit_post', post_type="review", id=self.id, _external=not (relative)
+        )
 
     def schema_filters(self):
         exceptions = super().schema_filters()
@@ -883,13 +877,14 @@ class Tag(db.Model):
     handle = db.Column(db.String(100), unique=True)
     label = db.Column(db.String(100))
 
-    def __init__(self, label):
+    def __init__(self, **kwargs):
         """Create a handle for a tag based on the supplied label."""
-        self.label = label
-        self.handle = self.slugify(label)
+        # self.label = kwargs.get("label")
+        self.handle = self.slugify(kwargs.get("label"))
+        super().__init__(**kwargs)
 
     def __repr__(self):
-        return f'<Tag {self.handle}>'
+        return f'<Tag {self.id} {self.handle}>'
 
     @classmethod
     def frequency(cls, post_types=['Article', 'Review'], status=['published']):

@@ -1,12 +1,10 @@
 import base64
-import os
 import random
 from datetime import datetime
 from flask import (
     abort,
     current_app,
     flash,
-    g,
     redirect,
     render_template,
     request,
@@ -19,6 +17,7 @@ from lemonade_soapbox.forms import ArticleForm, ReviewForm, SignInForm
 from lemonade_soapbox.helpers import Blueprint
 from lemonade_soapbox.models import Article, Review, Tag
 from lemonade_soapbox.models.users import User
+from pathlib import Path
 from sqlalchemy import and_, func
 from werkzeug.utils import secure_filename
 from whoosh.query import Term as whoosh_term, Or as whoosh_or
@@ -163,8 +162,6 @@ def signin():
         else:
             login_user(user)
             return redirect(url_for('.index'))
-    else:
-        current_app.logger.debug(form.errors)
 
     return render_template(
         'admin/views/signin.html',
@@ -189,6 +186,7 @@ def signout():
 def tag_manager():
     """Bulk management of all post tags."""
     page = request.args.get('page', 1, int)
+    per_page = request.args.get('per_page', 100, int)
     sort_by = request.args.get('sort_by', 'label')
     order = 'asc' if request.args.get('order') == 'asc' else 'desc'
     post_types = request.args.getlist('filter') or ['Article', 'Review']
@@ -200,7 +198,7 @@ def tag_manager():
     #     tags = tags.order_by(getattr(Tag.label, order)())
     # elif sort_by == 'frequency':
 
-    tags = tags.paginate(page=page, per_page=100)
+    tags = tags.paginate(page=page, per_page=per_page)
     tags.items = [dict(zip(i.keys(), i)) for i in tags.items]
 
     return render_template(
@@ -227,123 +225,151 @@ def blog():
 
 
 @bp.route(
-    '/blog/write/', defaults={'id': None, 'revision_id': None}, methods=['POST', 'GET']
+    '/<post_type>/write/',
+    defaults={'id': None, 'revision_id': None},
+    methods=['POST', 'GET'],
 )
 @bp.route(
-    '/blog/write/<int:id>/', defaults={'revision_id': None}, methods=['POST', 'GET']
+    '/<post_type>/write/<int:id>/',
+    defaults={'revision_id': None},
+    methods=['POST', 'GET'],
 )
-@bp.route('/blog/write/<revision_id>/', defaults={'id': None}, methods=['POST', 'GET'])
+@bp.route(
+    '/<post_type>/write/<revision_id>/', defaults={'id': None}, methods=['POST', 'GET']
+)
 @login_required
-def edit_article(id, revision_id):
-    """Compose a new article or edit an existing article."""
-    # Load an article either by ID or a specific revision
+def edit_post(post_type, id, revision_id):
+    """Compose a new post or edit an existing post."""
+    specifics = {
+        "blog": {
+            "class": Article,
+            "cover_dir": "blog",
+            "cover_field": "cover",
+            "form": ArticleForm,
+        },
+        "review": {
+            "class": Review,
+            "cover_dir": "book_covers",
+            "cover_field": "book_cover",
+            "form": ReviewForm,
+        },
+    }
+    if post_type not in specifics:
+        abort(404)
+    else:
+        specifics = specifics[post_type]
+
+    # Load a post either by ID or a specific revision
     if id:
-        article = Article.query.get_or_404(id)
-        revision_id = article.revision_id
-        g.search_query = 'id:' + str(id)
+        post = specifics["class"].query.get_or_404(id)
+        revision_id = post.revision_id
     elif revision_id:
-        article = Article.from_revision(revision_id)
-        g.search_query = 'revision:' + str(revision_id)
-        if not article:
+        post = specifics["class"].from_revision(revision_id)
+        if not post:
             abort(404)
     else:
-        article = Article()
-        # article.autosave = Revision.query.filter_by(article_id=None).first()
+        post = specifics["class"]()
 
-    form = ArticleForm(obj=article)
+    form = specifics["form"](obj=post)
     if form.validate_on_submit():
         message = ''
         message_category = 'success'
         redirect_url = None
         # Save a copy of the original body before we overwrite it
-        old_body = article.body
-        form.populate_obj(article)
+        old_body = post.body
+        form.populate_obj(post)
 
-        if not form.handle.data:
-            article.handle = article.slugify(article.title)
+        if not form.handle.data or (
+            form.handle.data != post.handle and not post.unique_check(form.handle.data)
+        ):
+            form.populate_obj(post)
+            post.handle = post.slugify(getattr(post, "short_title", post.title))
+        else:
+            form.populate_obj(post)
 
         #
         # Cover image uploading
         #
         # First, check if we uploaded a file the old-fashioned way
-        if form.cover.data and request.files.get(form.cover.name):
-            cover = request.files[form.cover.name]
+        cover_field = getattr(form, specifics["cover_field"])
+        cover_path = Path(current_app.instance_path, "media", specifics["cover_dir"])
+        if cover_field.data and request.files.get(cover_field.name):
+            cover = request.files[cover_field.name]
             filename = secure_filename(
-                article.handle + '-cover.' + cover.filename.rsplit('.', 1)[1].lower()
+                post.handle + '-cover.' + cover.filename.rsplit('.', 1)[1].lower()
             )
             try:
-                cover.save(
-                    os.path.join(current_app.instance_path, 'media', 'blog', filename)
-                )
+                cover.save(cover_path / filename)
             except Exception as e:
-                current_app.logger.warn(f'Could not upload cover image: {e}.')
+                current_app.logger.warning(f'Could not upload cover image: {e}.')
                 flash(
                     'There was a problem uploading the cover image. Try again?', 'error'
                 )
+                setattr(post, specifics["cover_field"], "")
             else:
-                article.cover = filename
+                setattr(post, specifics["cover_field"], filename)
         elif form.pasted_cover.data and not form.remove_cover.data:
             # We're uploading a pasted image, so decode the base64
             # and see if we can save it as an image file
             try:
-                filename = secure_filename(f'{article.handle}-cover.png')
-                current_app.logger.info('Creating new book image from pasted data.')
-                with open(
-                    os.path.join(current_app.instance_path, 'media', 'blog', filename),
-                    'wb',
-                ) as f:
+                filename = secure_filename(f'{post.handle}-cover.png')
+                current_app.logger.info('Creating new image from pasted data.')
+                with open(cover_path / filename, 'wb',) as f:
                     # Decode Base64 dataURL. The split is there to grab the
                     # "data" portion of the dataURL
                     f.write(base64.b64decode(form.pasted_cover.data.split(",")[1]))
             except Exception as e:
-                current_app.logger.warn(f'Could not save cover image: {e}.')
+                current_app.logger.warning(f'Could not save cover image: {e}.')
                 flash('There was a problem uploading the cover image. Try again?')
+                setattr(post, specifics["cover_field"], "")
             else:
-                article.cover = filename
-        if article.cover and (
-            form.remove_cover.data or (article.status == 'deleted' and form.delete.data)
+                setattr(post, specifics["cover_field"], filename)
+        if getattr(post, specifics["cover_field"]) and (
+            form.remove_cover.data or (post.status == 'deleted' and form.delete.data)
         ):
             try:
-                os.remove(
-                    os.path.join(
-                        current_app.instance_path, 'media', 'blog', article.cover,
-                    )
-                )
-                article.cover = ''
+                file = cover_path / getattr(post, specifics["cover_field"])
+                file.unlink()
+                setattr(post, specifics["cover_field"], "")
+                current_app.logger.info(f"Removed cover from {post.id}")
             except Exception as e:
-                current_app.logger.warn(f'Could not delete cover image: {e}')
+                current_app.logger.warning(f'Could not delete cover image: {e}')
                 flash('Could not delete cover image.', 'error')
 
-        article.new_revision(old_body)
+        post.new_revision(old_body)
         if form.publish.data:
-            message = article.publish_post()
+            message = post.publish_post()
         else:
-            message = article.update_post()
+            message = post.update_post()
             if form.delete.data:
-                if article.status == 'deleted':
-                    # Permanently deleting article
-                    article.status = 'removed'
-                    db.session.delete(article)
-                    message = 'Article permanently deleted.'
+                if post.status == 'deleted':
+                    # Permanently deleting post
+                    post.status = 'removed'
+                    db.session.delete(post)
+                    message = f'{post.__class__} permanently deleted.'
                     redirect_url = url_for('.blog')
                 else:
-                    article.status = 'deleted'
-                    message = 'Article moved to the trash.'
+                    post.status = 'deleted'
+                    message = f'{post.__class__} moved to the trash.'
                 message_category = 'removed'
             elif form.drafts.data:
-                article.status = 'draft'
-                article.date_published = None
-                message = 'Article moved to drafts.'
-        if article.status != 'removed':
-            db.session.add(article)
+                post.status = 'draft'
+                post.date_published = None
+                message = f'{post.__class__} moved to drafts.'
+        if post.status != 'removed':
+            db.session.add(post)
         db.session.commit()
         flash(message, message_category)
-        return redirect(redirect_url or url_for('.edit_article', id=article.id))
+        return redirect(
+            redirect_url or url_for('.edit_post', id=post.id, post_type=post_type)
+        )
     elif form.errors:
         current_app.logger.debug(form.errors)
         flash('You need to fix a few things before you can save your changes.', 'error')
 
-    return render_template('admin/views/blog/write.html', post=article, form=form)
+    return render_template(
+        f'admin/views/{post_type}/write.html', post=post, form=form, post_type=post_type
+    )
 
 
 #
@@ -356,144 +382,144 @@ def edit_article(id, revision_id):
 def reviews():
     """View and manage reviews."""
     return posts_index(
-        'review', 'admin/views/reviews/index.html', page_title='Manage Reviews'
+        'review', 'admin/views/review/index.html', page_title='Manage Reviews'
     )
 
 
-@bp.route(
-    '/reviews/write/',
-    defaults={'id': None, 'revision_id': None},
-    methods=['POST', 'GET'],
-)
-@bp.route(
-    '/reviews/write/<int:id>/', defaults={'revision_id': None}, methods=['POST', 'GET']
-)
-@bp.route(
-    '/reviews/write/<revision_id>/', defaults={'id': None}, methods=['POST', 'GET']
-)
-@login_required
-def edit_review(id, revision_id):
-    """Compose a new review or edit an existing review."""
-    # Load a review either by ID or a specific revision
-    if id:
-        review = Review.query.get_or_404(id)
-        # revision_id = review.revision_id
-        g.search_query = 'id:' + str(id)
-    elif revision_id:
-        review = Review.from_revision(revision_id)
-        g.search_query = 'revision:' + str(revision_id)
-        if not review:
-            abort(404)
-    else:
-        review = Review()
+# @bp.route(
+#     '/reviews/write/',
+#     defaults={'id': None, 'revision_id': None},
+#     methods=['POST', 'GET'],
+# )
+# @bp.route(
+#     '/reviews/write/<int:id>/', defaults={'revision_id': None}, methods=['POST', 'GET']
+# )
+# @bp.route(
+#     '/reviews/write/<revision_id>/', defaults={'id': None}, methods=['POST', 'GET']
+# )
+# @login_required
+# def edit_review(id, revision_id):
+#     """Compose a new review or edit an existing review."""
+#     # Load a review either by ID or a specific revision
+#     if id:
+#         review = Review.query.get_or_404(id)
+#         # revision_id = review.revision_id
+#         g.search_query = 'id:' + str(id)
+#     elif revision_id:
+#         review = Review.from_revision(revision_id)
+#         g.search_query = 'revision:' + str(revision_id)
+#         if not review:
+#             abort(404)
+#     else:
+#         review = Review()
 
-    current_app.logger.debug(f'Review handle: {review.handle}')
+#     current_app.logger.debug(f'Review handle: {review.handle}')
 
-    # Copy revisions section from edit_article when revisions enabled for reviews
+#     # Copy revisions section from edit_article when revisions enabled for reviews
 
-    form = ReviewForm(obj=review)
-    if form.validate_on_submit():
-        message = ''
-        message_category = 'success'
-        redirect_url = None
-        # Save a copy of the original body before we overwrite it
-        old_body = review.body
+#     form = ReviewForm(obj=review)
+#     if form.validate_on_submit():
+#         message = ''
+#         message_category = 'success'
+#         redirect_url = None
+#         # Save a copy of the original body before we overwrite it
+#         old_body = review.body
 
-        if not form.handle.data or (
-            form.handle.data != review.handle
-            and not review.unique_check(form.handle.data)
-        ):
-            form.populate_obj(review)
-            review.handle = review.slugify(review.short_title)
-        else:
-            form.populate_obj(review)
+#         if not form.handle.data or (
+#             form.handle.data != review.handle
+#             and not review.unique_check(form.handle.data)
+#         ):
+#             form.populate_obj(review)
+#             review.handle = review.slugify(review.short_title)
+#         else:
+#             form.populate_obj(review)
 
-        #
-        # Book cover uploading
-        #
-        # First, check if we uploaded a file the old-fashioned way
-        if form.book_cover.data and request.files.get(form.book_cover.name):
-            cover = request.files[form.book_cover.name]
-            filename = secure_filename(
-                review.handle + '-cover.' + cover.filename.rsplit('.', 1)[1].lower()
-            )
-            try:
-                cover.save(
-                    os.path.join(
-                        current_app.instance_path, 'media', 'book_covers', filename
-                    )
-                )
-            except Exception as e:
-                current_app.logger.warn(f'Could not upload book cover: {e}.')
-                flash(
-                    'There was a problem uploading the book cover. Try again?', 'error'
-                )
-            else:
-                review.book_cover = filename
-        elif form.pasted_cover.data and not form.remove_cover.data:
-            # We're uploading a pasted image, so decode the base64
-            # and see if we can save it as an image file
-            try:
-                filename = secure_filename(f'{review.handle}-cover.png')
-                current_app.logger.info('Creating new book image from pasted data.')
-                with open(
-                    os.path.join(
-                        current_app.instance_path, 'media', 'book_covers', filename
-                    ),
-                    'wb',
-                ) as f:
-                    # Decode Base64 dataURL. The split is there to grab the
-                    # "data" portion of the dataURL
-                    f.write(base64.b64decode(form.pasted_cover.data.split(",")[1]))
-            except Exception as e:
-                current_app.logger.warn(f'Could not save book cover: {e}.')
-                flash('There was a problem uploading the book cover. Try again?')
-            else:
-                review.book_cover = filename
-        if review.book_cover and (
-            form.remove_cover.data or (review.status == 'deleted' and form.delete.data)
-        ):
-            try:
-                os.remove(
-                    os.path.join(
-                        current_app.instance_path,
-                        'media',
-                        'book_covers',
-                        review.book_cover,
-                    )
-                )
-                review.book_cover = ''
-            except Exception as e:
-                current_app.logger.warn(f'Could not delete book cover: {e}')
-                flash('Could not delete book cover.', 'error')
+#         #
+#         # Book cover uploading
+#         #
+#         # First, check if we uploaded a file the old-fashioned way
+#         if form.book_cover.data and request.files.get(form.book_cover.name):
+#             cover = request.files[form.book_cover.name]
+#             filename = secure_filename(
+#                 review.handle + '-cover.' + cover.filename.rsplit('.', 1)[1].lower()
+#             )
+#             try:
+#                 cover.save(
+#                     os.path.join(
+#                         current_app.instance_path, 'media', 'book_covers', filename
+#                     )
+#                 )
+#             except Exception as e:
+#                 current_app.logger.warning(f'Could not upload book cover: {e}.')
+#                 flash(
+#                     'There was a problem uploading the book cover. Try again?', 'error'
+#                 )
+#             else:
+#                 review.book_cover = filename
+#         elif form.pasted_cover.data and not form.remove_cover.data:
+#             # We're uploading a pasted image, so decode the base64
+#             # and see if we can save it as an image file
+#             try:
+#                 filename = secure_filename(f'{review.handle}-cover.png')
+#                 current_app.logger.info('Creating new book image from pasted data.')
+#                 with open(
+#                     os.path.join(
+#                         current_app.instance_path, 'media', 'book_covers', filename
+#                     ),
+#                     'wb',
+#                 ) as f:
+#                     # Decode Base64 dataURL. The split is there to grab the
+#                     # "data" portion of the dataURL
+#                     f.write(base64.b64decode(form.pasted_cover.data.split(",")[1]))
+#             except Exception as e:
+#                 current_app.logger.warning(f'Could not save book cover: {e}.')
+#                 flash('There was a problem uploading the book cover. Try again?')
+#             else:
+#                 review.book_cover = filename
+#         if review.book_cover and (
+#             form.remove_cover.data or (review.status == 'deleted' and form.delete.data)
+#         ):
+#             try:
+#                 os.remove(
+#                     os.path.join(
+#                         current_app.instance_path,
+#                         'media',
+#                         'book_covers',
+#                         review.book_cover,
+#                     )
+#                 )
+#                 review.book_cover = ''
+#             except Exception as e:
+#                 current_app.logger.warning(f'Could not delete book cover: {e}')
+#                 flash('Could not delete book cover.', 'error')
 
-        review.new_revision(old_body)
-        if form.publish.data:
-            message = review.publish_post()
-        else:
-            message = review.update_post()
-            if form.delete.data:
-                if review.status == 'deleted':
-                    # Permanently deleting review
-                    review.status = 'removed'
-                    db.session.delete(review)
-                    message = 'Review permanently deleted.'
-                    redirect_url = url_for('.reviews')
-                else:
-                    review.status = 'deleted'
-                    message = 'Review moved to the trash.'
-                message_category = 'removed'
-            elif form.drafts.data:
-                review.status = 'draft'
-                review.date_published = None
-                message = 'Review moved to drafts.'
-        if review.status != 'removed':
-            db.session.add(review)
-        db.session.commit()
-        flash(message, message_category)
-        return redirect(redirect_url or url_for('.edit_review', id=review.id))
-    elif form.errors:
-        current_app.logger.debug(form.errors)
-        flash('You need to fix a few things before you can save your changes.', 'error')
+#         review.new_revision(old_body)
+#         if form.publish.data:
+#             message = review.publish_post()
+#         else:
+#             message = review.update_post()
+#             if form.delete.data:
+#                 if review.status == 'deleted':
+#                     # Permanently deleting review
+#                     review.status = 'removed'
+#                     db.session.delete(review)
+#                     message = 'Review permanently deleted.'
+#                     redirect_url = url_for('.reviews')
+#                 else:
+#                     review.status = 'deleted'
+#                     message = 'Review moved to the trash.'
+#                 message_category = 'removed'
+#             elif form.drafts.data:
+#                 review.status = 'draft'
+#                 review.date_published = None
+#                 message = 'Review moved to drafts.'
+#         if review.status != 'removed':
+#             db.session.add(review)
+#         db.session.commit()
+#         flash(message, message_category)
+#         return redirect(redirect_url or url_for('.edit_review', id=review.id))
+#     elif form.errors:
+#         current_app.logger.debug(form.errors)
+#         flash('You need to fix a few things before you can save your changes.', 'error')
 
-    return render_template('admin/views/reviews/write.html', post=review, form=form)
+#     return render_template('admin/views/review/write.html', post=review, form=form)

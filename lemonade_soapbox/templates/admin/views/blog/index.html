@@ -12,7 +12,7 @@
 
 
 {% block result_item %}
-                <h3 class="title"><a href="{{ url_for('.edit_article', id=post.id) }}" title="Edit article">{{ post.title }}</a></h3>
+                <h3 class="title"><a href="{{ url_for('.edit_post', id=post.id, post_type='blog') }}" title="Edit article">{{ post.title }}</a></h3>
                     <footer>
                         <dl class="details">
                             {% if post.date_published %}

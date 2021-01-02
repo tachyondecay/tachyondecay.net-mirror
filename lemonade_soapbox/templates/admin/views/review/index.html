@@ -14,7 +14,7 @@
 
 
 {% block result_item %}
-                <h3 class="title"><a href="{{ url_for('.edit_review', id=post.id) }}" title="Edit review">{{ post.title }}</a></h3>
+                <h3 class="title"><a href="{{ url_for('.edit_post', id=post.id, post_type='review') }}" title="Edit review">{{ post.title }}</a></h3>
                     <img src="/media/book_covers/{{ post.book_cover }}" alt="" class="cover" />
                     <footer>
                         <dl class="details">

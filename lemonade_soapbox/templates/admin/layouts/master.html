@@ -60,8 +60,8 @@
                     <li><a class="navlink -icon-before i-before--price-tags" href="{{ url_for('.tag_manager') }}">Tag Manager</a></li>
                     <li class="submenu"><span class="_button -small -important">Write <span class="i--pencil"></span></span>
                         <ul class="submenu-list">
-                            <li><a class="_button -small -new" href="{{ url_for('.edit_article') }}"><span class="i--plus"></span> Blog Post</a></li>
-                            <li><a class="_button -small -new" href="{{ url_for('.edit_review') }}"><span class="i--plus"></span> Book Review</a></li>
+                            <li><a class="_button -small -new" href="{{ url_for('.edit_post', post_type='blog') }}"><span class="i--plus"></span> Blog Post</a></li>
+                            <li><a class="_button -small -new" href="{{ url_for('.edit_post', post_type='review') }}"><span class="i--plus"></span> Book Review</a></li>
                         </ul>
                     </li>
                 </ul>
