@@ -742,7 +742,7 @@ class Review(
         if not self.id:
             return ""
         return url_for(
-            'admin.edit_post', post_type="review", id=self.id, _external=not (relative)
+            'admin.edit_post', post_type="reviews", id=self.id, _external=not (relative)
         )
 
     def schema_filters(self):
