@@ -823,7 +823,9 @@ class Revision(AuthorMixin, db.Model):
         # Find lowest common ancestor of current revision and target revision
         lca = self.lca([target, self])
         if not lca:
-            raise Exception("Could not determine LCA of current and target nodes.")
+            current_app.logger.warning(
+                f"{self.id}: Could not determine LCA of current and target nodes."
+            )
         current = self
         # Patch backwards from current revision to LCA
         while current is not lca:
