@@ -40,7 +40,7 @@
 <div class="postform-contents">
     {% if post.autosave and post.selected_revision.id == post.revision_id %}
     <div class="notification -warning -dismissable">
-        Looks like some changes were automatically saved but never committed. <a href="{{ url_for('.edit_post', post_type=('blog' if post.type == 'article' else post.type) revision_id=post.autosave.id) }}" data-content="{{ post.selected_revision.restore(post.autosave, post.body) }}">Restore them?</a>
+        Looks like some changes were automatically saved but never committed. <a href="{{ url_for('.edit_post', post_type=('blog' if post.type == 'article' else post.type), revision_id=post.autosave.id) }}" data-content="{{ post.selected_revision.restore(post.autosave, post.body) }}">Restore them?</a>
     </div>
     {% endif %}
 
