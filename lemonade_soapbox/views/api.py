@@ -38,7 +38,7 @@ def autosave():
         date_created = r.date_created.to(current_app.config['TIMEZONE']).format(
             'HH:mm:ss, DD MMM YYYY'
         )
-        return jsonify(revision_id=r.id, date=date_created)
+        return jsonify(revision_id=r.revision_id, date=date_created)
     else:
         # We're composing a brand new post, so let's create a new draft entry
         # in the database.

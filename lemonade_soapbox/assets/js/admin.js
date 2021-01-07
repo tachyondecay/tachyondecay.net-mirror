@@ -578,6 +578,7 @@ PostForm.prototype.autosave = function() {
                     .html('Last autosave: ' + data.date + ' <a href="#" class="c-revision__link">Restore</a>')
                     .children('a')
                         .data('content', self.old_content);
+                self.body.data('revision', data.revision_id);
                 self.bindAutosaveRestores();
 
                 // Remove a warning about an extant autosave if we just made a new one
