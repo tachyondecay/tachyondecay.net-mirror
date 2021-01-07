@@ -151,7 +151,7 @@ class ArticleForm(ModelForm):
 
 
 def validate_book_author_sort(form, field):
-    if not field.data:
+    if not field.data and form.book_author.data:
         fullname = form.book_author.data.split()
         if len(fullname) > 1:
             field.data = fullname[-1] + ', ' + ' '.join(fullname[0:-1])
