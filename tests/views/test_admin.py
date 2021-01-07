@@ -39,7 +39,7 @@ def post(db, request):
 @pytest.fixture
 def post_type(post):
     """Determines post_type parameter for edit_post tests."""
-    return "blog" if type(post) is Article else "review"
+    return "blog" if type(post) is Article else "reviews"
 
 
 @pytest.fixture
