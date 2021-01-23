@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Thunder Bay District Health Unit COVID-19 Stats</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        <link rel="stylesheet" href="style.css"/>
+
+        <script src="https://cdn.jsdelivr.net/npm/mustache@latest/mustache.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/dayjs@1.10.4/dayjs.min.js"></script>
+    </head>
+    <body>
+        <h1>Thunder Bay District Health Unit COVID-19 Stats</h1>
+
+        <form>
+            <label>Date: <input type="date" id="date"></label>
+        </form>
+
+        <div id="api-report"></div>
+
+        <p><small>Data source: <a href="https://covid19tracker.ca/">COVID-19 Tracker Canada</a></small></p>
+
+        <script id="template" type="x-tmpl-mustache">
+            <dl class="api-response">
+                <dt class="stat">New Cases</dt>
+                <dd class="value">{{ change_cases }}</dd>
+                <dt class="stat">New Deaths</dt>
+                <dd class="value">{{ change_fatalities }}</dd>
+                <dt class="stat">Additional Tests</dt>
+                <dd class="value">{{ change_tests }}</dd>
+                <dt class="stat">Change in Hospitalizations</dt>
+                <dd class="value">{{ change_hospitalizations }}</dd>
+                <dt class="stat">Change in Critical Cases</dt>
+                <dd class="value">{{ change_criticals }}</dd>
+                <dt class="stat">New Recoveries</dt>
+                <dd class="value">{{ change_recoveries }}</dd>
+                <dt class="stat">New Vaccinations</dt>
+                <dd class="value">{{ change_vaccinations }}</dd>
+                <dt class="stat">Cumulative Cases</dt>
+                <dd class="value">{{ total_cases }}</dd>
+                <dt class="stat">Cumulative Deaths</dt>
+                <dd class="value">{{ total_fatalities }}</dd>
+                <dt class="stat">Cumulative Tests</dt>
+                <dd class="value">{{ total_tests }}</dd>
+                <dt class="stat">Cumulative Hospitalizations</dt>
+                <dd class="value">{{ total_hospitalizations }}</dd>
+                <dt class="stat">Cumulative Critical Cases</dt>
+                <dd class="value">{{ total_criticals }}</dd>
+                <dt class="stat">Cumulative Recoveries</dt>
+                <dd class="value">{{ total_recoveries }}</dd>
+                <dt class="stat">Cumulative Vaccinations</dt>
+                <dd class="value">{{ total_vaccinations }}</dd>
+            </dl>
+        </script>
+
+        <script src="script.js"></script>
+    </body>
+</html>
