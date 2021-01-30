@@ -40,7 +40,7 @@ def create_app(config_name=None):
 
     # Nginx handles proxying the media dir in production
     # This emulates it when developing with Flask's built-in server
-    if app.config["ENV"] == "production" or app.testing:
+    if app.config["ENV"] == "development" or app.testing:
         app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 0
         app.wsgi_app = SharedDataMiddleware(
             app.wsgi_app, {"/media": str(app.instance_path / "media")}
