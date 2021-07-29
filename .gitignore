@@ -1,4 +1,6 @@
 __pycache__
+__pypackages__
+
 instance
 migrations
 venv

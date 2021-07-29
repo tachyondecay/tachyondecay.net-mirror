@@ -1,4 +1,8 @@
 [run]
-    # Don't measure coverage of library code
-    command_line = -m pytest
-    omit = venv/*
+command_line = -m pytest tests/
+
+[report]
+omit = 
+    __pypackages__/*
+    venv/*
+    /usr/*
