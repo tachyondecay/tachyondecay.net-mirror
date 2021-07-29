@@ -276,6 +276,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "python-dotenv"
+version = "0.19.0"
+requires_python = ">=3.5"
+summary = "Read key-value pairs from a .env file and set them as environment variables"
+
+[[package]]
 name = "python-slugify"
 version = "4.0.1"
 requires_python = ">=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*"
@@ -382,7 +388,7 @@ dependencies = [
 
 [metadata]
 lock_version = "3.1"
-content_hash = "sha256:4118708e65d547278792a54286dd4289ce64b02a366cdccfe78e7d3146808fd8"
+content_hash = "sha256:0678ecf8bc433487b175333e045bc37386bea49fc2777bcb2bb169f4ba5bb719"
 
 [metadata.files]
 "arrow 0.17.0" = [
@@ -673,6 +679,10 @@ content_hash = "sha256:4118708e65d547278792a54286dd4289ce64b02a366cdccfe78e7d314
 "python-dateutil 2.8.2" = [
     {file = "python_dateutil-2.8.2-py2.py3-none-any.whl", hash = "sha256:961d03dc3453ebbc59dbdea9e4e11c5651520a876d0f4db161e8674aae935da9"},
     {file = "python-dateutil-2.8.2.tar.gz", hash = "sha256:0123cacc1627ae19ddf3c27a5de5bd67ee4586fbdd6440d9748f8abb483d3e86"},
+]
+"python-dotenv 0.19.0" = [
+    {file = "python_dotenv-0.19.0-py2.py3-none-any.whl", hash = "sha256:aae25dc1ebe97c420f50b81fb0e5c949659af713f31fdb63c749ca68748f34b1"},
+    {file = "python-dotenv-0.19.0.tar.gz", hash = "sha256:f521bc2ac9a8e03c736f62911605c5d83970021e3fa95b37d769e2bbbe9b6172"},
 ]
 "python-slugify 4.0.1" = [
     {file = "python-slugify-4.0.1.tar.gz", hash = "sha256:69a517766e00c1268e5bbfc0d010a0a8508de0b18d30ad5a1ff357f8ae724270"},
