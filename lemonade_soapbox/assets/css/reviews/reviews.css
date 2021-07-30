@@ -1897,6 +1897,7 @@ label, legend {
   position: relative;
   z-index: 10;
   background: linear-gradient(hsla(320, 8%, 10%, 0.75), hsla(320, 8%, 10%, 0.55)), var(--cover-src);
+  background-attachment: fixed;
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
