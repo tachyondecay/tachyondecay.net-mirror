@@ -487,15 +487,16 @@ var PostForm = function(form) {
                                     data.forEach(link => {
                                         console.log(link);
                                         text = text.replace(
-                                            'https://kara.reviews/' + link[0],
-                                            'https://www.goodreads.com/review/show/' + link[1]
+                                            'https://kara.reviews/' + link.handle,
+                                            'https://www.goodreads.com/review/show/' + link.goodreads_id
                                         );
                                         text = text.replace(
-                                            '/' + link[0],
-                                            'https://www.goodreads.com/review/show/' + link[1]
+                                            '/' + link.handle,
+                                            'https://www.goodreads.com/review/show/' + link.goodreads_id
                                         );
                                     });
                                     text = text.replace('</body>', site_link);
+                                    console.log(text);
                                     navigator.clipboard.writeText(text);
                                     notify('Review copied to clipboard.', 'success');
                                 }
