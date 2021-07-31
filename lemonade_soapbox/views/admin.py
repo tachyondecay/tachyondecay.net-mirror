@@ -277,7 +277,6 @@ def edit_post(post_type, id, revision_id):
         redirect_url = None
         # Save a copy of the original body before we overwrite it
         old_body = post.body
-        form.populate_obj(post)
 
         if not form.handle.data or (
             form.handle.data != post.handle and not post.unique_check(form.handle.data)
@@ -314,7 +313,10 @@ def edit_post(post_type, id, revision_id):
             try:
                 filename = secure_filename(f'{post.handle}-cover.png')
                 current_app.logger.info('Creating new image from pasted data.')
-                with open(cover_path / filename, 'wb',) as f:
+                with open(
+                    cover_path / filename,
+                    'wb',
+                ) as f:
                     # Decode Base64 dataURL. The split is there to grab the
                     # "data" portion of the dataURL
                     f.write(base64.b64decode(form.pasted_cover.data.split(",")[1]))

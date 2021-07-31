@@ -558,7 +558,7 @@ class RevisionMixin:
             else:
                 # Changes aren't significant enough to merit a new revision.
                 self.selected_revision.date_created = arrow.utcnow()
-                self.selected_revisionpatch_text = patch_text
+                self.selected_revision.patch_text = patch_text
                 try:
                     del self.selected_revision.patches
                 except AttributeError:
@@ -801,7 +801,7 @@ class Revision(AuthorMixin, db.Model):
 
     def distance(self, new, old):
         """
-        Calculates Levenshtein distance between provided texts, returns 
+        Calculates Levenshtein distance between provided texts, returns
         distance and patch_text as a tuple.
         """
         diffs = self.differ.diff_main(new, old)
