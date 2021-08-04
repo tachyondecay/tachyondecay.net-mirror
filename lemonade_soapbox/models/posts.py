@@ -442,7 +442,9 @@ class RevisionMixin:
         fk = "[Revision.post_id]"
         return db.relationship(
             'Revision',
-            backref=orm.backref(cls.__name__.lower(), uselist=False, foreign_keys=fk),
+            backref=orm.backref(
+                cls.__name__.lower(), uselist=False, foreign_keys=fk, viewonly=True
+            ),
             primaryjoin=f'and_('
             f'revisions.c.post_id == {cls.__name__}.id, '
             f'revisions.c.post_type == "{cls.__name__}")',
@@ -561,7 +563,7 @@ class RevisionMixin:
                 self.selected_revision.patch_text = patch_text
                 try:
                     del self.selected_revision.patches
-                except AttributeError:
+                except KeyError:
                     pass
                 current_app.logger.debug(
                     f'Levenshtein percentage difference ({round(distance, 2)}) is '
@@ -623,7 +625,10 @@ class Article(
         if not self.id:
             return ""
         return url_for(
-            'admin.edit_post', post_type="blog", id=self.id, _external=not (relative)
+            'admin_main.edit_post',
+            post_type="blog",
+            id=self.id,
+            _external=not (relative),
         )
 
     @classmethod
@@ -742,7 +747,10 @@ class Review(
         if not self.id:
             return ""
         return url_for(
-            'admin.edit_post', post_type="reviews", id=self.id, _external=not (relative)
+            'admin_reviews.edit_post',
+            post_type="reviews",
+            id=self.id,
+            _external=not (relative),
         )
 
     def schema_filters(self):
@@ -902,7 +910,7 @@ class Tag(db.Model):
             )
             if status:
                 q = q.outerjoin(globals()[p]).filter(globals()[p].status.in_(status))
-            subqueries.append(q.subquery().as_scalar().label(f'{p.lower()}_count'))
+            subqueries.append(q.scalar_subquery().label(f'{p.lower()}_count'))
         main_query = db.session.query(*subqueries).group_by(cls.handle)
         return main_query
 

@@ -487,12 +487,12 @@ var PostForm = function(form) {
                                     data.forEach(link => {
                                         console.log(link);
                                         text = text.replace(
-                                            'https://kara.reviews/' + link.handle,
-                                            'https://www.goodreads.com/review/show/' + link.goodreads_id
+                                            'https://kara.reviews/' + link[0],
+                                            'https://www.goodreads.com/review/show/' + link[1]
                                         );
                                         text = text.replace(
-                                            '/' + link.handle,
-                                            'https://www.goodreads.com/review/show/' + link.goodreads_id
+                                            '/' + link[0],
+                                            'https://www.goodreads.com/review/show/' + link[1]
                                         );
                                     });
                                     text = text.replace('</body>', site_link);
