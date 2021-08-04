@@ -53,7 +53,7 @@
         {% block post_contents %}
         <div class="form-field -span" contenteditable="true">
             <label for="body" class="_hide">Body</label>
-        {{ form.body(**{'aria-label': 'Body', 'cols': 80, 'rows': 5, 'placeholder': 'Lorem ipsum, baby…', 'data-revision': (post.selected_revision.id if post.selected_revision else '')}) }}
+        {{ form.body(**{'aria-label': 'Body', 'cols': 80, 'rows': 5, 'placeholder': 'Lorem ipsum, baby…', 'data-revision': (post.selected_revision.id if post.selected_revision else ''), 'data-is-autosave': 'true' if (post.selected_revision and post.selected_revision.id == post.autosave_id) else ''}) }}
         </div>
 
         <div class="form-field -span">

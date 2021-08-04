@@ -524,6 +524,7 @@ PostForm.prototype.autosave = function() {
     var title = self.form.find('.-title');
     var handle = self.form.find('[name=handle]');
     var type = self.form.data('type');
+    var parent_revision = self.body.data('revision');
 
     // Only autosave if:
     //  * The article has a title
@@ -532,7 +533,7 @@ PostForm.prototype.autosave = function() {
         $.post(self.autosaveConfig.ajaxURL, {
             'type': type,
             'body': new_content,
-            'parent': self.body.data('revision'),
+            'parent': parent_revision,
             'title': title.val(),
             'handle': handle.val()
         }).done(function(data, textStatus) {
@@ -551,9 +552,9 @@ PostForm.prototype.autosave = function() {
                  * Then, add the revision id to the body field and bind the 
                  * restore function to the new "restore autosave" link.
                  */
-                self.form.data('id', data.post_id);
+                self.form.attr('data-id', data.post_id);
                 $(data.history).hide().appendTo('#post-metadata').slideDown(500);
-                self.body.data('revision', data.revision_id);
+                self.body.attr('data-revision', data.revision_id);
                 self.bindAutosaveRestores();
 
                 // Update handle field if not empty
@@ -562,7 +563,7 @@ PostForm.prototype.autosave = function() {
                 }
                 // Change URL
                 history.replaceState(null, null, location.href + data.post_id + "/");
-                $('.page-title .subtitle').text('Editing ' + type + ' »');
+                $('.page-title .subtitle').text('Editing ' + type);
                 $('.js-view-post').attr('href', data.link);
                 $('.js-date-created').prepend('<small>Created ' + data.created + '</small>');
                 $('.js-reveal-on-creation').removeClass('u-hidden').show('scale');
@@ -579,7 +580,13 @@ PostForm.prototype.autosave = function() {
                     .html('Last autosave: ' + data.date + ' <a href="#" class="c-revision__link">Restore</a>')
                     .children('a')
                         .data('content', self.old_content);
-                self.body.data('revision', data.revision_id);
+                self.body.attr('data-revision', data.revision_id);
+
+                // Update URL if we are currently working with an autosave
+                if(self.body.data('is-autosave')) {
+                    history.replaceState(null, null, location.href.replace(parent_revision, data.revision_id));
+                }
+                self.body.attr('data-is-autosave', 'true');
                 self.bindAutosaveRestores();
 
                 // Remove a warning about an extant autosave if we just made a new one
