@@ -17,6 +17,15 @@ class User(UserMixin, db.Model):
     password = db.Column(PasswordType(schemes=['bcrypt']))
     url = db.Column(db.String(100))
 
+    def __json__(self):
+        return {
+            "id": self.id,
+            "email": self.email,
+            "name": self.name,
+            "password": self.password.hash.decode("utf-8"),
+            "url": self.url,
+        }
+
     @property
     def email_hash(self):
         return md5(self.email.encode('UTF-8')).hexdigest()

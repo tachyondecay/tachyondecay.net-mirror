@@ -201,6 +201,11 @@ class UniqueHandleMixin:
     inherits from db.Model and has a column named `handle`.
     """
 
+    def __json__(self):
+        export = super().__json__()
+        export.update(handle=self.handle)
+        return export
+
     @classmethod
     def _default_handle(cls):
         return cls.slugify(cls.title) if cls.title else None
@@ -246,6 +251,11 @@ class UniqueHandleMixin:
 class AuthorMixin:
     """Many-to-one relationship with the users table."""
 
+    def __json__(self):
+        # export = super().__json__()
+        export = dict(author=self.author_id)
+        return export
+
     @declared_attr
     def author_id(cls):
         return db.Column(
@@ -261,6 +271,11 @@ class AuthorMixin:
 
 class TagMixin:
     """Any posts that are taggable."""
+
+    def __json__(self):
+        export = super().__json__()
+        export.update(tags=list(self.tags))
+        return export
 
     @declared_attr
     def _tags(cls):
@@ -307,6 +322,22 @@ class PostMixin(AuthorMixin):
     date_published = db.Column(ArrowType)
     show_updated = db.Column(db.Boolean, default=False)
     status = db.Column(db.String(25), default='draft')
+
+    def __json__(self):
+        export = super().__json__()
+        export.update(
+            id=self.id,
+            title=self.title,
+            body=self.body,
+            date_created=self.date_created.isoformat(),
+            date_published=self.date_published.isoformat()
+            if self.date_published
+            else None,
+            date_updated=self.date_updated.isoformat(),
+            show_updated=self.show_updated,
+            status=self.status,
+        )
+        return export
 
     def format(self, content, escape=False):
         """Accept raw Markdown input and output HTML5."""
@@ -428,6 +459,15 @@ class PostMixin(AuthorMixin):
 
 class RevisionMixin:
     """Mixin for any post classes that want to handle revisions and autosaves."""
+
+    def __json__(self):
+        export = super().__json__()
+        export.update(
+            revision_id=self.revision_id,
+            autosave_id=self.autosave_id,
+            revisions=[r.__json__() for r in self.revisions],
+        )
+        return export
 
     @declared_attr
     def revision_id(cls):
@@ -606,6 +646,11 @@ class Article(
         title=TEXT(field_boost=2.0, analyzer=StemmingAnalyzer()),
     )
 
+    def __json__(self):
+        export = super().__json__()
+        export.update(cover=self.cover, summary=self.summary)
+        return export
+
     def get_permalink(self, relative=True):
         """Generate a permanent link to the article."""
         if not self.id:
@@ -709,6 +754,20 @@ class Review(
         tags=KEYWORD(commas=True, scorable=True),
     )
 
+    def __json__(self):
+        export = super().__json__()
+        export.update(
+            book_author=self.book_author,
+            book_author_sort=self.book_author_sort,
+            cover=self.book_cover,
+            date_started=self.date_started,
+            goodreads_id=self.goodreads_id,
+            rating=self.rating,
+            spoilers=self.spoilers,
+            summary=self.summary,
+        )
+        return export
+
     @hybrid_property
     def dates_read(self):
         """Formats the start/finished date into a string for us."""
@@ -802,6 +861,18 @@ class Revision(AuthorMixin, db.Model):
     def __db_init__(self):
         super().__init__()
         self.differ = diff_match_patch()
+
+    def __json__(self):
+        return dict(
+            id=self.id,
+            post_id=self.post_id,
+            date_created=self.date_created.isoformat(),
+            depth=self.depth,
+            patch_text=self.patch_text,
+            parent_id=self.parent_id,
+            major=self.major,
+            author=self.author_id,
+        )
 
     @property
     def post(self):
