@@ -523,8 +523,8 @@ PostForm.prototype.autosave = function() {
     var new_content = self.editor.value();
     var title = self.form.find('.-title');
     var handle = self.form.find('[name=handle]');
-    var type = self.form.data('type');
-    var parent_revision = self.body.data('revision');
+    var type = self.form.attr('data-type');
+    var parent_revision = self.body.attr('data-revision');
 
     // Only autosave if:
     //  * The article has a title
@@ -583,7 +583,7 @@ PostForm.prototype.autosave = function() {
                 self.body.attr('data-revision', data.revision_id);
 
                 // Update URL if we are currently working with an autosave
-                if(self.body.data('is-autosave')) {
+                if(self.body.attr('is-autosave')) {
                     history.replaceState(null, null, location.href.replace(parent_revision, data.revision_id));
                 }
                 self.body.attr('data-is-autosave', 'true');
