@@ -759,8 +759,10 @@ class Review(
         export.update(
             book_author=self.book_author,
             book_author_sort=self.book_author_sort,
+            book_id=self.book_id,
             cover=self.book_cover,
             date_started=self.date_started,
+            date_finished=self.date_finished,
             goodreads_id=self.goodreads_id,
             rating=self.rating,
             spoilers=self.spoilers,
