@@ -23,6 +23,8 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
     - name: mirror-repository
       # You may pin to the exact commit or the version.
       # uses: spyoungtech/mirror-action@b313a53232e77d8f7d8fcdb00f90b94100767be1
