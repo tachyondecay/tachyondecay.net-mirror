@@ -31,5 +31,5 @@ jobs:
         # The remote repository e.g. https://github.com/octocat/foo.git or git@github.com:octocat/foo.git
         REMOTE: git@github.com:tachyondecay/tachyondecay.net-mirror.git
         # The ssh private key for writing to the remote repository, if using ssh
-        GIT_SSH_PRIVATE_KEY: ${{ secrets.GIT_SSH_KEY }}
+        GIT_SSH_PRIVATE_KEY: ${{ secrets.GIT_SSH_PRIVATE_KEY }}
         GIT_SSH_NO_VERIFY_HOST: "true"
