@@ -65,7 +65,8 @@ def create_app(config_name=None):
 
     @app.cli.command()
     @click.argument("model")
-    def reindex(model):
+    @click.option("--per-pass", default=100)
+    def reindex(model, per_pass):
         """Rebuild the search index for a given model."""
         model = globals().get(model)
         if not model:
@@ -73,7 +74,7 @@ def create_app(config_name=None):
         elif not issubclass(model, Searchable):
             click.echo("Model is not Searchable.")
         else:
-            model.build_index()
+            model.build_index(per_pass=per_pass)
             click.echo("Indexing complete.")
 
     from lemonade_soapbox.views import admin, api, blog, frontend, reviews
