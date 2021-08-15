@@ -173,7 +173,7 @@ class ReviewForm(ModelForm):
             'title',
             'book_id',
             'goodreads_id',
-            'book_cover',
+            'cover',
             'rating',
             'spoilers',
         ]
@@ -187,7 +187,7 @@ class ReviewForm(ModelForm):
         'Published', format='%Y-%M-%D %H:%m', validators=[validators.Optional()]
     )
     goodreads_id = IntegerField(widget=TextInput(), validators=[validators.Optional()])
-    book_cover = FileField(
+    cover = FileField(
         validators=[FileAllowed(['jpg', 'jpeg', 'png', 'gif']), validators.Optional()]
     )
     remove_cover = BooleanField(

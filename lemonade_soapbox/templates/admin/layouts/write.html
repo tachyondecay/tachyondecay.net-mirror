@@ -1,16 +1,16 @@
 {% extends 'admin/layouts/master.html' %}
 {% from 'macros.html' import notifications, render_field, checkbox_toggle %}
 
-{% block body_classes %}editing {{post.type}} {{ post.type }}--{{ post.status }}{% endblock %}
+{% block body_classes %}editing {{post.post_type}} {{ post.post_type }}--{{ post.status }}{% endblock %}
 
 {% block page_title_body %}
             {% if post.title %}
             <h1 class="_hide">{{ post.title }}</h1>
             <p class="subtitle">
-                {{ 'Deleted' if post.status == 'deleted' else 'Editing' }} {{ post.type.capitalize() }}
+                {{ 'Deleted' if post.status == 'deleted' else 'Editing' }} {{ post.post_type.capitalize() }}
             </p>
             {% else %}
-            <p class="subtitle">New {{ post.type.capitalize() }}</p>
+            <p class="subtitle">New {{ post.post_type.capitalize() }}</p>
             {% endif %}
 {% endblock %}
 
@@ -31,14 +31,14 @@
 {% endblock header_end %}
 
 {% block body_main %}
-<form id="write" method="post" data-id="{{ post.id|default('', true) }}" data-type="{{ post.type }}" data-published="{{'true' if (post.status == 'published') else 'false' }}" data-autosave="{{ config['AUTOSAVE_DELAY'] }}" enctype="multipart/form-data">
+<form id="write" method="post" data-id="{{ post.id|default('', true) }}" data-type="{{ post.post_type }}" data-published="{{'true' if (post.status == 'published') else 'false' }}" data-autosave="{{ config['AUTOSAVE_DELAY'] }}" enctype="multipart/form-data">
 {{ form.csrf_token }}
 
 {{ super() }}
 
 <div class="grid-layout -max">
 <div class="postform-contents">
-    {% if post.autosave and post.selected_revision.id == post.revision_id %}
+    {% if post.autosave and post.selected_revision.id == post.current_revision_id %}
     <div class="notification -warning -dismissable">
         Looks like some changes were automatically saved but never committed. <a href="{{ url_for('.edit_post', post_type=post_type, revision_id=post.autosave.id) }}" data-content="{{ post.selected_revision.restore(post.autosave, post.body) }}">Restore them?</a>
     </div>
@@ -85,7 +85,7 @@
         </div>
 
         <div class="form-field -span">
-            {{ render_field(form.tags, {'class': 'tag-lookup', 'data-url': url_for('api_main.tags_lookup', type=post.type), 'autocomplete': 'off'}) }}
+            {{ render_field(form.tags, {'class': 'tag-lookup', 'data-url': url_for('api.tags_lookup', type=post.post_type), 'autocomplete': 'off'}) }}
         </div>
 
         {% include "admin/posts/revision_history.html" %}

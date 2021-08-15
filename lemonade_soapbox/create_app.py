@@ -7,7 +7,7 @@ from gettext import gettext, ngettext
 from lemonade_soapbox import csrf, db, login_manager
 from lemonade_soapbox.logging_config import logging_config
 from lemonade_soapbox.helpers import JSONEncoder, truncate_html, weight
-from lemonade_soapbox.models import Article, Review, Searchable, User
+from lemonade_soapbox.models import Article, Review, Searchable, Tag, User
 from logging.config import dictConfig
 from pathlib import Path
 from werkzeug.middleware.shared_data import SharedDataMiddleware
@@ -50,11 +50,17 @@ def create_app(config_name=None):
     csrf.init_app(app)
     db.init_app(app)
     login_manager.init_app(app)
-    login_manager.login_view = "admin_main.signin"
+    login_manager.login_view = "admin.signin"
     login_manager.login_message_category = "error"
 
     app.shell_context_processor(
-        lambda: {'db': db, 'Article': Article, 'Review': Review, 'User': User}
+        lambda: {
+            'db': db,
+            'Article': Article,
+            'Review': Review,
+            'Tag': Tag,
+            'User': User,
+        }
     )
 
     @app.cli.command()
@@ -73,24 +79,10 @@ def create_app(config_name=None):
     from lemonade_soapbox.views import admin, api, blog, frontend, reviews
 
     # Register admin and API blueprints on both domains so we can log in to both
-    app.register_blueprint(
-        admin.bp, host=os.getenv('MAIN_HOST'), name="admin_main", url_prefix='/meta'
-    )
-    app.register_blueprint(
-        api.bp, host=os.getenv('MAIN_HOST'), name="api_main", url_prefix='/api'
-    )
+    app.register_blueprint(admin.bp, host=os.getenv('MAIN_HOST'), url_prefix='/meta')
+    app.register_blueprint(api.bp, host=os.getenv('MAIN_HOST'), url_prefix='/api')
     app.register_blueprint(blog.bp, host=os.getenv('MAIN_HOST'), url_prefix='/blog')
     app.register_blueprint(frontend.bp, host=os.getenv('MAIN_HOST'), url_prefix='/')
-
-    app.register_blueprint(
-        admin.bp,
-        host=os.getenv('REVIEW_HOST'),
-        name="admin_reviews",
-        url_prefix='/meta',
-    )
-    app.register_blueprint(
-        api.bp, host=os.getenv('REVIEW_HOST'), name="api_reviews", url_prefix='/api'
-    )
     app.register_blueprint(reviews.bp, host=os.getenv('REVIEW_HOST'), url_prefix='/')
 
     # Configure Jinja env

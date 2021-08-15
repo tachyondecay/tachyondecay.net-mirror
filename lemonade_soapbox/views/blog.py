@@ -1,11 +1,12 @@
-import arrow
 import calendar
+from gettext import ngettext
+
+import arrow
 from flask import abort, current_app, g, redirect, render_template, Response, url_for
 from flask_login import current_user, login_required
-from gettext import ngettext
+
 from lemonade_soapbox.helpers import Blueprint
-from lemonade_soapbox.models import Article, Tag
-from sqlalchemy import and_
+from lemonade_soapbox.models import Article, Post, Tag
 
 bp = Blueprint('blog', __name__)
 
@@ -71,7 +72,9 @@ def show_feed(format):
 
 @bp.route('/tags/')
 def all_tags():
-    tags = [t for t in Tag.frequency(post_types=['Article']).all() if t[1] > 0]
+    tags = [
+        t for t in Tag.frequency(post_types=['article']).all() if t["article_count"] > 0
+    ]
     page_title = ngettext('%(num)d Tag', 'All %(num)d Tags', len(tags)) % {
         'num': len(tags)
     }
@@ -82,19 +85,22 @@ def all_tags():
 def show_tag(handle):
     tag = Tag.query.filter_by(handle=handle).first_or_404()
     articles = (
-        tag.articles.filter(
-            and_(
-                Article.status == 'published', Article.date_published <= arrow.utcnow()
-            )
+        tag.posts.filter(
+            Post.post_type == "article",
+            Post.status == 'published',
+            Post.date_published <= arrow.utcnow(),
         )
-        .order_by(Article.date_published.desc())
+        .order_by(Post.date_published.desc())
         .all()
     )
-    page_title = ngettext(
-        '%(num)d Article Tagged with “%(t)s”',
-        '%(num)d Articles Tagged with “%(t)s”',
-        len(articles),
-    ) % {'num': len(articles), 't': tag.label}
+    page_title = (
+        ngettext(
+            '%(num)d Article Tagged with “%(t)s”',
+            '%(num)d Articles Tagged with “%(t)s”',
+            len(articles),
+        )
+        % {'num': len(articles), 't': tag.label}
+    )
 
     return render_template(
         'blog/views/article_list.html', articles=articles, page_title=page_title
@@ -137,11 +143,14 @@ def month_archive(year, month):
     )
     if not articles:
         abort(404)
-    page_title = ngettext(
-        '%(num)d Article from %(month)s %(year)s',
-        '%(num)d Articles from %(month)s %(year)s',
-        len(articles),
-    ) % {'num': len(articles), 'month': calendar.month_name[int(month)], 'year': year}
+    page_title = (
+        ngettext(
+            '%(num)d Article from %(month)s %(year)s',
+            '%(num)d Articles from %(month)s %(year)s',
+            len(articles),
+        )
+        % {'num': len(articles), 'month': calendar.month_name[int(month)], 'year': year}
+    )
 
     return render_template(
         'blog/views/article_list.html', articles=articles, page_title=page_title

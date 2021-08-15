@@ -1,6 +1,8 @@
 import base64
 import random
 from datetime import datetime
+from pathlib import Path
+
 from flask import (
     abort,
     current_app,
@@ -12,15 +14,15 @@ from flask import (
 )
 from flask_login import current_user, login_user, login_required, logout_user
 from flask_sqlalchemy import Pagination
-from lemonade_soapbox import db
-from lemonade_soapbox.forms import ArticleForm, ReviewForm, SignInForm
-from lemonade_soapbox.helpers import Blueprint
-from lemonade_soapbox.models import Article, Review, Tag
-from lemonade_soapbox.models.users import User
-from pathlib import Path
 from sqlalchemy import and_, func
 from werkzeug.utils import secure_filename
 from whoosh.query import Term as whoosh_term, Or as whoosh_or
+
+from lemonade_soapbox import db
+from lemonade_soapbox.forms import ArticleForm, ReviewForm, SignInForm
+from lemonade_soapbox.helpers import Blueprint
+from lemonade_soapbox.models.posts import Article, Review, RevisionMixin, Tag
+from lemonade_soapbox.models.users import User
 
 bp = Blueprint('admin', __name__)
 
@@ -159,9 +161,8 @@ def signin():
         if not user or user.password != form.password.data:
             flash('Incorrect email address or password.', 'error')
             return redirect(url_for('.signin'))
-        else:
-            login_user(user)
-            return redirect(url_for('.index'))
+        login_user(user)
+        return redirect(url_for('.index'))
 
     return render_template(
         'admin/views/signin.html',
@@ -189,17 +190,25 @@ def tag_manager():
     per_page = request.args.get('per_page', 100, int)
     sort_by = request.args.get('sort_by', 'label')
     order = 'asc' if request.args.get('order') == 'asc' else 'desc'
-    post_types = request.args.getlist('filter') or ['Article', 'Review']
+    post_types = request.args.getlist('filter') or ['article', 'review']
     tags = None
 
-    tags = Tag.frequency(post_types=post_types, status=None)
+    tags = Tag.frequency(
+        post_types=post_types, status=None, page=page, per_page=per_page
+    )
     # if sort_by == 'label':
     #     current_app.logger.debug('Sorting by label')
     #     tags = tags.order_by(getattr(Tag.label, order)())
     # elif sort_by == 'frequency':
 
-    tags = tags.paginate(page=page, per_page=per_page)
-    tags.items = [dict(zip(i.keys(), i)) for i in tags.items]
+    tags = Pagination(
+        query=None,
+        page=page,
+        per_page=per_page,
+        total=Tag.query.count(),
+        items=tags,
+    )
+    # tags.items = [dict(zip(i.keys(), i)) for i in tags.items]
 
     return render_template(
         'admin/views/tag_manager.html',
@@ -239,38 +248,24 @@ def blog():
 )
 @login_required
 def edit_post(post_type, id, revision_id):
-    """Compose a new post or edit an existing post."""
-    specifics = {
-        "blog": {
-            "class": Article,
-            "cover_dir": "blog",
-            "cover_field": "cover",
-            "form": ArticleForm,
-        },
-        "reviews": {
-            "class": Review,
-            "cover_dir": "book_covers",
-            "cover_field": "book_cover",
-            "form": ReviewForm,
-        },
-    }
-    if post_type not in specifics:
+    post_classes = {"blog": Article, "reviews": Review}
+
+    if post_type not in post_classes:
         abort(404)
-    else:
-        specifics = specifics[post_type]
+    post_class = post_classes[post_type]
 
     # Load a post either by ID or a specific revision
     if id:
-        post = specifics["class"].query.get_or_404(id)
-        revision_id = post.revision_id
-    elif revision_id:
-        post = specifics["class"].from_revision(revision_id)
+        post = post_class.query.get_or_404(id)
+        revision_id = post.current_revision_id
+    elif revision_id and issubclass(post_class, RevisionMixin):
+        post = post_class.from_revision(revision_id)
         if not post:
             abort(404)
     else:
-        post = specifics["class"]()
+        post = post_class()
 
-    form = specifics["form"](obj=post)
+    form = globals()[f"{post_class.__name__}Form"](obj=post)
     if form.validate_on_submit():
         message = ''
         message_category = 'success'
@@ -290,10 +285,9 @@ def edit_post(post_type, id, revision_id):
         # Cover image uploading
         #
         # First, check if we uploaded a file the old-fashioned way
-        cover_field = getattr(form, specifics["cover_field"])
-        cover_path = Path(current_app.instance_path, "media", specifics["cover_dir"])
-        if cover_field.data and request.files.get(cover_field.name):
-            cover = request.files[cover_field.name]
+        cover_path = current_app.instance_path / "media" / post.post_type / "covers"
+        if form.cover.data and request.files.get(form.cover.name):
+            cover = request.files[form.cover.name]
             filename = secure_filename(
                 post.handle + '-cover.' + cover.filename.rsplit('.', 1)[1].lower()
             )
@@ -304,9 +298,9 @@ def edit_post(post_type, id, revision_id):
                 flash(
                     'There was a problem uploading the cover image. Try again?', 'error'
                 )
-                setattr(post, specifics["cover_field"], "")
+                post.cover = ""
             else:
-                setattr(post, specifics["cover_field"], filename)
+                post.cover = filename
         elif form.pasted_cover.data and not form.remove_cover.data:
             # We're uploading a pasted image, so decode the base64
             # and see if we can save it as an image file
@@ -323,16 +317,16 @@ def edit_post(post_type, id, revision_id):
             except Exception as e:
                 current_app.logger.warning(f'Could not save cover image: {e}.')
                 flash('There was a problem uploading the cover image. Try again?')
-                setattr(post, specifics["cover_field"], "")
+                post.cover = ""
             else:
-                setattr(post, specifics["cover_field"], filename)
-        if getattr(post, specifics["cover_field"]) and (
+                post.cover = filename
+        if post.cover and (
             form.remove_cover.data or (post.status == 'deleted' and form.delete.data)
         ):
             try:
-                file = cover_path / getattr(post, specifics["cover_field"])
+                file = cover_path / post.cover
                 file.unlink()
-                setattr(post, specifics["cover_field"], "")
+                post.cover = ""
                 current_app.logger.info(f"Removed cover from {post.id}")
             except Exception as e:
                 current_app.logger.warning(f'Could not delete cover image: {e}')
@@ -348,16 +342,22 @@ def edit_post(post_type, id, revision_id):
                     # Permanently deleting post
                     post.status = 'removed'
                     db.session.delete(post)
-                    message = f'{post.__class__} permanently deleted.'
-                    redirect_url = url_for('.blog')
+                    # Need to do this to avoid SQLAlchemy RACE condition
+                    db.session.delete(post.selected_revision)
+                    message = f'{post.post_type.capitalize()} permanently deleted.'
+                    redirect_url = (
+                        url_for('.blog')
+                        if post.post_type == "article"
+                        else url_for('.reviews')
+                    )
                 else:
                     post.status = 'deleted'
-                    message = f'{post.__class__} moved to the trash.'
+                    message = f'{post.post_type.capitalize()} moved to the trash.'
                 message_category = 'removed'
             elif form.drafts.data:
                 post.status = 'draft'
                 post.date_published = None
-                message = f'{post.__class__} moved to drafts.'
+                message = f'{post.post_type.capitalize()} moved to drafts.'
         if post.status != 'removed':
             db.session.add(post)
         db.session.commit()

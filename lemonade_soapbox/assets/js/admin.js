@@ -57,7 +57,7 @@ function BackendInit() {
                 var rev = current.data('view');
                 current
                     .removeClass('js-revisions__current')
-                current.wrapInner('<a href="' + application_root + '/meta/blog/write/' + rev + '/" title="View this revision"></a>');
+                // current.wrapInner('<a href="' + application_root + '/meta/blog/write/' + rev + '/" title="View this revision"></a>');
                 current.before('<li class="js-revisions__current"><span class="i--spinner"></span> Autosaving…</li>');
             } else {
                 $('.js-revisions__current').html('Autosaving…');
@@ -531,7 +531,7 @@ PostForm.prototype.autosave = function() {
     //  * There have been changes
     if(title.val() && self.old_content != new_content) {
         $.post(self.autosaveConfig.ajaxURL, {
-            'type': type,
+            'post_type': type,
             'body': new_content,
             'parent': parent_revision,
             'title': title.val(),
@@ -542,7 +542,7 @@ PostForm.prototype.autosave = function() {
             // If there was an autosave error, destroy it!
             self.form.find('.js-autosave-error').fadeOut().remove();
 
-            if(data.post_id) {
+            if(self.form.attr('data-id') == '') {
                 /*
                  * We created a new post draft.
                  *
@@ -580,7 +580,7 @@ PostForm.prototype.autosave = function() {
                     .html('Last autosave: ' + data.date + ' <a href="#" class="c-revision__link">Restore</a>')
                     .children('a')
                         .data('content', self.old_content);
-                self.body.attr('data-revision', data.revision_id);
+                // self.body.attr('data-revision', data.revision_id);
 
                 // Update URL if we are currently working with an autosave
                 if(self.body.attr('is-autosave')) {

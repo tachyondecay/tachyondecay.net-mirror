@@ -1,6 +1,7 @@
+import re
+
 import arrow
 import pytest
-import re
 
 from lemonade_soapbox.models import Review, Tag
 from tests.factories import ReviewFactory
@@ -18,7 +19,7 @@ def test_all_reviews(client):
     reviews = ReviewFactory.create_batch(5)
     resp = client.get("http://reviews.test/index/")
     assert resp.status_code == 200
-    assert all([r.short_title.encode() in resp.data for r in reviews])
+    assert all(r.short_title.encode() in resp.data for r in reviews)
 
 
 def test_all_tags(client, db):
@@ -42,7 +43,7 @@ def test_index(client, db):
     ) + ReviewFactory.create_batch(3)
     resp = client.get("http://reviews.test/")
     assert resp.status_code == 200
-    assert all([r.short_title.encode() in resp.data for r in reviews])
+    assert all(r.short_title.encode() in resp.data for r in reviews)
 
 
 def test_lists(client):
@@ -97,7 +98,7 @@ def test_show_feed(client, user):
         resp = client.get(f"http://reviews.test/feed/posts.{format}")
         assert resp.status_code == 200
         assert resp.mimetype == f"application/{format}+xml"
-        assert all([r.short_title.upper().encode() in resp.data for r in reviews])
+        assert all(r.short_title.upper().encode() in resp.data for r in reviews)
 
 
 def test_show_review_unauthenticated(client):
@@ -166,11 +167,11 @@ def test_show_tag(client, db):
     assert resp.status_code == 200
 
     # Check if all reviews are present
-    assert all([r.short_title.encode() in resp.data for r in reviews])
+    assert all(r.short_title.encode() in resp.data for r in reviews)
 
     # Test shelf feed view
     for format in ["atom", "rss"]:
         resp = client.get(f"http://reviews.test/shelves/science-fiction/posts.{format}")
         assert resp.status_code == 200
         assert resp.mimetype == f"application/{format}+xml"
-        assert all([r.short_title.upper().encode() in resp.data for r in reviews])
+        assert all(r.short_title.upper().encode() in resp.data for r in reviews)

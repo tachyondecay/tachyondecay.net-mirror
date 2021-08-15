@@ -1,24 +1,25 @@
-import arrow
 import io
-import pytest
 import random
 import shutil
-
-from flask_login import current_user
-from lemonade_soapbox.models import Article, Review, Tag
 from pathlib import Path
-from sqlalchemy import inspect
+
+import arrow
+import pytest
+from flask_login import current_user
 from sqlalchemy.orm.util import was_deleted
+
+from lemonade_soapbox.models import Article, Review, Tag
 from tests.factories import ArticleFactory, ReviewFactory, TagFactory
 
 pytestmark = pytest.mark.usefixtures("db")
 
 
 @pytest.fixture(params=[ArticleFactory, ReviewFactory])
-def post(db, request):
+def post(db, request, signin):
     """For testing various cases with the edit_post endpoint."""
     # Create the post and generate a new revision
     post = request.param(title="Hello World", body="Test post here")
+
     old_body = post.body
     post.body = "This is a replacement body text."
     post.new_revision(old_body)
@@ -39,22 +40,25 @@ def post(db, request):
 @pytest.fixture
 def post_type(post):
     """Determines post_type parameter for edit_post tests."""
-    return "blog" if type(post) is Article else "reviews"
+    return "blog" if post.post_type == "article" else "reviews"
 
 
 @pytest.fixture
 def cover_dir(app):
     """Creates a temporary directory for covers."""
-    media = Path(app.instance_path, "media")
 
     def _make_dir(post_type):
-        cover = "blog" if post_type == "blog" else "book_covers"
-        dir = Path(app.instance_path, "media", cover)
-        dir.mkdir(parents=True)
-        return dir
+        _cover_dir = (
+            app.instance_path
+            / "media"
+            / ("article" if post_type == "blog" else "review")
+            / "covers"
+        )
+        _cover_dir.mkdir(parents=True)
+        yield _cover_dir
+        shutil.rmtree(_cover_dir)
 
     yield _make_dir
-    shutil.rmtree(media)
 
 
 def test_protected_routes(client):
@@ -143,7 +147,6 @@ def test_edit_post_fetch_by_id(client, post, post_type, signin):
 def test_edit_post_fetch_by_revision(client, post, post_type, signin):
     """Fetch by old revision ID and check that the old body is present."""
     old_revision = post.revisions[0].id
-    print(old_revision)
     resp = client.get(f"http://main.test/meta/{post_type}/write/{old_revision}/")
     assert resp.status_code == 200
     assert b"Test post here" in resp.data
@@ -182,38 +185,27 @@ def test_edit_post_no_errors(client, post, post_type, signin):
 
 def test_edit_post_upload_cover(client, cover_dir, db, post, post_type, signin):
     """Test uploading a cover."""
-    cover_field = "cover" if post_type == "blog" else "book_cover"
     data = {
         "body": "Edited body text",
         "book_author": "Nobody",
-        cover_field: (io.BytesIO(b"hey"), "test.jpg"),
+        "cover": (io.BytesIO(b"hey"), "test.jpg"),
         "dates_read": "2010/05/08 - 2010/05/09",
         "title": post.title,
     }
 
-    # First, trigger an error
-    resp = client.post(
-        f"http://main.test/meta/{post_type}/write/{post.id}/",
-        data=data,
-        content_type="multipart/form-data",
-        follow_redirects=True,
-    )
-    assert b"There was a problem uploading the cover image. Try again?" in resp.data
-
     cover_dir(post_type)
-    data[cover_field] = (io.BytesIO(b"hey"), "test1.jpg")
+    data["cover"] = (io.BytesIO(b"hey"), "test1.jpg")
     resp = client.post(
         f"http://main.test/meta/{post_type}/write/{post.id}/",
         data=data,
         content_type="multipart/form-data",
     )
     assert resp.status_code == 302
-    assert getattr(post, cover_field) == f"{post.handle}-cover.jpg"
+    assert post.cover == f"{post.handle}-cover.jpg"
 
 
 def test_edit_post_remove_cover(app, cover_dir, client, db, post, post_type, signin):
     """Test removing a cover."""
-    cover_field = "cover" if post_type == "blog" else "book_cover"
     data = {
         "body": "Edited body text",
         "book_author": "Nobody",
@@ -221,10 +213,10 @@ def test_edit_post_remove_cover(app, cover_dir, client, db, post, post_type, sig
         "remove_cover": "yes",
         "title": post.title,
     }
-    dir = cover_dir(post_type)
+    cover_dir(post_type)
 
     # First, trigger an error
-    setattr(post, cover_field, "hey.jpg")
+    post.cover = "hey.jpg"
     resp = client.post(
         f"http://main.test/meta/{post_type}/write/{post.id}/",
         data=data,
@@ -234,18 +226,20 @@ def test_edit_post_remove_cover(app, cover_dir, client, db, post, post_type, sig
     assert b"Could not delete cover image." in resp.data
 
     # Create a fake cover image file to be deleted
-    open(dir / "hey.jpg", "a").close()
+    open(
+        app.instance_path / "media" / post.post_type / "covers" / "hey.jpg", "a"
+    ).close()
 
     resp = client.post(
-        f"http://main.test/meta/{post_type}/write/{post.id}/", data=data,
+        f"http://main.test/meta/{post_type}/write/{post.id}/",
+        data=data,
     )
     assert resp.status_code == 302
-    assert getattr(post, cover_field) == ""
+    assert post.cover == ""
 
 
 def test_edit_post_pasted_cover(client, cover_dir, post, post_type, signin):
     """Test uploading a cover via pasted image data."""
-    cover_field = "cover" if post_type == "blog" else "book_cover"
     data = {
         "body": "Edited body text",
         "book_author": "Nobody",
@@ -254,22 +248,13 @@ def test_edit_post_pasted_cover(client, cover_dir, post, post_type, signin):
         "title": post.title,
     }
 
-    # First, trigger an error
-    resp = client.post(
-        f"http://main.test/meta/{post_type}/write/{post.id}/",
-        data=data,
-        content_type="multipart/form-data",
-        follow_redirects=True,
-    )
-    assert b"There was a problem uploading the cover image. Try again?" in resp.data
-
     cover_dir(post_type)
     resp = client.post(f"http://main.test/meta/{post_type}/write/{post.id}/", data=data)
     assert resp.status_code == 302
-    assert getattr(post, cover_field) == f"{post.handle}-cover.png"
+    assert post.cover == f"{post.handle}-cover.png"
 
 
-def test_edit_post_delete(client, post, post_type, signin):
+def test_edit_post_delete(client, db, post, post_type, signin):
     """Test deleting article."""
     data = {
         "body": "Edited body text",
@@ -280,6 +265,7 @@ def test_edit_post_delete(client, post, post_type, signin):
     }
     resp = client.post(f"http://main.test/meta/{post_type}/write/{post.id}/", data=data)
     assert resp.status_code == 302
+    # db.session.refresh(post)
     assert post.status == "deleted"
 
     # Now permanently delete it
@@ -333,21 +319,33 @@ def test_signin_unauthed(client, user):
     url = "http://main.test/meta/signin/"
 
     # Invalid form data
-    resp = client.post(url, data={},)
+    resp = client.post(
+        url,
+        data={},
+    )
     assert resp.status_code == 200
 
     # Invalid email address
-    resp = client.post(url, data={"email": "test1@example.com", "password": "1234"},)
+    resp = client.post(
+        url,
+        data={"email": "test1@example.com", "password": "1234"},
+    )
     assert resp.status_code == 302
     assert resp.location == url
 
     # Valid email address, invalid password
-    resp = client.post(url, data={"email": "test@example.com", "password": "1234"},)
+    resp = client.post(
+        url,
+        data={"email": "test@example.com", "password": "1234"},
+    )
     assert resp.status_code == 302
     assert resp.location == url
 
     # Valid email and password
-    resp = client.post(url, data={"email": "test@example.com", "password": "testing"},)
+    resp = client.post(
+        url,
+        data={"email": "test@example.com", "password": "testing"},
+    )
     assert resp.status_code == 302
     assert resp.location == "http://main.test/meta/"
 
@@ -382,10 +380,3 @@ def test_tag_manager(client, db, signin):
     # Test that our last tag, and only our last tag, is present (pagination)
     assert tags[-1].label.encode() in resp.data
     assert all(t.label.encode() not in resp.data for t in tags[:-1])
-
-    # Test that the appropriate number of articles and reviews is present
-    num_articles = tags[-1].articles.count()
-    num_reviews = tags[-1].reviews.count()
-
-    assert f"{num_articles} articles".encode() in resp.data
-    assert f"{num_reviews} reviews".encode() in resp.data

@@ -1,7 +1,8 @@
-import arrow
-import os
 import random
 import re
+from pathlib import Path
+
+import arrow
 from flask import (
     abort,
     current_app,
@@ -14,11 +15,12 @@ from flask import (
 )
 from flask_login import current_user
 from flask_sqlalchemy import Pagination
+from sqlalchemy import or_, not_
+from whoosh.query import Term as whoosh_term
+
 from lemonade_soapbox import db
 from lemonade_soapbox.helpers import Blueprint
-from lemonade_soapbox.models import Review, Tag
-from sqlalchemy import and_, func, or_, not_
-from whoosh.query import Term as whoosh_term
+from lemonade_soapbox.models import Post, Review, Tag
 
 bp = Blueprint('reviews', __name__)
 
@@ -58,7 +60,7 @@ def error_404(e):
 @bp.before_request
 def before():
     g.total = (
-        db.session.query(func.count(Review.id))
+        db.session.query(db.func.count(Review.id))
         .filter(Review.status == 'published')
         .scalar()
     )
@@ -81,8 +83,6 @@ def index():
         .limit(3)
         .all()
     )
-    current_app.logger.debug(fiction)
-    current_app.logger.debug(non_fiction)
     return render_template(
         'reviews/index.html',
         fiction=fiction,
@@ -113,7 +113,7 @@ def show_feed(format):
 @bp.route('/random/')
 def random_review():
     """Load a random book review."""
-    review = Review.published().order_by(func.random()).first()
+    review = Review.published().order_by(db.func.random()).first()
     return redirect(review.get_permalink(False))
 
 
@@ -194,7 +194,9 @@ def search():
 @bp.route('/shelves/')
 def all_tags():
     """Display a list of all tags."""
-    shelves = [t for t in Tag.frequency(post_types=['Review']).all() if t[1] > 0]
+    shelves = [
+        t for t in Tag.frequency(post_types=['review']).all() if t["review_count"] > 0
+    ]
     sort_by = request.args.get('sort', 'alphabetical')
     return render_template(
         'reviews/views/shelves.html',
@@ -209,9 +211,11 @@ def all_tags():
 def show_tag(handle, format=None):
     page = request.args.get('page', 1, int)
     shelf = Tag.query.filter_by(handle=handle).first_or_404()
-    reviews = shelf.reviews.filter(
-        and_(Review.status == 'published', Review.date_published <= arrow.utcnow())
-    ).order_by(Review.date_published.desc())
+    reviews = shelf.posts.filter(
+        Post.post_type == "review",
+        Post.status == 'published',
+        Post.date_published <= arrow.utcnow(),
+    ).order_by(Post.date_published.desc())
 
     if format:
         return Response(
@@ -220,32 +224,33 @@ def show_tag(handle, format=None):
                 page_title=f'Kara.Reviews: {shelf.label.title()} Books',
                 reviews=reviews.all(),
                 url=url_for(
-                    'reviews.show_tag', _external=True, handle=handle, format=format,
+                    'reviews.show_tag',
+                    _external=True,
+                    handle=handle,
+                    format=format,
                 ),
             ),
             mimetype='application/' + format + '+xml',
         )
-    else:
-        reviews = reviews.paginate(page=page, per_page=50)
-        filename = 'susan-yin-2JIvboGLeho-unsplash.jpg'
-        if os.path.exists(
-            os.path.join(
-                current_app.static_folder, 'images/layout/header_bg', handle + '.jpg'
-            )
-        ):
-            filename = handle + '.jpg'
-        return render_template(
-            'reviews/views/review_list.html',
-            handle=handle,
-            read_more_length=75,
-            reviews=reviews,
-            page_title=f'Books shelved under “{shelf.label.title()}”',
-            cover=url_for(
-                '.static',
-                filename='images/layout/header_bg/' + filename,
-                _external=True,
-            ),
-        )
+
+    reviews = reviews.paginate(page=page, per_page=50)
+    filename = 'susan-yin-2JIvboGLeho-unsplash.jpg'
+    if Path(
+        current_app.static_folder, 'images/layout/header_bg', f"{handle}.jpg"
+    ).exists():
+        filename = handle + '.jpg'
+    return render_template(
+        'reviews/views/review_list.html',
+        handle=handle,
+        read_more_length=75,
+        reviews=reviews,
+        page_title=f'Books shelved under “{shelf.label.title()}”',
+        cover=url_for(
+            '.static',
+            filename='images/layout/header_bg/' + filename,
+            _external=True,
+        ),
+    )
 
 
 @bp.route('/<handle>/')
@@ -264,12 +269,11 @@ def show_review(handle):
     # Grab reviews from the same author
     from_author = (
         Review.published()
-        .filter(and_(Review.book_author == review.book_author, Review.id != review.id))
+        .filter(Review.book_author == review.book_author, Review.id != review.id)
         .order_by(Review.date_published.desc())
         .limit(3)
         .all()
     )
-    current_app.logger.debug(f'FROM AUTHOR: {from_author}')
     if from_author:
         related_reviews['More From This Author'] = from_author
     # Look for reviews of books mentioned in this review
@@ -287,15 +291,11 @@ def show_review(handle):
         mentioned = (
             Review.published()
             .filter(
-                and_(
-                    Review.id != review.id,
-                    or_(*[Review.title.startswith(t) for t in titles_mentioned]),
-                )
+                Review.id != review.id,
+                or_(*[Review.title.startswith(t) for t in titles_mentioned]),
             )
             .all()
         )
-    current_app.logger.debug(f"Titles mentioned: {titles_mentioned}")
-    current_app.logger.debug(mentioned)
     if mentioned:
         related_reviews['Mentioned in This Review'] = mentioned
     # If all else fails, grab books from the same shelf
@@ -303,10 +303,12 @@ def show_review(handle):
     if review._tags:
         shelf = random.choice(review._tags)
         shelved = (
-            shelf.reviews.filter(
-                and_(Review.status == 'published', Review.id != review.id)
+            shelf.posts.filter(
+                Post.post_type == "review",
+                Post.status == 'published',
+                Post.id != review.id,
             )
-            .order_by(func.random())
+            .order_by(db.func.random())
             .limit(3)
             .all()
         )

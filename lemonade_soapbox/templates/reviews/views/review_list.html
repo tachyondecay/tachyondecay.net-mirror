@@ -61,8 +61,8 @@
         <article class="review-preview" data-review-id="{{ review.id }}" data-short-title="{{ review.short_title }}" data-title="{{ review.title }}">
             <header>
                 <a href="{{ review.get_permalink() }}">
-                    {% if review.book_cover %}
-                    <img src="/media/book_covers/{{ review.book_cover }}" class="coverimg" alt="Book cover for {{ review.short_title }}" itemprop="image">
+                    {% if review.cover %}
+                    <img src="/media/review/covers/{{ review.cover }}" class="coverimg" alt="Book cover for {{ review.short_title }}" itemprop="image">
                     {% endif %}
                     <h3 class="title"><a href="{{ review.get_permalink() }}">{{ review.title }}</a></h3>
                 </a>

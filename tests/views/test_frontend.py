@@ -1,5 +1,4 @@
 import pytest
-from lemonade_soapbox import db
 from tests.factories import ArticleFactory
 
 pytestmark = pytest.mark.usefixtures("db")

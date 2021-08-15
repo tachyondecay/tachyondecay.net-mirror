@@ -80,9 +80,9 @@ class JSONEncoder(BaseJSONEncoder):  # pragma: no cover
     def default(self, obj):
         if hasattr(obj, "__json__"):
             return obj.__json__()
-        elif isinstance(obj, arrow.Arrow):
+        if isinstance(obj, arrow.Arrow):
             return obj.isoformat()
-        return BaseJSONEncoder.default(obj)
+        return BaseJSONEncoder().default(obj)
 
 
 whitespace = re.compile(r'(\S+)')

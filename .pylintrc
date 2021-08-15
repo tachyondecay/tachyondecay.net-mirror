@@ -1,0 +1,12 @@
+[MASTER]
+disable=
+    invalid-name,
+    missing-class-docstring,
+    missing-function-docstring,
+    missing-module-docstring,
+    no-member,
+    no-self-use,
+    too-few-public-methods,
+    too-many-arguments,
+    too-many-locals,
+    unnecessary-lambda

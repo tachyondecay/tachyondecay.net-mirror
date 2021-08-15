@@ -26,8 +26,8 @@
         {% for review in fiction %}
         <div class="review">
             <a href="{{ review.get_permalink() }}">
-            {% if review.book_cover %}
-                <img src="/media/book_covers/{{ review.book_cover }}" alt="Cover for {{ review.short_title }}" class="coverimg">
+            {% if review.cover %}
+                <img src="/media/review/covers/{{ review.cover }}" alt="Cover for {{ review.short_title }}" class="coverimg">
             {% else %}
                 {{ review.short_title }}
             {% endif %}
@@ -44,8 +44,8 @@
         {% for review in non_fiction %}
         <div class="review">
             <a href="{{ review.get_permalink() }}">
-            {% if review.book_cover %}
-                <img src="/media/book_covers/{{ review.book_cover }}" alt="Cover for {{ review.short_title }}" class="coverimg">
+            {% if review.cover %}
+                <img src="/media/review/covers/{{ review.cover }}" alt="Cover for {{ review.short_title }}" class="coverimg">
             {% else %}
                 {{ review.short_title }}
             {% endif %}

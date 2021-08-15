@@ -13,6 +13,7 @@ def test_all_tags(client, db):
     ArticleFactory(tags=["hello world"])
     resp = client.get("http://main.test/blog/tags/")
     assert resp.status_code == 200
+    print(resp.data)
     assert b"/blog/tags/hello-world/" in resp.data
     assert b"/blog/tags/test/" in resp.data
     assert b"1 article with this tag" in resp.data

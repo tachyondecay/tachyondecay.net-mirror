@@ -1,7 +1,8 @@
 import pytest
 from flask_wtf import csrf
-from lemonade_soapbox.models import Article, Review, Tag
 from sqlalchemy.orm.util import was_deleted
+
+from lemonade_soapbox.models import Article, Review, Tag, Revision
 from tests.factories import ArticleFactory, ReviewFactory
 
 pytestmark = pytest.mark.usefixtures("db")
@@ -17,8 +18,11 @@ def test_autosave(client, db, post_type, signin):
     data = {
         "body": "This is a test post body.",
         "title": "Post title here",
-        "type": str(post_type.__name__).lower(),
+        "post_type": str(post_type.__name__).lower(),
     }
+
+    if post_type is Review:
+        data["book_author"] = "Nobody"
 
     # Test with a new post
     resp = client.post("http://main.test/api/posts/autosave/", data=data)
@@ -27,25 +31,25 @@ def test_autosave(client, db, post_type, signin):
     json = resp.get_json()
     post = post_type.query.filter_by(title=data["title"]).first()
     assert post
-    assert post.revision_id == json["revision_id"]
+    assert post.current_revision_id == json["revision_id"]
     assert post.id == json["post_id"]
     assert post.handle == json["handle"]
 
     # Test with editing a post
-    data["parent"] = post.revision_id
+    data["parent"] = post.current_revision_id
     data["body"] = "The new body of this post now."
     resp = client.post("http://main.test/api/posts/autosave/", data=data)
     assert resp.mimetype == "application/json"
     json = resp.get_json()
     assert post.autosave_id == json["revision_id"]
 
+    db.session.delete(post)
+    db.session.commit()
+
     # Test post 404
     data["parent"] = "invalid"
     resp = client.post("http://main.test/api/posts/autosave/", data=data)
     assert resp.status_code == 400
-
-    db.session.delete(post)
-    db.session.commit()
 
 
 def test_goodreads_link(client, signin):

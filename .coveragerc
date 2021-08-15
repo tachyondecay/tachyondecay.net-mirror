@@ -4,5 +4,6 @@ command_line = -m pytest tests/
 [report]
 omit = 
     __pypackages__/*
+    tests/*
     venv/*
     /usr/*

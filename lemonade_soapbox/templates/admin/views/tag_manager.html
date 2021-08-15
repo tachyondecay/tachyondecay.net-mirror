@@ -69,11 +69,11 @@
         <div class="tag-item">
             <span class="label" data-oldlabel="{{ tag['Tag'].label}}">{{ tag['Tag'].label }}</span>
 
-            {% if 'Article' in post_types %}
+            {% if 'review' in post_types %}
             <a href="{{ url_for('.blog', q='tags:"' ~ tag['Tag'].label ~ '"') }}" class="count -article i-before--newspaper" title="{{ tag['article_count'] }} articles">{{ tag['article_count'] }}</a>
             {% endif %}
 
-            {% if 'Review' in post_types %}
+            {% if 'review' in post_types %}
             <a href="{{ url_for('.reviews', q='tags:"' ~ tag['Tag'].label ~ '"') }}" class="count -review i-before--book" title="{{ tag['review_count'] }} reviews">{{ tag['review_count'] }}</a>
             {% endif %}
         </div>

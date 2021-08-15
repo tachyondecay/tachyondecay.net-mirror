@@ -48,7 +48,7 @@
             <h1 class="u-hidden">Tags</h1>
             <ul class="o-list-inline c-taglist">
                 {% for t in article._tags|sort(attribute='handle') %}
-                <li class="o-list-inline__item"><a class="c-taglist__tag c-btn" href="{{ url_for('blog.show_tag', handle=t.handle) }}" rel="tag">{{ t.label }}</a></li>
+                <li class="o-list-inline__item"><a class="c-taglist__tag c-btn" href="{{ url_for('.show_tag', handle=t.handle) }}" rel="tag">{{ t.label }}</a></li>
                 {% endfor %}
             </ul>
         </aside>

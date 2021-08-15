@@ -1,10 +1,10 @@
 import pytest
 import shutil
+from pathlib import Path
 
 from lemonade_soapbox import db as _db
 from lemonade_soapbox.create_app import create_app
 from lemonade_soapbox.models import User
-from pathlib import Path
 
 
 @pytest.fixture(scope="session")

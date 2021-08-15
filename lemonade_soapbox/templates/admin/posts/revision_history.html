@@ -3,10 +3,10 @@
     <h3 class="_h4">Revision History</h3>
     {% if post.selected_revision.id == post.autosave_id %}
     <p class="_info _smaller">You are editing the latest autosave.</p>
-    {% elif post.selected_revision.id == post.revision_id %}
-    <p class="_info _smaller">You are editing the current version of this {{ post.type }}.</p>
+    {% elif post.selected_revision.id == post.current_revision_id %}
+    <p class="_info _smaller">You are editing the current version of this {{ post.post_type }}.</p>
     {% else %}
-    <p class="_info _smaller">You are editing a previous version of this article. <a href="{{ url_for('admin_main.edit_post', post_type=post_type, id=post.id) }}">Edit the most recent version.</a></p>
+    <p class="_info _smaller">You are editing a previous version of this article. <a href="{{ url_for('.edit_post', post_type=post_type, id=post.id) }}">Edit the most recent version.</a></p>
     {% endif %}
 
     <ol class="js-revisions__list">
@@ -15,7 +15,7 @@
         {%- if r.id == post.selected_revision.id %}
         <li class="js-revisions__current" data-view="{{ r.id }}">{{ rtext }}</li>
         {% else %}
-        <li><a href="{{ url_for('admin_main.edit_post', post_type=post_type, revision_id=r.id) }}" class="c-revisions__link" title="View this revision">{{ rtext }}</a> {% if r.id == post.autosave_id %}<small>(Autosave)</small>{% endif %}</li>
+        <li><a href="{{ url_for('.edit_post', post_type=post_type, revision_id=r.id) }}" class="c-revisions__link" title="View this revision">{{ rtext }}</a> {% if r.id == post.autosave_id %}<small>(Autosave)</small>{% endif %}</li>
         {% endif -%}
         {% endfor %}
     </ol>

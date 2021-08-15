@@ -6,8 +6,8 @@
 <meta property="og:type" content="review">
 <meta property="og:title" content="{{ self.page_title() }}">
 <meta property="og:description" content="{{ review.summary or read_more(review.body_html, length=50, link=False)|striptags }}">
-{% if review.book_cover %}
-<meta property="og:image" content="{{ request.url_root ~ 'media/book_covers/' ~ review.book_cover }}">
+{% if review.cover %}
+<meta property="og:image" content="{{ request.url_root ~ 'media/review/covers/' ~ review.cover }}">
 <meta name="twitter:card" content="summary">
 {% else %}
 <meta property="og:image" content="{{ url_for('.static', filename='images/kara.reviews-logo-alternate.png', external=True) }}">
@@ -25,10 +25,10 @@
 
 {% block body_main %}
 {{ super() }}
-<article class="single-review{{' -has-cover' if review.book_cover }} grid-layout" id="review-{{ review.id }}" itemprop="review" itemscope itemtype="http://schema.org/Review" data-spoilers="{{ 'yes' if review.spoilers else 'no' }}">
+<article class="single-review{{' -has-cover' if review.cover }} grid-layout" id="review-{{ review.id }}" itemprop="review" itemscope itemtype="http://schema.org/Review" data-spoilers="{{ 'yes' if review.spoilers else 'no' }}">
     <meta itemprop="author" content="Kara Babcock">
     <meta itemprop="license" content="https://creativecommons.org/licenses/by-nc/4.0/">
-    <header class="header" itemprop="itemReviewed" itemscope itemtype="https://schema.org/Book"{% if review.book_cover %} style="--cover-src: url('/media/book_covers/{{ review.book_cover }}');"{% endif %}>
+    <header class="header" itemprop="itemReviewed" itemscope itemtype="https://schema.org/Book"{% if review.cover %} style="--cover-src: url('/media/review/covers/{{ review.cover }}');"{% endif %}>
         {% if review.book_id %}<meta itemprop="isbn" content="{{ review.book_id }}">{% endif %}
         <h1 class="reviewtitle">
             <span class="_hide">Review of </span>
@@ -37,8 +37,8 @@
             <span itemprop="author">{{ review.book_author }}</span></span>
         </h1>
 
-        {% if review.book_cover %}
-        <img src="/media/book_covers/{{ review.book_cover }}" class="coverimg" alt="Book cover for {{ review.title }}" itemprop="image" title="{{ review.title }} by {{ review.book_author }}">
+        {% if review.cover %}
+        <img src="/media/review/covers/{{ review.cover }}" class="coverimg" alt="Book cover for {{ review.title }}" itemprop="image" title="{{ review.title }} by {{ review.book_author }}">
         {% endif %}
     </header>
     <footer class="review-footer">
@@ -146,8 +146,8 @@
             <div class="list">
             {% for r in revs %}
                 <a class="review" href="{{ r.get_permalink() }}" title="{{ r.short_title }} by {{ r.book_author }}">
-                    {% if r.book_cover %}
-                    <img src="/media/book_covers/{{ r.book_cover }}" alt="Cover for {{ r.short_title }}">
+                    {% if r.cover %}
+                    <img src="/media/review/covers/{{ r.cover }}" alt="Cover for {{ r.short_title }}">
                     {% else %}
                     <span class="booktitle">{{ r.short_title }}</span> by 
                     <span class="bookauthor">{{ r.book_author }}</span>

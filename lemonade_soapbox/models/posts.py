@@ -1,13 +1,14 @@
-import arrow
 from datetime import datetime
+from uuid import uuid4
+
+import arrow
 from diff_match_patch import diff_match_patch
 from flask import current_app, Markup, url_for
 from flask_login import current_user
-from lemonade_soapbox import db
-from lemonade_soapbox.helpers import Timer
 from markdown import markdown
 from slugify import slugify
-from sqlalchemy import asc, desc, event, func, orm, text
+from sqlalchemy import asc, desc, event, func
+from sqlalchemy.exc import NoResultFound
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -18,21 +19,9 @@ from whoosh.analysis import StemmingAnalyzer
 from whoosh.fields import Schema, ID, KEYWORD, NUMERIC, TEXT, DATETIME
 from whoosh.qparser import GtLtPlugin, MultifieldParser, QueryParser
 from whoosh.qparser.dateparse import DateParserPlugin
-from uuid import uuid4
 
-
-tag_relationships = {
-    'Article': db.Table(
-        'tag_associations',
-        db.Column('tag_id', db.Integer, db.ForeignKey('tags.id')),
-        db.Column('post_id', db.Integer, db.ForeignKey('articles.id')),
-    ),
-    'Review': db.Table(
-        'shelf_associations',
-        db.Column('tag_id', db.Integer, db.ForeignKey('tags.id')),
-        db.Column('post_id', db.Integer, db.ForeignKey('reviews.id')),
-    ),
-}
+from lemonade_soapbox import db
+from lemonade_soapbox.helpers import Timer
 
 
 class Searchable:
@@ -41,35 +30,33 @@ class Searchable:
     schema = None
 
     @staticmethod
-    @event.listens_for(db.session, 'after_flush')
+    @event.listens_for(db.session, "after_flush")
     def _after_flush(session, flush_context):
         """Index models that are searchable."""
-        # Disable automatic indexing during testing to prevent warnings
-        # We will manually call the class's build_index() method instead
-        if current_app.testing:
-            return
         models = {}
         for obj in session.new | session.dirty | session.deleted:
             if isinstance(obj, Searchable):
                 models.setdefault(obj.__class__, [])
                 models[obj.__class__].append(obj)
 
-        ix_path = current_app.config['INDEX_PATH']
-        # Create index if it does not exist.
+        ix_path = current_app.config["INDEX_PATH"]
         for model, instances in models.items():
-            if not (index.exists_in(ix_path, indexname=model.__name__)):
+            try:
+                ix = index.open_dir(
+                    ix_path, schema=model.schema, indexname=model.__name__
+                )
+            except index.EmptyIndexError:
                 ix = index.create_in(
                     ix_path, schema=model.schema, indexname=model.__name__
                 )
-            ix = index.open_dir(ix_path, indexname=model.__name__)
             with ix.writer() as writer:
                 for obj in instances:
-                    id = getattr(obj, 'id')
+                    obj_id = getattr(obj, "id")
                     if obj in session.deleted:
-                        current_app.logger.info(f"Removing {model} {id} from index.")
-                        writer.delete_by_term('id', str(id))
+                        current_app.logger.info(f"Removing {obj} from index.")
+                        writer.delete_by_term("id", str(obj_id))
                     else:
-                        current_app.logger.info(f"Indexing {model} {id}")
+                        current_app.logger.info(f"Indexing {obj}.")
                         obj.add_to_index(writer)
 
     def add_to_index(self, writer):
@@ -77,7 +64,6 @@ class Searchable:
         idx_info = {}
         filters = self.schema_filters()
         fields = self.schema.names()
-        current_app.logger.debug(fields)
         for field in fields:
             value = getattr(self, field)
             if field in filters:
@@ -90,13 +76,18 @@ class Searchable:
         """Build a clean index of this model."""
         with Timer() as t:
             current_app.logger.info(
-                f"Beginning clean indexing operation of {cls.__name__}"
+                f"Beginning clean indexing operation of {cls.__name__}."
             )
-            try:
-                ix_path = current_app.config['INDEX_PATH']
+            ix_path = current_app.config["INDEX_PATH"]
+            if not ix_path.exists():
+                current_app.logger.info(
+                    f"Index directory does not exist, attempting to create it at {ix_path}."
+                )
+                ix_path.mkdir()
 
-                ix = index.create_in(ix_path, schema=cls.schema, indexname=cls.__name__)
-                with ix.writer() as writer:
+            ix = index.create_in(ix_path, schema=cls.schema, indexname=cls.__name__)
+            with ix.writer() as writer:
+                with db.session.no_autoflush:
                     total = int(cls.query.order_by(None).count())
                     current_app.logger.info(
                         f"Indexing {cls.__name__}: {total} rows found."
@@ -108,14 +99,12 @@ class Searchable:
                         done += 1
                         if done % per_pass == 0:
                             current_app.logger.info(
-                                f"Indexed {done}/{total} ({(done/total):.1%})"
+                                f"Indexed {done}/{total} ({done/total:.1%})."
                             )
 
                     current_app.logger.info(f"Finished: {done}/{total} indexed.")
-            except Exception:
-                raise
         current_app.logger.info(
-            f"Built index for {cls.__name__} in {t.interval:.3f} seconds"
+            f"Built index for {cls.__name__} in {t.interval:.3f} seconds."
         )
 
     @classmethod
@@ -143,6 +132,7 @@ class Searchable:
     def search(
         cls,
         query,
+        paginate=True,
         fields=None,
         pagenum=1,
         pagelen=50,
@@ -162,9 +152,12 @@ class Searchable:
                     kwargs['sortedby'] = sort_field
                     if sort_order == 'desc':
                         kwargs['reverse'] = True
-                raw_results = searcher.search_page(
-                    parsed_query, pagenum, pagelen=pagelen, **kwargs
-                )
+                if paginate:
+                    raw_results = searcher.search_page(
+                        parsed_query, pagenum, pagelen=pagelen, **kwargs
+                    )
+                else:
+                    raw_results = searcher.search(parsed_query, **kwargs)
                 if raw_results.total > 0:
                     query_obj = cls.query.filter(
                         cls.id.in_([r['id'] for r in raw_results])
@@ -201,20 +194,10 @@ class UniqueHandleMixin:
     inherits from db.Model and has a column named `handle`.
     """
 
-    def __json__(self):
-        export = super().__json__()
-        export.update(handle=self.handle)
-        return export
-
-    @classmethod
-    def _default_handle(cls):
-        return cls.slugify(cls.title) if cls.title else None
-
     @declared_attr
-    def handle(cls):
-        return db.Column(
-            db.String(255), nullable=False, default=cls._default_handle, unique=True
-        )
+    def handle(self):
+        """URL-friendly handle, usually generated from the title."""
+        return db.Column(db.String, nullable=False, default='')
 
     @classmethod
     def unique_check(cls, text=None):
@@ -226,7 +209,11 @@ class UniqueHandleMixin:
             return unique
         return False
 
-    def slugify(self, text='', max_length=100, to_lower=True, **kwargs):
+    def slugify(self, text='', max_length=100, to_lower=True):
+        """
+        Given any string, transform into URL-friendly handle.
+        Also checks for uniqueness.
+        """
         slug = ''
         if text:
             slug = original = slugify(text, max_length=max_length, lowercase=to_lower)
@@ -257,7 +244,8 @@ class AuthorMixin:
         return export
 
     @declared_attr
-    def author_id(cls):
+    def author_id(self):
+        """Foreign key to the Users table, automatically insert current user."""
         return db.Column(
             db.Integer,
             db.ForeignKey('users.id'),
@@ -265,8 +253,15 @@ class AuthorMixin:
         )
 
     @declared_attr
-    def author(cls):
-        return db.relationship('User', backref=cls.__tablename__)
+    def author(self):
+        return db.relationship('User', backref=self.__tablename__)
+
+
+tag_associations = db.Table(
+    'tag_associations',
+    db.Column('tag_id', db.Integer, db.ForeignKey('tags.id', ondelete="CASCADE")),
+    db.Column('post_id', db.Integer, db.ForeignKey('posts.id', ondelete="CASCADE")),
+)
 
 
 class TagMixin:
@@ -278,12 +273,13 @@ class TagMixin:
         return export
 
     @declared_attr
-    def _tags(cls):
+    def _tags(self):
         return db.relationship(
             'Tag',
-            secondary=tag_relationships[cls.__name__],
+            secondary=tag_associations,
             sync_backref=False,
-            backref=db.backref(cls.__tablename__, lazy='dynamic', viewonly=True),
+            passive_deletes=True,
+            backref=db.backref(self.__tablename__, lazy='dynamic', viewonly=True),
         )
 
     @staticmethod
@@ -291,53 +287,191 @@ class TagMixin:
         with db.session.no_autoflush:
             q = Tag.query.filter_by(handle=Tag.slugify(tag))
             t = q.first()
-            if not (t):
-                current_app.logger.info(
-                    'Tag "{}" does not exist, creating.'.format(tag)
-                )
+            if not t:
+                current_app.logger.info(f'Tag "{tag}" does not exist, creating.')
                 t = Tag(label=tag)
         return t
 
     tags = association_proxy('_tags', 'label', creator=_find_or_create_tag.__func__)
-    # @property
-    # def tags(self):
-    #     """Return list of tag objects associated with this article."""
-    #     tag_list = getattr(self, 'tag_list', [])
-    #     return tag_list if (tag_list != ['']) else []
-
-    # @tags.setter
-    # def tags(self, tag_list):
-    #     """Set list of tag objects associated with this article."""
-    #     self._tags = [self._find_or_create_tag(t) for t in tag_list if t.strip() != '']
 
 
-class PostMixin(AuthorMixin):
-    """Base class from which all post-liked objects (articles, comments) inherit."""
-
-    id = db.Column(db.Integer, primary_key=True)
-    body = db.Column(db.Text, default='')
-    title = db.Column(db.String(255), nullable=False)
-    date_created = db.Column(ArrowType, default=datetime.utcnow)
-    date_updated = db.Column(ArrowType, default=datetime.utcnow)
-    date_published = db.Column(ArrowType)
-    show_updated = db.Column(db.Boolean, default=False)
-    status = db.Column(db.String(25), default='draft')
+class RevisionMixin:
+    """Mixin for any post classes that want to handle revisions and autosaves."""
 
     def __json__(self):
         export = super().__json__()
         export.update(
-            id=self.id,
-            title=self.title,
-            body=self.body,
-            date_created=self.date_created.isoformat(),
-            date_published=self.date_published.isoformat()
-            if self.date_published
-            else None,
-            date_updated=self.date_updated.isoformat(),
-            show_updated=self.show_updated,
-            status=self.status,
+            revision_id=self.current_revision_id,
+            autosave_id=self.autosave_id,
+            revisions=[r.__json__() for r in self.revisions],
         )
         return export
+
+    @declared_attr
+    def current_revision_id(self):
+        """
+        This is the id of the Revision that represents the most up to date
+        content of this post.
+        """
+        return db.Column(db.String(32))
+
+    @declared_attr
+    def autosave_id(self):
+        """This is the id of the autosave Revision for this post, if any."""
+        return db.Column(db.String(32))
+
+    @declared_attr
+    def revisions(self):
+        return db.relationship(
+            'Revision',
+            back_populates="post",
+            cascade='all, delete',
+            order_by='Revision.date_created.asc()',
+            passive_deletes=True,
+        )
+
+    @declared_attr
+    def current_revision(self):
+        return db.relationship(
+            "Revision",
+            primaryjoin=f"foreign({self.__name__}.current_revision_id) == Revision.id",
+            uselist=False,
+            lazy="joined",
+            viewonly=True,
+        )
+
+    @declared_attr
+    def autosave(self):
+        return db.relationship(
+            'Revision',
+            primaryjoin=f"foreign({self.__name__}.autosave_id) == Revision.id",
+            uselist=False,
+        )
+
+    @db.reconstructor
+    def __db_init__(self):
+        super().__init__()
+        self.selected_revision = self.current_revision
+
+    @classmethod
+    def from_revision(cls, revision_id):
+        """Instantiate a post with a specific revision loaded."""
+        try:
+            # Load the revision and the post but only if the revision ID
+            # belongs to this Post subclass
+            r, p = (
+                db.session.query(Revision, cls)
+                .join(cls)
+                .filter(
+                    Revision.id == revision_id,
+                    Revision.post.has(post_type=cls.__name__.lower()),
+                )
+                .one()
+            )
+            # Restore the post's body to the selected revision
+            p.load_revision(r)
+            return p
+        except NoResultFound:
+            current_app.logger.warning(
+                f"Revision {revision_id} does not exist for {cls.__name__}s."
+            )
+            return None
+
+    def load_revision(self, target):
+        """Restore the article to a previous revision from current."""
+        content = self.selected_revision.restore(target, self.body)
+        if content:
+            self.body = content
+            self.selected_revision = target
+            current_app.logger.info(
+                f"Loaded revision {self.selected_revision.id} for {self}"
+            )
+        return self
+
+    def new_autosave(self, content):
+        """Save a temporary revision."""
+        new_save = Revision(
+            self,
+            new=content,
+            old=self.body,
+            parent=self.selected_revision,
+            major=False,
+        )
+        if self.id:
+            if self.autosave:
+                current_app.logger.info(
+                    f'Deleting autosave {self.autosave.id} for post {self.id}'
+                )
+                db.session.delete(self.autosave)
+
+            self.autosave = new_save
+            new_save.post_id = self.id
+            current_app.logger.info(f'New autosave for post {self.id} is {new_save.id}')
+        return new_save
+
+    def new_revision(self, old_content=''):
+        """
+        Create a revision object representing the diff between current body and
+        new body.
+        """
+        r = None
+        if not self.current_revision_id or not self.selected_revision:
+            r = Revision(self, new=self.body, old='')
+        else:
+            # Check Levenshtein distance and generate patches while we're at it.
+            distance, patch_text = self.selected_revision.distance(
+                self.body, old_content
+            )
+
+            if distance > current_app.config['REVISION_THRESHOLD']:
+                # Distance percentage trips the threshold for a new revision.
+                r = Revision(self, parent=self.selected_revision, patch_text=patch_text)
+                current_app.logger.debug(
+                    f'Levenshtein percentage difference ({round(distance, 2)}) '
+                    f'resulted in new revision {r.id} with parent {r.parent}'
+                )
+            else:
+                # Changes aren't significant enough to merit a new revision.
+                self.selected_revision.date_created = arrow.utcnow()
+                self.selected_revision.patch_text = patch_text
+                try:
+                    del self.selected_revision.patches
+                except KeyError:
+                    pass
+                current_app.logger.debug(
+                    f'Levenshtein percentage difference ({round(distance, 2)}) is '
+                    f'below the threshold ({current_app.config["REVISION_THRESHOLD"]}) '
+                    f'for new revision creation.'
+                )
+
+        if r:
+            self.current_revision_id = r.id
+            self.revisions.append(r)
+            self.selected_revision = r
+
+        # Delete autosave
+        if self.autosave:
+            db.session.delete(self.autosave)
+        return r or self.selected_revision
+
+
+class Post(AuthorMixin, UniqueHandleMixin, TagMixin, Searchable, db.Model):
+    """Base class from which all post-like objects (articles, reviews) inherit."""
+
+    __tablename__ = 'posts'
+    id = db.Column(db.Integer, primary_key=True)
+    post_type = db.Column(db.String)
+    title = db.Column(db.String, nullable=False)
+    date_created = db.Column(ArrowType(timezone=True), default=datetime.utcnow)
+    date_updated = db.Column(ArrowType(timezone=True), default=datetime.utcnow)
+    date_published = db.Column(ArrowType(timezone=True))
+    show_updated = db.Column(db.Boolean, default=False)
+    status = db.Column(db.String, default='draft')
+    cover = db.Column(db.String)
+    body = db.Column(db.Text, default='')
+    summary = db.Column(db.Text)
+
+    __mapper_args__ = {'polymorphic_identity': 'post', 'polymorphic_on': post_type}
 
     def format(self, content, escape=False):
         """Accept raw Markdown input and output HTML5."""
@@ -356,20 +490,15 @@ class PostMixin(AuthorMixin):
         raise NotImplementedError
 
     def __repr__(self):
-        return f'<{type(self).__name__} "{self.id} {self.title}">'
-
-    @property
-    def type(self):
-        """Expose what type of post this is to the wider world."""
-        return type(self).__name__.lower()
+        return f'<{type(self).__name__} {self.id} "{self.title}">'
 
     @hybrid_property
     def sort_title(self):
         return self.title.lstrip(' The').lstrip('A ').lstrip('An ')
 
     @sort_title.expression
-    def title_sort(cls):
-        return func.ltrim(func.ltrim(func.ltrim(cls.title, 'The '), 'A '), 'An ')
+    def title_sort(self):
+        return func.ltrim(func.ltrim(func.ltrim(self.title, 'The '), 'A '), 'An ')
 
     @cached_property
     def body_html(self):
@@ -431,12 +560,10 @@ class PostMixin(AuthorMixin):
     def update_post(self):
         """Save changes to a post without altering its publication status."""
         self.date_updated = arrow.utcnow()
-        current_app.logger.info(
-            'Post {} updated at {}'.format(self.id, self.date_updated)
-        )
-        message = 'Article saved.'
-        if self.status == 'published':
-            message += ' <a href="{0}">View post.</a>'.format(self.get_permalink())
+        current_app.logger.info(f"Post {self.id} updated at {self.date_updated}")
+        message = "Post saved."
+        if self.status == "published":
+            message += f' <a href="{self.get_permalink()}">View post.</a>'
         return message
 
     def schema_filters(self):
@@ -457,181 +584,15 @@ class PostMixin(AuthorMixin):
         return exceptions
 
 
-class RevisionMixin:
-    """Mixin for any post classes that want to handle revisions and autosaves."""
-
-    def __json__(self):
-        export = super().__json__()
-        export.update(
-            revision_id=self.revision_id,
-            autosave_id=self.autosave_id,
-            revisions=[r.__json__() for r in self.revisions],
-        )
-        return export
-
-    @declared_attr
-    def revision_id(cls):
-        return db.Column(db.String(32), db.ForeignKey('revisions.id', use_alter=True))
-
-    @declared_attr
-    def autosave_id(cls):
-        return db.Column(db.String(32), db.ForeignKey('revisions.id'))
-
-    @declared_attr
-    def revisions(cls):
-        fk = "[Revision.post_id]"
-        return db.relationship(
-            'Revision',
-            backref=orm.backref(
-                cls.__name__.lower(), uselist=False, foreign_keys=fk, viewonly=True
-            ),
-            primaryjoin=f'and_('
-            f'revisions.c.post_id == {cls.__name__}.id, '
-            f'revisions.c.post_type == "{cls.__name__}")',
-            order_by='Revision.date_created.asc()',
-            foreign_keys=fk,
-            lazy='select',
-            uselist=True,
-            post_update=True,
-            cascade='all, delete, delete-orphan',
-        )
-
-    @declared_attr
-    def current_revision(cls):
-        return db.relationship(
-            'Revision',
-            foreign_keys=cls.revision_id,
-            uselist=False,
-            lazy='joined',
-            post_update=True,
-            cascade='all',
-        )
-
-    @declared_attr
-    def autosave(cls):
-        return db.relationship(
-            'Revision',
-            foreign_keys=cls.autosave_id,
-            uselist=False,
-            post_update=True,
-            cascade='all',
-        )
-
-    @orm.reconstructor
-    def __db_init__(self):
-        super().__init__()
-        self.selected_revision = self.current_revision
-
-    @classmethod
-    def from_revision(cls, revision_id):
-        """Instantiate a post with a specific revision loaded."""
-        r = Revision.query.get(revision_id)
-        if r:
-            r.post.load_revision(r)
-            return r.post
-        else:
-            current_app.logger.warning(
-                'Revision {} does not exist.'.format(revision_id)
-            )
-            return None
-
-    def load_revision(self, target):
-        """Restore the article to a previous revision from current."""
-        content = self.selected_revision.restore(target, self.body)
-        if content:
-            self.body = content
-            self.selected_revision = target
-            current_app.logger.info(
-                'Loaded revision {} for post {}'.format(
-                    self.selected_revision.id, self.id
-                )
-            )
-        return self
-
-    def new_autosave(self, content):
-        """Save a temporary revision."""
-        try:
-            new_save = Revision(
-                self,
-                new=content,
-                old=self.body,
-                parent=self.selected_revision,
-                major=False,
-            )
-            if self.id:
-                if self.autosave:
-                    current_app.logger.info(
-                        f'Deleting autosave {self.autosave.id} for post {self.id}'
-                    )
-                    db.session.delete(self.autosave)
-
-                new_save.post_id = self.id
-                self.autosave = new_save
-                current_app.logger.info(
-                    f'New autosave for post {self.id} is {new_save.id}'
-                )
-            return new_save
-        except Exception as e:
-            current_app.logger.info(e)
-            return None
-
-    def new_revision(self, old_content=''):
-        """
-        Create a revision object representing the diff between current body and
-        new body.
-        """
-
-        r = None
-        if not self.revision_id or not self.selected_revision:
-            r = Revision(self, new=self.body, old='')
-        else:
-            # Check Levenshtein distance and generate patches while we're at it.
-            distance, patch_text = self.selected_revision.distance(
-                self.body, old_content
-            )
-
-            if distance > current_app.config['REVISION_THRESHOLD']:
-                # Distance percentage trips the threshold for a new revision.
-                r = Revision(self, parent=self.selected_revision, patch_text=patch_text)
-                current_app.logger.debug(
-                    f'Levenshtein percentage difference ({round(distance, 2)}) '
-                    f'resulted in new revision {r.id}'
-                )
-            else:
-                # Changes aren't significant enough to merit a new revision.
-                self.selected_revision.date_created = arrow.utcnow()
-                self.selected_revision.patch_text = patch_text
-                try:
-                    del self.selected_revision.patches
-                except KeyError:
-                    pass
-                current_app.logger.debug(
-                    f'Levenshtein percentage difference ({round(distance, 2)}) is '
-                    f'below the threshold ({current_app.config["REVISION_THRESHOLD"]}) for new revision creation.'
-                )
-
-        if r:
-            self.revision_id = r.id
-            self.revisions.append(r)
-            self.selected_revision = r
-
-        # Delete autosave
-        if self.autosave:
-            db.session.delete(self.autosave)
-        return r or self.selected_revision
-
-
-class Article(
-    UniqueHandleMixin, TagMixin, RevisionMixin, PostMixin, Searchable, db.Model
-):
+class Article(Post, RevisionMixin):
     """Blog posts."""
 
     __tablename__ = 'articles'
     __searchable__ = ['title', 'body', 'status']
     __sortable__ = ['author', 'date_created', 'date_published', 'date_updated', 'title']
+    __mapper_args__ = {'polymorphic_identity': 'article'}
 
-    summary = db.Column(db.Text)
-    cover = db.Column(db.String(255))
+    id = db.Column(db.Integer, db.ForeignKey('posts.id'), primary_key=True)
 
     schema = Schema(
         id=ID(stored=True, unique=True),
@@ -655,7 +616,7 @@ class Article(
         """Generate a permanent link to the article."""
         if not self.id:
             return ""
-        kwargs = {'handle': self.handle, '_external': not (relative)}
+        kwargs = {'handle': self.handle, '_external': not relative}
         if self.status == 'published':
             kwargs['year'] = self.date_published.year
             kwargs['month'] = self.date_published.strftime('%m')
@@ -670,10 +631,7 @@ class Article(
         if not self.id:
             return ""
         return url_for(
-            'admin_main.edit_post',
-            post_type="blog",
-            id=self.id,
-            _external=not (relative),
+            'admin.edit_post', id=self.id, post_type="blog", _external=not relative
         )
 
     @classmethod
@@ -681,8 +639,8 @@ class Article(
         """Generate a breakdown of post counts by year and month."""
         q = (
             db.session.query(
-                func.strftime('%Y', Article.date_published).label('pub_year'),
-                func.strftime('%m', Article.date_published).label('pub_month'),
+                func.extract('YEAR', Article.date_published).label('pub_year'),
+                func.extract('MONTH', Article.date_published).label('pub_month'),
                 func.count(Article.id),
             )
             .filter(Article.status == 'published')
@@ -692,14 +650,12 @@ class Article(
         )
         breakdown = {}
         for (y, m, c) in q:
-            year = breakdown.setdefault(y, {})
+            year = breakdown.setdefault(int(y), {})
             year[int(m)] = c
         return breakdown
 
 
-class Review(
-    UniqueHandleMixin, TagMixin, RevisionMixin, PostMixin, Searchable, db.Model
-):
+class Review(Post, RevisionMixin):
     """Book reviews."""
 
     __tablename__ = 'reviews'
@@ -725,19 +681,18 @@ class Review(
         'date_started',
         'book_author',
     ]
+    __mapper_args__ = {'polymorphic_identity': 'review'}
 
-    book_author = db.Column(db.String)
+    id = db.Column(db.Integer, db.ForeignKey('posts.id'), primary_key=True)
+    book_author = db.Column(db.String, nullable=False)
     book_author_sort = db.Column(db.String)
-    book_cover = db.Column(db.String)
     book_id = db.Column(db.String)  # ISBN or ASIN
 
-    # dates_read = db.Column(db.String(255))
-    date_started = db.Column(ArrowType)
-    date_finished = db.Column(ArrowType)
-    goodreads_id = db.Column(db.Integer)
+    date_started = db.Column(ArrowType(timezone=True))
+    date_finished = db.Column(ArrowType(timezone=True))
+    goodreads_id = db.Column(db.String)
     rating = db.Column(db.Integer, info={'min': 0, 'max': 5}, default=0)
     spoilers = db.Column(db.Boolean, default=False)
-    summary = db.Column(db.Text)
 
     schema = Schema(
         id=ID(stored=True, unique=True),
@@ -760,7 +715,7 @@ class Review(
             book_author=self.book_author,
             book_author_sort=self.book_author_sort,
             book_id=self.book_id,
-            cover=self.book_cover,
+            cover=self.cover,
             date_started=self.date_started,
             date_finished=self.date_finished,
             goodreads_id=self.goodreads_id,
@@ -773,21 +728,22 @@ class Review(
     @hybrid_property
     def dates_read(self):
         """Formats the start/finished date into a string for us."""
-        return f"{self.date_started.format('YYYY-MM-DD')} - {self.date_finished.format('YYYY-MM-DD')}"
+        return (
+            f"{self.date_started.format('YYYY-MM-DD')} - "
+            f"{self.date_finished.format('YYYY-MM-DD')}"
+        )
 
     @dates_read.setter
     def dates_read(self, value):
         """Sets the start/finished date when given an appropriate string."""
         try:
             start, end = [arrow.get(x.strip()) for x in value.split('-')]
-            current_app.logger.debug(start)
-            current_app.logger.debug(end)
             if end < start:
                 raise Exception
             self.date_started = start
             self.date_finished = end
-        except Exception:
-            raise Exception('Dates read must be a valid date range.')
+        except Exception as e:
+            raise Exception('Dates read must be a valid date range.') from e
 
     @property
     def short_title(self):
@@ -802,15 +758,15 @@ class Review(
             'handle': self.handle,
             '_external': not (relative),
         }
-        return url_for(f'reviews.show_review', **kwargs)
+        return url_for('reviews.show_review', **kwargs)
 
     def get_editlink(self, relative=True):
         if not self.id:
             return ""
         return url_for(
-            'admin_reviews.edit_post',
-            post_type="reviews",
+            'admin.edit_post',
             id=self.id,
+            post_type="reviews",
             _external=not (relative),
         )
 
@@ -829,14 +785,12 @@ class Revision(AuthorMixin, db.Model):
     __tablename__ = 'revisions'
 
     id = db.Column(db.String(32), primary_key=True, unique=True)
-    post_type = db.Column(db.String(32))
-    post_id = db.Column(db.Integer)
-    date_created = db.Column(ArrowType, default=datetime.utcnow)
+    post_id = db.Column(db.Integer, db.ForeignKey('posts.id', ondelete="CASCADE"))
+    post = db.relationship("Post")
+    date_created = db.Column(ArrowType(timezone=True), default=datetime.utcnow)
     depth = db.Column(db.Integer)
     patch_text = db.Column(db.Text)
-    parent_id = db.Column(
-        db.String(32), db.ForeignKey('revisions.id', ondelete='SET NULL')
-    )
+    parent_id = db.Column(db.String, db.ForeignKey('revisions.id', ondelete='SET NULL'))
     parent = db.relationship('Revision', remote_side=[id])
     major = db.Column(db.Boolean, default=True)
 
@@ -847,9 +801,7 @@ class Revision(AuthorMixin, db.Model):
         Expects in kwargs a `patch_text` containing previously made
         patches, or `new` and `old` text for generating the patches.
         """
-        super().__init__(
-            post_type=type(post).__name__, author_id=post.author_id, **kwargs
-        )
+        super().__init__(author_id=post.author_id, **kwargs)
 
         self.differ = diff_match_patch()
         self.id = uuid4().hex
@@ -859,26 +811,10 @@ class Revision(AuthorMixin, db.Model):
         if not self.patch_text:
             self.patch_text = self.differ.patch_toText(self.differ.patch_make(new, old))
 
-    @orm.reconstructor
+    @db.reconstructor
     def __db_init__(self):
         super().__init__()
         self.differ = diff_match_patch()
-
-    def __json__(self):
-        return dict(
-            id=self.id,
-            post_id=self.post_id,
-            date_created=self.date_created.isoformat(),
-            depth=self.depth,
-            patch_text=self.patch_text,
-            parent_id=self.parent_id,
-            major=self.major,
-            author=self.author_id,
-        )
-
-    @property
-    def post(self):
-        return getattr(self, self.post_type.lower())
 
     def distance(self, new, old):
         """
@@ -904,9 +840,7 @@ class Revision(AuthorMixin, db.Model):
         # Find lowest common ancestor of current revision and target revision
         lca = self.lca([target, self])
         if not lca:
-            current_app.logger.warning(
-                f"{self.id}: Could not determine LCA of current and target nodes."
-            )
+            raise Exception("Could not determine LCA of current and target nodes.")
         current = self
         # Patch backwards from current revision to LCA
         while current is not lca:
@@ -952,7 +886,7 @@ class Revision(AuthorMixin, db.Model):
 
 
 class Tag(db.Model):
-    """Flexible categories for articles."""
+    """Flexible categories for posts."""
 
     __tablename__ = 'tags'
 
@@ -960,40 +894,56 @@ class Tag(db.Model):
     handle = db.Column(db.String(100), unique=True)
     label = db.Column(db.String(100))
 
-    def __init__(self, **kwargs):
+    def __init__(self, *args, **kwargs):
         """Create a handle for a tag based on the supplied label."""
-        # self.label = kwargs.get("label")
-        self.handle = self.slugify(kwargs.get("label"))
-        super().__init__(**kwargs)
+        super().__init__(*args, **kwargs)
+        self.handle = self.slugify(self.label)
 
     def __repr__(self):
-        return f'<Tag {self.id} {self.handle}>'
+        return f'<Tag "{self.label}">'
 
     @classmethod
-    def frequency(cls, post_types=['Article', 'Review'], status=['published']):
+    def frequency(
+        cls,
+        match=None,
+        post_types=None,
+        status=None,
+        sort_by="label",
+        order_desc=False,
+        page=1,
+        per_page=None,
+    ):
         """Returns tuples of tags and their frequencies."""
+        if not post_types:
+            post_types = ["article", "review"]
+        if not status:
+            status = ["published"]
+
+        # Start building subqueries—going to select the Tag class
         subqueries = [cls]
-        current_app.logger.debug(post_types)
+        # Iterate over the post types included in this query
         for p in post_types:
-            assoc_table = tag_relationships[p]
             q = (
-                db.session.query(func.count(assoc_table.c.post_id))
-                .select_from(assoc_table)
-                .filter(assoc_table.c.tag_id == Tag.id)
+                db.select(db.func.count(tag_associations.c.post_id))
+                .join(Post)
+                .where(Post.post_type == p, tag_associations.c.tag_id == cls.id)
             )
             if status:
-                q = q.outerjoin(globals()[p]).filter(globals()[p].status.in_(status))
-            subqueries.append(q.scalar_subquery().label(f'{p.lower()}_count'))
-        main_query = db.session.query(*subqueries).group_by(cls.handle)
-        return main_query
+                q = q.where(Post.status.in_(status))
+            subqueries.append(q.scalar_subquery().label(f'{p}_count'))
+        # Build the main query, adding on sorting and filtering on label
+        main_query = (
+            db.select(subqueries)
+            .group_by(cls.id)
+            .order_by(getattr(db, "desc" if order_desc else "asc")(sort_by))
+        )
+        if match:
+            main_query = main_query.where(Tag.label.ilike(f"%{match}%"))
+        if per_page:
+            main_query = main_query.limit(per_page).offset((page - 1) * per_page)
+        return db.session.execute(main_query)
 
     @classmethod
     def slugify(cls, text):
         """Create a unique handle for this tag."""
         return slugify(text, lowercase=True, max_length=100)
-
-
-# Tags no longer associated with any article should be removed
-# Disabled because it doesn't work now that I have two models
-# auto_delete_orphans(Article._tags)
-# auto_delete_orphans(Review._tags)

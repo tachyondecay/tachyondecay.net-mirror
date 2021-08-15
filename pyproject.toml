@@ -30,6 +30,7 @@ dependencies = [
     "wtforms-alchemy~=0.17",
     "wtforms-components~=0.10",
     "python-dotenv~=0.19",
+    "psycopg2-binary~=2.9",
 ]
 requires-python = ">=3.8"
 dynamic = ["classifiers"]
@@ -52,6 +53,7 @@ dev = [
     "coverage~=5.5",
     "factory-boy~=3.2",
     "pytest~=6.2",
+    "pylint~=2.9",
 ]
 
 [[tool.pdm.source]]

@@ -8,9 +8,10 @@ from flask import (
 )
 from flask_login import login_required
 from flask_wtf import csrf
+
 from lemonade_soapbox import db
 from lemonade_soapbox.helpers import Blueprint
-from lemonade_soapbox.models import Article, Review, Tag, tag_relationships
+from lemonade_soapbox.models import Article, Post, Review, Tag
 
 bp = Blueprint('api', __name__)
 
@@ -26,7 +27,7 @@ def autosave():
     """Autosave the current draft content of a post object."""
     parent = request.form.get('parent')
     body = request.form.get('body')
-    post_type = request.form.get('type').capitalize()
+    post_type = request.form.get('post_type').capitalize()
     if parent:
         post = getattr(globals()[post_type], 'from_revision')(parent)
         if not post:
@@ -37,28 +38,26 @@ def autosave():
             'HH:mm:ss, DD MMM YYYY'
         )
         return jsonify(revision_id=r.id, date=date_created)
-    else:
-        # We're composing a brand new post, so let's create a new draft entry
-        # in the database.
-        post = globals()[post_type](
-            handle=request.form.get('handle'),
-            body=body,
-            title=request.form.get('title'),
-        )
-        post.new_revision()
-        db.session.add(post)
-        db.session.commit()
 
-        return jsonify(
-            revision_id=post.revision_id,
-            post_id=post.id,
-            created=post.date_created.to(current_app.config['TIMEZONE']).format(
-                'MMM DD, YYYY HH:mm'
-            ),
-            handle=post.handle,
-            link=post.get_permalink(),
-            history=render_template('admin/posts/revision_history.html', post=post),
-        )
+    # We're composing a brand new post, so let's create a new draft entry
+    # in the database.
+    params = request.form.to_dict()
+    del params["parent"]
+    post = globals()[post_type](**params)
+    post.new_revision()
+    db.session.add(post)
+    db.session.commit()
+
+    return jsonify(
+        revision_id=post.current_revision_id,
+        post_id=post.id,
+        created=post.date_created.to(current_app.config['TIMEZONE']).format(
+            'MMM DD, YYYY HH:mm'
+        ),
+        handle=post.handle,
+        link=post.get_permalink(),
+        history=render_template('admin/posts/revision_history.html', post=post),
+    )
 
 
 @bp.route('/posts/goodreads-link/')
@@ -66,12 +65,11 @@ def autosave():
 def goodreads_link():
     """Given a review handle, return the Goodreads ID."""
     if q := request.args.getlist('q'):
-        reviews = (
-            db.session.query(Review.handle, Review.goodreads_id)
-            .filter(Review.handle.in_(q))
-            .all()
-        )
-        return jsonify(reviews)
+        reviews = db.session.execute(
+            db.select(Review.handle, Review.goodreads_id).filter(Review.handle.in_(q))
+        ).all()
+        # return jsonify([r._asdict() for r in reviews])
+        return jsonify([(r.handle, r.goodreads_id) for r in reviews])
     return '', 204
 
 
@@ -82,21 +80,23 @@ def posts_lookup():
     data = "No results found."
     if term := request.args.get('q'):
         articles = (
-            Article.query.filter(Article.title.like(f'%{term}%'))
+            Article.query.filter(Article.title.ilike(f'%{term}%'))
             .order_by(Article.title_sort)
             .all()
         )
         reviews = (
-            Review.query.filter(Review.title.like(f'%{term}%'))
+            Review.query.filter(Review.title.ilike(f'%{term}%'))
             .order_by(Review.title_sort)
             .all()
         )
+        current_app.logger.debug(articles)
+        current_app.logger.debug(reviews)
         posts = articles + reviews
         posts.sort(key=lambda x: x.title)
 
         data = [
             {
-                "type": post.type,
+                "type": post.post_type,
                 "title": getattr(post, 'short_title', post.title),
                 "full_title": post.title,
                 "edit": post.get_editlink(),
@@ -117,8 +117,7 @@ def tags_delete():
         db.session.delete(tag)
         db.session.commit()
         return jsonify(message='Tag deleted.')
-    else:
-        return jsonify(message='No tag found.'), 400
+    return jsonify(message='No tag found.'), 400
 
 
 @bp.route('/tags/rename/', methods=['POST'])
@@ -130,10 +129,8 @@ def tags_rename():
     if tag := Tag.query.filter_by(label=old).first():
         # Check if a tag with the new label already exists
         if conflict := Tag.query.filter_by(label=new).first():
-            for a in tag.articles:
-                a._tags.append(conflict)
-            for r in tag.reviews:
-                r._tags.append(conflict)
+            for p in tag.posts:
+                p._tags.append(conflict)
             db.session.delete(tag)
             db.session.add(conflict)
         else:
@@ -142,8 +139,7 @@ def tags_rename():
             db.session.add(tag)
         db.session.commit()
         return jsonify(message='Tag updated.')
-    else:
-        return jsonify(message='No tag found.'), 400
+    return jsonify(message='No tag found.'), 400
 
 
 @bp.route('/tags/search/')
@@ -154,9 +150,7 @@ def tags_lookup():
         matches = Tag.query.filter(Tag.label.startswith(term))
         blueprints = {'article': 'blog', 'review': 'reviews'}
         if post_type := request.args.get('type'):
-            table = tag_relationships.get(post_type.capitalize())
-            if table is not None:
-                matches = matches.join(table)
+            matches = matches.join(Post._tags).filter(Post.post_type == post_type)
         just_tags = [
             {
                 'handle': t.handle,

@@ -23,17 +23,15 @@ class TagFactory(ModelFactory):
         model = Tag
 
     label = Sequence(lambda n: f"tag {n}")
-    handle = Sequence(lambda n: f"tag-{n}")
 
 
 class PostFactory(ModelFactory):
     class Meta:
         abstract = True
 
-    id = Sequence(lambda n: n + 1)
     title = Faker("text", max_nb_chars=20)
-    # handle = Sequence(lambda n: f"article-{n}")
     body = Faker("paragraph")
+    cover = Sequence(lambda n: f"cover-{n}.jpg")
     date_published = FuzzyDateTime(datetime(2004, 1, 1, tzinfo=timezone.utc))
     date_created = LazyAttribute(lambda obj: obj.date_published)
     date_updated = LazyAttribute(lambda obj: obj.date_published)
@@ -51,7 +49,7 @@ class RevisionMixinFactory(ModelFactory):
         else:
             r = Revision(obj, new=obj.body, old='')
             obj.revisions.append(r)
-            obj.revision_id = r.id
+            obj.current_revision_id = r.id
             obj.selected_revision = r
 
 
@@ -65,7 +63,6 @@ class ReviewFactory(PostFactory, RevisionMixinFactory):
         model = Review
 
     book_author = Faker("name")
-    book_cover = Sequence(lambda n: f"cover-{n}.jpg")
     book_id = Faker("isbn13")
 
     date_started = Faker(

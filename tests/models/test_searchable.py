@@ -33,11 +33,9 @@ def test_build_index(app, clear_index):
     Article.build_index(per_pass=5)
     assert any(app.config["INDEX_PATH"].iterdir())
 
-    # Remove index dir
+    # Remove index dir shouldn't break anything
     shutil.rmtree(app.config["INDEX_PATH"])
-    with pytest.raises(Exception):
-        Article.build_index()
-    app.config["INDEX_PATH"].mkdir()
+    Article.build_index()
 
 
 def test_schema_filters_not_implemented():
@@ -45,10 +43,11 @@ def test_schema_filters_not_implemented():
         Searchable().schema_filters()
 
 
-def test_search(clear_index):
+def test_search(clear_index, db):
     ArticleFactory(title="Test article")
     ArticleFactory(title="Not a test")
     ArticleFactory(title="Hello world")
+    db.session.flush()
     Article.build_index()
     results = Article.search(query="test", sort_order="asc", sort_field="title")
     assert results["total"] == 2
