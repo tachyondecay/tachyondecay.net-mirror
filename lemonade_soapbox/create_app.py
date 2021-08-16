@@ -1,16 +1,18 @@
-import arrow
-import click
 import json
 import os
+from logging.config import dictConfig
+from pathlib import Path
+
+import arrow
+import click
 from flask import Flask
 from gettext import gettext, ngettext
-from lemonade_soapbox import csrf, db, login_manager
+from werkzeug.middleware.shared_data import SharedDataMiddleware
+
+from lemonade_soapbox import csrf, db, login_manager, migrate
 from lemonade_soapbox.logging_config import logging_config
 from lemonade_soapbox.helpers import JSONEncoder, truncate_html, weight
 from lemonade_soapbox.models import Article, Review, Searchable, Tag, User
-from logging.config import dictConfig
-from pathlib import Path
-from werkzeug.middleware.shared_data import SharedDataMiddleware
 
 
 def create_app(config_name=None):
@@ -52,6 +54,7 @@ def create_app(config_name=None):
     login_manager.init_app(app)
     login_manager.login_view = "admin.signin"
     login_manager.login_message_category = "error"
+    migrate.init_app(app, db)
 
     app.shell_context_processor(
         lambda: {

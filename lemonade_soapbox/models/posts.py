@@ -684,7 +684,7 @@ class Review(Post, RevisionMixin):
     __mapper_args__ = {'polymorphic_identity': 'review'}
 
     id = db.Column(db.Integer, db.ForeignKey('posts.id'), primary_key=True)
-    book_author = db.Column(db.String, nullable=False)
+    book_author = db.Column(db.String)
     book_author_sort = db.Column(db.String)
     book_id = db.Column(db.String)  # ISBN or ASIN
 

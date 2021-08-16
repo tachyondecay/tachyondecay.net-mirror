@@ -2,8 +2,8 @@ __pycache__
 __pypackages__
 
 instance
-migrations
 venv
+.env
 .sass-cache
 .pytest_cache
 
