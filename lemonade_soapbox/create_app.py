@@ -1,12 +1,13 @@
 import json
 import os
+from datetime import timedelta
+from gettext import gettext, ngettext
 from logging.config import dictConfig
 from pathlib import Path
 
 import arrow
 import click
 from flask import Flask
-from gettext import gettext, ngettext
 from werkzeug.middleware.shared_data import SharedDataMiddleware
 
 from lemonade_soapbox import csrf, db, login_manager, migrate
@@ -92,7 +93,7 @@ def create_app(config_name=None):
     # Configure Jinja env
     app.jinja_env.add_extension('jinja2.ext.i18n')
     app.jinja_env.filters.update({'truncate_html': truncate_html, 'weight': weight})
-    app.jinja_env.globals.update({'arrow': arrow})
+    app.jinja_env.globals.update({'arrow': arrow, 'timedelta': timedelta})
     app.jinja_env.install_gettext_callables(gettext, ngettext, newstyle=True)
     app.jinja_env.lstrip_blocks = True
     app.jinja_env.trim_blocks = True

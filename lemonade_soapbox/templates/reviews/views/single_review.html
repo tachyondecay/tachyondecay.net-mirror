@@ -86,8 +86,8 @@
 
     <aside class="sidebar-aside disclaimers">
         <h3 class="heading">Heads Up</h3>
-        {% if review.status == "published" and review.date_published < arrow.utcnow().shift(years=-3) %}
-        <p class="disclaimer -date"><strong>This review was published over 3 years ago.</strong> Some of its information or my opinions might be out of date.</p>
+        {% if review.status == "published" and (arrow.utcnow() - review.date_published) > timedelta(days=728) %}
+        <p class="disclaimer -date"><strong>This review was published {{ review.date_published.humanize() }}.</strong> Some of its information or my opinions might be out of date.</p>
         {% endif %}
 
         {% if review.status == "published" and review.date_published < arrow.get(config.TRANS_DATE) %}
