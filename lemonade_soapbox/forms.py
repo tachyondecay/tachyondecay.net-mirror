@@ -2,8 +2,6 @@ import arrow
 from flask import current_app, Markup
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileAllowed, FileField
-from lemonade_soapbox import db
-from lemonade_soapbox.models import Article, Review
 from wtforms import (
     BooleanField,
     DateTimeField,
@@ -19,13 +17,16 @@ from wtforms.fields.html5 import EmailField
 from wtforms.widgets import html_params, TextInput
 from wtforms_alchemy import model_form_factory
 
+from lemonade_soapbox import db
+from lemonade_soapbox.models import Article, List, Review
+
 Form = FlaskForm
 BaseModelForm = model_form_factory(Form)
 
 
 class ModelForm(BaseModelForm):
     @classmethod
-    def get_session(self):
+    def get_session(cls):
         return db.session
 
 
@@ -65,7 +66,8 @@ class DateTimeWidget:
             name=field.name, id=id + '-time', step='1', value=time, **kwargs
         )
         return Markup(
-            f'<span class="{date_class}"><input type="date" {date_params}/></span><span class="{time_class}"><input type="time" {time_params}/></span>'
+            f'<span class="{date_class}"><input type="date" {date_params}/></span>'
+            f'<span class="{time_class}"><input type="time" {time_params}/></span>'
         )
 
 
@@ -103,8 +105,7 @@ class TagListField(StringField):
         """Turn the list into a comma-separated string in alphabetical order."""
         if self.data:
             return ', '.join(sorted(self.data, key=lambda s: s.lower()))
-        else:
-            return ''
+        return ''
 
     def process_data(self, value):
         """Form data should only have the actual tags, not the handles."""
@@ -148,6 +149,24 @@ class ArticleForm(ModelForm):
         'Remove uploaded cover', validators=[validators.Optional()]
     )
     pasted_cover = HiddenField(validators=[validators.Optional()])
+
+
+class ListForm(ArticleForm):
+    class Meta:
+        model = List
+        only = [
+            'body',
+            'cover',
+            'date_published',
+            'show_updated',
+            'title',
+            'summary',
+            'handle',
+            'show_numbers',
+            'reverse_order',
+        ]
+
+    list_items = TagListField('List Items')
 
 
 def validate_book_author_sort(form, field):

@@ -13,7 +13,15 @@ from werkzeug.middleware.shared_data import SharedDataMiddleware
 from lemonade_soapbox import csrf, db, login_manager, migrate
 from lemonade_soapbox.logging_config import logging_config
 from lemonade_soapbox.helpers import JSONEncoder, truncate_html, weight
-from lemonade_soapbox.models import Article, Review, Searchable, Tag, User
+from lemonade_soapbox.models import (
+    Article,
+    List,
+    ListItem,
+    Review,
+    Searchable,
+    Tag,
+    User,
+)
 
 
 def create_app(config_name=None):
@@ -61,6 +69,8 @@ def create_app(config_name=None):
         lambda: {
             'db': db,
             'Article': Article,
+            'List': List,
+            'ListItem': ListItem,
             'Review': Review,
             'Tag': Tag,
             'User': User,

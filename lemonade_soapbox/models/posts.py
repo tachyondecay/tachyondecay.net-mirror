@@ -12,6 +12,7 @@ from sqlalchemy.exc import NoResultFound
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.ext.orderinglist import ordering_list
 from sqlalchemy_utils import ArrowType
 from werkzeug.utils import cached_property
 from whoosh import index
@@ -470,6 +471,7 @@ class Post(AuthorMixin, UniqueHandleMixin, TagMixin, Searchable, db.Model):
     cover = db.Column(db.String)
     body = db.Column(db.Text, default='')
     summary = db.Column(db.Text)
+    lists = association_proxy("_lists", "list")
 
     __mapper_args__ = {'polymorphic_identity': 'post', 'polymorphic_on': post_type}
 
@@ -550,20 +552,16 @@ class Post(AuthorMixin, UniqueHandleMixin, TagMixin, Searchable, db.Model):
             timing = 'just now'
         elif self.date_published > arrow.utcnow():
             timing = self.date_published.humanize()
-        current_app.logger.info(
-            'Post {} published at {} (publication date: {}'.format(
-                self.id, arrow.utcnow(), self.date_published
-            )
-        )
-        return f'Post published {timing}. <a href="{self.get_permalink()}">View live version</a>.'
+        current_app.logger.info(f"{self} published at {self.date_published}")
+        return f'{self.post_type.capitalize()} published {timing}. <a href="{self.get_permalink()}">View live version</a>.'
 
     def update_post(self):
         """Save changes to a post without altering its publication status."""
         self.date_updated = arrow.utcnow()
-        current_app.logger.info(f"Post {self.id} updated at {self.date_updated}")
-        message = "Post saved."
+        current_app.logger.info(f"{self} updated at {self.date_updated}")
+        message = f"{self.post_type.capitalize()} saved."
         if self.status == "published":
-            message += f' <a href="{self.get_permalink()}">View post.</a>'
+            message += f' <a href="{self.get_permalink()}">View {self.post_type}.</a>'
         return message
 
     def schema_filters(self):
@@ -774,6 +772,85 @@ class Review(Post, RevisionMixin):
         exceptions = super().schema_filters()
         exceptions['date_finished'] = lambda x: getattr(x, 'datetime', None)
         return exceptions
+
+
+class List(Post):
+    """Lists of posts."""
+
+    __tablename__ = "lists"
+    __searchable__ = [
+        "body",
+        "title",
+        "date_created",
+        "date_published",
+        "date_updated",
+        "tags",
+        "status",
+    ]
+    __sortable__ = [
+        "date_created",
+        "date_published",
+        "date_read",
+        "title",
+        "date_updated",
+    ]
+    __mapper_args__ = {"polymorphic_identity": "list"}
+
+    schema = Schema(
+        id=ID(stored=True, unique=True),
+        author=TEXT(phrase=False),
+        date_created=DATETIME(sortable=True),
+        date_published=DATETIME(sortable=True),
+        date_updated=DATETIME(sortable=True),
+        body=TEXT(analyzer=StemmingAnalyzer()),
+        handle=ID(unique=True),
+        status=ID(),
+        tags=KEYWORD(commas=True, scorable=True),
+        title=TEXT(field_boost=2.0, analyzer=StemmingAnalyzer()),
+    )
+
+    id = db.Column(db.Integer, db.ForeignKey('posts.id'), primary_key=True)
+    # If true, the list should count down (e.g., top 10 list) instead of up
+    reverse_order = db.Column(db.Boolean, default=False)
+    show_numbers = db.Column(db.Boolean, default=True)
+
+    def get_permalink(self, relative=True):
+        """Generate a permanent link to the post."""
+        return url_for("")  # How to know if a list belongs to the blog or reviews?
+        # Do I want to let a list contain a mixture??
+
+    def get_editlink(self, relative=True):
+        """Generate an edit link for this post."""
+        raise NotImplementedError
+
+
+class ListItem(db.Model):
+    """Association object that links posts to a list."""
+
+    __tablename__ = "list_items"
+    list_id = db.Column(
+        db.Integer, db.ForeignKey("lists.id", ondelete="CASCADE"), primary_key=True
+    )
+    post_id = db.Column(
+        db.Integer, db.ForeignKey("posts.id", ondelete="CASCADE"), primary_key=True
+    )
+
+    # Posts on a list can be ordered; OrderingList helps us do this automatically
+    list = db.relationship(
+        "List",
+        backref=db.backref(
+            "items",
+            order_by="ListItem.position",
+            collection_class=ordering_list("position", count_from=1),
+        ),
+        foreign_keys=list_id,
+    )
+    post = db.relationship("Post", backref="_lists", lazy="joined")
+    position = db.Column(db.Integer)
+    blurb = db.Column(db.Text)
+
+    # def __repr__(self):
+    #     return self.post.__repr__()
 
 
 class Revision(AuthorMixin, db.Model):

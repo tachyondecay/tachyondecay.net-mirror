@@ -2,6 +2,8 @@ from sqlalchemy_utils import auto_delete_orphans
 
 from lemonade_soapbox.models.posts import (
     Article,
+    List,
+    ListItem,
     Post,
     Review,
     Revision,
