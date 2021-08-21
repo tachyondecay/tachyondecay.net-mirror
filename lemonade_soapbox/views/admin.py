@@ -339,7 +339,7 @@ def edit_post(post_type, id, revision_id):
                 current_app.logger.warning(f'Could not delete cover image: {e}')
                 flash('Could not delete cover image.', 'error')
 
-        if issubclass(post, RevisionMixin):
+        if issubclass(post_class, RevisionMixin):
             post.new_revision(old_body)
         if form.publish.data:
             message = post.publish_post()
@@ -351,7 +351,7 @@ def edit_post(post_type, id, revision_id):
                     post.status = 'removed'
                     db.session.delete(post)
                     # Need to do this to avoid SQLAlchemy RACE condition
-                    if issubclass(post, RevisionMixin):
+                    if issubclass(post_class, RevisionMixin):
                         db.session.delete(post.selected_revision)
                     message = f'{post.post_type.capitalize()} permanently deleted.'
                     redirect_url = url_for(f".{post_type}")

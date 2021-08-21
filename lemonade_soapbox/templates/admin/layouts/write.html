@@ -88,7 +88,9 @@
             {{ render_field(form.tags, {'class': 'tag-lookup', 'data-url': url_for('api.tags_lookup', type=post.post_type), 'autocomplete': 'off'}) }}
         </div>
 
-        {% include "admin/posts/revision_history.html" %}
+        {% if post.selected_revision %}
+            {% include "admin/posts/revision_history.html" %}
+        {%  endif %}
         {% endblock post_metadata %}
     </fieldset>
 

@@ -1,7 +1,7 @@
 {% extends 'admin/layouts/write.html' %}
 
 {% block page_title %}
-{% if list.title %}Editing “{{ list.title }}”{% else %}Creating a new list{% endif %} {{ super() }}
+{% if post.title %}Editing “{{ post.title }}”{% else %}Creating a new list{% endif %} {{ super() }}
 {% endblock %}
 
 {% block field__title %}
@@ -13,19 +13,44 @@
 {% block post_contents %}
 	{{ super() }}
 
-	<p>Individual list items interface goes here.</p>
+    <div class="form-field">
+        <label>List Items</label>
+        <div class="quick-search">
+            <input type="text" class="quicksearch" id="quicksearch" placeholder="Quick post search…" autocomplete="off">
+            <div class="results"></div>
+            <script id="quicksearch-template" type="x-tmpl-mustache">
+                <div class="resultitem -<%type%>">
+                    <strong title="<% full_title %>"><% title %></strong>
+                    <a href="<% edit %>" target="_blank" title="Edit <% type %>"><span class="i--pencil"></span></a>
+                    <a href="<% copy %>" title="Copy link"><span class="i--copy"></span></a>
+                </div>
+            </script>
+        </div>
+    	<ol class="results-list js-sortable">
+            {% for item in post.items %}
+                <li>
+                    {{ form.items[loop.index0].list_id }}
+                    {{ form.items[loop.index0].post_id }}
+                    {{ form.items[loop.index0].position }}
+                    <span class="i--{{ 'book' if item.post.post_type == 'review' else 'newspaper'}} icon"></span>
+                    <a href="{{ item.post.get_editlink() }}" target="_blank">{{ item.post.title }}</a>
+                    {{ form.items[loop.index0].blurb }}
+                </li>
+            {% endfor %}
+        </ol>
+    </div>
 {% endblock post_contents %}
 
 
 {% block post_metadata %}
-    <div class="form-field -span upload-widget js-image-upload" data-alt="Pasted book cover image">
+    <div class="form-field -span upload-widget js-image-upload" data-alt="Pasted list image">
         {{ form.pasted_cover }}
         <div class="fileselect">
-            {{ render_field(form.cover, label='Book Cover') }}
+            {{ render_field(form.cover, label='List Cover') }}
         </div>
         <div class="thumbnail-preview">
             {% if post.cover %}
-            <img src="/media/review/covers/{{ post.cover }}" class="thumbnail" alt="Cover image" />
+            <img src="/media/lists/covers/{{ post.cover }}" class="thumbnail" alt="Cover image" />
             {% else %}
             <img src="" class="thumbnail -none" alt="" />
             {% endif %}
@@ -37,13 +62,9 @@
         </div>
     </div>
 
-    <div class="form-field">
         {{ checkbox_toggle(form.show_numbers, label='Show numbers') }}
-    </div>
 
-    <div class="form-field">
         {{ checkbox_toggle(form.reverse_order, label='Descending order') }}
-    </div>
 
     {{ super() }}
  {% endblock post_metadata %}

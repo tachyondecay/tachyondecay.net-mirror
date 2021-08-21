@@ -418,6 +418,21 @@ function BackendInit() {
             tag.append(del);
         });
     }
+
+
+    /*
+     * Drag and drop sort for List Items
+     */
+    document.querySelectorAll('.js-sortable').forEach(elem => {
+        let sortable = new Sortable(elem, {
+            onUpdate: function(evt) {
+                // console.log(evt);
+                evt.target.querySelectorAll('[name*=position]').forEach((elem, index) => {
+                    elem.value = index + 1;
+                });
+            }
+        })
+    });
 }
 
 

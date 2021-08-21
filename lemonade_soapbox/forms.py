@@ -15,10 +15,10 @@ from wtforms import (
 )
 from wtforms.fields.html5 import EmailField
 from wtforms.widgets import html_params, TextInput
-from wtforms_alchemy import model_form_factory
+from wtforms_alchemy import model_form_factory, ModelFieldList, ModelFormField
 
 from lemonade_soapbox import db
-from lemonade_soapbox.models import Article, List, Review
+from lemonade_soapbox.models import Article, List, ListItem, Review
 
 Form = FlaskForm
 BaseModelForm = model_form_factory(Form)
@@ -151,6 +151,20 @@ class ArticleForm(ModelForm):
     pasted_cover = HiddenField(validators=[validators.Optional()])
 
 
+class ListItemForm(ModelForm):
+    class Meta:
+        model = ListItem
+        only = [
+            "list_id",
+            "post_id",
+            "position",
+            "blurb",
+        ]
+
+    list_id = HiddenField()
+    post_id = HiddenField()
+
+
 class ListForm(ArticleForm):
     class Meta:
         model = List
@@ -166,7 +180,7 @@ class ListForm(ArticleForm):
             'reverse_order',
         ]
 
-    list_items = TagListField('List Items')
+    items = ModelFieldList(ModelFormField(ListItemForm))
 
 
 def validate_book_author_sort(form, field):

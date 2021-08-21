@@ -349,10 +349,25 @@ class RevisionMixin:
             uselist=False,
         )
 
-    @db.reconstructor
-    def __db_init__(self):
-        super().__init__()
-        self.selected_revision = self.current_revision
+    # @db.reconstructor
+    # def __db_init__(self):
+    #     super().__init__()
+    #     self.selected_revision = self.current_revision
+
+    @property
+    def selected_revision(self):
+        """
+        Represents the Revision that is currently *selected*, i.e., loaded
+        into the Post.body. This is, by default, the current_revision but
+        can change from the `load_revision()` and `from_revision()` methods.
+        """
+        if self._selected_revision:
+            return self._selected_revision
+        return self.current_revision
+
+    @selected_revision.setter
+    def selected_revision(self, value):
+        self._selected_revision = value
 
     @classmethod
     def from_revision(cls, revision_id):
@@ -816,8 +831,7 @@ class List(Post):
 
     def get_permalink(self, relative=True):
         """Generate a permanent link to the post."""
-        return url_for("")  # How to know if a list belongs to the blog or reviews?
-        # Do I want to let a list contain a mixture??
+        return ""
 
     def get_editlink(self, relative=True):
         """Generate an edit link for this post."""
@@ -845,7 +859,7 @@ class ListItem(db.Model):
         ),
         foreign_keys=list_id,
     )
-    post = db.relationship("Post", backref="_lists", lazy="joined")
+    post = db.relationship("Post", backref="_lists")
     position = db.Column(db.Integer)
     blurb = db.Column(db.Text)
 
