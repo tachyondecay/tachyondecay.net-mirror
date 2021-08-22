@@ -96,6 +96,7 @@ def posts_lookup():
 
         data = [
             {
+                "id": post.id,
                 "type": post.post_type,
                 "title": getattr(post, 'short_title', post.title),
                 "full_title": post.title,
