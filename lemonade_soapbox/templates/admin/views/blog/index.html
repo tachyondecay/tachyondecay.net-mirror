@@ -13,6 +13,9 @@
 
 {% block result_item %}
                 <h3 class="title"><a href="{{ url_for('.edit_post', id=post.id, post_type='blog') }}" title="Edit article">{{ post.title }}</a></h3>
+                    {% if post.cover %}
+                    <img src="/media/article/covers/{{ post.cover }}" alt="" class="cover" />
+                    {% endif %}
                     <footer>
                         <dl class="details">
                             {% if post.date_published %}

@@ -9,12 +9,13 @@ from wtforms import (
     IntegerField,
     PasswordField,
     RadioField,
+    SelectField,
     StringField,
     SubmitField,
     validators,
 )
 from wtforms.fields.html5 import EmailField
-from wtforms.widgets import html_params, TextInput
+from wtforms.widgets import HiddenInput, html_params, TextInput
 from wtforms_alchemy import model_form_factory, ModelFieldList, ModelFormField
 
 from lemonade_soapbox import db
@@ -163,6 +164,8 @@ class ListItemForm(ModelForm):
 
     list_id = HiddenField()
     post_id = HiddenField()
+    position = HiddenField()
+    remove = BooleanField(widget=HiddenInput(), validators=[validators.Optional()])
 
 
 class ListForm(ArticleForm):
@@ -172,15 +175,19 @@ class ListForm(ArticleForm):
             'body',
             'cover',
             'date_published',
-            'show_updated',
-            'title',
-            'summary',
             'handle',
-            'show_numbers',
+            'owner',
             'reverse_order',
+            'show_numbers',
+            'show_updated',
+            'summary',
+            'title',
         ]
 
     items = ModelFieldList(ModelFormField(ListItemForm))
+    owner = SelectField(
+        'Owner', choices=["tachyondecay.net", "kara.reviews"], default="kara.reviews"
+    )
 
 
 def validate_book_author_sort(form, field):

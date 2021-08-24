@@ -96,12 +96,13 @@ def posts_lookup():
 
         data = [
             {
+                "copy": post.get_permalink(),
+                "cover": post.cover,
+                "edit": post.get_editlink(),
+                "full_title": post.title,
                 "id": post.id,
                 "type": post.post_type,
                 "title": getattr(post, 'short_title', post.title),
-                "full_title": post.title,
-                "edit": post.get_editlink(),
-                "copy": post.get_permalink(),
             }
             for post in posts
         ]

@@ -292,7 +292,7 @@ summary {
  * Mixins and functions that allow us to apply a SVG sprite icon.
  * Largely cribbed from https://github.com/liquidlight/sass-gulp-svg-sprite
  */
-.result-item.-review .star.-empty, .result-item.-review .star.-full, .quick-search > .results > .resultitem.-review:before, .quick-search > .results > .resultitem.-article:before, .notification > .dismiss, .i-after--star-full:after, .i-before--star-full:before, .i--star-full, .i-after--star-empty:after, .i-before--star-empty:before, .i--star-empty, .i-after--spinner:after, .i-before--spinner:before, .i--spinner, .i-after--search:after, .i-before--search:before, .i--search, .i-after--price-tags:after, .i-before--price-tags:before, .i--price-tags, .i-after--plus:after, .i-before--plus:before, .i--plus, .i-after--pencil:after, .i-before--pencil:before, .i--pencil, .i-after--new-tab:after, .i-before--new-tab:before, .i--new-tab, .i-after--newspaper:after, .i-before--newspaper:before, .i--newspaper, .i-after--link:after, .i-before--link:before, .i--link, .i-after--floppy-disk:after, .i-before--floppy-disk:before, .i--floppy-disk, .i-after--eye-blocked:after, .i-before--eye-blocked:before, .i--eye-blocked, .i-after--earth:after, .i-before--earth:before, .i--earth, .i-after--copy:after, .i-before--copy:before, .i--copy, .i-after--clock:after, .i-before--clock:before, .i--clock, .i-after--checkmark:after, .i-before--checkmark:before, .i--checkmark, .i-after--calendar:after, .i-before--calendar:before, .i--calendar, .i-after--books:after, .i-before--books:before, .i--books, .i-after--book:after, .i-before--book:before, .i--book, .i-after--bin:after, .i-before--bin:before, .i--bin, .i-after--box-add:after, .i-before--box-add:before, .i--box-add, .rating-input input:checked ~ label:not(:last-child), .rating-input:not(:checked) label:not(:last-child):hover, .rating-input:not(:checked) label:not(:last-child):hover ~ label:not(:last-child), .rating-input label:not(:last-child) {
+.result-item.-has-cover .star.-empty, .result-item.-has-cover .star.-full, .quick-search > .results > .resultitem.-review:before, .quick-search > .results > .resultitem.-article:before, .notification > .dismiss, .i-after--star-full:after, .i-before--star-full:before, .i--star-full, .i-after--star-empty:after, .i-before--star-empty:before, .i--star-empty, .i-after--spinner:after, .i-before--spinner:before, .i--spinner, .i-after--search:after, .i-before--search:before, .i--search, .i-after--price-tags:after, .i-before--price-tags:before, .i--price-tags, .i-after--plus:after, .i-before--plus:before, .i--plus, .i-after--pencil:after, .i-before--pencil:before, .i--pencil, .i-after--new-tab:after, .i-before--new-tab:before, .i--new-tab, .i-after--newspaper:after, .i-before--newspaper:before, .i--newspaper, .i-after--link:after, .i-before--link:before, .i--link, .i-after--floppy-disk:after, .i-before--floppy-disk:before, .i--floppy-disk, .i-after--eye-blocked:after, .i-before--eye-blocked:before, .i--eye-blocked, .i-after--earth:after, .i-before--earth:before, .i--earth, .i-after--copy:after, .i-before--copy:before, .i--copy, .i-after--clock:after, .i-before--clock:before, .i--clock, .i-after--checkmark:after, .i-before--checkmark:before, .i--checkmark, .i-after--calendar:after, .i-before--calendar:before, .i--calendar, .i-after--books:after, .i-before--books:before, .i--books, .i-after--book:after, .i-before--book:before, .i--book, .i-after--bin:after, .i-before--bin:before, .i--bin, .i-after--box-add:after, .i-before--box-add:before, .i--box-add, .rating-input input:checked ~ label:not(:last-child), .rating-input:not(:checked) label:not(:last-child):hover, .rating-input:not(:checked) label:not(:last-child):hover ~ label:not(:last-child), .rating-input label:not(:last-child) {
   display: inline-block;
   background-size: 31em 21em;
 }
@@ -2176,6 +2176,7 @@ input[type=time] {
   display: grid;
   grid-template-areas: "title" "footer" "tags" "summary";
   padding: var(--unit-tiny) 0;
+  transition: opacity 0.5s;
 }
 .result-item .details {
   margin: 0;
@@ -2203,6 +2204,16 @@ input[type=time] {
   .result-item > .title {
     font-size: 1.2rem;
   }
+}
+.result-item > .title.-cutoff {
+  display: flex;
+}
+.result-item > .title.-cutoff a {
+  flex: 1;
+  margin-right: var(--unit-tiny);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 @media (min-width: 46.25em) {
   .result-item {
@@ -2243,51 +2254,51 @@ input[type=time] {
   opacity: 1;
 }
 
-.result-item.-review {
+.result-item.-has-cover {
   --cover-width: 50px;
   grid-template-columns: calc(var(--cover-width) + var(--unit-small)) max-content 1fr;
   grid-template-areas: "img title title" "img footer footer" "img tags tags" "img summary summary";
 }
 @media (min-width: 46.25em) {
-  .result-item.-review {
+  .result-item.-has-cover {
     --cover-width: 75px;
     align-items: center;
     grid-template-areas: "img title title" "img footer tags" "img summary summary";
   }
 }
 @media (min-width: 61.25em) {
-  .result-item.-review {
+  .result-item.-has-cover {
     --cover-width: 100px;
   }
 }
-.result-item.-review > .cover {
+.result-item.-has-cover > .cover {
   display: block;
   grid-area: img;
   margin-right: var(--unit-small);
   width: var(--cover-width);
 }
-.result-item.-review .star {
+.result-item.-has-cover .star {
   font-size: 0.5rem;
   height: 1em !important;
 }
 @media (min-width: 46.25em) {
-  .result-item.-review .star {
+  .result-item.-has-cover .star {
     font-size: 0.75rem;
   }
 }
-.result-item.-review .star.-full {
+.result-item.-has-cover .star.-full {
   background-image: url("/assets/images/icons/sprite--000000.svg");
   width: 1.0625em;
   height: 1.0625em;
   background-position: -2em -14em;
 }
-.result-item.-review .star.-empty {
+.result-item.-has-cover .star.-empty {
   background-image: url("/assets/images/icons/sprite--000000.svg");
   width: 0.9375em;
   height: 1.0625em;
   background-position: -30em -12em;
 }
-.result-item.-review .tags {
+.result-item.-has-cover .tags {
   margin: 0;
 }
 

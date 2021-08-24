@@ -83,6 +83,7 @@
     "summary";
 
   padding: var(--unit-tiny) 0;
+  transition: opacity 0.5s;
 
   .details {
     margin: 0;
@@ -113,6 +114,18 @@
 
     @include mq($from: tablet) {
       font-size: 1.2rem;
+    }
+
+    &.-cutoff {
+      display: flex;
+    }
+
+    &.-cutoff a {
+      flex: 1;
+      margin-right: var(--unit-tiny);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     } 
   }
 
@@ -160,7 +173,7 @@
   }
 }
 
-.result-item.-review {
+.result-item.-has-cover {
   --cover-width: 50px;
   grid-template-columns: calc(var(--cover-width) + var(--unit-small)) max-content 1fr;
   grid-template-areas: 
@@ -213,6 +226,7 @@
     margin: 0;
   }
 }
+
 
 .filter-bar {
   background: $purple;

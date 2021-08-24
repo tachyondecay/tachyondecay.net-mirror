@@ -17,13 +17,19 @@
         <label>List Items</label>
     	<ol class="results-list js-sortable">
             {% for item in post.items %}
-                <li>
+                <li class="result-item -{{ item.post.post_type }}{{ ' -has-cover' if item.post.cover }}">
                     {{ form.items[loop.index0].list_id }}
                     {{ form.items[loop.index0].post_id }}
                     {{ form.items[loop.index0].position }}
-                    <span class="i--{{ 'book' if item.post.post_type == 'review' else 'newspaper'}} icon"></span>
-                    <a href="{{ item.post.get_editlink() }}" target="_blank">{{ item.post.title }}</a>
-                    {{ form.items[loop.index0].blurb(placeholder="Add blurb…") }}
+                    {{ form.items[loop.index0].remove(value='') }}
+                    {% if item.post.cover %}
+                    <img src="/media/{{ item.post.post_type }}/covers/{{ item.post.cover }}" alt="" class="cover" />
+                    {% endif %}
+                    <div class="title -cutoff">
+                        <a href="{{ item.post.get_editlink() }}" target="_blank">{{ item.post.title }}</a>
+                        <button class="_button -micro -ghost" title="Remove post from list"><span class="i--bin icon"></span></button>
+                    </div>
+                    {{ form.items[loop.index0].blurb(class="summary", placeholder="Add blurb…") }}
                 </li>
             {% endfor %}
         </ol>
@@ -31,19 +37,24 @@
             <input type="text" class="quicksearch" id="quicksearch" placeholder="Add post to list…" autocomplete="off">
             <div class="results"></div>
             <script type="x-tmpl-mustache">
-                <div class="resultitem -<%type%>" data-edit-link="<% edit %>" data-post-id="<% id %>">
+                <div class="resultitem -<%type%>" data-edit-link="<% edit %>" data-post-id="<% id %>" data-post-type="<% type %>" data-cover="<% cover %>">
                     <strong class="addtolist" title="<% full_title %>"><% title %></strong>
                 </div>
             </script>
         </div>
         <script id="list-item-prototype" type="x-tmpl-mustache">
-            <li>
+            <li class="result-item -<% post_type %><%#cover%> -has-cover<%/cover%>">
                 <input type="hidden" name="items-<% num %>-list_id" value="<% list_id %>">
                 <input type="hidden" name="items-<% num %>-post_id" value="<% post_id %>">
-                <input type="text" name="items-<% num %>-position" value="<% num %>">
-                <span class="i--<% icon %> icon"></span>
-                <a href="<% editlink %>" target="_blank"><% title %></a>
-                <textarea class="" name="items-<% num %>-blurb" placeholder="Add blurb…"></textarea>
+                <input type="hidden" name="items-<% num %>-position" value="<% num %>">
+                <%#cover%>
+                <img src="/media/<% type %>/covers/<% cover %>" alt="" class="cover" />
+                <%/cover%>
+                <div class="title -cutoff">
+                    <a class="title" href="<% editlink %>" target="_blank"><% title %></a>
+                    <button class="_button -micro -ghost" title="Remove post from list"><span class="i--bin icon"></span></button>
+                </div>
+                <textarea class="summary" name="items-<% num %>-blurb" placeholder="Add blurb…"></textarea>
             </li>
         </script>
     </div>
@@ -68,6 +79,10 @@
         <div class="remove">
             {{ checkbox_toggle(form.remove_cover, size='small') }}
         </div>
+    </div>
+
+    <div class="form-field">
+        {{ render_field(form.owner, label='Owner') }}
     </div>
 
         {{ checkbox_toggle(form.show_numbers, label='Show numbers') }}

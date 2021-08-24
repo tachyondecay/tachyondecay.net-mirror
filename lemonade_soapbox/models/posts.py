@@ -361,7 +361,7 @@ class RevisionMixin:
         into the Post.body. This is, by default, the current_revision but
         can change from the `load_revision()` and `from_revision()` methods.
         """
-        if self._selected_revision:
+        if getattr(self, "_selected_revision", None):
             return self._selected_revision
         return self.current_revision
 
@@ -825,6 +825,9 @@ class List(Post):
     )
 
     id = db.Column(db.Integer, db.ForeignKey('posts.id'), primary_key=True)
+    owner = db.Column(
+        db.Enum("tachyondecay.net", "kara.reviews", name="owner"),
+    )
     # If true, the list should count down (e.g., top 10 list) instead of up
     reverse_order = db.Column(db.Boolean, default=False)
     show_numbers = db.Column(db.Boolean, default=True)
@@ -854,8 +857,9 @@ class ListItem(db.Model):
         "List",
         backref=db.backref(
             "items",
-            order_by="ListItem.position",
+            cascade="all, delete-orphan",
             collection_class=ordering_list("position", count_from=1),
+            order_by="ListItem.position",
         ),
         foreign_keys=list_id,
     )

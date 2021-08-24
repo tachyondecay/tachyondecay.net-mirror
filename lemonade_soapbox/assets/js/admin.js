@@ -329,12 +329,14 @@ function BackendInit() {
                 let template = document.getElementById('list-item-prototype');
 
                 list.innerHTML += Mustache.render(template.innerHTML, {
-                    list_id: document.getElementById('write').dataset.id,
-                    post_id: parent.dataset.postId,
+                    cover: parent.dataset.cover,
                     editlink: parent.dataset.editLink,
-                    icon: (parent.classList.contains('-review')) ? 'book' : 'newspaper',
+                    // icon: (parent.classList.contains('-review')) ? 'book' : 'newspaper',
+                    list_id: document.getElementById('write').dataset.id,
+                    num: list.querySelectorAll('li').length + 1,
+                    post_id: parent.dataset.postId,
                     title: e.target.innerText,
-                    num: list.querySelectorAll('li').length + 1
+                    type: parent.dataset.postType
                 });
             }
         });
@@ -446,6 +448,24 @@ function BackendInit() {
                 evt.target.querySelectorAll('[name*=position]').forEach((elem, index) => {
                     elem.value = index + 1;
                 });
+            }
+        });
+
+        /*
+         * Fade out and remove the list item when delete button clicked
+         */
+        elem.addEventListener('click', e => {
+            if((e.target.nodeName == 'SPAN' || e.target.nodeName == 'BUTTON') 
+                && e.target.parentNode.nodeName == 'BUTTON') {
+                e.preventDefault();
+                parent = e.target.closest('li');
+                parent.style.opacity = '0';
+            }
+        });
+
+        elem.addEventListener('transitionend', e => {
+            if(e.target.nodeName == 'LI') {
+                e.target.remove();
             }
         })
     });
