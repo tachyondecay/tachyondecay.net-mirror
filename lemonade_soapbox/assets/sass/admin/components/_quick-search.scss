@@ -93,10 +93,14 @@
     opacity: 1;
   }
 
-  @include mq($from: desktop) {
+  @include mq($from: tablet) {
     display: flex;
     align-items: center;
-    grid-column: 5 / 7;
-    grid-row: 1;
+    flex: 2;
+    order: 2;
+  }
+
+  @include mq($from: desktop) {
+    flex: 1;
   }
 }

@@ -128,17 +128,17 @@ def all_reviews():
     )
 
 
-@bp.route('/lists/')
-def lists():
-    return render_template(
-        'reviews/layouts/basic.html',
-        page_title="Lists Coming Soon",
-        description="The lists feature is under construction! Check back in a few weeks.",
-        cover=url_for(
-            '.static',
-            filename='images/layout/header_bg/glenn-carstens-peters-RLw-UC03Gwc-unsplash.jpg',
-        ),
-    )
+# @bp.route('/lists/')
+# def lists():
+#     return render_template(
+#         'reviews/layouts/basic.html',
+#         page_title="Lists Coming Soon",
+#         description="The lists feature is under construction! Check back in a few weeks.",
+#         cover=url_for(
+#             '.static',
+#             filename='images/layout/header_bg/glenn-carstens-peters-RLw-UC03Gwc-unsplash.jpg',
+#         ),
+#     )
 
 
 @bp.route('/search/')

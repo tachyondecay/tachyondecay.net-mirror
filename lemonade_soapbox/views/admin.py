@@ -379,6 +379,15 @@ def edit_post(post_type, id, revision_id):
     )
 
 
+@bp.route('/lists/')
+@login_required
+def lists():
+    """View and manage lists."""
+    return posts_index(
+        'list', 'admin/views/lists/index.html', page_title='Manage Lists'
+    )
+
+
 #
 # Review endpoints
 #

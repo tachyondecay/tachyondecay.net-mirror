@@ -834,11 +834,17 @@ class List(Post):
 
     def get_permalink(self, relative=True):
         """Generate a permanent link to the post."""
-        return ""
+        return url_for(
+            "frontend.lists.single_list"
+            if self.owner == "tachyondecay.net"
+            else "reviews.lists.single_list",
+            handle=self.handle,
+            _external=(not relative),
+        )
 
     def get_editlink(self, relative=True):
         """Generate an edit link for this post."""
-        raise NotImplementedError
+        return url_for("admin.edit_post", post_type="lists", id=self.id)
 
 
 class ListItem(db.Model):

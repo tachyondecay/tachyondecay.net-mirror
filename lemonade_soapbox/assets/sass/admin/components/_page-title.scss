@@ -55,9 +55,16 @@
 }
 
 .site-nav {
+  display: flex;
+  flex-flow: column wrap;
   background-color: $charcoal;
   border-bottom: 1px solid $grey;
   color: $snow-white;
+
+  @include mq($from: tablet) {
+    align-items: center;
+    flex-flow: row wrap;
+  }
 
   a {
     color: $grey-light;
@@ -71,8 +78,6 @@
 }
 
 .site-nav > .user-greeting {
-  margin-bottom: -1rem;
-  padding-bottom: var(--unit-small);
   border-bottom: 1px solid $grey;
 
   font-weight: bold;
@@ -96,22 +101,13 @@
   }
 
   @include mq($from: tablet) {
-    grid-column: span 2 / content-end;
-    grid-row: 1;
-
+    order: 3;
     margin: 0;
     padding: var(--unit-tiny);
     text-align: right;
   }
 
   @include mq($from: desktop) {
-    display: grid;
-    grid-template-columns: max-content 2.5em;
-    grid-template-rows: 1.2em 1.2em;
-    justify-content: end;
-    align-items: center;
-    align-self: center;
-
     padding: var(--unit-tiny) var(--unit-large);
 
     border-bottom: 0;
@@ -143,6 +139,15 @@
   flex-flow: row wrap;
   margin: 0;
   padding: 0;
+
+  @include mq($from: tablet) {
+    order: 1;
+    flex-basis: 100%;
+  }
+
+  @include mq($from: desktop) {
+    flex: 1 0 auto;
+  }
 
   > li {
     flex: 1 1 5em;
@@ -218,14 +223,6 @@
     margin-right: var(--unit-tiny);
   }
 
-  @include mq($from: tablet) {
-    grid-column: content-start / span 6;
-  }
-
-  @include mq($from: tablet) {
-    grid-column: content-start / span 4;
-  }
-
   @media (hover: hover) {
     .submenu > span {
       display: block;
@@ -241,7 +238,6 @@
     .submenu:hover > .submenu-list {
       opacity: 1;
       margin-left: var(--unit-tiny);
-      // width: 100%;
     }
 
     .submenu-list ._button {
