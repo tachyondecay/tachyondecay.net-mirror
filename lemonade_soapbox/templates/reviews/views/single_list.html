@@ -1,0 +1,121 @@
+{% extends 'reviews/layouts/main.html' %}
+{% from 'macros.html' import read_more, time %}
+
+{% block open_graph %}
+<meta property="og:url" content="{{ list.get_permalink(False) }}" />
+<meta property="og:type" content="list">
+<meta property="og:title" content="{{ self.page_title() }}">
+<meta property="og:description" content="{{ list.summary or read_more(list.body_html, length=50, link=False)|striptags }}">
+{% if list.cover %}
+<meta property="og:image" content="{{ request.url_root ~ 'media/list/covers/' ~ list.cover }}">
+<meta name="twitter:card" content="summary">
+{% else %}
+<meta property="og:image" content="{{ url_for('.static', filename='images/kara.reviews-logo-alternate.png', external=True) }}">
+    <meta property="og:image:width" content="955">
+    <meta property="og:image:height" content="500">
+<meta name="twitter:card" content="summary_large_image">
+{% endif %}
+{% endblock open_graph %}
+
+{% block body_classes %}list-view{% endblock body_classes %}
+
+{% block body_main %}
+{{ super() }}
+<article class="single-list{{' -has-cover' if list.cover }} grid-layout" id="list-{{ list.id }}">
+    <header class="header"{% if list.cover %} style="--cover-src: url('/media/list/covers/{{ list.cover }}');"{% endif %}>
+        <h1 class="listtitle">
+            {{ list.title }}
+        </h1>
+
+        {% if list.cover %}
+        <img src="/media/list/covers/{{ list.cover }}" class="coverimg" alt="Cover image for {{ list.title }}">
+        {% endif %}
+    </header>
+
+    <footer class="list-footer">
+        <p class="pubdate">
+        {% if list.status != "published" or list.show_updated %}
+            Updated {{ time(list.date_updated, 'MMMM D, YYYY') }} | 
+        {% endif %}
+        {% if list.status == "published" %}
+            {{ time(list.date_published, 'MMMM D, YYYY') }}
+        {% endif %}
+        {% if current_user.is_authenticated %}
+            | <a href="{{ list.get_editlink() }}">Edit</a>
+        {% endif %}
+        </p>
+
+        {% if list.tags %}
+        <div class="tag-list">
+            Categories: 
+            <ul class="list">
+            {% for t in list._tags|sort(attribute='handle') %}
+                <li><a class="tag" href="{{ url_for('reviews.lists.show_tag', handle=t.handle) }}">{{ t.label }}</a></li>
+            {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+    </footer>
+
+    <div class="content _textual">
+        {{ list.body_html }}
+    </div>
+
+    <div class="items">
+    <ol class="_bare-list">
+    {% for item in list.items %}
+        {% set review = item.post %}
+    <li>
+        <article class="review-preview" data-review-id="{{ review.id }}" data-short-title="{{ review.short_title }}" data-title="{{ review.title }}">
+            <header>
+                <a href="{{ review.get_permalink() }}">
+                    {% if review.cover %}
+                    <img src="/media/review/covers/{{ review.cover }}" class="coverimg" alt="Book cover for {{ review.short_title }}" itemprop="image">
+                    {% endif %}
+                    <h3 class="title"><a href="{{ review.get_permalink() }}">{{ review.title }}</a></h3>
+                </a>
+                <p class="bookauthor">by <a href="{{ url_for('reviews.search', q='book_author:"' ~ review.book_author ~ '"') }}">{{ review.book_author }}</a></p>
+            </header>
+
+            <footer>
+                <p class="rating">
+                {% if review.rating > 0 %}
+                    <span class="text">{{ review.rating }} out of 5 stars</span>
+                {% else %}
+                    <span class="text">Unrated</span>
+                {% endif %}
+                    <span class="stars" title="{{ review.rating }} out of 5 stars">
+                    {% for star in range(0,5) %}
+                        {% if star < review.rating %}
+                        <i class="star -full"></i>
+                        {% else %}
+                        <i class="star -empty"></i>
+                        {% endif %}
+                    {% endfor %}
+                    </span>
+                </p>
+
+                <p class="pubdate">
+                {% if review.status != "published" or review.show_updated %}
+                    Updated {{ time(review.date_updated, 'MMMM D, YYYY') }} | 
+                {% endif %}
+                {% if review.status == "published" %}
+                    Reviewed {{ time(review.date_published, 'MMMM D, YYYY') }}
+                {% endif %}
+                </p>
+            </footer>
+
+            <div class="content">
+                {% if review.summary %}
+                <p>{{ review.summary }}</p>
+                {% else %}
+                {{ review.body_html|truncate_html(read_more_length|default(75)) }}
+                {% endif %}
+            </div>
+        </article>
+    </li>
+    {% endfor %}
+    </ol>
+    </div>
+</article>
+{% endblock body_main %}

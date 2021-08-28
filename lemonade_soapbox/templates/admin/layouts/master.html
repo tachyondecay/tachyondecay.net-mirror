@@ -19,7 +19,6 @@
             let csrf_token = "{{ csrf_token() }}";
         </script>
 
-        {# <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script> #}
         <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
         <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
         <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
@@ -62,8 +61,9 @@
                     <li><a class="navlink -icon-before i-before--price-tags" href="{{ url_for('.tag_manager') }}">Tags</a></li>
                     <li class="submenu"><span class="_button -small -important">Write <span class="i--pencil"></span></span>
                         <ul class="submenu-list">
-                            <li><a class="_button -small -new" href="{{ url_for('.edit_post', post_type='blog') }}"><span class="i--plus"></span> Blog Post</a></li>
-                            <li><a class="_button -small -new" href="{{ url_for('.edit_post', post_type='reviews') }}"><span class="i--plus"></span> Book Review</a></li>
+                            <li><a class="_button -small -new" href="{{ url_for('.edit_post', post_type='blog') }}"><span class="i--plus"></span> Post</a></li>
+                            <li><a class="_button -small -new" href="{{ url_for('.edit_post', post_type='reviews') }}"><span class="i--plus"></span> Review</a></li>
+                            <li><a class="_button -small -new" href="{{ url_for('.edit_post', post_type='lists') }}"><span class="i--plus"></span> List</a></li>
                         </ul>
                     </li>
                 </ul>

@@ -1072,11 +1072,12 @@ h4, ._h4 {
   .site-nav > .navlist .submenu:hover > .submenu-list {
     opacity: 1;
     margin-left: var(--unit-tiny);
+    margin-right: -5em;
   }
   .site-nav > .navlist .submenu-list ._button {
     font-size: 0.6em;
     line-height: calc(var(--baseline) * 0.6 * 1rem);
-    padding: 0.2em 0.5em;
+    padding: var(--unit-tiny);
   }
 }
 

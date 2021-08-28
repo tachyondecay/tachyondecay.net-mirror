@@ -834,10 +834,12 @@ class List(Post):
 
     def get_permalink(self, relative=True):
         """Generate a permanent link to the post."""
+        if not self.id:
+            return ""
         return url_for(
-            "frontend.lists.single_list"
+            "frontend.lists.show_list"
             if self.owner == "tachyondecay.net"
-            else "reviews.lists.single_list",
+            else "reviews.lists.show_list",
             handle=self.handle,
             _external=(not relative),
         )
