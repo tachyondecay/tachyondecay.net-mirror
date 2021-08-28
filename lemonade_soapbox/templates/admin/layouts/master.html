@@ -19,12 +19,12 @@
             let csrf_token = "{{ csrf_token() }}";
         </script>
 
-        {# <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script> #}
         <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
         <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
         <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
         <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mustache@latest/mustache.min.js"></script>
-<script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
+        <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
         <script src="{{ url_for('.static', filename='js/vendor/paste.js') }}"></script>
         <script src="{{ url_for('.static', filename='js/admin.js') }}"></script>
         {% block scripts %} {% endblock %}
@@ -34,11 +34,11 @@
         {{ notifications() }}
 
         <header class="page-title grid-layout -max -slim-rows" id="top">
-            <nav class="site-nav grid-layout">
+            <nav class="site-nav">
                 <div class="quick-search">
                     <input type="text" class="quicksearch" id="quicksearch" placeholder="Quick post search…" autocomplete="off">
                     <div class="results"></div>
-                    <script id="quicksearch-template" type="x-tmpl-mustache">
+                    <script type="x-tmpl-mustache">
                         <div class="resultitem -<%type%>">
                             <strong title="<% full_title %>"><% title %></strong>
                             <a href="<% edit %>" target="_blank" title="Edit <% type %>"><span class="i--pencil"></span></a>
@@ -55,13 +55,15 @@
                     <a href="{{ url_for('.signout') }}"><small>Sign out</small></a>
                 </div>
                 <ul class="navlist">
-                    <li><a class="navlink -icon-before i-before--newspaper" href="{{ url_for('.blog') }}">Blog Posts</a></li>
+                    <li><a class="navlink -icon-before i-before--newspaper" href="{{ url_for('.blog') }}">Blog</a></li>
                     <li><a class="navlink -icon-before i-before--book" href="{{ url_for('.reviews') }}">Reviews</a></li>
-                    <li><a class="navlink -icon-before i-before--price-tags" href="{{ url_for('.tag_manager') }}">Tag Manager</a></li>
+                    <li><a class="navlink -icon-before i-before--list-numbered" href="{{ url_for('.lists') }}">Lists</a></li>
+                    <li><a class="navlink -icon-before i-before--price-tags" href="{{ url_for('.tag_manager') }}">Tags</a></li>
                     <li class="submenu"><span class="_button -small -important">Write <span class="i--pencil"></span></span>
                         <ul class="submenu-list">
-                            <li><a class="_button -small -new" href="{{ url_for('.edit_post', post_type='blog') }}"><span class="i--plus"></span> Blog Post</a></li>
-                            <li><a class="_button -small -new" href="{{ url_for('.edit_post', post_type='reviews') }}"><span class="i--plus"></span> Book Review</a></li>
+                            <li><a class="_button -small -new" href="{{ url_for('.edit_post', post_type='blog') }}"><span class="i--plus"></span> Post</a></li>
+                            <li><a class="_button -small -new" href="{{ url_for('.edit_post', post_type='reviews') }}"><span class="i--plus"></span> Review</a></li>
+                            <li><a class="_button -small -new" href="{{ url_for('.edit_post', post_type='lists') }}"><span class="i--plus"></span> List</a></li>
                         </ul>
                     </li>
                 </ul>

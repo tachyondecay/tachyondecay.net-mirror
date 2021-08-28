@@ -29,7 +29,7 @@ bp = Blueprint('reviews', __name__)
 def sitenav():
     links = [
         ("Bookshelves", "reviews.all_tags", "Reviews organized by categories"),
-        ("Lists", "reviews.lists", "Series, Top 10 lists, and more!"),
+        ("Lists", "reviews.lists.index", "Series, Top 10 lists, and more!"),
         (
             "Review Index",
             "reviews.all_reviews",
@@ -125,19 +125,6 @@ def all_reviews():
         'reviews/views/all_reviews.html',
         page_title="All Reviews, by Year",
         reviews=reviews,
-    )
-
-
-@bp.route('/lists/')
-def lists():
-    return render_template(
-        'reviews/layouts/basic.html',
-        page_title="Lists Coming Soon",
-        description="The lists feature is under construction! Check back in a few weeks.",
-        cover=url_for(
-            '.static',
-            filename='images/layout/header_bg/glenn-carstens-peters-RLw-UC03Gwc-unsplash.jpg',
-        ),
     )
 
 

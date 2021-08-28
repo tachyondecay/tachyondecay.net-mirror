@@ -81,7 +81,7 @@
 
 {% macro search(class='') %}
 <div class="site-search {{ class }}">
-    <form action="{{ url_for('.search') }}">
+    <form action="{{ url_for('reviews.search') }}">
         <input type="search" class="textinput" name="q" placeholder="Search reviews…" value="{{ request.args.get('q', '') }}">
         <button type="submit" value="Go" title="Search"><span class="i--search"></span></button>
     </form>

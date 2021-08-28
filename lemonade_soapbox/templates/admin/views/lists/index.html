@@ -1,0 +1,30 @@
+{% extends 'admin/layouts/results.html' %}
+{% set post_type = 'list' %}
+
+{% block sort_by %}
+            <select id="sort_by" data-default="date_updated">
+                <option value="date_published">Date published</option>
+                <option value="date_updated">Date updated</option>
+                <option value="title_sort">Title</option>
+            </select>
+{% endblock sort_by %}
+
+
+{% block result_item %}
+                <h3 class="title"><a href="{{ url_for('.edit_post', id=post.id, post_type='lists') }}" title="Edit review">{{ post.title }}</a></h3>
+                    <img src="/media/review/covers/{{ post.cover }}" alt="" class="cover" />
+
+                    <ul class="tags _inline-list">
+                    {% for t in post._tags|sort(attribute='handle') %}
+                        <li><a class="_button -micro" href="{{ url_for('.reviews', q='tags:"' ~ t.label ~ '"') }}">{{ t.label }}</a></li>
+                    {% endfor %}
+                    </ul>
+
+                    <div class="summary">
+                        {% if post.summary %}
+                            {{ post.summary }}
+                        {% else %}
+                            {{ post.body_html|striptags|truncate(300) }}
+                        {% endif %}
+                    </div>
+{% endblock %}

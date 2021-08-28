@@ -65,7 +65,7 @@
         <ol class="results-list">
         {% for post in posts.items %}
             <li>
-                <article class="result-item -{{ post_type }}">
+                <article class="result-item -{{ post_type }}{{ ' -has-cover' if post.cover}}">
                     {% block result_item scoped %}{% endblock %}
                 </article>
             </li>

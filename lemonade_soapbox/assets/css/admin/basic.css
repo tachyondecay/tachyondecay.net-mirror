@@ -293,7 +293,7 @@ summary {
  * Mixins and functions that allow us to apply a SVG sprite icon.
  * Largely cribbed from https://github.com/liquidlight/sass-gulp-svg-sprite
  */
-.site-nav > .quick-search > .results > .resultitem.-review:before, .site-nav > .quick-search > .results > .resultitem.-article:before, .notification > .dismiss {
+.notification > .dismiss {
   display: inline-block;
   background-size: 31em 21em;
 }
@@ -908,9 +908,17 @@ h4, ._h4 {
 }
 
 .site-nav {
+  display: flex;
+  flex-flow: column wrap;
   background-color: #3c2438;
   border-bottom: 1px solid #6e6e6e;
   color: #f8f8f8;
+}
+@media (min-width: 46.25em) {
+  .site-nav {
+    align-items: center;
+    flex-flow: row wrap;
+  }
 }
 .site-nav a {
   color: #e8e8e8;
@@ -921,96 +929,7 @@ h4, ._h4 {
   font-size: 0.6em;
 }
 
-.site-nav > .quick-search {
-  display: none;
-  position: relative;
-}
-.site-nav > .quick-search > .quicksearch {
-  padding: var(--unit-small) 0;
-  width: 100%;
-  opacity: 0.5;
-}
-.site-nav > .quick-search > .quicksearch:focus {
-  opacity: 0.85;
-}
-.site-nav > .quick-search > .results {
-  display: none;
-}
-.site-nav > .quick-search > .results.-display {
-  display: block;
-  position: absolute;
-  top: calc(100% - 0.5em);
-  max-height: 50vh;
-  overflow-y: scroll;
-  width: 100%;
-  z-index: 10;
-  background: #eff2f3;
-  border-color: #4b7c91;
-  border-width: 0 1px 1px 1px;
-  border-style: solid;
-  box-shadow: 3px 3px 5px 5px rgba(0, 0, 0, 0.5);
-  color: #393b3c;
-}
-.site-nav > .quick-search > .results > .resultitem {
-  display: flex;
-  align-items: center;
-  transition: none;
-  border-bottom: 1px solid #cdd9de;
-}
-.site-nav > .quick-search > .results > .resultitem:hover {
-  background-color: #cdd9de;
-}
-.site-nav > .quick-search > .results > .resultitem:before {
-  content: "";
-  opacity: 0.3;
-  margin-left: var(--unit-tiny);
-  font-size: 1.25em;
-}
-.site-nav > .quick-search > .results > .resultitem.-article:before {
-  background-image: url("/assets/images/icons/sprite--000000.svg");
-  width: 1.0625em;
-  height: 1.0625em;
-  background-position: -2em 0em;
-  background-image: url("/assets/images/icons/sprite--657177.svg");
-}
-.site-nav > .quick-search > .results > .resultitem.-review:before {
-  background-image: url("/assets/images/icons/sprite--000000.svg");
-  width: 1.0625em;
-  height: 1.0625em;
-  background-position: -24em 0em;
-  background-image: url("/assets/images/icons/sprite--657177.svg");
-}
-.site-nav > .quick-search > .results strong {
-  flex: 1;
-  font-family: Fjalla One, Verdana, sans-serif;
-  font-size: 0.6rem;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.site-nav > .quick-search > .results strong, .site-nav > .quick-search a {
-  padding: var(--unit-tiny);
-}
-.site-nav > .quick-search > .results > .resultitem a {
-  color: #6c9e5b;
-  opacity: 0;
-  outline: 0;
-}
-.site-nav > .quick-search > .results > .resultitem:hover a {
-  opacity: 1;
-}
-@media (min-width: 61.25em) {
-  .site-nav > .quick-search {
-    display: flex;
-    align-items: center;
-    grid-column: 5/7;
-    grid-row: 1;
-  }
-}
-
 .site-nav > .user-greeting {
-  margin-bottom: -1rem;
-  padding-bottom: var(--unit-small);
   border-bottom: 1px solid #6e6e6e;
   font-weight: bold;
   text-align: center;
@@ -1031,8 +950,7 @@ h4, ._h4 {
 }
 @media (min-width: 46.25em) {
   .site-nav > .user-greeting {
-    grid-column: span 2/content-end;
-    grid-row: 1;
+    order: 3;
     margin: 0;
     padding: var(--unit-tiny);
     text-align: right;
@@ -1040,12 +958,6 @@ h4, ._h4 {
 }
 @media (min-width: 61.25em) {
   .site-nav > .user-greeting {
-    display: grid;
-    grid-template-columns: max-content 2.5em;
-    grid-template-rows: 1.2em 1.2em;
-    justify-content: end;
-    align-items: center;
-    align-self: center;
     padding: var(--unit-tiny) var(--unit-large);
     border-bottom: 0;
     font-size: 0.8em;
@@ -1073,6 +985,17 @@ h4, ._h4 {
   flex-flow: row wrap;
   margin: 0;
   padding: 0;
+}
+@media (min-width: 46.25em) {
+  .site-nav > .navlist {
+    order: 1;
+    flex-basis: 100%;
+  }
+}
+@media (min-width: 61.25em) {
+  .site-nav > .navlist {
+    flex: 1 0 auto;
+  }
 }
 .site-nav > .navlist > li {
   flex: 1 1 5em;
@@ -1136,16 +1059,6 @@ h4, ._h4 {
 .site-nav > .navlist .submenu-list li {
   margin-right: var(--unit-tiny);
 }
-@media (min-width: 46.25em) {
-  .site-nav > .navlist {
-    grid-column: content-start/span 6;
-  }
-}
-@media (min-width: 46.25em) {
-  .site-nav > .navlist {
-    grid-column: content-start/span 4;
-  }
-}
 @media (hover: hover) {
   .site-nav > .navlist .submenu > span {
     display: block;
@@ -1159,11 +1072,12 @@ h4, ._h4 {
   .site-nav > .navlist .submenu:hover > .submenu-list {
     opacity: 1;
     margin-left: var(--unit-tiny);
+    margin-right: -5em;
   }
   .site-nav > .navlist .submenu-list ._button {
     font-size: 0.6em;
     line-height: calc(var(--baseline) * 0.6 * 1rem);
-    padding: 0.2em 0.5em;
+    padding: var(--unit-tiny);
   }
 }
 

@@ -1,0 +1,106 @@
+/**
+ * _quick-search.scss
+ *
+ * Quick search with dropdown
+ *
+ */
+
+.quick-search {
+  display: none;
+  position: relative;
+
+  > .quicksearch {
+    padding: var(--unit-small) 0;
+    width: 100%;
+
+    opacity: 0.5;
+
+    &:focus {
+      opacity: 0.85;
+    }
+  }
+
+  > .results {
+    display: none;
+  }
+
+  > .results.-display {
+    display: block;
+    position: absolute;
+    top: calc(100% - 0.5em);
+    max-height: 50vh;
+    overflow-y: scroll;
+    width: 100%;
+    z-index: 10;
+
+    background: mix($blue, $snow-white, 5);
+    border-color: $blue;
+    border-width: 0 1px 1px 1px;
+    border-style: solid;
+    box-shadow: 3px 3px 5px 5px $c-shadow;
+    color: mix($blue, $black, 5);
+  }
+
+  > .results > .resultitem {
+    display: flex;
+    align-items: center;
+    transition: none;
+
+    border-bottom: 1px solid mix($blue, $snow-white, 25);
+
+    &:hover {
+      background-color: mix($blue, $snow-white, 25);
+    }
+  }
+
+  > .results > .resultitem:before {
+    content: '';
+    opacity: 0.3;
+    margin-left: var(--unit-tiny);
+    font-size: 1.25em;
+  }
+
+  > .results > .resultitem.-article:before {
+    @include sprite("newspaper");
+    @include sprite-image($blue-grey);
+  }
+
+  > .results > .resultitem.-review:before {
+    @include sprite("book");
+    @include sprite-image($blue-grey);
+  }
+
+  > .results strong {
+    flex: 1;
+    font-family: $f-accent;
+    font-size: 0.6rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  > .results strong, a {
+    padding: var(--unit-tiny);
+  }
+
+  > .results > .resultitem a {
+    color: $green;
+    opacity: 0;
+    outline: 0;
+  }
+
+  > .results > .resultitem:hover a {
+    opacity: 1;
+  }
+
+  @include mq($from: tablet) {
+    display: flex;
+    align-items: center;
+    flex: 2;
+    order: 2;
+  }
+
+  @include mq($from: desktop) {
+    flex: 1;
+  }
+}

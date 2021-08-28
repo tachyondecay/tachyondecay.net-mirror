@@ -298,62 +298,80 @@ function BackendInit() {
      * Quick search for posts to edit or copy view link
      */
     Mustache.tags = ['<%', '%>'];
-    const quicksearch = document.getElementById('quicksearch');
-    const container = quicksearch.nextElementSibling;
-    document.addEventListener('click', e => {
-        if(!container.contains(e.target)) {
-            container.classList.remove('-display');
-        }
-    });
-    container.addEventListener('click', e => {
-        if(e.target.parentNode.title == 'Copy link') {
-            e.preventDefault();
-            navigator.clipboard.writeText(e.target.parentNode.href);
-            e.target.classList = 'i--checkmark';
-            const copied = document.createElement('span');
-            copied.innerText = 'Copied';
-            copied.style.fontSize = '0.75em';
-            copied.style.transition = 'all 300ms ease-in-out';
-            e.target.parentNode.append(copied);
-            window.setTimeout(() => { 
-                copied.style.opacity = 0; 
-                window.setTimeout(() => {
-                    copied.style.display = 'none';
-                    e.target.classList = 'i--copy';
-                }, 400);
-            }, 2000);
-        }
-    });
-    quicksearch.addEventListener('keydown', e => {
-        if(e.key == "Enter") {
-            e.preventDefault();
-            quicksearch.value = quicksearch.value.trim();
-            if(quicksearch.value) {
-                fetch('/api/posts/search/?q=' + quicksearch.value)
-                    .then(response => response.json())
-                    .then(data => {
-                        console.log(data);
-                        container.textContent = '';
-                        if(data.length > 0) {
-                            data.forEach(item => {
-                                const result = Mustache.render(
-                                    document.getElementById('quicksearch-template').innerHTML, 
-                                    item
-                                );
-                                container.innerHTML += result;
-                            });
-                        } else {
-                            container.textContent = 'No results found.';
-                        }
-                        container.classList.add('-display');
-                        container.focus();
-                    })
-                    .catch(error => {
-                        console.log(error);
-                    });
+    document.querySelectorAll('.quicksearch').forEach(quicksearch => {
+        let container = quicksearch.nextElementSibling;
+        document.addEventListener('click', e => {
+            if(!container.contains(e.target)) {
+                container.classList.remove('-display');
             }
-        }
-    });
+        });
+        container.addEventListener('click', e => {
+            if(e.target.parentNode.title == 'Copy link') {
+                e.preventDefault();
+                navigator.clipboard.writeText(e.target.parentNode.href);
+                e.target.classList = 'i--checkmark';
+                const copied = document.createElement('span');
+                copied.innerText = 'Copied';
+                copied.style.fontSize = '0.75em';
+                copied.style.transition = 'all 300ms ease-in-out';
+                e.target.parentNode.append(copied);
+                window.setTimeout(() => { 
+                    copied.style.opacity = 0; 
+                    window.setTimeout(() => {
+                        copied.style.display = 'none';
+                        e.target.classList = 'i--copy';
+                    }, 400);
+                }, 2000);
+            } else if (e.target.classList.contains('addtolist')) {
+                let parent = e.target.parentNode;
+                let field = e.target.closest('.form-field');
+                let list = field.querySelector('ol');
+                let template = document.getElementById('list-item-prototype');
+
+                list.innerHTML += Mustache.render(template.innerHTML, {
+                    cover: parent.dataset.cover,
+                    editlink: parent.dataset.editLink,
+                    // icon: (parent.classList.contains('-review')) ? 'book' : 'newspaper',
+                    list_id: document.getElementById('write').dataset.id,
+                    num: list.querySelectorAll('li').length + 1,
+                    post_id: parent.dataset.postId,
+                    title: e.target.innerText,
+                    type: parent.dataset.postType
+                });
+            }
+        });
+
+        quicksearch.addEventListener('keydown', e => {
+            if(e.key == "Enter") {
+                e.preventDefault();
+                quicksearch.value = quicksearch.value.trim();
+                if(quicksearch.value) {
+                    fetch('/api/posts/search/?q=' + quicksearch.value)
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log(data);
+                            container.textContent = '';
+                            if(data.length > 0) {
+                                data.forEach(item => {
+                                    const result = Mustache.render(
+                                        container.parentNode.querySelector('[type=x-tmpl-mustache]').innerHTML, 
+                                        item
+                                    );
+                                    container.innerHTML += result;
+                                });
+                            } else {
+                                container.textContent = 'No results found.';
+                            }
+                            container.classList.add('-display');
+                            container.focus();
+                        })
+                        .catch(error => {
+                            console.log(error);
+                        });
+                }
+            }
+        });
+    })
 
 
     const tag_manager = document.querySelector('.tag-display');
@@ -418,6 +436,39 @@ function BackendInit() {
             tag.append(del);
         });
     }
+
+
+    /*
+     * Drag and drop sort for List Items
+     */
+    document.querySelectorAll('.js-sortable').forEach(elem => {
+        let sortable = new Sortable(elem, {
+            onUpdate: function(evt) {
+                // console.log(evt);
+                evt.target.querySelectorAll('[name*=position]').forEach((elem, index) => {
+                    elem.value = index + 1;
+                });
+            }
+        });
+
+        /*
+         * Fade out and remove the list item when delete button clicked
+         */
+        elem.addEventListener('click', e => {
+            if((e.target.nodeName == 'SPAN' || e.target.nodeName == 'BUTTON') 
+                && e.target.parentNode.nodeName == 'BUTTON') {
+                e.preventDefault();
+                parent = e.target.closest('li');
+                parent.style.opacity = '0';
+            }
+        });
+
+        elem.addEventListener('transitionend', e => {
+            if(e.target.nodeName == 'LI') {
+                e.target.remove();
+            }
+        })
+    });
 }
 
 

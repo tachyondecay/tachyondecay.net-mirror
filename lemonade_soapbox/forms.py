@@ -2,8 +2,6 @@ import arrow
 from flask import current_app, Markup
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileAllowed, FileField
-from lemonade_soapbox import db
-from lemonade_soapbox.models import Article, Review
 from wtforms import (
     BooleanField,
     DateTimeField,
@@ -11,13 +9,17 @@ from wtforms import (
     IntegerField,
     PasswordField,
     RadioField,
+    SelectField,
     StringField,
     SubmitField,
     validators,
 )
 from wtforms.fields.html5 import EmailField
-from wtforms.widgets import html_params, TextInput
-from wtforms_alchemy import model_form_factory
+from wtforms.widgets import HiddenInput, html_params, TextInput
+from wtforms_alchemy import model_form_factory, ModelFieldList, ModelFormField
+
+from lemonade_soapbox import db
+from lemonade_soapbox.models import Article, List, ListItem, Review
 
 Form = FlaskForm
 BaseModelForm = model_form_factory(Form)
@@ -25,7 +27,7 @@ BaseModelForm = model_form_factory(Form)
 
 class ModelForm(BaseModelForm):
     @classmethod
-    def get_session(self):
+    def get_session(cls):
         return db.session
 
 
@@ -65,7 +67,8 @@ class DateTimeWidget:
             name=field.name, id=id + '-time', step='1', value=time, **kwargs
         )
         return Markup(
-            f'<span class="{date_class}"><input type="date" {date_params}/></span><span class="{time_class}"><input type="time" {time_params}/></span>'
+            f'<span class="{date_class}"><input type="date" {date_params}/></span>'
+            f'<span class="{time_class}"><input type="time" {time_params}/></span>'
         )
 
 
@@ -103,8 +106,7 @@ class TagListField(StringField):
         """Turn the list into a comma-separated string in alphabetical order."""
         if self.data:
             return ', '.join(sorted(self.data, key=lambda s: s.lower()))
-        else:
-            return ''
+        return ''
 
     def process_data(self, value):
         """Form data should only have the actual tags, not the handles."""
@@ -148,6 +150,44 @@ class ArticleForm(ModelForm):
         'Remove uploaded cover', validators=[validators.Optional()]
     )
     pasted_cover = HiddenField(validators=[validators.Optional()])
+
+
+class ListItemForm(ModelForm):
+    class Meta:
+        model = ListItem
+        only = [
+            "list_id",
+            "post_id",
+            "position",
+            "blurb",
+        ]
+
+    list_id = HiddenField()
+    post_id = HiddenField()
+    position = HiddenField()
+    remove = BooleanField(widget=HiddenInput(), validators=[validators.Optional()])
+
+
+class ListForm(ArticleForm):
+    class Meta:
+        model = List
+        only = [
+            'body',
+            'cover',
+            'date_published',
+            'handle',
+            'owner',
+            'reverse_order',
+            'show_numbers',
+            'show_updated',
+            'summary',
+            'title',
+        ]
+
+    items = ModelFieldList(ModelFormField(ListItemForm))
+    owner = SelectField(
+        'Owner', choices=["tachyondecay.net", "kara.reviews"], default="kara.reviews"
+    )
 
 
 def validate_book_author_sort(form, field):

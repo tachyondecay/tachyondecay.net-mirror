@@ -19,9 +19,16 @@ from werkzeug.utils import secure_filename
 from whoosh.query import Term as whoosh_term, Or as whoosh_or
 
 from lemonade_soapbox import db
-from lemonade_soapbox.forms import ArticleForm, ReviewForm, SignInForm
+from lemonade_soapbox.forms import ArticleForm, ListForm, ReviewForm, SignInForm
 from lemonade_soapbox.helpers import Blueprint
-from lemonade_soapbox.models.posts import Article, Review, RevisionMixin, Tag
+from lemonade_soapbox.models.posts import (
+    Article,
+    List,
+    ListItem,
+    Review,
+    RevisionMixin,
+    Tag,
+)
 from lemonade_soapbox.models.users import User
 
 bp = Blueprint('admin', __name__)
@@ -248,7 +255,7 @@ def blog():
 )
 @login_required
 def edit_post(post_type, id, revision_id):
-    post_classes = {"blog": Article, "reviews": Review}
+    post_classes = {"blog": Article, "lists": List, "reviews": Review}
 
     if post_type not in post_classes:
         abort(404)
@@ -257,7 +264,7 @@ def edit_post(post_type, id, revision_id):
     # Load a post either by ID or a specific revision
     if id:
         post = post_class.query.get_or_404(id)
-        revision_id = post.current_revision_id
+        revision_id = getattr(post, "current_revision_id", None)
     elif revision_id and issubclass(post_class, RevisionMixin):
         post = post_class.from_revision(revision_id)
         if not post:
@@ -332,7 +339,8 @@ def edit_post(post_type, id, revision_id):
                 current_app.logger.warning(f'Could not delete cover image: {e}')
                 flash('Could not delete cover image.', 'error')
 
-        post.new_revision(old_body)
+        if issubclass(post_class, RevisionMixin):
+            post.new_revision(old_body)
         if form.publish.data:
             message = post.publish_post()
         else:
@@ -343,13 +351,10 @@ def edit_post(post_type, id, revision_id):
                     post.status = 'removed'
                     db.session.delete(post)
                     # Need to do this to avoid SQLAlchemy RACE condition
-                    db.session.delete(post.selected_revision)
+                    if issubclass(post_class, RevisionMixin):
+                        db.session.delete(post.selected_revision)
                     message = f'{post.post_type.capitalize()} permanently deleted.'
-                    redirect_url = (
-                        url_for('.blog')
-                        if post.post_type == "article"
-                        else url_for('.reviews')
-                    )
+                    redirect_url = url_for(f".{post_type}")
                 else:
                     post.status = 'deleted'
                     message = f'{post.post_type.capitalize()} moved to the trash.'
@@ -365,12 +370,21 @@ def edit_post(post_type, id, revision_id):
         return redirect(
             redirect_url or url_for('.edit_post', id=post.id, post_type=post_type)
         )
-    elif form.errors:
+    if form.errors:
         current_app.logger.debug(form.errors)
         flash('You need to fix a few things before you can save your changes.', 'error')
 
     return render_template(
         f'admin/views/{post_type}/write.html', post=post, form=form, post_type=post_type
+    )
+
+
+@bp.route('/lists/')
+@login_required
+def lists():
+    """View and manage lists."""
+    return posts_index(
+        'list', 'admin/views/lists/index.html', page_title='Manage Lists'
     )
 
 
