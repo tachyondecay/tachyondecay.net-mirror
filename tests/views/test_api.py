@@ -61,7 +61,7 @@ def test_goodreads_link(client, signin):
     resp = client.get("http://main.test/api/posts/goodreads-link/?q=test-handle")
     assert resp.status_code == 200
     assert resp.mimetype == "application/json"
-    assert resp.get_json() == [[r.handle, r.goodreads_id]]
+    assert resp.get_json() == [[r.handle, str(r.goodreads_id)]]
 
 
 def test_posts_lookup(client, signin):
