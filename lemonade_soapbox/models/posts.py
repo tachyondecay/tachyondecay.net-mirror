@@ -6,6 +6,7 @@ from diff_match_patch import diff_match_patch
 from flask import current_app, Markup, url_for
 from flask_login import current_user
 from markdown import markdown
+from PIL import Image
 from slugify import slugify
 from sqlalchemy import asc, desc, event, func
 from sqlalchemy.exc import NoResultFound
@@ -556,6 +557,20 @@ class Post(AuthorMixin, UniqueHandleMixin, TagMixin, Searchable, db.Model):
         return cls.query.filter(
             (cls.status == 'published') & (cls.date_published <= arrow.utcnow())
         )
+
+    def process_cover(self, img_data):
+        """Save a new cover image for this post."""
+        cover_name = f"{self.id}-{self.handle}-cover.jpg"
+        cover_path = (
+            current_app.instance_path / "media" / self.post_type / "covers" / cover_name
+        )
+
+        with Image.open(img_data) as img:
+            # Save image as JPEG regardless of original file type
+            if img.mode in ("RGBA", "LA", "P"):
+                img = img.convert("RGB")
+            img.save(cover_path)
+        self.cover = cover_name
 
     def publish_post(self):
         """Set a post's status to "published" and set date published if null."""

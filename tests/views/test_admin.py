@@ -1,14 +1,14 @@
+import base64
 import io
 import random
 import shutil
-from pathlib import Path
 
 import arrow
 import pytest
 from flask_login import current_user
 from sqlalchemy.orm.util import was_deleted
 
-from lemonade_soapbox.models import Article, Review, Tag
+from lemonade_soapbox.models import Article, Review
 from tests.factories import ArticleFactory, ReviewFactory, TagFactory
 
 pytestmark = pytest.mark.usefixtures("db")
@@ -194,14 +194,39 @@ def test_edit_post_upload_cover(client, cover_dir, db, post, post_type, signin):
     }
 
     cover_dir(post_type)
-    data["cover"] = (io.BytesIO(b"hey"), "test1.jpg")
+    data["cover"] = (
+        io.BytesIO(
+            base64.b64decode(
+                b"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="
+            )
+        ),
+        "test1.png",
+    )
     resp = client.post(
         f"http://main.test/meta/{post_type}/write/{post.id}/",
         data=data,
         content_type="multipart/form-data",
     )
     assert resp.status_code == 302
-    assert post.cover == f"{post.handle}-cover.jpg"
+    assert post.cover == f"{post.id}-{post.handle}-cover.jpg"
+
+    # Now test an error
+    data["cover"] = (
+        io.BytesIO(
+            base64.b64decode(
+                b"VVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="
+            )
+        ),
+        "test1.png",
+    )
+    resp = client.post(
+        f"http://main.test/meta/{post_type}/write/{post.id}/",
+        data=data,
+        content_type="multipart/form-data",
+    )
+    assert resp.status_code == 302
+    db.session.refresh(post)
+    assert post.cover == ""
 
 
 def test_edit_post_remove_cover(app, cover_dir, client, db, post, post_type, signin):
@@ -238,20 +263,21 @@ def test_edit_post_remove_cover(app, cover_dir, client, db, post, post_type, sig
     assert post.cover == ""
 
 
-def test_edit_post_pasted_cover(client, cover_dir, post, post_type, signin):
+def test_edit_post_pasted_cover(client, cover_dir, db, post, post_type, signin):
     """Test uploading a cover via pasted image data."""
     data = {
         "body": "Edited body text",
         "book_author": "Nobody",
         "dates_read": "2010/05/08 - 2010/05/09",
-        "pasted_cover": "data:image/png;base64,testdata",
+        "pasted_cover": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==",
         "title": post.title,
     }
 
     cover_dir(post_type)
     resp = client.post(f"http://main.test/meta/{post_type}/write/{post.id}/", data=data)
     assert resp.status_code == 302
-    assert post.cover == f"{post.handle}-cover.png"
+    db.session.refresh(post)
+    assert post.cover == f"{post.id}-{post.handle}-cover.jpg"
 
 
 def test_edit_post_delete(client, db, post, post_type, signin):
