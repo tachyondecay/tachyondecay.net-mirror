@@ -1,16 +1,17 @@
-import arrow
 import re
 import time
-from bs4 import BeautifulSoup
 from decimal import Decimal
+from fractions import Fraction
+from html.parser import HTMLParser
+
+import arrow
+from bs4 import BeautifulSoup
 from flask import current_app, Markup
 from flask.blueprints import (
     Blueprint as FlaskBlueprint,
     BlueprintSetupState as FlaskBlueprintSetupState,
 )
 from flask.json import JSONEncoder as BaseJSONEncoder
-from fractions import Fraction
-from html.parser import HTMLParser
 
 
 def truncate_html(content, max_length=None):

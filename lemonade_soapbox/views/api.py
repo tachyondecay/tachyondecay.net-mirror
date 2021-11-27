@@ -42,7 +42,7 @@ def autosave():
     # We're composing a brand new post, so let's create a new draft entry
     # in the database.
     params = request.form.to_dict()
-    del params["parent"]
+    params.pop("parent", None)
     post = globals()[post_type](**params)
     post.new_revision()
     db.session.add(post)

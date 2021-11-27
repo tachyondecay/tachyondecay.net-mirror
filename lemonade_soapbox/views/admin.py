@@ -1,7 +1,7 @@
 import base64
 import random
 from datetime import datetime
-from pathlib import Path
+from io import BytesIO
 
 from flask import (
     abort,
@@ -15,7 +15,6 @@ from flask import (
 from flask_login import current_user, login_user, login_required, logout_user
 from flask_sqlalchemy import Pagination
 from sqlalchemy import and_, func
-from werkzeug.utils import secure_filename
 from whoosh.query import Term as whoosh_term, Or as whoosh_or
 
 from lemonade_soapbox import db
@@ -290,54 +289,48 @@ def edit_post(post_type, id, revision_id):
 
         #
         # Cover image uploading
-        #
-        # First, check if we uploaded a file the old-fashioned way
-        cover_path = current_app.instance_path / "media" / post.post_type / "covers"
-        if form.cover.data and request.files.get(form.cover.name):
-            cover = request.files[form.cover.name]
-            filename = secure_filename(
-                post.handle + '-cover.' + cover.filename.rsplit('.', 1)[1].lower()
-            )
-            try:
-                cover.save(cover_path / filename)
-            except Exception as e:
-                current_app.logger.warning(f'Could not upload cover image: {e}.')
-                flash(
-                    'There was a problem uploading the cover image. Try again?', 'error'
-                )
-                post.cover = ""
-            else:
-                post.cover = filename
-        elif form.pasted_cover.data and not form.remove_cover.data:
-            # We're uploading a pasted image, so decode the base64
-            # and see if we can save it as an image file
-            try:
-                filename = secure_filename(f'{post.handle}-cover.png')
-                current_app.logger.info('Creating new image from pasted data.')
-                with open(
-                    cover_path / filename,
-                    'wb',
-                ) as f:
-                    # Decode Base64 dataURL. The split is there to grab the
-                    # "data" portion of the dataURL
-                    f.write(base64.b64decode(form.pasted_cover.data.split(",")[1]))
-            except Exception as e:
-                current_app.logger.warning(f'Could not save cover image: {e}.')
-                flash('There was a problem uploading the cover image. Try again?')
-                post.cover = ""
-            else:
-                post.cover = filename
+        uploaded_cover = None
+        # First, check if we are removing a cover
         if post.cover and (
             form.remove_cover.data or (post.status == 'deleted' and form.delete.data)
         ):
             try:
-                file = cover_path / post.cover
+                file = (
+                    current_app.instance_path
+                    / "media"
+                    / post.post_type
+                    / "covers"
+                    / post.cover
+                )
                 file.unlink()
                 post.cover = ""
-                current_app.logger.info(f"Removed cover from {post.id}")
+                current_app.logger.info(f"Removed cover from {post}")
             except Exception as e:
-                current_app.logger.warning(f'Could not delete cover image: {e}')
-                flash('Could not delete cover image.', 'error')
+                current_app.logger.warning(
+                    f"Could not delete cover image for {post}: {e}"
+                )
+                flash("Could not delete cover image.", "error")
+        elif form.pasted_cover.data:  # This must come before next condition
+            current_app.logger.debug("We pasted")
+            # Remove the data prefix on the binary image data
+            uploaded_cover = BytesIO(
+                base64.b64decode(form.pasted_cover.data.split(",")[1])
+            )
+        elif form.cover.data:
+            current_app.logger.debug("We uploaded")
+            uploaded_cover = request.files.get(form.cover.name)
+            current_app.logger.debug(form.cover.data)
+        if uploaded_cover:
+            try:
+                post.process_cover(uploaded_cover)
+            except Exception as e:
+                current_app.logger.warning(
+                    f"Could not upload cover image for {post}: {e}."
+                )
+                flash(
+                    "There was a problem uploading the cover image. Try again?", "error"
+                )
+                post.cover = ""
 
         if issubclass(post_class, RevisionMixin):
             post.new_revision(old_body)
