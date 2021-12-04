@@ -35,7 +35,6 @@ dependencies = [
     "pillow~=8.4",
 ]
 requires-python = ">=3.8"
-dynamic = ["classifiers"]
 license = {text = "N/A"}
 
 [project.urls]
@@ -55,8 +54,7 @@ dev = [
     "coverage~=6.1",
     "factory-boy~=3.2",
     "pytest~=6.2",
-    "pylint~=2.11",
-]
+    "pylint~=2.11"]
 
 [[tool.pdm.source]]
 name = "pypi"

@@ -491,6 +491,7 @@ var PostForm = function(form) {
 
     // Initialize EasyMDE on the body
     this.editor = new EasyMDE({
+        'autoDownloadFontAwesome': false,
         'element': this.body[0],
         'spellChecker': true,
         'toolbar': [
@@ -559,8 +560,24 @@ var PostForm = function(form) {
                         notify('Review copied to clipboard.', 'success');
                     }
                 },
-                className: 'fa fa-copy',
+                className: 'fab fa-goodreads',
                 title: 'Copy for Goodreads'
+            },
+            {
+                name: 'copy-for-sg',
+                action: function (editor) {
+                    let handle = document.getElementById('handle').value;
+                    let text = editor.markdown(editor.value());
+                    text = text.replace('<head></head><body>', '').replace('</body>', '').replaceAll('<p>', '').replaceAll('</p>', '<br><br>');
+                    text = text += 'Originally posted at <a href="https://kara.reviews/' + handle + '/">Kara.Reviews</a>.';
+                    console.log(text);
+                    let blob = new Blob([text], {type: "text/html"});
+                    navigator.clipboard.write([new ClipboardItem({ ["text/html"]: blob })]).then(() => {
+                        notify('Review copied to clipboard.', 'success');
+                    });
+                },
+                icon: '<img src="/assets/images/icons/storygraph.png" width="25" style="cursor: pointer; vertical-align: bottom;">',
+                title: 'Copy for StoryGraph'
             }
         ]
     });
