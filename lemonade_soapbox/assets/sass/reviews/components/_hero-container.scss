@@ -6,40 +6,40 @@
  */
 
 .hero-container {
-  margin: vr(3) 0 vr(4);
+  display: flex;
+  flex-flow: row wrap;
+  align-items: flex-start;
+  justify-content: center;
+  margin: vr(2) 0;
   padding: vr(0.5);
   flex: 1 0 100%;
 
   .hero:not(:only-of-type) {
-    margin: vr(2) auto;
+    margin: vr(0.5);
+  }
+
+  .action {
+    text-align: center;
   }
 }
 
 @include mq($from: tablet) {
   .hero-container {
-    display: flex;
-    flex-flow: row wrap;
-    align-items: flex-start;
-    justify-content: center;
-    margin: vr(1) vr(2);
+    margin: vr(2) vr(1);
 
     border-top: 6px solid var(--blue-400);
     border-radius: $global-radius;
     box-shadow: 0 4px 6px alpha("grey", "500", "0.25");
 
     > .hero:not(:only-of-type) {
-      margin: 0 vr(1);
-    }
-
-    .action {
-      text-align: center;
+      margin: vr(1);
     }
   }
 }
 
 @include mq($from: desktop) {
   .hero-container {
-    margin: vr(3) 0;
+    margin: vr(2) 0;
     border: none;
     box-shadow: none;
   }

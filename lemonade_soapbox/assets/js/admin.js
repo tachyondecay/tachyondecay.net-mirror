@@ -230,13 +230,11 @@ function BackendInit() {
         new MagnificentUpload(v);
     });
 
-    // Automatically strip GR Review ID from URL
-    $('.js-gr').change(function(e) {
-        const gr_id_regex = /^[a-z\./\:]+([0-9]+)$/i;
-        var matches = $(this).val().match(gr_id_regex);
-        if(matches) {
-            $(this).val(matches[1]);
-        }
+    // Automatically grab GR or StoryGraph Review ID from URL
+    Array.from(document.getElementsByClassName('js-review-id')).forEach(elem => {
+        elem.addEventListener('change', e => {
+            e.target.value = e.target.value.split('/').slice(-1);
+        });
     });
 
     $('#dates_read').on('apply.daterangepicker', function(e, picker) {

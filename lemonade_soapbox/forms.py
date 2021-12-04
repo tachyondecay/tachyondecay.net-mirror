@@ -213,6 +213,7 @@ class ReviewForm(ModelForm):
             'title',
             'book_id',
             'goodreads_id',
+            'storygraph_id',
             'cover',
             'rating',
             'spoilers',
@@ -226,6 +227,7 @@ class ReviewForm(ModelForm):
     date_published = DateTimeLocalField(
         'Published', format='%Y-%M-%D %H:%m', validators=[validators.Optional()]
     )
+    book_id = StringField('ISBN', filters=[lambda x: x.strip()])
     goodreads_id = IntegerField(widget=TextInput(), validators=[validators.Optional()])
     cover = FileField(
         validators=[FileAllowed(['jpg', 'jpeg', 'png', 'gif']), validators.Optional()]

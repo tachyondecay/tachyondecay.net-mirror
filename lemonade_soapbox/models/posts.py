@@ -766,6 +766,7 @@ class Review(Post, RevisionMixin):
     date_started = db.Column(ArrowType(timezone=True))
     date_finished = db.Column(ArrowType(timezone=True))
     goodreads_id = db.Column(db.String)
+    storygraph_id = db.Column(db.String)
     rating = db.Column(db.Integer, info={'min': 0, 'max': 5}, default=0)
     spoilers = db.Column(db.Boolean, default=False)
 

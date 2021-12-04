@@ -695,8 +695,10 @@ label, legend {
 .button:focus, .button active {
   box-shadow: inset 2px 2px 5px hsla(320, 8%, 55%, 0.75);
 }
-.button > img {
+.button > img:not(:only-child) {
   margin-right: 5px;
+}
+.button > img {
   max-height: 1.5rem;
   vertical-align: text-bottom;
 }
@@ -704,7 +706,7 @@ label, legend {
   background-image: url("/assets/images/icons/sprite--ffffff.svg");
   background-repeat: none;
   height: 1em;
-  margin: 0.25em 0.25em 0 0;
+  margin: 0.25em 0.25em;
 }
 
 .button.-red-900 {
@@ -1115,35 +1117,35 @@ label, legend {
  * 
  */
 .hero-container {
-  margin: 4.2rem 0 5.6rem;
+  display: flex;
+  flex-flow: row wrap;
+  align-items: flex-start;
+  justify-content: center;
+  margin: 2.8rem 0;
   padding: 0.7rem;
   flex: 1 0 100%;
 }
 .hero-container .hero:not(:only-of-type) {
-  margin: 2.8rem auto;
+  margin: 0.7rem;
+}
+.hero-container .action {
+  text-align: center;
 }
 
 @media (min-width: 46.25em) {
   .hero-container {
-    display: flex;
-    flex-flow: row wrap;
-    align-items: flex-start;
-    justify-content: center;
-    margin: 1.4rem 2.8rem;
+    margin: 2.8rem 1.4rem;
     border-top: 6px solid var(--blue-400);
     border-radius: 5px;
     box-shadow: 0 4px 6px hsla(320, 8%, 55%, 0.25);
   }
   .hero-container > .hero:not(:only-of-type) {
-    margin: 0 1.4rem;
-  }
-  .hero-container .action {
-    text-align: center;
+    margin: 1.4rem;
   }
 }
 @media (min-width: 61.25em) {
   .hero-container {
-    margin: 4.2rem 0;
+    margin: 2.8rem 0;
     border: none;
     box-shadow: none;
   }

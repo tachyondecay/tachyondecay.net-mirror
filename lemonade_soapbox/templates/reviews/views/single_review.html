@@ -115,23 +115,27 @@
             </p>
         </div>
 
-        {% if review.goodreads_id %}
         <div class="hero -purple">
             <h3 class="heading">Let me know what you think</h3>
+
             <p class="action">
-                <a class="button -purple" target="_blank" href="https://www.goodreads.com/review/show/{{ review.goodreads_id }}"><span class="icon i--bubble"></span> Like/comment on Goodreads</a>
+                <a class="button -purple" title="Talk to me on Twitter" target="_blank" href="https://twitter.com/intent/tweet?text={{'@tachyondecay '|urlencode}}"><span class="icon i--twitter"></span></a>
+                <a class="button -purple" title="Email me" target="_blank" href="mailto:kara@tachyondecay.net{{('?subject=Your review of ' ~ review.short_title ~ '&body=Hi Kara!')|urlencode}}"><span class="icon i--envelop"></span></a>
+
+            {% if review.goodreads_id %}
+                <a class="button -purple" title="Like/comment on Goodreads" target="_blank" href="https://www.goodreads.com/review/show/{{ review.goodreads_id }}"><img src="{{ url_for("static", filename="images/icons/goodreads_white.png") }}" alt="Goodreads Logo"></a>
+            {% endif %}
+
+            {% if review.storygraph_id %}
+                <a class="button -purple" title="Read this review on The StoryGraph" target="_blank" href="https://app.thestorygraph.com/reviews/{{ review.storygraph_id }}"><img src="{{ url_for("static", filename="images/icons/storygraph_white.png") }}" alt="StoryGraph Logo"></a>
             </p>
-            <p class="action">
-                <a class="button -purple" target="_blank" href="https://twitter.com/intent/tweet?text={{'@tachyondecay '|urlencode}}"><span class="icon i--twitter" title="Talk to me on Twitter"></span> Tweet</a>
-                <a class="button -purple" target="_blank" href="mailto:kara@tachyondecay.net{{('?subject=Your review of ' ~ review.short_title ~ '&body=Hi Kara!')|urlencode}}"><span class="icon i--envelop" title="Email me"></span> Email</a>
-            </p>
+            {%  endif %}
         </div>
-        {% endif %}
 
         <div class="hero -red">
             <h3 class="heading">Enjoying my reviews?</h3>
             <p class="action">
-            <a class="button -red" target="_blank" href="https://www.buymeacoffee.com/karababcock"><img src="https://cdn.buymeacoffee.com/buttons/bmc-new-btn-logo.svg" alt="Tip me">Buy me a tea</a>
+            <a class="button -red" target="_blank" href="https://www.buymeacoffee.com/karababcock"><img src="https://cdn.buymeacoffee.com/buttons/bmc-new-btn-logo.svg" alt="Tip me"><span>Buy me a tea</span></a>
             </p>
         </div>
     </section>

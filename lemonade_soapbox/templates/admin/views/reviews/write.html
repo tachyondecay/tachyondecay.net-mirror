@@ -63,7 +63,11 @@
     </div>
 
     <div class="form-field -span">
-        {{ render_field(form.goodreads_id, {'class': 'textinput -blend js-gr', 'autocomplete': 'off' }, label='Goodreads Review') }}
+        {{ render_field(form.goodreads_id, {'class': 'textinput -blend js-review-id', 'autocomplete': 'off' }, label='Goodreads Review') }}
+    </div>
+
+    <div class="form-field -span">
+        {{ render_field(form.storygraph_id, {'class': 'textinput -blend js-review-id', 'autocomplete': 'off' }, label='Storygraph Review') }}
     </div>
 
     <div class="form-field -span">
