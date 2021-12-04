@@ -8,21 +8,28 @@ import pytest
 from flask_login import current_user
 from sqlalchemy.orm.util import was_deleted
 
-from lemonade_soapbox.models import Article, Review
-from tests.factories import ArticleFactory, ReviewFactory, TagFactory
+from lemonade_soapbox.models.posts import Article, List, Review, RevisionMixin
+from tests.factories import ArticleFactory, ListFactory, ReviewFactory, TagFactory
 
 pytestmark = pytest.mark.usefixtures("db")
+post_types = {
+    Article: "blog",
+    List: "lists",
+    Review: "reviews",
+}
 
 
-@pytest.fixture(params=[ArticleFactory, ReviewFactory])
+@pytest.fixture(params=[ArticleFactory, ListFactory, ReviewFactory])
 def post(db, request, signin):
     """For testing various cases with the edit_post endpoint."""
     # Create the post and generate a new revision
     post = request.param(title="Hello World", body="Test post here")
 
-    old_body = post.body
-    post.body = "This is a replacement body text."
-    post.new_revision(old_body)
+    # Create a new revision if the post type supports this
+    if issubclass(request.param._meta.model, RevisionMixin):
+        old_body = post.body
+        post.body = "This is a replacement body text."
+        post.new_revision(old_body)
 
     # This is required to make sure the Revision objects work properly
     db.session.add(post)
@@ -31,34 +38,17 @@ def post(db, request, signin):
 
     yield post
 
-    # Article might have been deleted in the test
-    if post in db.session:
-        db.session.delete(post)
-        db.session.commit()
-
 
 @pytest.fixture
-def post_type(post):
-    """Determines post_type parameter for edit_post tests."""
-    return "blog" if post.post_type == "article" else "reviews"
-
-
-@pytest.fixture
-def cover_dir(app):
+def cover_dir(app, post):
     """Creates a temporary directory for covers."""
 
-    def _make_dir(post_type):
-        _cover_dir = (
-            app.instance_path
-            / "media"
-            / ("article" if post_type == "blog" else "review")
-            / "covers"
-        )
-        _cover_dir.mkdir(parents=True)
-        yield _cover_dir
-        shutil.rmtree(_cover_dir)
+    _cover_dir = app.instance_path / "media" / post.post_type / "covers"
+    _cover_dir.mkdir(parents=True)
+    yield _cover_dir
+    shutil.rmtree(_cover_dir)
 
-    yield _make_dir
+    # yield _make_dir
 
 
 def test_protected_routes(client):
@@ -69,6 +59,8 @@ def test_protected_routes(client):
         "/tags/",
         "/blog/",
         "/blog/write/",
+        "/lists/",
+        "/lists/write/",
         "/reviews/",
         "/reviews/write/",
     ]
@@ -78,12 +70,15 @@ def test_protected_routes(client):
         assert resp.location.startswith("http://main.test/meta/signin/")
 
 
-@pytest.mark.parametrize("post_type", ["blog", "reviews"])
-def test_posts_index(client, post_type, signin):
+@pytest.mark.parametrize(
+    "factory",
+    [ArticleFactory, ListFactory, ReviewFactory],
+)
+def test_posts_index(client, factory, signin):
     """Test the /meta/blog/ and /meta/reviews/ views."""
-    factory = ArticleFactory if post_type == "blog" else ReviewFactory
     posts = factory.create_batch(51)
     posts.sort(key=lambda a: a.date_published, reverse=True)
+    post_type = post_types[posts[0].__class__]
 
     # Test pagination and default sort/filter parameters
     resp = client.get(f"http://main.test/meta/{post_type}/?page=2")
@@ -109,11 +104,12 @@ def test_edit_post_type_not_specified(client, signin):
     assert resp.status_code == 404
 
 
-def test_edit_post_new(client, db, post_type, signin):
+@pytest.mark.parametrize("post_class", [Article, List, Review])
+def test_edit_post_new(client, db, post_class, signin):
     """Test that starting a brand new article works as expectd."""
+    post_type = post_types[post_class]
     resp = client.get(f"http://main.test/meta/{post_type}/write/")
     assert resp.status_code == 200
-    assert b"Writing a new" in resp.data
 
     resp = client.post(
         f"http://main.test/meta/{post_type}/write/",
@@ -121,31 +117,35 @@ def test_edit_post_new(client, db, post_type, signin):
             "body": "A new beginning.",
             "book_author": "Nobody",
             "dates_read": "2010/05/08 - 2010/05/09",
+            "owner": "kara.reviews",
             "publish": "yes",
             "title": "A Fresh Article",
         },
     )
     assert resp.status_code == 302
-    post = Article if post_type == "blog" else Review
-    post = post.query.filter_by(title="A Fresh Article").first()
+    post = post_class.query.filter_by(title="A Fresh Article").first()
     assert post is not None
     db.session.delete(post)
     db.session.commit()
 
 
-def test_edit_post_fetch_by_id(client, post, post_type, signin):
+def test_edit_post_fetch_by_id(client, post, signin):
     """Test displaying a post to edit by ID."""
+    post_type = post_types[post.__class__]
     resp = client.get(f"http://main.test/meta/{post_type}/write/{post.id}/")
     assert resp.status_code == 200
     assert any(
         phrase in resp.data.decode()
         for phrase in ["Editing “Hello World”", "Editing review of"]
     )
-    assert b"This is a replacement body text." in resp.data
+    assert post.body in resp.data.decode()
 
 
-def test_edit_post_fetch_by_revision(client, post, post_type, signin):
+def test_edit_post_fetch_by_revision(client, post, signin):
     """Fetch by old revision ID and check that the old body is present."""
+    if not issubclass(post.__class__, RevisionMixin):
+        return
+    post_type = post_types[post.__class__]
     old_revision = post.revisions[0].id
     resp = client.get(f"http://main.test/meta/{post_type}/write/{old_revision}/")
     assert resp.status_code == 200
@@ -156,19 +156,22 @@ def test_edit_post_fetch_by_revision(client, post, post_type, signin):
     assert resp.status_code == 404
 
 
-def test_edit_post_errors(client, post, post_type, signin):
+def test_edit_post_errors(client, post, signin):
     """Test editing an post with no errors."""
     data = {}
 
     # Submit form with no errors
-    resp = client.post(f"http://main.test/meta/{post_type}/write/{post.id}/", data=data)
+    resp = client.post(
+        f"http://main.test/meta/{post_types[post.__class__]}/write/{post.id}/",
+        data=data,
+    )
     assert resp.status_code == 200
     assert (
         b"You need to fix a few things before you can save your changes." in resp.data
     )
 
 
-def test_edit_post_no_errors(client, post, post_type, signin):
+def test_edit_post_no_errors(client, post, signin):
     """Test editing a post with no errors."""
     data = {
         "body": "Edited body text",
@@ -178,12 +181,15 @@ def test_edit_post_no_errors(client, post, post_type, signin):
     }
 
     # Submit form with no errors
-    resp = client.post(f"http://main.test/meta/{post_type}/write/{post.id}/", data=data)
+    resp = client.post(
+        f"http://main.test/meta/{post_types[post.__class__]}/write/{post.id}/",
+        data=data,
+    )
     assert resp.status_code == 302
     assert post.body == "Edited body text"
 
 
-def test_edit_post_upload_cover(client, cover_dir, db, post, post_type, signin):
+def test_edit_post_upload_cover(client, db, post, cover_dir, signin):
     """Test uploading a cover."""
     data = {
         "body": "Edited body text",
@@ -193,7 +199,8 @@ def test_edit_post_upload_cover(client, cover_dir, db, post, post_type, signin):
         "title": post.title,
     }
 
-    cover_dir(post_type)
+    post_type = post_types[post.__class__]
+    # cover_dir(post.post_type)
     data["cover"] = (
         io.BytesIO(
             base64.b64decode(
@@ -229,7 +236,7 @@ def test_edit_post_upload_cover(client, cover_dir, db, post, post_type, signin):
     assert post.cover == ""
 
 
-def test_edit_post_remove_cover(app, cover_dir, client, db, post, post_type, signin):
+def test_edit_post_remove_cover(app, cover_dir, client, db, post, signin):
     """Test removing a cover."""
     data = {
         "body": "Edited body text",
@@ -238,17 +245,7 @@ def test_edit_post_remove_cover(app, cover_dir, client, db, post, post_type, sig
         "remove_cover": "yes",
         "title": post.title,
     }
-    cover_dir(post_type)
-
-    # First, trigger an error
-    post.cover = "hey.jpg"
-    resp = client.post(
-        f"http://main.test/meta/{post_type}/write/{post.id}/",
-        data=data,
-        content_type="multipart/form-data",
-        follow_redirects=True,
-    )
-    assert b"Could not delete cover image." in resp.data
+    post_type = post_types[post.__class__]
 
     # Create a fake cover image file to be deleted
     open(
@@ -263,7 +260,7 @@ def test_edit_post_remove_cover(app, cover_dir, client, db, post, post_type, sig
     assert post.cover == ""
 
 
-def test_edit_post_pasted_cover(client, cover_dir, db, post, post_type, signin):
+def test_edit_post_pasted_cover(client, cover_dir, db, post, signin):
     """Test uploading a cover via pasted image data."""
     data = {
         "body": "Edited body text",
@@ -273,14 +270,16 @@ def test_edit_post_pasted_cover(client, cover_dir, db, post, post_type, signin):
         "title": post.title,
     }
 
-    cover_dir(post_type)
-    resp = client.post(f"http://main.test/meta/{post_type}/write/{post.id}/", data=data)
+    resp = client.post(
+        f"http://main.test/meta/{post_types[post.__class__]}/write/{post.id}/",
+        data=data,
+    )
     assert resp.status_code == 302
     db.session.refresh(post)
     assert post.cover == f"{post.id}-{post.handle}-cover.jpg"
 
 
-def test_edit_post_delete(client, db, post, post_type, signin):
+def test_edit_post_delete(client, db, post, signin):
     """Test deleting article."""
     data = {
         "body": "Edited body text",
@@ -289,6 +288,7 @@ def test_edit_post_delete(client, db, post, post_type, signin):
         "delete": "yes",
         "title": post.title,
     }
+    post_type = post_types[post.__class__]
     resp = client.post(f"http://main.test/meta/{post_type}/write/{post.id}/", data=data)
     assert resp.status_code == 302
     # db.session.refresh(post)
@@ -300,7 +300,7 @@ def test_edit_post_delete(client, db, post, post_type, signin):
     assert was_deleted(post)
 
 
-def test_edit_post_unpublish(client, post, post_type, signin):
+def test_edit_post_unpublish(client, post, signin):
     """Test unpublishing an article."""
     data = {
         "body": "Edited body text",
@@ -309,7 +309,10 @@ def test_edit_post_unpublish(client, post, post_type, signin):
         "drafts": "yes",
         "title": post.title,
     }
-    resp = client.post(f"http://main.test/meta/{post_type}/write/{post.id}/", data=data)
+    resp = client.post(
+        f"http://main.test/meta/{post_types[post.__class__]}/write/{post.id}/",
+        data=data,
+    )
     assert resp.status_code == 302
     assert post.status == "draft"
 
@@ -322,6 +325,7 @@ def test_index(client, signin):
 
     resp = client.get("http://main.test/meta/")
     assert resp.status_code == 200
+    print(resp.data.decode())
     assert b"<strong>23</strong>" in resp.data
     assert b"<strong>15</strong>" in resp.data
     assert draft.title.encode() in resp.data

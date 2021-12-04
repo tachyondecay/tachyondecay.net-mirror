@@ -273,11 +273,8 @@ def edit_post(post_type, id, revision_id):
 
     form = globals()[f"{post_class.__name__}Form"](obj=post)
     if form.validate_on_submit():
-        message = ''
-        message_category = 'success'
-        redirect_url = None
         # Save a copy of the original body before we overwrite it
-        old_body = post.body
+        old_content = post.body
 
         if not form.handle.data or (
             form.handle.data != post.handle and not post.unique_check(form.handle.data)
@@ -289,83 +286,38 @@ def edit_post(post_type, id, revision_id):
 
         #
         # Cover image uploading
-        uploaded_cover = None
-        # First, check if we are removing a cover
-        if post.cover and (
-            form.remove_cover.data or (post.status == 'deleted' and form.delete.data)
-        ):
-            try:
-                file = (
-                    current_app.instance_path
-                    / "media"
-                    / post.post_type
-                    / "covers"
-                    / post.cover
-                )
-                file.unlink()
-                post.cover = ""
-                current_app.logger.info(f"Removed cover from {post}")
-            except Exception as e:
-                current_app.logger.warning(
-                    f"Could not delete cover image for {post}: {e}"
-                )
-                flash("Could not delete cover image.", "error")
-        elif form.pasted_cover.data:  # This must come before next condition
-            current_app.logger.debug("We pasted")
+        cover_data = None
+        if form.pasted_cover.data:  # This must come before next condition
             # Remove the data prefix on the binary image data
-            uploaded_cover = BytesIO(
-                base64.b64decode(form.pasted_cover.data.split(",")[1])
-            )
+            cover_data = BytesIO(base64.b64decode(form.pasted_cover.data.split(",")[1]))
         elif form.cover.data:
-            current_app.logger.debug("We uploaded")
-            uploaded_cover = request.files.get(form.cover.name)
-            current_app.logger.debug(form.cover.data)
-        if uploaded_cover:
-            try:
-                post.process_cover(uploaded_cover)
-            except Exception as e:
-                current_app.logger.warning(
-                    f"Could not upload cover image for {post}: {e}."
-                )
-                flash(
-                    "There was a problem uploading the cover image. Try again?", "error"
-                )
-                post.cover = ""
+            cover_data = request.files.get(form.cover.name)
 
-        if issubclass(post_class, RevisionMixin):
-            post.new_revision(old_body)
+        if form.delete.data:
+            # Delete post
+            message = post.save(action="deleted")
+            db.session.commit()
+            flash(message, "removed")
+            return redirect(url_for("." + post_type))
+
+        action = "saved"
         if form.publish.data:
-            message = post.publish_post()
-        else:
-            message = post.update_post()
-            if form.delete.data:
-                if post.status == 'deleted':
-                    # Permanently deleting post
-                    post.status = 'removed'
-                    db.session.delete(post)
-                    # Need to do this to avoid SQLAlchemy RACE condition
-                    if issubclass(post_class, RevisionMixin):
-                        db.session.delete(post.selected_revision)
-                    message = f'{post.post_type.capitalize()} permanently deleted.'
-                    redirect_url = url_for(f".{post_type}")
-                else:
-                    post.status = 'deleted'
-                    message = f'{post.post_type.capitalize()} moved to the trash.'
-                message_category = 'removed'
-            elif form.drafts.data:
-                post.status = 'draft'
-                post.date_published = None
-                message = f'{post.post_type.capitalize()} moved to drafts.'
-        if post.status != 'removed':
-            db.session.add(post)
-        db.session.commit()
-        flash(message, message_category)
-        return redirect(
-            redirect_url or url_for('.edit_post', id=post.id, post_type=post_type)
+            action = "published"
+        elif form.drafts.data:
+            action = "draft"
+
+        message = post.save(
+            action=action,
+            old_content=old_content,
+            remove_cover=form.remove_cover.data,
+            cover_data=cover_data,
         )
+        db.session.commit()
+        flash(message, "success")
+        return redirect(url_for(".edit_post", id=post.id, post_type=post_type))
     if form.errors:
         current_app.logger.debug(form.errors)
-        flash('You need to fix a few things before you can save your changes.', 'error')
+        flash("You need to fix a few things before you can save your changes.", "error")
 
     return render_template(
         f'admin/views/{post_type}/write.html', post=post, form=form, post_type=post_type

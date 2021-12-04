@@ -3,12 +3,12 @@ from uuid import uuid4
 
 import arrow
 from diff_match_patch import diff_match_patch
-from flask import current_app, Markup, url_for
+from flask import current_app, flash, Markup, url_for
 from flask_login import current_user
 from markdown import markdown
 from PIL import Image
 from slugify import slugify
-from sqlalchemy import asc, desc, event, func
+from sqlalchemy import asc, desc, event, func, orm
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.declarative import declared_attr
@@ -548,8 +548,17 @@ class Post(AuthorMixin, UniqueHandleMixin, TagMixin, Searchable, db.Model):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.cover_path = (
+            current_app.instance_path / "media" / self.post_type / "covers"
+        )
         if not self.status:
             self.status = 'draft'
+
+    @orm.reconstructor
+    def __db_init__(self, **kwargs):
+        self.cover_path = (
+            current_app.instance_path / "media" / self.post_type / "covers"
+        )
 
     @classmethod
     def published(cls):
@@ -558,40 +567,78 @@ class Post(AuthorMixin, UniqueHandleMixin, TagMixin, Searchable, db.Model):
             (cls.status == 'published') & (cls.date_published <= arrow.utcnow())
         )
 
-    def process_cover(self, img_data):
+    def process_cover(self, img_data=None):
         """Save a new cover image for this post."""
+        if not img_data:
+            return
         cover_name = f"{self.id}-{self.handle}-cover.jpg"
-        cover_path = (
-            current_app.instance_path / "media" / self.post_type / "covers" / cover_name
-        )
 
         with Image.open(img_data) as img:
             # Save image as JPEG regardless of original file type
             if img.mode in ("RGBA", "LA", "P"):
                 img = img.convert("RGB")
-            img.save(cover_path)
+            img.save(self.cover_path / cover_name)
         self.cover = cover_name
 
-    def publish_post(self):
-        """Set a post's status to "published" and set date published if null."""
-        self.status = 'published'
-        self.date_updated = arrow.utcnow()
-        timing = ''
-        if not self.date_published:
-            self.date_published = arrow.utcnow()
-            timing = 'just now'
-        elif self.date_published > arrow.utcnow():
-            timing = self.date_published.humanize()
-        current_app.logger.info(f"{self} published at {self.date_published}")
-        return f'{self.post_type.capitalize()} published {timing}. <a href="{self.get_permalink()}">View live version</a>.'
+    def save(
+        self, action="saved", old_content=None, remove_cover=False, cover_data=None
+    ):
+        """Update various attributes of a post when it is being saved to the db."""
+        if action == "deleted" and self.status == "deleted":
+            # Permanently delete post from database
+            self.status = "removed"
 
-    def update_post(self):
-        """Save changes to a post without altering its publication status."""
+            # Remove cover
+            if self.cover:
+                (self.cover_path / self.cover).unlink(missing_ok=True)
+
+            db.session.delete(self)
+            # Need to do this to avoid SQLAlchemy RACE condition
+            if issubclass(self.__class__, RevisionMixin):
+                db.session.delete(self.selected_revision)
+            current_app.logger.info(f"{self} {action}")
+            return f"{self.post_type.capitalize()} permanently deleted."
+
         self.date_updated = arrow.utcnow()
-        current_app.logger.info(f"{self} updated at {self.date_updated}")
-        message = f"{self.post_type.capitalize()} saved."
-        if self.status == "published":
-            message += f' <a href="{self.get_permalink()}">View {self.post_type}.</a>'
+        self.status = self.status if action == "saved" else action
+
+        # Generate a new Revision if applicable
+        if issubclass(self.__class__, RevisionMixin) and old_content:
+            with db.session.no_autoflush:
+                self.new_revision(old_content)
+
+        # Remove cover if desired
+        if remove_cover and self.cover:
+            (self.cover_path / self.cover).unlink(missing_ok=True)
+            self.cover = ""
+        else:
+            try:
+                self.process_cover(cover_data)
+            except Exception as e:
+                current_app.logger.warning(
+                    f"Could not upload cover image for {self}: {e}."
+                )
+                flash(
+                    "There was a problem uploading the cover image. Try again?", "error"
+                )
+                self.cover = ""
+
+        message = f"{self.post_type.capitalize()} {action}"
+        if action == "draft":
+            self.date_published = None
+            message = f"{self.post_type.capitalize()} moved to drafts."
+        if action == "published":
+            if self.date_published:
+                # Convert publication date to relative time, e.g., "in 1 day"
+                message += f" {self.date_published.humanize()}."
+            else:
+                # If no publication date was set, publish immediately.
+                self.date_published = self.date_updated
+                message += " just now."
+
+        # Add instance to session but the caller will handle committing
+        db.session.add(self)
+        current_app.logger.info(f"{self} {action} at {self.date_updated}")
         return message
 
     def schema_filters(self):
@@ -863,6 +910,44 @@ class List(Post):
         """Generate an edit link for this post."""
         return url_for("admin.edit_post", post_type="lists", id=self.id)
 
+    def process_cover(self, img_data=None):
+        """
+        Update various attributes of a list when it is being saved to the db.
+        This is overridden to provide logic specific to generating list covers.
+        """
+        if img_data:
+            super().process_cover(img_data)
+        elif not self.cover:
+            current_app.logger.debug("Generating cover")
+            if len(self.items) == 1:
+                # There is only one item in the list, so its cover is the cover image
+                self.cover = self.items[0].post.cover
+            elif len(self.items) > 1:
+                # There are multiple items in the list, so generate a cover
+                input_imgs = []
+                for item in self.items:
+                    if item.post.cover:
+                        try:
+                            current_app.logger.debug(f"Opening cover for {item.post}")
+                            img = Image.open(item.post.cover_path / item.post.cover)
+                        except FileNotFoundError:
+                            current_app.logger.debug("Cover image not found")
+                            continue
+                        if img.height != 400:
+                            current_app.logger.debug(f"Resizing cover from {item.post}")
+                            img.resize((round((img.width / img.height) * 400), 400))
+                        input_imgs.append(img)
+                cover_width = min(1200, sum([img.width for img in input_imgs]))
+                if cover_width:
+                    new_cover = Image.new("RGB", (cover_width, 400))
+                    x_dist = 0
+                    current_app.logger.debug("Generating now...")
+                    for img in input_imgs:
+                        new_cover.paste(img, (x_dist, 0))
+                        x_dist += img.width
+                    self.cover = f"{self.id}-{self.handle}-cover.jpg"
+                    new_cover.save(self.cover_path / self.cover)
+
 
 class ListItem(db.Model):
     """Association object that links posts to a list."""
@@ -886,7 +971,7 @@ class ListItem(db.Model):
         ),
         foreign_keys=list_id,
     )
-    post = db.relationship("Post", backref="_lists")
+    post = db.relationship("Post", backref="_lists", foreign_keys=post_id)
     position = db.Column(db.Integer)
     blurb = db.Column(db.Text)
 

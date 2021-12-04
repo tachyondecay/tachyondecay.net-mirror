@@ -1,15 +1,19 @@
 from datetime import datetime, timezone
+from random import randint
 from factory import (
+    BUILD_STRATEGY,
     Faker,
     LazyAttribute,
+    make_factory,
     post_generation,
     SelfAttribute,
     Sequence,
+    SubFactory,
 )
 from factory.alchemy import SQLAlchemyModelFactory
 from factory.fuzzy import FuzzyDateTime, FuzzyInteger
 from lemonade_soapbox import db
-from lemonade_soapbox.models import Article, Review, Revision, Tag
+from lemonade_soapbox.models import Article, List, ListItem, Review, Revision, Tag
 
 
 class ModelFactory(SQLAlchemyModelFactory):
@@ -41,16 +45,16 @@ class PostFactory(ModelFactory):
 
 class RevisionMixinFactory(ModelFactory):
     @post_generation
-    def revisions(obj, create, extracted, **kwargs):
+    def revisions(self, create, extracted, **kwargs):
         if not create:
             return
         if extracted:
-            obj.revisions = extracted
+            self.revisions = extracted
         else:
-            r = Revision(obj, new=obj.body, old='')
-            obj.revisions.append(r)
-            obj.current_revision_id = r.id
-            obj.selected_revision = r
+            r = Revision(self, new=self.body, old='')
+            self.revisions.append(r)
+            self.current_revision_id = r.id
+            self.selected_revision = r
 
 
 class ArticleFactory(PostFactory, RevisionMixinFactory):
@@ -80,3 +84,28 @@ class ReviewFactory(PostFactory, RevisionMixinFactory):
     goodreads_id = FuzzyInteger(100000, 10000000)
     rating = FuzzyInteger(0, 5)
     spoilers = False
+
+
+class ListItemFactory(ModelFactory):
+    class Meta:
+        model = ListItem
+
+    post = SubFactory(ReviewFactory)
+    position = Sequence(lambda n: n)
+    blurb = Faker("paragraph")
+
+
+class ListFactory(PostFactory):
+    class Meta:
+        model = List
+
+    owner = "kara.reviews"
+
+    @post_generation
+    def items(self, create, extracted, **kwargs):
+        if not create:
+            return
+        if extracted:
+            self.items = extracted
+        else:
+            self.items = ListItemFactory.build_batch(randint(1, 10))

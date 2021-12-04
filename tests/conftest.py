@@ -4,7 +4,7 @@ from pathlib import Path
 
 from lemonade_soapbox import db as _db
 from lemonade_soapbox.create_app import create_app
-from lemonade_soapbox.models import User
+from lemonade_soapbox.models import Article, List, Review, User
 
 
 @pytest.fixture(scope="session")
@@ -47,6 +47,11 @@ def db():
     """
     yield _db
     _db.session.remove()
+
+    # Clean up any posts that were committed to the db
+    for post in [Article, List, Review]:
+        _db.session.execute(_db.delete(post))
+    _db.session.commit()
 
 
 @pytest.fixture(scope="module")

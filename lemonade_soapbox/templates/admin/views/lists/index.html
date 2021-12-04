@@ -12,7 +12,7 @@
 
 {% block result_item %}
                 <h3 class="title"><a href="{{ url_for('.edit_post', id=post.id, post_type='lists') }}" title="Edit review">{{ post.title }}</a></h3>
-                    <img src="/media/review/covers/{{ post.cover }}" alt="" class="cover" />
+                    <img src="/media/list/covers/{{ post.cover }}" alt="" class="cover" />
 
                     <ul class="tags _inline-list">
                     {% for t in post._tags|sort(attribute='handle') %}

@@ -140,7 +140,7 @@ class ArticleForm(ModelForm):
     )
     tags = TagListField('Tags')
     publish = SubmitField('Publish', widget=ButtonWidget())
-    save = SubmitField('Save', widget=ButtonWidget())
+    update = SubmitField('Save', widget=ButtonWidget())
     delete = SubmitField('Delete', widget=ButtonWidget())
     drafts = SubmitField('Unpublish', widget=ButtonWidget())
     cover = FileField(
@@ -186,7 +186,7 @@ class ListForm(ArticleForm):
 
     items = ModelFieldList(ModelFormField(ListItemForm))
     owner = SelectField(
-        'Owner', choices=["tachyondecay.net", "kara.reviews"], default="kara.reviews"
+        'Owner', choices=["kara.reviews", "tachyondecay.net"], default="kara.reviews"
     )
 
 
@@ -251,7 +251,7 @@ class ReviewForm(ModelForm):
     )
     tags = TagListField('Shelves')
     publish = SubmitField('Publish', widget=ButtonWidget())
-    save = SubmitField('Save', widget=ButtonWidget())
+    update = SubmitField('Save', widget=ButtonWidget())
     delete = SubmitField('Delete', widget=ButtonWidget())
     drafts = SubmitField('Unpublish', widget=ButtonWidget())
 

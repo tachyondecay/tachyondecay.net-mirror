@@ -18,7 +18,7 @@
     <div class="postform-title">
         <div class="titlefield">{% block field__title %}{% endblock %}</div>
         <div class="actions">
-            {{ form.save(class='_button -positive', icon_after='floppy-disk') }}
+            {{ form.update(class='_button -positive', icon_after='floppy-disk') }}
             {% if post.status != 'published' and post.status != 'deleted' %}
             {{ form.publish(class='_button -important', icon_after='earth') }}
             {% endif %}
