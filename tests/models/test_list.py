@@ -24,6 +24,7 @@ def test_generate_cover_one_cover(app):
     r = ReviewFactory()
     l = ListFactory(cover="", items=[ListItemFactory(post=r)])
     l.save()
+    l.process_cover()
     assert l.cover == r.cover
 
 
@@ -38,5 +39,6 @@ def test_generate_cover(cover_dir):
     reviews.append(ReviewFactory())
     l = ListFactory(cover="", items=[ListItemFactory(post=r) for r in reviews])
     l.save()
+    l.process_cover()
     assert l.cover == f"{l.id}-{l.handle}-cover.jpg"
     assert (l.cover_path / l.cover).is_file()

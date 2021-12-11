@@ -284,15 +284,6 @@ def edit_post(post_type, id, revision_id):
         else:
             form.populate_obj(post)
 
-        #
-        # Cover image uploading
-        cover_data = None
-        if form.pasted_cover.data:  # This must come before next condition
-            # Remove the data prefix on the binary image data
-            cover_data = BytesIO(base64.b64decode(form.pasted_cover.data.split(",")[1]))
-        elif form.cover.data:
-            cover_data = request.files.get(form.cover.name)
-
         if form.delete.data:
             # Delete post
             message = post.save(action="deleted")
@@ -309,10 +300,37 @@ def edit_post(post_type, id, revision_id):
         message = post.save(
             action=action,
             old_content=old_content,
-            remove_cover=form.remove_cover.data,
-            cover_data=cover_data,
         )
+
+        #
+        # Cover image uploading
+        cover_data = None
+        if form.pasted_cover.data:  # This must come before next condition
+            # Remove the data prefix on the binary image data
+            cover_data = BytesIO(base64.b64decode(form.pasted_cover.data.split(",")[1]))
+        elif form.cover.data:
+            cover_data = request.files.get(form.cover.name)
+
+        # Remove cover if desired
+        if form.remove_cover.data and post.cover:
+            (post.cover_path / post.cover).unlink(missing_ok=True)
+            post.cover = ""
+        else:
+            try:
+                if not post.id:
+                    db.session.flush()
+                post.process_cover(cover_data)
+            except Exception as e:
+                current_app.logger.warning(
+                    f"Could not upload cover image for {post}: {e}."
+                )
+                flash(
+                    "There was a problem uploading the cover image. Try again?", "error"
+                )
+                post.cover = ""
+
         db.session.commit()
+
         flash(message, "success")
         return redirect(url_for(".edit_post", id=post.id, post_type=post_type))
     if form.errors:

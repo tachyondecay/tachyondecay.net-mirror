@@ -580,9 +580,7 @@ class Post(AuthorMixin, UniqueHandleMixin, TagMixin, Searchable, db.Model):
             img.save(self.cover_path / cover_name)
         self.cover = cover_name
 
-    def save(
-        self, action="saved", old_content=None, remove_cover=False, cover_data=None
-    ):
+    def save(self, action="saved", old_content=None):
         """Update various attributes of a post when it is being saved to the db."""
         if action == "deleted" and self.status == "deleted":
             # Permanently delete post from database
@@ -606,22 +604,6 @@ class Post(AuthorMixin, UniqueHandleMixin, TagMixin, Searchable, db.Model):
         if issubclass(self.__class__, RevisionMixin) and old_content:
             with db.session.no_autoflush:
                 self.new_revision(old_content)
-
-        # Remove cover if desired
-        if remove_cover and self.cover:
-            (self.cover_path / self.cover).unlink(missing_ok=True)
-            self.cover = ""
-        else:
-            try:
-                self.process_cover(cover_data)
-            except Exception as e:
-                current_app.logger.warning(
-                    f"Could not upload cover image for {self}: {e}."
-                )
-                flash(
-                    "There was a problem uploading the cover image. Try again?", "error"
-                )
-                self.cover = ""
 
         message = f"{self.post_type.capitalize()} {action}"
         if action == "draft":
