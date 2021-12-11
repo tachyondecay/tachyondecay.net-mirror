@@ -98,6 +98,11 @@
     align-items: center;
     flex: 2;
     order: 2;
+
+    .form-field & {
+      order: initial;
+      margin-bottom: var(--unit);
+    }
   }
 
   @include mq($from: desktop) {

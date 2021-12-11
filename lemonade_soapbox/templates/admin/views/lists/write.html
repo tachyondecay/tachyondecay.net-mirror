@@ -15,24 +15,6 @@
 
     <div class="form-field">
         <label>List Items</label>
-    	<ol class="results-list js-sortable">
-            {% for item in post.items %}
-                <li class="result-item -{{ item.post.post_type }}{{ ' -has-cover' if item.post.cover }}">
-                    {{ form.items[loop.index0].list_id }}
-                    {{ form.items[loop.index0].post_id }}
-                    {{ form.items[loop.index0].position }}
-                    {{ form.items[loop.index0].remove(value='') }}
-                    {% if item.post.cover %}
-                    <img src="/media/{{ item.post.post_type }}/covers/{{ item.post.cover }}" alt="" class="cover" />
-                    {% endif %}
-                    <div class="title -cutoff">
-                        <a href="{{ item.post.get_editlink() }}" target="_blank">{{ item.post.title }}</a>
-                        <button class="_button -micro -ghost" title="Remove post from list"><span class="i--bin icon"></span></button>
-                    </div>
-                    {{ form.items[loop.index0].blurb(class="summary", placeholder="Add blurb…") }}
-                </li>
-            {% endfor %}
-        </ol>
         <div class="quick-search">
             <input type="text" class="quicksearch" id="quicksearch" placeholder="Add post to list…" autocomplete="off">
             <div class="results"></div>
@@ -57,6 +39,25 @@
                 <textarea class="summary" name="items-<% num %>-blurb" placeholder="Add blurb…"></textarea>
             </li>
         </script>
+
+        <ol class="results-list js-sortable">
+            {% for item in post.items %}
+                <li class="result-item -{{ item.post.post_type }}{{ ' -has-cover' if item.post.cover }}">
+                    {{ form.items[loop.index0].list_id }}
+                    {{ form.items[loop.index0].post_id }}
+                    {{ form.items[loop.index0].position }}
+                    {{ form.items[loop.index0].remove(value='') }}
+                    {% if item.post.cover %}
+                    <img src="/media/{{ item.post.post_type }}/covers/{{ item.post.cover }}" alt="" class="cover" />
+                    {% endif %}
+                    <div class="title -cutoff">
+                        <a href="{{ item.post.get_editlink() }}" target="_blank">{{ item.post.title }}</a>
+                        <button class="_button -micro -ghost" title="Remove post from list"><span class="i--bin icon"></span></button>
+                    </div>
+                    {{ form.items[loop.index0].blurb(class="summary", placeholder="Add blurb…") }}
+                </li>
+            {% endfor %}
+        </ol>
     </div>
 {% endblock post_contents %}
 

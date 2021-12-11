@@ -336,6 +336,9 @@ function BackendInit() {
                     title: e.target.innerText,
                     type: parent.dataset.postType
                 });
+
+                quicksearch.value = "";
+                container.classList.remove('-display');
             }
         });
 

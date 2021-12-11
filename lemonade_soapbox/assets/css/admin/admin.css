@@ -2134,6 +2134,10 @@ input[type=time] {
     flex: 2;
     order: 2;
   }
+  .form-field .quick-search {
+    order: initial;
+    margin-bottom: var(--unit);
+  }
 }
 @media (min-width: 61.25em) {
   .quick-search {
