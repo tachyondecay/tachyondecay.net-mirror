@@ -64,7 +64,7 @@
         <p class="mt-4">
         {% if review.status == "published" -%}
                 Reviewed {{ time(review.date_published, 'MMMM D, YYYY') }}
-                {% if true or review.show_updated -%}
+                {% if review.show_updated -%}
                     and last updated {{ time(review.date_updated, 'MMMM D, YYYY') }}
                 {%- endif %}.
         {% else %}
