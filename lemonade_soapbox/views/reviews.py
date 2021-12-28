@@ -138,7 +138,7 @@ def search():
     if q:
         search_params = {
             'pagenum': page,
-            'pagelen': 50,
+            'pagelen': 20,
             'filter': whoosh_term(
                 'status', 'published'
             ),  # Only return published reviews
@@ -156,7 +156,7 @@ def search():
             reviews = Pagination(
                 None,
                 page=page,
-                per_page=50,
+                per_page=20,
                 total=results['total'],
                 items=results['query'].all(),
             )
@@ -219,7 +219,7 @@ def show_tag(handle, format=None):
             mimetype='application/' + format + '+xml',
         )
 
-    reviews = reviews.paginate(page=page, per_page=50)
+    reviews = reviews.paginate(page=page, per_page=20)
     filename = 'susan-yin-2JIvboGLeho-unsplash.jpg'
     if Path(
         current_app.static_folder, 'images/layout/header_bg', f"{handle}.jpg"
