@@ -7,27 +7,27 @@
 {{ pagetitle(title="My Bookshelves", cover=url_for('.static', filename='images/layout/header_bg/bookshelves.jpg'), description="Come on into my library, browse my shelves—I’m sure you’ll find something to your liking.")}}
 
 <main>
-    <div class="sortby">
-        <p>Sort my shelves  
+    <div class="p-3 mt-12 text-lg text-center">
+        <p>Sort shelves  
         {% if sort_by != 'alphabetical' %}
-            <a href="?sort=alphabetical">alphabetically</a> 
+            <a href="?sort=alphabetical" class="border-b-2 border-red-900 hover:border-pink-700 focus:border-pink-700">alphabetically</a> 
         {% else %}
             <strong>alphabetically</strong>
         {% endif %}
         | 
         {% if sort_by != 'frequency' %}
-        <a href="?sort=frequency">by number of books</a>
+        <a href="?sort=frequency" class="border-b-2 border-red-900 hover:border-pink-700 focus:border-pink-700">by number of books</a>
         {% else %}
             <strong>by number of books</strong>
         {% endif %}
         </p>
 
         {% if shelves and sort_by != 'frequency' %}
-        <div class="jumplinks">
+        <div class="mt-6">
             Jump to: 
-            <ul class="list">
+            <ul class="flex flex-wrap justify-center">
             {% for letter, shelves in shelves|groupby("0.handle.0") %}
-                <li><a href="#letter-{{ letter }}">{{ letter.upper() }}</a></li>
+                <li><a class="block p-1 mt-2 mr-4 border-b-2 border-red-900 hover:border-pink-700 focus:border-pink-700" href="#letter-{{ letter }}">{{ letter.upper() }}</a></li>
             {% endfor %}
             </ul>
         </div>
@@ -35,29 +35,30 @@
     </div>
 
     {% if shelves %}
-    <div class="shelf-list">
         {% if sort_by == 'frequency' %}
-            <ul class="list -frequency">
+            <ul class="flex flex-wrap justify-center mx-auto mt-12 lg:max-w-4xl">
             {% for shelf in shelves|sort(attribute="1", reverse=True)|weight %}
                 <li>
-                    <a href="{{ url_for('.show_tag', handle=shelf[0].handle) }}" class="button -red" style="--weight: {{ shelf[2] }}">{{ shelf[0].label }}</span>
-                    <span class="count">({{ shelf[1] }})</span></a>
+                    <a href="{{ url_for('.show_tag', handle=shelf[0].handle) }}" class="block mt-3 mr-2 p-3 lg:mt-6 lg:mr-4 tracking-wide rounded-md shadow-md transition-all duration-300 lg:leading-5 hover:bg-red-700 active:relative active:top-px active:left-px active:bg-red-600 bg-red-700/75 text-marble-50 shadow-marble-800/50 hover:text-marble-50 focus:bg-red-00 focus:text-marble-50 active:text-marble-50 text-[length:calc(var(--weight)*1.5rem)]" style="--weight: {{ shelf[2] }}">{{ shelf[0].label }}</span>
+                    <span class="text-marble-100">({{ shelf[1] }})</span></a>
                 </li>
             {% endfor %}
             </ul>
         {% else %}
+
+        <div class="pt-12 mt-12 sm:items-start sm:border-t lg:container lg:mx-auto border-marble-200 sm:columns-2 md:columns-3">
             {% for letter, shelf_list in shelves|groupby("0.handle.0") %}
-            <div class="shelf" id="letter-{{ letter }}">
-                <h2 class="letter"><span>{{ letter.upper() }}</span></h2>
-                <ul class="list">
+            <div class="mb-12 break-inside-avoid-column" id="letter-{{ letter }}">
+                <h2 class="text-center"><span class="inline-block pb-3 w-12 bg-[url('/assets/images/icons/open-book.svg')] bg-bottom bg-no-repeat bg-[length:2em_auto] text-3xl font-bold text-center">{{ letter.upper() }}</span></h2>
+                <ul class="text-center">
                 {% for shelf in shelf_list %}
-                    <li><a class="button -red" href="{{ url_for('.show_tag', handle=shelf[0].handle) }}" title="{{ shelf[1] }} books shelved">{{ shelf[0].label }}</a></li>
+                    <li><a class="underline" href="{{ url_for('.show_tag', handle=shelf[0].handle) }}" title="{{ shelf[1] }} books shelved">{{ shelf[0].label }}</a></li>
                 {% endfor %}
                 </ul>
             </div>
             {% endfor %}
+        </div>
         {% endif %}
-    </div>
     {% endif %}
 </main>
 {% endblock body_main %}

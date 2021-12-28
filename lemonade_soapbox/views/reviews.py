@@ -85,8 +85,7 @@ def index():
     )
     return render_template(
         'reviews/index.html',
-        fiction=fiction,
-        non_fiction=non_fiction,
+        reviews=(("Fiction", fiction), ("Non-Fiction", non_fiction)),
         total_reviews=g.total,
     )
 

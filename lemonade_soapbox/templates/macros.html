@@ -12,7 +12,7 @@
     {% set trimmed = content|truncate_html(length) %}
     {{ trimmed }}
     {% if link and trimmed|length < content|length %}
-    <p class="u-text-center"><a class="c-btn more" href="{{ url }}">Read more…</a></p>
+    <a class="underline" href="{{ url }}">Read more…</a>
     {% endif %}
 {% endmacro %}
 
@@ -54,7 +54,7 @@
 {% macro render_pagination(pagination) %}
   {% set query_args = request.args.to_dict(false) %}
   {% set update = query_args.update(request.view_args) %}
-  <div class="pagination-links">
+  <nav class="pagination-links" aria-label="Pagination">
   {%- for page in pagination.iter_pages() %}
     {% if page %}
       {% if page != pagination.page %}
@@ -67,24 +67,15 @@
       <span class="ellipsis">…</span>
     {% endif %}
   {%- endfor %}
-  </div>
+  </nav>
 {% endmacro %}
 
-{% macro pagetitle(title, cover='', description='', class='') %}
-<div class="page-title header {{ class }}" style="--cover-src: url('{{ cover }}');">
-    <h2 class="title">{{ title }}</h2>
+{% macro pagetitle(title, cover='', description='', class='', heading='h1', subheading='p') %}
+<div class="px-3 py-16 bg-coverimg from-marble-900/75 to-marble-900/70 lg:h-screen lg:pt-[45vh] lg:relative lg:z-20 {{ class }}" style="--cover-src: url('{{ cover }}');">
+    <{{ heading }} class="text-2xl font-bold lg:mx-auto lg:max-w-[55rem] xl:max-w-[54rem] lg:text-3xl xl:text-5xl text-marble-100">{{ title }}</{{ heading }}>
     {% if description %}
-    <p class="description">{{ description|safe }}</p>
+    <{{ subheading }} class="mt-6 text-lg lg:mx-auto lg:mt-3 lg:max-w-[55rem] xl:max-w-[54rem] lg:text-xl xl:text-3xl text-marble-200">{{ description|safe }}</{{ subheading }}>
     {% endif %}
-</div>
-{% endmacro %}
-
-{% macro search(class='') %}
-<div class="site-search {{ class }}">
-    <form action="{{ url_for('reviews.search') }}">
-        <input type="search" class="textinput" name="q" placeholder="Search reviews…" value="{{ request.args.get('q', '') }}">
-        <button type="submit" value="Go" title="Search"><span class="i--search"></span></button>
-    </form>
 </div>
 {% endmacro %}
 
@@ -103,12 +94,12 @@
 
 
 {% macro toc(links) %}
-<nav class="sidebar-aside" aria-label="Table of Contents">
-    <h3 class="heading">On this page…</h3>
+<nav class="px-6 my-12 group lg:px-0" aria-label="Table of Contents">
+    <h2 class="sidebar-heading">On this page…</h2>
 
-    <ol class="list">
+    <ol class="ml-3">
         {% for id, text in links.items() %}
-        <li><a href="#{{id}}" class="navlink">{{ text }}</a>
+        <li><a href="#{{id}}" class="inline-block py-2 pl-3 w-full border-l lg:py-1 hover:border-pink-700 focus:border-pink-700 border-marble-200 motion-safe:hover:border-l-2 motion-safe:hover:pl-4 motion-safe:focus:border-l-2 motion-safe:focus:pl-4">{{ text }}</a>
         {% endfor %}
     </ol>
 </nav>

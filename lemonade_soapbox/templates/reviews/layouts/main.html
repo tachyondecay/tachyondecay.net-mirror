@@ -1,6 +1,5 @@
-{% from 'macros.html' import search %}
 <!doctype html>
-<html>
+<html class="lg:text-lg xl:text-xl bg-marble-50 text-marble-700 scroll-pt-10" lang="en">
     <head>
         <title>{% block page_title %}{{ page_title }} | Kara.Reviews{% endblock %}</title>
 
@@ -15,7 +14,7 @@
         <meta property="og:url" content="{{ request.base_url }}" />
         <meta property="og:type" content="website">
         <meta property="og:title" content="{{ self.page_title() }} | Kara.Reviews" />
-        <meta property="og:description" content="12 years. {{ g.total }} reviews. And I keep on reading." >
+        <meta property="og:description" content="13 years. {{ g.total }} reviews. And I keep on reading." >
         <meta property="og:image" content="{{ url_for('.static', filename='images/kara.reviews-logo-alternate_white.png', _external=True) }}">
         <meta property="og:image:width" content="955">
         <meta property="og:image:height" content="500">
@@ -24,7 +23,7 @@
 
         <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,700;1,400&family=Oswald:wght@300;400;700&display=swap" rel="stylesheet">
         {% block styles %}
-        <link rel="stylesheet" href="{{ url_for('.static', filename='css/reviews/reviews.css') }}"/>
+        <link rel="stylesheet" href="{{ url_for('.static', filename='css/reviews.css') }}"/>
         {% endblock %}
 
         {% block scripts %}
@@ -41,34 +40,43 @@
         <link rel="manifest" href="{{ url_for('.static', filename='kara.reviews/site.webmanifest') }}">
     </head>
     <body class="{% block body_classes %}{%endblock body_classes %}">
-    <div class="sticky-jumplinks">
-        <span class="title">{{ self.page_title() }}</span>
+    <div class="flex sticky top-0 z-10 justify-center items-center px-8 h-10 bg-red-900 shadow-md md:justify-between shadow-marble-600/50">
+        <div class="hidden mr-4 md:block md:overflow-hidden md:flex-1 md:text-red-50 md:whitespace-nowrap md:text-ellipsis">{{ self.page_title() }}</div>
         <div class="links">
-            <a href="#top" title="Jump to top of page">Start</a>
-            <a href="#colophon" title="Jump to footer">End</a>
+            <a class="text-red-50 mr-8 before:content-['⬆']" href="#top" title="Jump to top of page">Start</a>
+            <a class="text-red-50 after:content-['⬇']" href="#colophon" title="Jump to footer">End</a>
         </div>
     </div>
     {% block body_main %}
-        <header class="site-title" id="top">
+        <header class="border-t-8 border-red-900 lg:flex lg:absolute lg:top-0 lg:right-0 lg:left-0 lg:z-30 lg:px-11 lg:pt-6 lg:pb-4 lg:text-lg lg:bg-neutral-50" id="top">
             {% block navigation %}
-            <nav class="site-navigation -header" aria-label="Primary Site Navigation">
-                {{ search(class="-nav") }}
+            <nav class="flex flex-col -mt-[2.1rem] pb-3 relative z-20 bg-marble-100 md:bg-neutral-50 md:flex-row md:items-end md:pt-6 lg:p-0 lg:grow-[2] lg:shrink lg:basis-auto lg:bg-transparent" aria-label="Primary Site Navigation">
+                <div class="site-search flex md:flex-1 md:basis-1/5 md:ml-6 border-b border-marble-500 md:border-b-0 md:rounded-md shadow-md shadow-marble-200/25 lg:grow-[3] lg:ml-6 lg:mr-3">
+                    <form action="{{ url_for('.search') }}" class="contents">
+                        <input type="search" class="peer grow-[3] p-3 opacity-50 transition-all duration-300 focus:opacity-100 focus:ring-inset focus:ring-yellow-500 border-0 text-violet-800 md:rounded-l-lg" name="q" placeholder="Search reviews…" value="{{ request.args.get('q', '') }}">
+                        <button type="submit" value="Go" title="Search" class="text-center transition-all md:rounded-r-lg duration-600 basis-20 bg-marble-50 text-marble-400 peer-focus:bg-yellow-600/20 peer-focus:text-yellow-600 md:grow-0 md:shrink md:basis-10 hover:bg-yellow-600/20">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
+  <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+</svg>
+                        </button>
+                    </form>
+                </div>
 
-                <ul>
+                <ul role="list" class="flex flex-wrap justify-around items-center my-3 md:flex-auto md:justify-end md:my-0 md:mr-3">
                     {% for link in sitenav %}
-                    <li>
-                        <a class="navlink{{ ' -active' if request.endpoint == link[1] }}" href="{{ url_for(link[1]) }}" title="{{ link[2] }}">{{ link[0] }}</a>
+                    <li class="m-3 md:my-0">
+                        <a class="border-b-2 uppercase lg:text-sm{{ ' border-amber-600 text-amber-600' if request.endpoint == link[1] else ' border-red-900  hover:border-pink-700  focus:border-pink-700' }} " href="{{ url_for(link[1]) }}" title="{{ link[2] }}">{{ link[0] }}</a>
                     </li>
                     {% endfor %}
                 </ul>
 
-                <a href="#colophon" class="navlink -jumplink">Jump to End</a>
+                <a href="#colophon" class="inline-block flex-1 mx-auto text-xs after:content-['↴'] border-b-2 uppercase border-red-900 md:mx-3  hover:border-pink-700  focus:border-pink-700">Jump to End</a>
             </nav>
             {% endblock navigation %}
 
-            <h1 class="title">
+            <h1 class="my-6 sm:text-center lg:order-first lg:m-0 lg:flex-0 lg:grow-0 lg:shrink-0 lg:basis-auto">
                 <a href="/">
-                    <img class="logo" src="{{ url_for('.static', filename='images/kara.reviews-logo.png') }}" alt="Kara.Reviews">
+                    <img class="max-w-full max-h-[20vmax] mx-auto lg:max-h-12" src="{{ url_for('.static', filename='images/kara.reviews-logo.png') }}" alt="Kara.Reviews">
                 </a>
             </h1>
 
@@ -77,41 +85,39 @@
     {% endblock body_main %}
 
     {% block body_footer %}
-        <footer class="page-colophon" id="colophon">
-            <h2 class="_hide">Colophon</h2>
+        <footer class="mt-24 md:mt-36 p-3 bg-marble-100 border-b-[6px] border-b-red-900 lg:bg-transparent lg:p-0" id="colophon">
+            <h2 class="sr-only">Colophon</h2>
 
             {% block newsletter %}
-            <div class="hero-container">
-                <div class="hero -gold">
+            <div class="my-12 sm:my-6 lg:mx-auto lg:max-w-2xl lg:rounded-b-lg lg:border-t-8 lg:border-yellow-500 lg:shadow-md lg:shadow-marble-600/50">
                 <form action="https://tinyletter.com/karababcock" method="post" target="_blank">
                     <input type="hidden" value="1" name="embed"/>
 
-                    <h3 class="heading">Want my reviews in your inbox?</h3>
+                    <h3 class="px-3 mt-6 text-2xl font-bold lg:px-6">Want my reviews in your inbox?</h3>
 
-                    <p>Subscribe to my occasional newsletter! Every month or so, you’ll receive a digest email of my latest reviews and a brief bookish thought or two.</p>
-                    <div class="form-field">
-                        <label for="tlemail">Enter your email address</label>
-                        <input type="text" class="textinput" name="email" id="tlemail" />
-                        <button type="submit" class="button -gold" value="Subscribe">Subscribe</button>
+                    <p class="px-3 mt-3 font-serif lg:px-6">Subscribe to my occasional newsletter! Every month or so, you’ll receive a digest email of my latest reviews and a brief bookish thought or two.</p>
+                    <div class="flex flex-col px-3 mx-auto mt-12 lg:flex-row lg:flex-wrap lg:justify-center lg:items-baseline">
+                        <label for="newsletter-email" class="sr-only">Enter your email address</label>
+                        <input type="email" class="text-violet-800 rounded-md opacity-50 transition-all duration-300 lg:mr-3 lg:w-96 focus:ring-inset focus:ring-yellow-500 focus:opacity-100" name="email" id="newsletter-email" placeholder="Email address…" />
+                        <button type="submit" class="p-3 mt-1 tracking-wide rounded-md shadow-md transition-all duration-300 lg:leading-5 hover:bg-yellow-600 focus:bg-yellow-600 active:relative active:top-px active:left-px active:bg-amber-500 bg-amber-600/50 text-marble-50 shadow-marble-600/50" value="Subscribe">Subscribe</button>
                     </div>
-                    <p class="_info"><small><a href="https://tinyletter.com" target="_blank">Powered by TinyLetter</a>. Your email will not be used for anything other than this newsletter, nor will I share it with any third parties.</small></p>
+                    <p class="px-6 mt-3 text-right lg:pb-3 text-marble-500"><small><a href="https://tinyletter.com" target="_blank" class="underline text-marble-500">Powered by TinyLetter</a>. Your email will not be used for anything other than this newsletter, nor will I share it with any third parties.</small></p>
                 </form>
-                </div>
-            {% endblock newsletter %}
             </div>
+            {% endblock newsletter %}
 
-            <div class="footer">
-                <nav class="site-navigation -footer" arialabel="Secondary Site Navigation">
-                    <ul>
-                        <li><a href="/about/" class="navlink">About</a></li>
-                        <li><a href="/about/#contact" class="navlink">Contact</a></li>
-                        <li><a href="/about/#review-policy" class="navlink">Review Policy</a></li>
-                        <li><a href="/about/#submissions" class="navlink">Submit a Book for Review</a></li>
+            <div class="sm:mt-20 sm:border-t xl:flex xl:justify-between xl:items-baseline xl:mx-auto sm:border-marble-100">
+                <nav aria-label="Secondary Site Navigation">
+                    <ul role="list" class="flex flex-wrap justify-around items-center my-3 lg:flex-auto lg:justify-end lg:px-12 lg:mt-6 lg:text-xs xl:mt-3 xl:text-2xs">
+                        <li class="m-3 lg:my-0"><a href="/about/" class="uppercase border-b-2 border-red-900 hover:border-pink-700 focus:border-pink-700">About</a></li>
+                        <li class="m-3 lg:my-0"><a href="/about/#contact" class="uppercase border-b-2 border-red-900 hover:border-pink-700 focus:border-pink-700">Contact</a></li>
+                        <li class="m-3 lg:my-0"><a href="/about/#review-policy" class="uppercase border-b-2 border-red-900 hover:border-pink-700 focus:border-pink-700">Review Policy</a></li>
+                        <li class="m-3 lg:my-0"><a href="/about/#submissions" class="uppercase border-b-2 border-red-900 hover:border-pink-700 focus:border-pink-700">Submit a Book for Review</a></li>
                     </ul>
                 </nav>
 
-                <div class="copyright">
-                    Copyright ©2021 <a href="https://tachyondecay.net/">Kara Babcock</a>. All reviews are available under a <a href="https://creativecommons.org/licenses/by-nc/4.0">Creative Commons Attribution–NonCommercial License<img style="height:22px!important;margin-left: 3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg" /><img  style="height:22px!important;margin-left: 3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg" /><img  style="height:22px!important;margin-left: 3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nc.svg" /></a>
+                <div class="mx-auto mt-10 mb-3 text-xs font-normal text-center lg:flex-auto lg:order-first lg:pb-3 xl:px-12 xl:pb-0 xl:mt-3 xl:text-left xl:text-2xs">
+                    Copyright ©2022 <a href="https://tachyondecay.net/" class="underline">Kara Babcock</a>. All reviews are available under a <a href="https://creativecommons.org/licenses/by-nc/4.0" class="underline">Creative Commons Attribution–NonCommercial License<img class="inline mx-px h-3" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg" alt="Creative Commons logo"><img class="inline mx-px h-3" src="https://mirrors.creativecommons.org/presskit/icons/by.svg" alt="Creative Commmons Attribution logo"><img class="inline mx-px h-3" src="https://mirrors.creativecommons.org/presskit/icons/nc.svg" alt="Creative Commons Non-Commercial Logo"></a>
                 </div>
             </div>
 

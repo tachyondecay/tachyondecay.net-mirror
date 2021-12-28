@@ -3,71 +3,69 @@
 
 {% block page_title %}Kara.Reviews All the Books{% endblock %}
 
-{% block body_classes %}homepage{% endblock body_classes %}
-
-{% block styles %}
-{{ super() }}
-<link href="{{ url_for('.static', filename='css/reviews/homepage.css')}}" rel="stylesheet">
-{% endblock styles %}
-
 {% block body_main %}
 
 {{ super() }}
 
-{{ pagetitle(title=('13 years. ' ~ total_reviews ~ ' reviews.'), description='Not sure where to start? Check out my latest!', cover=url_for('.static', filename='images/layout/header_bg/my_shelves.jpg'), class='-homepage')}}
+<div class="xl:grid xl:grid-cols-[calc(50vw-40rem)_repeat(2,_1fr)_calc(50vw-40rem)] xl:bg-coverimg xl:from-marble-900/75 xl:to-marble-900/70" style="--cover-src: url('{{ url_for('.static', filename='images/layout/header_bg/my_shelves.jpg') }}')">
+<!-- Begin grid layout -->
 
-<section class="review-hero hero-container">
-    <h2 class="heading">Recent Reviews</h2>
+{{ pagetitle(title=('13 years. ' ~ total_reviews ~ ' reviews.'), description='Not sure where to start? Check out my latest!', cover=url_for('.static', filename='images/layout/header_bg/my_shelves.jpg'), class='xl:bg-none xl:col-start-2 xl:h-auto xl:pt-[30vh] xl:px-6')}}
 
-    {% if fiction %}
-    <div class="hero -red -fiction">
-        <h3 class="subheading">Fiction</h3>
+<section class="mt-12 md:mx-auto md:max-w-lg xl:col-start-3 xl:row-span-2 xl:justify-self-end xl:self-center xl:mx-12 xl:mt-24">
+    <h2 class="sr-only">Recent Reviews</h2>
 
-        {% for review in fiction %}
-        <div class="review">
+    {% for title, books in reviews %}
+    <div class="xl:p-6 xl:pt-3 xl:mt-8 xl:mb-16 xl:rounded-b-lg xl:border-t-8 xl:border-red-900 group xl:bg-marble-50/90 xl:odd:border-pink-900">
+        <h3 class="mt-12 xl:p-0 xl:mt-0 xl:bg-transparent xl:shadow-none sidebar-heading xl:group-even:text-red-900 xl:group-odd:text-pink-900 xl:group-hover:bg-transparent">{{ title }}</h3>
+
+        <div class="flex justify-center space-x-4">
+        {% for review in books %}
+        <div class="relative mt-8 lg:opacity-90 lg:hover:opacity-100 lg:focus-within:opacity-100">
             <a href="{{ review.get_permalink() }}">
             {% if review.cover %}
-                <img src="/media/review/covers/{{ review.cover }}" alt="Cover for {{ review.short_title }}" class="coverimg">
+                <img class="h-40 shadow-md sm:h-52 xl:h-40 shadow-marble-600/50 hover:shadow-marble-600/100 focus:shadow-marble-600/100" src="/media/review/covers/{{ review.cover }}" alt="Cover for {{ review.short_title }}">
             {% else %}
                 {{ review.short_title }}
             {% endif %}
-            <span class="pubdate">{{ time_relative(review.date_published, granularity='day') }}</span>
+            <span class="absolute -top-6 p-1 w-full text-sm text-center uppercase lg:text-xs text-marble-50 group-even:bg-red-900 group-odd:bg-pink-900">{{ time_relative(review.date_published, granularity='day') }}</span>
             </a>
         </div>
         {% endfor %}
-    </div>
-    {% endif %}
-
-    {% if non_fiction %}
-    <div class="hero -purple -nonfiction">
-        <h3 class="subheading">Non-Fiction</h3>
-        {% for review in non_fiction %}
-        <div class="review">
-            <a href="{{ review.get_permalink() }}">
-            {% if review.cover %}
-                <img src="/media/review/covers/{{ review.cover }}" alt="Cover for {{ review.short_title }}" class="coverimg">
-            {% else %}
-                {{ review.short_title }}
-            {% endif %}
-            <span class="pubdate"><time datetime="{{ review.date_published.isoformat() }}">{{ time_relative(review.date_published, granularity='day') }}</time></span>
-            </a>
         </div>
-        {% endfor %}
     </div>
-    {% endif %}
+    {% endfor %}
         
 </section>
 
-<section class="intro _textual">
-    <h2 class="_h3">Hi, I’m Kara Babcock</h2>
-    <p>and I’m a queer girl from Canada who reviews <strong>every book she reads</strong>. In my spare time, I knit and code. <a href="/about/">Read more about me.</a></p>
+<section class="mt-36 lg:mx-auto lg:max-w-2xl xl:contents">
+    <div class="xl:col-start-2 xl:row-start-2 xl:mx-3">
+        <h2 class="mx-3 mt-6 text-2xl font-bold xl:text-marble-50">Hi, I’m Kara Babcock</h2>
+        <p class="px-3 mt-3 font-serif xl:text-xl xl:text-marble-50">and I’m a queer girl from Canada who reviews <strong>every book she reads</strong>. In my spare time, I knit and code. <a class="underline hover:text-pink-300 focus:text-pink-300 xl:text-marble-50" href="/about/">Read more about me.</a></p>
 
-    <h3 class="_h4">On Social Media</h3>
-    <ul class="social-icons">
-        <li><a href="https://twitter.com/tachyondecay"><img src="{{ url_for('.static', filename='images/icons/twitter.png') }}" alt="Twitter"></a></li>
-        <li><a href="https://app.storygraph.com/profile/tachyondecay"><img src="{{ url_for('.static', filename='images/icons/storygraph.png') }}" alt="The StoryGraph"></a></li>
-        <li><a href="https://goodreads.com/tachyondecay"><img src="{{ url_for('.static', filename='images/icons/goodreads.png') }}" alt="Goodreads"></a></li>
-        <li><a href="https://ravelry.com/tachyondecay"><img src="{{ url_for('.static', filename='images/icons/ravelry.png') }}" alt="Ravelry"></a></li>
-    </ul>
+        <h3 class="mx-3 mt-12 text-xl font-bold xl:text-marble-50">Find Me Elsewhere</h3>
+        <ul class="flex flex-wrap justify-around mt-4 xl:justify-start xl:pl-6 xl:space-x-12">
+            <li><a href="https://twitter.com/tachyondecay"><img class="w-12 xl:w-8" src="{{ url_for('.static', filename='images/icons/twitter.png') }}" alt="Twitter"></a></li>
+            <li><a href="https://app.storygraph.com/profile/tachyondecay"><img class="w-12 xl:w-8" src="{{ url_for('.static', filename='images/icons/storygraph.png') }}" alt="The StoryGraph"></a></li>
+            <li><a href="https://goodreads.com/tachyondecay"><img class="w-12 xl:w-8" src="{{ url_for('.static', filename='images/icons/goodreads.png') }}" alt="Goodreads"></a></li>
+            <li><a href="https://ravelry.com/tachyondecay"><img class="w-12 xl:w-8" src="{{ url_for('.static', filename='images/icons/ravelry.png') }}" alt="Ravelry"></a></li>
+            <li><a href="https://github.com/tachyondecay"><img class="w-12 xl:w-8" src="{{ url_for('.static', filename='images/icons/github.png') }}" alt="GitHub"></a></li>
+        </ul>
+    </div>
+
+    <div class="xl:col-span-full xl:row-start-3 xl:[background:linear-gradient(180deg,_rgba(0,0,0,0)_0%,_rgba(248,247,247,0.5)_10%,_rgba(248,247,247,1)_30%,_rgba(248,247,247,1)_100%)]">
+        <h3 class="mx-3 mt-24 text-xl font-bold text-center xl:mx-auto xl:max-w-3xl">If you like my reviews, you’ll <em>love</em> my podcasts!</h3>
+
+        <div class="flex justify-center mt-3 xl:mx-auto xl:mt-6 xl:max-w-4xl">
+            <a class="mx-3 flex-1 max-w-[15rem] opacity-80 hover:opacity-100 focus:opacity-100 shadow-sm shadow-marble-600/50 hover:shadow-marble-600/100 focus:shadow-marble-600/100" href="https://wejustliketotalk.com/" title="We Just Like to Talk — A general-interest show with my best friend">
+                <img class="border border-marble-100" src="{{ url_for('static', filename="images/wejustliketotalk.jpg") }}" alt="We Just Like to Talk logo">
+            </a>
+
+            <a class="mx-3 max-w-[15rem] flex-1 opacity-80 hover:opacity-100 focus:opacity-100 shadow-sm shadow-marble-600/50 hover:shadow-marble-600/100 focus:shadow-marble-600/100" href="https://prophecygirls.ca/" title="Prophecy Girls — A Buffy the Vampire Slayer rewatch podcast">
+                <img src="{{ url_for('static', filename="images/prophecy_girls_logo.png") }}" alt="Prophecy Girls logo">
+            </a>
+        </div>
+    </div>
 </section>
+</div> <!-- end grid layout -->
 {% endblock body_main %}

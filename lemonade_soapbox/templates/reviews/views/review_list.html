@@ -39,12 +39,15 @@
 {% endif %}
 
 {% if reviews and reviews.pages > 1 %}
+    <div class="flex flex-col items-center my-12 md:flex-row md:justify-between md:pb-3 md:mx-10 md:border-b lg:mx-auto lg:max-w-4xl md:border-marble-200">
+        <p>Showing {{ 1 + reviews.per_page * (reviews.page - 1) }} to {{ [reviews.total, reviews.per_page * reviews.page]|min }} of {{ reviews.total }} results</p>
     {{ render_pagination(reviews) }}
+    </div>
 {% endif %}
 
 <main>
 
-<div class="body-notification">
+<div class="mx-auto mt-12 max-w-4xl text-center">
     {% if not reviews %}
     <p>No results found.</p>
     {% endif %}
@@ -55,53 +58,57 @@
 </div>
 
 {% if reviews %}
-<ol class="_bare-list">
+<ol>
     {% for review in reviews.items %}
     <li>
-        <article class="review-preview" data-review-id="{{ review.id }}" data-short-title="{{ review.short_title }}" data-title="{{ review.title }}">
-            <header>
-                <a href="{{ review.get_permalink() }}">
+        <article data-review-id="{{ review.id }}" data-short-title="{{ review.short_title }}" data-title="{{ review.title }}" class="grid grid-cols-[fit-content(25%)_1fr] grid-rows-2 gap-x-4 mt-8 mx-3 sm:mt-16 sm:grid-rows-[repeat(3,_min-content)] sm:gap-x-8 sm:gap-y-2 md:mx-10 xl:mx-auto xl:max-w-4xl lg:grid-cols-[fit-content(25%)_1fr_auto)] lg:gap-y-8 lg:gap-x-2 lg:shadow-md lg:shadow-marble-600/25 lg:rounded-b-lg lg:overflow-hidden lg:border-t-8 lg:border-red-900 group hover:border-pink-600 hover:shadow-marble-600/50 focus-within:border-pink-600 focus-within:shadow-marble-600/50">
+
+            <header class="contents">
+
+                <a href="{{ review.get_permalink() }}" class="row-span-full lg:p-3">
                     {% if review.cover %}
-                    <img src="/media/review/covers/{{ review.cover }}" class="coverimg" alt="Book cover for {{ review.short_title }}" itemprop="image">
+                    <img src="/media/review/covers/{{ review.cover }}" alt="Book cover for {{ review.short_title }}" class="shadow-md lg:h-60 lg:opacity-90 shadow-marble-600/50 group-hover:lg:opacity-100 group-hover:shadow-marble-600/100 group-focus-within:lg:opacity-100 group-focus-within:shadow-marble-600/100">
                     {% endif %}
-                    <h3 class="title"><a href="{{ review.get_permalink() }}">{{ review.title }}</a></h3>
                 </a>
-                <p class="bookauthor">by <a href="{{ url_for('.search', q='book_author:"' ~ review.book_author ~ '"') }}">{{ review.book_author }}</a></p>
+
+                <div>
+                    <h3 class="sm:text-xl lg:pt-3 lg:font-bold"><a href="{{ review.get_permalink() }}">{{ review.title }}</a></h3>
+                    <p class="font-light sm:text-xl">by <a href="{{ url_for('.search', q='book_author:"' ~ review.book_author ~ '"') }}">{{ review.book_author }}</a></p>
+                </div>
+
             </header>
 
-            <footer>
-                <p class="rating">
-                {% if review.rating > 0 %}
-                    <span class="text">{{ review.rating }} out of 5 stars</span>
-                {% else %}
-                    <span class="text">Unrated</span>
-                {% endif %}
-                    <span class="stars" title="{{ review.rating }} out of 5 stars">
-                    {% for star in range(0,5) %}
-                        {% if star < review.rating %}
-                        <i class="star -full"></i>
-                        {% else %}
-                        <i class="star -empty"></i>
-                        {% endif %}
-                    {% endfor %}
+            <footer class="self-end lg:col-start-3 lg:p-3 lg:text-right">
+                <p class="lg:text-xl text-marble-900">
+                    {% if review.rating > 0 %}
+                    <span class="sr-only">
+                        {{ review.rating }} out of 5 stars
                     </span>
+                    {% else %}
+                    <span class="sr-only">Unrated</span>
+                    {% endif %}
+                    {% for star in range(0,5) %}
+                        {{ '★' if star < review.rating else '☆' }}
+                    {% endfor %}
                 </p>
 
-                <p class="pubdate">
-                {% if review.status != "published" or review.show_updated %}
-                    Updated {{ time(review.date_updated, 'MMMM D, YYYY') }} | 
-                {% endif %}
+                <p class="font-light">
                 {% if review.status == "published" %}
                     Reviewed {{ time(review.date_published, 'MMMM D, YYYY') }}
+                {% endif %}
+                {% if review.status != "published" or review.show_updated %}
+                    <small class="block">(Updated {{ time(review.date_updated, 'MMMM D, YYYY') }})</small> 
                 {% endif %}
                 </p>
             </footer>
 
-            <div class="content">
+            <div class="hidden sm:block sm:font-serif lg:col-span-2">
                 {% if review.summary %}
                 <p>{{ review.summary }}</p>
                 {% else %}
+                <div class="sm:max-w-none lg:pr-3 sm:prose sm:prose-marble sm:prose-h2:text-base lg:prose-sm group-hover:prose-p:text-marble-900">
                 {{ review.body_html|truncate_html(read_more_length|default(75)) }}
+                </div>
                 {% endif %}
             </div>
         </article>
@@ -110,7 +117,10 @@
 </ol>
 
 {% if reviews and reviews.pages > 1 %}
+    <div class="flex flex-col items-center my-12 md:flex-row md:justify-between md:pb-3 md:mx-10 md:border-b lg:mx-auto lg:max-w-4xl md:border-marble-200">
+        <p>Showing {{ 1 + reviews.per_page * (reviews.page - 1) }} to {{ [reviews.total, reviews.per_page * reviews.page]|min }} of {{ reviews.total }} results</p>
     {{ render_pagination(reviews) }}
+    </div>
 {% endif %}
 </main>
 {% endif %}
