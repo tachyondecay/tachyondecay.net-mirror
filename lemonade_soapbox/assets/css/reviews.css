@@ -2863,10 +2863,6 @@ small {
     max-width: 32rem;
   }
 
-  .md\:max-w-4xl {
-    max-width: 56rem;
-  }
-
   .md\:flex-1 {
     flex: 1 1 0%;
   }
@@ -3692,6 +3688,10 @@ small {
     margin-bottom: calc(0px * var(--tw-space-y-reverse));
   }
 
+  .lg\:self-start {
+    align-self: flex-start;
+  }
+
   .lg\:overflow-hidden {
     overflow: hidden;
   }
@@ -4024,17 +4024,8 @@ small {
     background-color: transparent;
   }
 
-  .xl\:bg-marble-50 {
-    --tw-bg-opacity: 1;
-    background-color: rgb(248 247 247 / var(--tw-bg-opacity));
-  }
-
   .xl\:bg-none {
     background-image: none;
-  }
-
-  .xl\:bg-gradient-to-b {
-    background-image: linear-gradient(to bottom, var(--tw-gradient-stops));
   }
 
   .xl\:from-marble-900\/75 {
@@ -4042,50 +4033,8 @@ small {
     --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgb(28 23 26 / 0));
   }
 
-  .xl\:from-transparent {
-    --tw-gradient-from: transparent;
-    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgb(0 0 0 / 0));
-  }
-
-  .xl\:from-marble-50\/0 {
-    --tw-gradient-from: rgb(248 247 247 / 0);
-    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgb(248 247 247 / 0));
-  }
-
-  .xl\:via-marble-50\/25 {
-    --tw-gradient-stops: var(--tw-gradient-from), rgb(248 247 247 / 0.25), var(--tw-gradient-to, rgb(248 247 247 / 0));
-  }
-
-  .xl\:via-marble-50\/50 {
-    --tw-gradient-stops: var(--tw-gradient-from), rgb(248 247 247 / 0.5), var(--tw-gradient-to, rgb(248 247 247 / 0));
-  }
-
-  .xl\:via-marble-50\/75 {
-    --tw-gradient-stops: var(--tw-gradient-from), rgb(248 247 247 / 0.75), var(--tw-gradient-to, rgb(248 247 247 / 0));
-  }
-
-  .xl\:via-marble-50\/90 {
-    --tw-gradient-stops: var(--tw-gradient-from), rgb(248 247 247 / 0.9), var(--tw-gradient-to, rgb(248 247 247 / 0));
-  }
-
-  .xl\:via-marble-50\/95 {
-    --tw-gradient-stops: var(--tw-gradient-from), rgb(248 247 247 / 0.95), var(--tw-gradient-to, rgb(248 247 247 / 0));
-  }
-
-  .xl\:via-marble-50\/80 {
-    --tw-gradient-stops: var(--tw-gradient-from), rgb(248 247 247 / 0.8), var(--tw-gradient-to, rgb(248 247 247 / 0));
-  }
-
-  .xl\:via-marble-50 {
-    --tw-gradient-stops: var(--tw-gradient-from), #F8F7F7, var(--tw-gradient-to, rgb(248 247 247 / 0));
-  }
-
   .xl\:to-marble-900\/70 {
     --tw-gradient-to: rgb(28 23 26 / 0.7);
-  }
-
-  .xl\:to-marble-50 {
-    --tw-gradient-to: #F8F7F7;
   }
 
   .xl\:p-6 {
@@ -4150,31 +4099,6 @@ small {
     color: rgb(248 247 247 / var(--tw-text-opacity));
   }
 
-  .xl\:text-marble-100 {
-    --tw-text-opacity: 1;
-    color: rgb(230 229 230 / var(--tw-text-opacity));
-  }
-
-  .xl\:text-marble-400 {
-    --tw-text-opacity: 1;
-    color: rgb(160 146 155 / var(--tw-text-opacity));
-  }
-
-  .xl\:text-marble-800 {
-    --tw-text-opacity: 1;
-    color: rgb(61 52 58 / var(--tw-text-opacity));
-  }
-
-  .xl\:text-marble-500 {
-    --tw-text-opacity: 1;
-    color: rgb(149 131 143 / var(--tw-text-opacity));
-  }
-
-  .xl\:text-marble-300 {
-    --tw-text-opacity: 1;
-    color: rgb(177 169 175 / var(--tw-text-opacity));
-  }
-
   .xl\:shadow-none {
     --tw-shadow: 0 0 #0000;
     --tw-shadow-colored: 0 0 #0000;
@@ -4203,38 +4127,6 @@ small {
     .xl\:bg-coverimg {
       background-attachment: fixed;
     }
-  }
-
-  .xl\:\[background\:linear-gradient\(180deg\2c _rgba\(0\2c 0\2c 0\2c 0\)_0\%\2c _rgba\(248\2c 247\2c 247\2c 1\)_6\%\2c _rgba\(248\2c 247\2c 247\2c 1\)_100\%\)\] {
-    background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(248,247,247,1) 6%, rgba(248,247,247,1) 100%);
-  }
-
-  .xl\:\[background\:linear-gradient\(180deg\2c _rgba\(0\2c 0\2c 0\2c 0\)_0\%\2c _rgba\(248\2c 247\2c 247\2c 50\)_6\%\2c _rgba\(248\2c 247\2c 247\2c 1\)_100\%\)\] {
-    background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(248,247,247,50) 6%, rgba(248,247,247,1) 100%);
-  }
-
-  .xl\:\[background\:linear-gradient\(180deg\2c _rgba\(0\2c 0\2c 0\2c 0\)_0\%\2c _rgba\(248\2c 247\2c 247\2c 0\.5\)_6\%\2c _rgba\(248\2c 247\2c 247\2c 1\)_100\%\)\] {
-    background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(248,247,247,0.5) 6%, rgba(248,247,247,1) 100%);
-  }
-
-  .xl\:\[background\:linear-gradient\(180deg\2c _rgba\(0\2c 0\2c 0\2c 0\)_0\%\2c _rgba\(248\2c 247\2c 247\2c 0\.5\)_10\%\2c _rgba\(248\2c 247\2c 247\2c 1\)_20\%_rgba\(248\2c 247\2c 247\2c 1\)_100\%\)\] {
-    background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(248,247,247,0.5) 10%, rgba(248,247,247,1) 20% rgba(248,247,247,1) 100%);
-  }
-
-  .xl\:\[background\:linear-gradient\(180deg\2c _rgba\(0\2c 0\2c 0\2c 0\)_0\%\2c _rgba\(248\2c 247\2c 247\2c 0\.5\)_10\%\2c _rgba\(248\2c 247\2c 247\2c 1\)_20\%\2c _rgba\(248\2c 247\2c 247\2c 1\)_100\%\)\] {
-    background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(248,247,247,0.5) 10%, rgba(248,247,247,1) 20%, rgba(248,247,247,1) 100%);
-  }
-
-  .xl\:\[background\:linear-gradient\(180deg\2c _rgba\(0\2c 0\2c 0\2c 0\)_0\%\2c _rgba\(248\2c 247\2c 247\2c 0\.5\)_6\%\2c _rgba\(248\2c 247\2c 247\2c 1\)_20\%\2c _rgba\(248\2c 247\2c 247\2c 1\)_100\%\)\] {
-    background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(248,247,247,0.5) 6%, rgba(248,247,247,1) 20%, rgba(248,247,247,1) 100%);
-  }
-
-  .xl\:\[background\:linear-gradient\(180deg\2c _rgba\(0\2c 0\2c 0\2c 0\)_0\%\2c _rgba\(248\2c 247\2c 247\2c 0\.5\)_6\%\2c _rgba\(248\2c 247\2c 247\2c 1\)_15\%\2c _rgba\(248\2c 247\2c 247\2c 1\)_100\%\)\] {
-    background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(248,247,247,0.5) 6%, rgba(248,247,247,1) 15%, rgba(248,247,247,1) 100%);
-  }
-
-  .xl\:\[background\:linear-gradient\(180deg\2c _rgba\(0\2c 0\2c 0\2c 0\)_0\%\2c _rgba\(248\2c 247\2c 247\2c 0\.5\)_6\%\2c _rgba\(248\2c 247\2c 247\2c 1\)_30\%\2c _rgba\(248\2c 247\2c 247\2c 1\)_100\%\)\] {
-    background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(248,247,247,0.5) 6%, rgba(248,247,247,1) 30%, rgba(248,247,247,1) 100%);
   }
 
   .xl\:\[background\:linear-gradient\(180deg\2c _rgba\(0\2c 0\2c 0\2c 0\)_0\%\2c _rgba\(248\2c 247\2c 247\2c 0\.5\)_10\%\2c _rgba\(248\2c 247\2c 247\2c 1\)_30\%\2c _rgba\(248\2c 247\2c 247\2c 1\)_100\%\)\] {
