@@ -2266,6 +2266,19 @@ small {
   color: rgb(28 23 26 / var(--tw-text-opacity));
 }
 
+.prose-img\:mx-auto :is(:where(img):not(:where([class~="not-prose"] *))) {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.prose-img\:max-h-\[50vw\] :is(:where(img):not(:where([class~="not-prose"] *))) {
+  max-height: 50vw;
+}
+
+.prose-img\:max-h-\[50vh\] :is(:where(img):not(:where([class~="not-prose"] *))) {
+  max-height: 50vh;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .motion-safe\:hover\:border-l-2:hover {
     border-left-width: 2px;

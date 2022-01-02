@@ -90,7 +90,7 @@
             </header>
 
             <div class="sm:block sm:font-serif">
-                <div class="sm:max-w-none md:pb-3 lg:pr-3 prose prose-slate prose-sm sm:prose-h2:text-base lg:prose-base group-hover:prose-p:text-slate-900">
+                <div class="sm:max-w-none md:pb-3 lg:pr-3 prose prose-slate prose-sm prose-img:max-h-[50vh] prose-img:mx-auto sm:prose-h2:text-base lg:prose-base group-hover:prose-p:text-slate-900">
                 {{ article.summary or article.body_html|truncate_html(read_more_length|default(75)) }}
                 </div>
             </div>             

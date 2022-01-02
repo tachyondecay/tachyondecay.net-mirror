@@ -2636,6 +2636,10 @@ small {
   margin-right: auto;
 }
 
+.prose-img\:max-h-\[50vh\] :is(:where(img):not(:where([class~="not-prose"] *))) {
+  max-height: 50vh;
+}
+
 .prose-img\:shadow-md :is(:where(img):not(:where([class~="not-prose"] *))) {
   --tw-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   --tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);
@@ -4263,13 +4267,13 @@ small {
     gap: 0.5rem;
   }
 
+  .lg\:gap-y-4 {
+    row-gap: 1rem;
+  }
+
   .lg\:gap-x-8 {
     -moz-column-gap: 2rem;
          column-gap: 2rem;
-  }
-
-  .lg\:gap-y-4 {
-    row-gap: 1rem;
   }
 
   .lg\:gap-x-2 {

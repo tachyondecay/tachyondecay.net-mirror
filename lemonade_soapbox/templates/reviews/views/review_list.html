@@ -107,7 +107,7 @@
                 {% if review.summary %}
                 <p>{{ review.summary }}</p>
                 {% else %}
-                <div class="sm:max-w-none lg:pr-3 sm:prose sm:prose-marble sm:prose-h2:text-base lg:prose-sm group-hover:prose-p:text-marble-900">
+                <div class="prose-img:max-h-[50vh] prose-img:mx-auto sm:max-w-none lg:pr-3 sm:prose sm:prose-marble sm:prose-h2:text-base lg:prose-sm group-hover:prose-p:text-marble-900">
                 {{ review.body_html|truncate_html(read_more_length|default(75)) }}
                 </div>
                 {% endif %}
