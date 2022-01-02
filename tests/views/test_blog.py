@@ -16,8 +16,7 @@ def test_all_tags(client, db):
     print(resp.data)
     assert b"/blog/tags/hello-world/" in resp.data
     assert b"/blog/tags/test/" in resp.data
-    assert b"1 article with this tag" in resp.data
-    assert b"2 articles with this tag" in resp.data
+    assert b"hello world" in resp.data
 
 
 def test_default_feed(app, client):

@@ -1,17 +1,18 @@
 {% extends 'reviews/layouts/main.html' %}
-{% from 'macros.html' import pagetitle, time, read_more, render_pagination %}
+{% from 'macros.html' import time, read_more, render_pagination %}
+{% from 'reviews/macros.html' import pagetitle %}
 
 {% block body_main %}
 {{ super() }}
 
-{% if request.endpoint == 'search' %}
+{% if request.endpoint == 'reviews.search' %}
     {% if request.args.get('q') %}
         {% set description = 'You searched for <i>' ~ request.args.get('q') ~ '</i>' %}
     {% else %}
         {% set description = 'You haven\'t searched yet.' %}
     {% endif %}
 
-    {{ pagetitle(title=("Search My Reviews" if not reviews else reviews.total ~ " reviews found"), cover=url_for('.static', filename='images/layout/header_bg/my_shelves.jpg'), description=description)}}
+    {{ pagetitle(title=("Search My Reviews" if not reviews else reviews.total ~ " reviews found"), cover=cover, description=description)}}
 {% else %}
     {{ pagetitle(title=page_title, cover=cover, description=('No reviews found' if not reviews else reviews.total ~ " reviews found"))}}
 
@@ -117,7 +118,7 @@
 </ol>
 
 {% if reviews and reviews.pages > 1 %}
-    <div class="flex flex-col items-center my-12 md:flex-row md:justify-between md:pb-3 md:mx-10 md:border-b lg:mx-auto lg:max-w-4xl md:border-marble-200">
+    <div class="flex flex-col items-center my-12 md:flex-row md:justify-between md:pt-3 md:mx-10 md:border-t lg:mx-auto lg:max-w-4xl md:border-marble-200">
         <p>Showing {{ 1 + reviews.per_page * (reviews.page - 1) }} to {{ [reviews.total, reviews.per_page * reviews.page]|min }} of {{ reviews.total }} results</p>
     {{ render_pagination(reviews) }}
     </div>

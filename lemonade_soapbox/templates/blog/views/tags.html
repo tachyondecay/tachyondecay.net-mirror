@@ -1,21 +1,64 @@
-{% extends 'blog/layouts/master.html' %}
+{% extends 'frontend/layouts/main.html' %}
+{% from 'frontend/macros.html' import pagetitle %}
 
 {% block body_main %}
 {{ super() }}
 
-{% block main_title %}
-<h1 class="c-page__title u-text-center u-text-shadow">{{ page_title }}</h1>
-{% endblock main_title %}
+{{ pagetitle(title=page_title, cover=url_for('.static', filename='images/layout/header_bg/jan-antonin-kolar-lRoX0shwjUQ-unsplash.jpg'), description="An easy way to browse my blog posts by categories.")}}
 
-{% if all_tags|length > 0 %}
-	<ul class="o-list-inline o-wrapper--text">
-	{% for tag in all_tags|weight %}
-		<li class="o-list-inline__item" style="font-size: {{ tag[2] * 200 }}%">
-			<a href="{{ url_for('blog.show_tag', handle=tag[0].handle) }}" title="{{ ngettext('%(num)d article', '%(num)d articles', tag[1]) }} with this tag">{{ tag[0].label }}</a>
-		</li>
-	{% endfor %}
-	</ul>
-{% else %}
-<p>No tags.</p>
-{% endif %}
+<main>
+    <div class="p-3 mt-12 text-lg text-center">
+        <p>Sort tags  
+        {% if sort_by != 'alphabetical' %}
+            <a href="?sort=alphabetical" class="border-b-2 border-fuchsia-900 hover:border-sky-900 focus:border-sky-900">alphabetically</a> 
+        {% else %}
+            <strong>alphabetically</strong>
+        {% endif %}
+        | 
+        {% if sort_by != 'frequency' %}
+        <a href="?sort=frequency" class="border-b-2 border-fuchsia-900 hover:border-sky-900 focus:border-sky-900">by number of books</a>
+        {% else %}
+            <strong>by number of articles</strong>
+        {% endif %}
+        </p>
+
+        {% if tags and sort_by != 'frequency' %}
+        <div class="mt-6">
+            Jump to: 
+            <ul class="flex flex-wrap justify-center">
+            {% for letter, tags in tags|groupby("0.handle.0") %}
+                <li><a class="block p-1 mt-2 mr-4 border-b-2 border-fuchsia-900 hover:border-sky-900 focus:border-sky-900" href="#letter-{{ letter }}">{{ letter.upper() }}</a></li>
+            {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+    </div>
+
+    {% if tags %}
+        {% if sort_by == 'frequency' %}
+            <ul class="flex flex-wrap justify-center mx-auto mt-12 lg:max-w-4xl">
+            {% for tag in tags|sort(attribute="1", reverse=True)|weight %}
+                <li>
+                    <a href="{{ url_for('.show_tag', handle=tag[0].handle) }}" class="block mt-3 mr-2 p-3 lg:mt-6 lg:mr-4 tracking-wide rounded-md shadow-md transition-all duration-300 lg:leading-5 hover:bg-fuchsia-800 active:relative active:top-px active:left-px active:bg-fuchsia-700 bg-fuchsia-800/75 text-slate-50 shadow-slate-900/50 hover:text-slate-50 focus:bg-fuchsia-800 focus:text-slate-50 active:text-slate-50 text-[length:calc(var(--weight)*1.5rem)]" style="--weight: {{ tag[2] }}">{{ tag[0].label }}</span>
+                    <span class="text-slate-100">({{ tag[1] }})</span></a>
+                </li>
+            {% endfor %}
+            </ul>
+        {% else %}
+
+        <div class="pt-12 mt-12 sm:items-start sm:border-t lg:container lg:mx-auto border-slate-400 sm:columns-2 md:columns-3">
+            {% for letter, tag_list in tags|groupby("0.handle.0") %}
+            <div class="mb-12 break-inside-avoid-column" id="letter-{{ letter }}">
+                <h2 class="text-center"><span class="inline-block pb-3 w-12 bg-[url('/assets/images/icons/open-book.svg')] bg-bottom bg-no-repeat bg-[length:2em_auto] text-3xl font-bold text-center">{{ letter.upper() }}</span></h2>
+                <ul class="text-center">
+                {% for tag in tag_list %}
+                    <li><a class="underline" href="{{ url_for('.show_tag', handle=tag[0].handle) }}" title="{{ tag[1] }} articles">{{ tag[0].label }}</a></li>
+                {% endfor %}
+                </ul>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    {% endif %}
+</main>
 {% endblock body_main %}

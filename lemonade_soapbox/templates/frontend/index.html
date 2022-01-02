@@ -1,4 +1,5 @@
-{% extends 'frontend/layouts/master.html' %}
+{% extends 'frontend/layouts/main.html' %}
+{% from 'macros.html' import read_more, time %}
 
 {% block body_classes %}index{% endblock body_classes %}
 
@@ -6,48 +7,172 @@
 
 {% block body_main %}
 
-<h1 class="u-hidden-visually">Home Page</h1>
+{{ super() }}
 
-<h2 class="c-page__title">Recent Blog Posts</h2>
+<div class="md:flex lg:pt-16 lg:mx-auto lg:max-w-5xl">
+    <div class="py-12 md:basis-3/5 lg:basis-2/3">
+        <div class="py-6 text-slate-50 md:mr-8 md:rounded-r md:shadow-md md:shadow-slate-600/50 lg:grid lg:grid-cols-[1fr_2fr] lg:grid-flow-col-dense lg:grid-rows-[repeat(2,_1fr)] lg:py-3 2xl:rounded bg-gradient-to-br from-fuchsia-900 to-fuchsia-900/80">
+            <h1 class="ml-12 lg:ml-6 text-2xl font-bold [font-variant:small-caps]">Kar·a Bab·cock</h1>
+            <p class="ml-12 text-sm lg:ml-6">
+                /ˈkɑɹə ˈbæbˌkɑk/
+                <audio id="pronunciation" controls>
+                    <source src="/media/kara-babcock-pronunciation.m4a" type="audio/mp4">
+                </audio>
+                <svg id="pronunciation-trigger" xmlns="http://www.w3.org/2000/svg" class="inline-block ml-px -mt-1 w-4 h-4 cursor-pointer hover:text-fuchsia-300" viewBox="0 0 20 20" fill="currentColor">
+                    <title>Listen to how I pronounce my name</title>title>
+                    <path fill-rule="evenodd" d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM14.657 2.929a1 1 0 011.414 0A9.972 9.972 0 0119 10a9.972 9.972 0 01-2.929 7.071 1 1 0 01-1.414-1.414A7.971 7.971 0 0017 10c0-2.21-.894-4.208-2.343-5.657a1 1 0 010-1.414zm-2.829 2.828a1 1 0 011.415 0A5.983 5.983 0 0115 10a5.984 5.984 0 01-1.757 4.243 1 1 0 01-1.415-1.415A3.984 3.984 0 0013 10a3.983 3.983 0 00-1.172-2.828 1 1 0 010-1.415z" clip-rule="evenodd" />
+                </svg>
+            </p>
 
-<div class="c-results o-grid--column o-wrapper--text u-margin-horizontal-large">
-
-{% if articles %}
-    {% for article in articles %}
-    <article class="c-results__item o-grid__cell o-post o-post--excerpt u-padding-top" id="{{ article.handle }}" data-id="{{ article.id }}">
-        <header>
-            <h1 class="u-h3 u-margin-bottom-none">
-                <a href="{{ article.get_permalink() }}">{{ article.title }}</a>
-            </h1>
-
-            <p class="o-post__details"><time datetime="{{ article.date_published.isoformat() }}">{{ article.date_published.to(config.TIMEZONE).format('MMM DD, YYYY h:mm a') }}</time></p>
-        </header>
-        <div class="o-post__summary">
-            {{ article.summary or article.body_html|truncate_html(50) }}
+            <div class="flex mx-3 mt-6 font-serif lg:row-span-2 lg:mt-0">
+                <em class="ml-9">noun</em>
+                <ol class="flex-[2] ml-8 list-decimal">
+                    <li class="pl-1">An inveterate reader.
+                    <li class="pl-1">A word goddess.
+                    <li class="pl-1">A force of nature. 
+                </ol>
+            </div>
         </div>
-    </article>
-    {% endfor %}
-{% else %}
-    <div class="o-grid__cell c-no-results u-margin-top u-text--centre">
-        <p><span class="c-no-results__icon i--newspaper"></span> </p>
-        <p> No articles found. </p>
+
+        <p class="px-3 mt-12 font-serif text-lg leading-relaxed sm:px-6">Welcome to my personal site, including my blog of 17 years and links to my book reviews, podcasts, and other projects around the web.</p>
+
+        <div class="mt-12 py-6 bg-slate-200 md:mr-8 md:rounded-r xl:-ml-[32rem] xl:pl-[32rem]">
+        <h2 class="mx-3 text-xl font-bold sm:mx-6 text-sky-900">Find Me Elsewhere</h2>
+        <ul class="flex flex-wrap justify-around mt-4 xl:justify-start xl:pl-6 xl:space-x-12">
+            <li><a target="_blank" href="https://twitter.com/tachyondecay"><img class="w-12 md:w-10 xl:w-8" src="{{ url_for('.static', filename='images/icons/twitter.png') }}" alt="Twitter"></a></li>
+            <li><a target="_blank" href="https://app.storygraph.com/profile/tachyondecay"><img class="w-12 md:w-10 xl:w-8" src="{{ url_for('.static', filename='images/icons/storygraph.png') }}" alt="The StoryGraph"></a></li>
+            <li><a target="_blank" href="https://goodreads.com/tachyondecay"><img class="w-12 md:w-10 xl:w-8" src="{{ url_for('.static', filename='images/icons/goodreads.png') }}" alt="Goodreads"></a></li>
+            <li><a target="_blank" href="https://ravelry.com/people/tachyondecay"><img class="w-12 md:w-10 xl:w-8" src="{{ url_for('.static', filename='images/icons/ravelry.png') }}" alt="Ravelry"></a></li>
+            <li><a target="_blank" href="https://github.com/tachyondecay"><img class="w-12 md:w-10 xl:w-8" src="{{ url_for('.static', filename='images/icons/github.png') }}" alt="GitHub"></a></li>
+        </ul>
+        </div>
     </div>
-{% endif %}
+
+    <div class="mt-12 md:h-full md:basis-2/5 lg:basis-1/3">
+       <h2 class="sr-only">Recent Tweets</h2>
+
+        <a class="twitter-timeline" data-height="1000" data-dnt="true" data-chrome="transparent" data-link-color="#ffffff" href="https://twitter.com/tachyondecay?ref_src=twsrc%5Etfw">Tweets by tachyondecay</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> 
+    </div>
 </div>
+
+<section class="mt-24 xl:mx-auto xl:max-w-5xl">
+    <h2 class="mx-3 mb-6 text-2xl font-bold sm:mx-6 xl:text-3xl text-sky-900">Recent Blog Posts</h2>
+
+    <div class="md:grid md:grid-cols-2 md:gap-4 lg:gap-y-4 lg:gap-x-8">
+    {% for article in articles %}
+        {% if loop.first %}
+            <article class="md:row-span-2 xl:row-span-4 hover:rounded-md group hover:bg-slate-200">
+                <header>
+                    {% if article.cover %}
+                    <a href="{{ article.get_permalink() }}"><img src="/media/article/covers/{{ article.cover }}" alt="Cover image for {{ article.title }}" class="mb-3 shadow-md md:mx-3 lg:opacity-90 shadow-slate-600/50 group-hover:lg:opacity-100 group-hover:shadow-slate-600/100 group-focus-within:lg:opacity-100 group-focus-within:shadow-slate-600/100"></a>
+                    {% endif %}
+
+                    <h3 class="mx-3 mb-2 text-xl sm:mx-6 lg:pt-3 lg:font-bold"><a class="hover:underline focus:underline group-hover:text-sky-900 group-focus-within:text-sky-900" href="{{ article.get_permalink() }}">{{ article.title }}</a></h3>
+
+                    <p class="pb-2 mx-3 mb-2 font-light border-b sm:mx-6 md:mb-0 border-slate-400">
+                        Published {{ time(article.date_published, 'MMMM D, YYYY') }}
+                    </p>
+                </header>
+
+                <div class="mx-3 sm:mx-6 sm:max-w-none md:pb-3 lg:pr-3 prose prose-slate sm:prose-h2:text-base group-hover:prose-p:text-slate-900">
+                {{ article.summary or article.body_html|truncate_html(read_more_length|default(75)) }}
+                </div>
+            </article>
+        {% else %}
+            <article class="px-3 mt-12 sm:px-6 md:mt-0 hover:rounded-md group hover:bg-slate-200">
+                {{ time(article.date_published, format="MMM DD", class="text-sm font-light") }}
+                <h3 class="inline ml-1"><a class="hover:underline focus:underline group-hover:text-sky-900 group-focus-within:text-sky-900" href="{{ article.get_permalink() }}">{{ article.title }}</a></h3>
+
+                <p class="max-w-none prose prose-slate lg:prose-sm">
+                    {{ article.summary or article.body_html|truncate_html(read_more_length|default(75)) }}
+                </p>
+            </article>
+        {% endif %}
+    {% endfor %}
+    </div>
+</section>
+
+<section class="mt-24 xl:mx-auto xl:max-w-5xl">
+    <h2 class="mx-3 mb-6 text-2xl font-bold sm:mx-6 xl:text-3xl text-sky-900">Recent Book Reviews</h2>
+
+    <div class="sm:grid sm:grid-cols-2 lg:grid-cols-4">
+    {% for review in reviews %}
+        {% if loop.first %}
+            <article class="sm:col-span-2 lg:col-span-4 group hover:bg-slate-200">
+                <header>
+                    {% if review.cover %}
+                    <a href="{{ review.get_permalink(relative=False) }}"><img src="/media/review/covers/{{ review.cover }}" alt="Cover image for {{ review.title }}" class="mx-auto mb-6 h-52 shadow-md sm:float-left sm:m-6 sm:mt-0 sm:h-72 lg:h-60 lg:opacity-90 xl:h-52 shadow-slate-600/50 group-hover:lg:opacity-100 group-hover:shadow-slate-600/100 group-focus-within:lg:opacity-100 group-focus-within:shadow-slate-600/100"></a>
+                    {% endif %}
+
+                    <h3 class="mx-3 mb-2 text-xl font-bold"><a class="hover:underline focus:underline group-hover:text-sky-900 group-focus-within:text-sky-900" href="{{ review.get_permalink(relative=False) }}">{{ review.title }}</a></h3>
+
+                    <p class="px-3 sm:px-6 lg:text-xl text-slate-900">
+                    {% if review.rating > 0 %}
+                    <span class="sr-only">
+                        {{ review.rating }} out of 5 stars
+                    </span>
+                    {% else %}
+                    <span class="sr-only">Unrated</span>
+                    {% endif %}
+                    {% for star in range(0,5) %}
+                        {{ '★' if star < review.rating else '☆' }}
+                    {% endfor %}
+                    </p>
+
+                    <p class="pb-2 mx-3 mb-2 font-light border-b sm:mx-6 md:mb-0 border-slate-400">
+                        Published {{ time(review.date_published, 'MMMM D, YYYY') }}
+                    </p>
+                </header>
+
+                <div class="px-3 sm:px-6 sm:max-w-none md:pb-3 lg:pr-3 prose prose-slate sm:prose-h2:text-base group-hover:prose-p:text-slate-900">
+                {{ review.summary or review.body_html|truncate_html(read_more_length|default(75)) }}
+                </div>
+            </article>
+        {% else %}
+            <div class="flex relative mt-16">
+                <a class="mx-auto lg:opacity-90 group lg:hover:opacity-100 lg:focus-within:opacity-100" href="{{ review.get_permalink() }}">
+                    {{ time(review.date_published, format="MMM DD", class="absolute -top-6 p-1 w-48 text-sm text-center uppercase bg-fuchsia-900 lg:w-36 lg:text-xs text-slate-50 group-hover:bg-sky-900 group-focus-within:bg-sky-900") }}
+                    {% if review.cover %}
+                        <img src="/media/review/covers/{{ review.cover }}" alt="{{ review.title }}" class="mb-3 w-48 shadow-md md:mb-0 lg:w-36 shadow-slate-600/50 group-hover:shadow-slate-600/100 group-focus-within:shadow-slate-600/100">
+                    {% else %}
+                        {{ review.title }}
+                    {% endif %}
+                </a>
+            </div>
+        {% endif %}
+    {% endfor %}
+</section>
+
+<section class="hidden mt-24 xl:mx-auto xl:max-w-5xl">
+    <h2 class="mx-3 text-2xl font-bold sm:mx-6 xl:text-3xl text-sky-900">Recent Podcast Episodes</h2>
+
+    <div class="flex flex-col lg:flex-row" id="latest-episodes">
+
+    </div>
+
+    <template id="ep-template">
+        <article class="mt-12 sm:flex lg:flex-col group">
+            <div class="basis-1/3 shrink-0">
+                <a href="[{ link }]">
+                    <img src="[{ thumbnail }]" alt="[{ title }]" class="sm:shadow-md lg:mx-auto lg:w-64 sm:shadow-slate-900/50">
+                </a>
+                <audio id="episode-[{ id }]" class="w-full sm:shadow-md lg:mx-auto lg:w-64 sm:shadow-slate-900/50" controls preload="none">
+                    <source type="[{ type }]" src="[{ src }]"/>
+                </audio>
+            </div>
+
+            <div class="rounded-md group-hover:bg-slate-200 group-focus-within:bg-slate-200">
+                <h3 class="mx-3 mb-2 text-xl sm:mx-6 lg:pt-3 lg:mt-3 lg:font-bold"><a class="hover:underline focus:underline group-hover:text-sky-900 group-focus-within:text-sky-900" href="[{ link }]">[{ title }]</a></h3>
+                <p class="pb-2 mx-3 mb-2 font-light border-b sm:mx-6 md:mb-0 border-slate-400">
+                    Published <time datetime="[{ dateTime }]">[{ pubDate }]</time>
+                </p>
+                <p class="mx-3 sm:mx-6 sm:max-w-none md:pb-3 lg:pr-3 prose prose-slate sm:prose-sm group-hover:prose-p:text-slate-900">[{ description }]</p>
+                <p class="mx-3 text-xs text-right sm:mx-6">
+                    <a href="[{ podcastSite }]" target="_blank">More from <cite>[{ podcastTitle }]</cite> &rarr;</a>
+                </p>
+            </div>
+        </article>
+    </template>
+</section>
+
 {% endblock body_main %}
-
-
-{% block body_sidebar_right %}
-    <h2>Instagram</h2>
-
-    <p class="u-accent">Don’t get too excited: it’s just knitting pics.</p>
-
-    <!-- LightWidget WIDGET --><script src="https://cdn.lightwidget.com/widgets/lightwidget.js"></script><iframe src="https://cdn.lightwidget.com/widgets/7dfe501604ef53f6b6d1ad007d3639f5.html" scrolling="no" allowtransparency="true" class="lightwidget-widget" style="width:100%;border:0;overflow:hidden;"></iframe>
-{% endblock body_sidebar_right %}
-
-
-{% block body_sidebar_left %}
-   <h2 class="u-hidden-visually">Twitter</h2>
-
-    <a class="twitter-timeline" data-height="1000" data-dnt="true" data-link-color="#71493f" href="https://twitter.com/tachyondecay?ref_src=twsrc%5Etfw">Tweets by tachyondecay</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> 
-{% endblock body_sidebar_left %}

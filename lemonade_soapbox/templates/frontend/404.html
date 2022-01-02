@@ -1,9 +1,11 @@
-{% extends 'frontend/layouts/master.html' %}
+{% extends 'frontend/layouts/main.html' %}
+{% from 'frontend/macros.html' import pagetitle %}
 
 {% block page_title %}Page Not Found {{ super() }}{% endblock %}
 
 {% block body_main %}
-<h1 class="page-title">Page Not Found</h1>
+	{{ super() }}
+	
+{{ pagetitle(title="Page Not Found", cover=url_for('.static', filename='images/layout/header_bg/tachyondecay-shawl.jpg'), description='Oops, looks like you followed a stale link.')}}
 
-<p>There’s nothing here! Move along!</p>
 {% endblock body_main %}

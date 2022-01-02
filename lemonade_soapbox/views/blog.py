@@ -1,10 +1,21 @@
 import calendar
 from gettext import ngettext
+from pathlib import Path
 
 import arrow
-from flask import abort, current_app, g, redirect, render_template, Response, url_for
+from flask import (
+    abort,
+    current_app,
+    g,
+    redirect,
+    render_template,
+    request,
+    Response,
+    url_for,
+)
 from flask_login import current_user, login_required
 
+from lemonade_soapbox import db
 from lemonade_soapbox.helpers import Blueprint
 from lemonade_soapbox.models import Article, Post, Tag
 
@@ -26,11 +37,17 @@ def before():
 
 @bp.route('/')
 def index():
+    page = request.args.get('page', 1, int)
     articles = (
-        Article.published().order_by(Article.date_published.desc()).limit(10).all()
+        Article.published()
+        .order_by(Article.date_published.desc())
+        .paginate(page=page, per_page=10)
     )
     return render_template(
-        'blog/views/article_list.html', articles=articles, page_title='Recent Posts'
+        'blog/views/index.html',
+        articles=articles,
+        description="Read my thoughts going back 17 years.",
+        page_title="Kara’s Blog",
     )
 
 
@@ -75,35 +92,59 @@ def all_tags():
     tags = [
         t for t in Tag.frequency(post_types=['article']).all() if t["article_count"] > 0
     ]
+    sort_by = request.args.get('sort', 'frequency')
     page_title = ngettext('%(num)d Tag', 'All %(num)d Tags', len(tags)) % {
         'num': len(tags)
     }
-    return render_template('blog/views/tags.html', page_title=page_title, all_tags=tags)
+    return render_template(
+        'blog/views/tags.html', page_title=page_title, tags=tags, sort_by=sort_by
+    )
 
 
 @bp.route('/tags/<handle>/')
-def show_tag(handle):
+@bp.route('/tags/<handle>/posts.<format>')
+def show_tag(handle, format=None):
+    page = request.args.get('page', 1, int)
     tag = Tag.query.filter_by(handle=handle).first_or_404()
-    articles = (
-        tag.posts.filter(
-            Post.post_type == "article",
-            Post.status == 'published',
-            Post.date_published <= arrow.utcnow(),
+    articles = tag.posts.filter(
+        Post.post_type == "article",
+        Post.status == 'published',
+        Post.date_published <= arrow.utcnow(),
+    ).order_by(Post.date_published.desc())
+
+    if format:
+        return Response(
+            render_template(
+                'blog/articles/' + format + '.xml',
+                title=f'Kara.Reviews: {tag.label.title()} Books',
+                articles=articles.all(),
+                url=url_for(
+                    'blog.show_tag',
+                    _external=True,
+                    handle=handle,
+                    format=format,
+                ),
+            ),
+            mimetype='application/' + format + '+xml',
         )
-        .order_by(Post.date_published.desc())
-        .all()
-    )
-    page_title = (
-        ngettext(
-            '%(num)d Article Tagged with “%(t)s”',
-            '%(num)d Articles Tagged with “%(t)s”',
-            len(articles),
+
+    articles = articles.paginate(page=page, per_page=20)
+
+    cover = None
+    if Path(
+        current_app.static_folder, 'images/layout/header_bg', f"{handle}.jpg"
+    ).exists():
+        cover = url_for(
+            '.static', filename=f"images/layout/header_bg/{handle}.jpg", _external=True
         )
-        % {'num': len(articles), 't': tag.label}
-    )
 
     return render_template(
-        'blog/views/article_list.html', articles=articles, page_title=page_title
+        'blog/views/article_list.html',
+        handle=handle,
+        read_more_length=75,
+        articles=articles,
+        page_title=f"Articles Tagged with “{tag.label}”",
+        cover=cover,
     )
 
 
@@ -118,15 +159,51 @@ def year_archive(year):
     )
     if not articles:
         abort(404)
-    page_title = ngettext(
-        '%(num)d Article from %(year)s', '%(num)d Articles from %(year)s', len(articles)
-    ) % {'num': len(articles), 'year': year}
+
+    # Check if there are posts for previous and next years
+    prev_link = (
+        Article.published()
+        .filter(db.func.extract('YEAR', Article.date_published) == (year - 1))
+        .count()
+        > 0
+    )
+    next_link = (
+        Article.published()
+        .filter(db.func.extract('YEAR', Article.date_published) == (year + 1))
+        .count()
+        > 0
+    )
+
+    year_summaries = {
+        "2004": "First year of university, first real job, first year online.",
+        "2005": "In which I discover Doctor Who, move high schools, and get political.",
+        "2006": "Learning how to drive, playing with Linux, and more politics.",
+        "2007": "Pop culture, environmental awareness, and high school graduation.",
+        "2008": "Joining Twitter and Goodreads, visiting an online friend, discovering Mass Effect.",
+        "2009": "Lots of thoughts on technology, more politics.",
+        "2010": "A summer spent researching mathematics, my first smartphone.",
+        "2011": "In which I was very into voting for the Hugo Awards.",
+        "2012": "Learning how to knit, graduating university, and moving to England.",
+        "2013": "Living and teaching in England and a lot of pop culture.",
+        "2014": "Trip to Amsterdam, moving back to Canada, new phone who dis?",
+        "2015": "In which I start blogging seriously about education.",
+        "2016": "Critical reflections on education, algorithms, and some lighter fare in knitting.",
+        "2017": "On being asexual and aromantic, buying a house, and meeting my ride or die",
+        "2018": "Starting a podcast with my bestie, visiting her in Montréal.",
+        "2019": "More reflections on being an educator in Ontario.",
+        "2020": "Coming out as trans, launching Kara.Reviews.",
+        "2021": "Transition during a pandemic and reflections on friendship and pop culture.",
+        "2022": "The current year. I hope it’s a good one!",
+    }
 
     return render_template(
         'blog/views/year_archive.html',
         articles=articles,
-        page_title=page_title,
+        page_title=f"{len(articles)} Articles from {year}",
+        prev_link=prev_link,
+        next_link=next_link,
         year=year,
+        year_summaries=year_summaries,
     )
 
 
@@ -143,17 +220,52 @@ def month_archive(year, month):
     )
     if not articles:
         abort(404)
-    page_title = (
-        ngettext(
-            '%(num)d Article from %(month)s %(year)s',
-            '%(num)d Articles from %(month)s %(year)s',
-            len(articles),
+
+    # Check if there are posts for previous and next months
+    prev_article = (
+        Article.published()
+        .filter(Article.date_published < articles[-1].date_published)
+        .order_by(Article.date_published.desc())
+        .first()
+    )
+    prev_link = (
+        (
+            url_for(
+                ".month_archive",
+                year=prev_article.date_published.year,
+                month=f"{prev_article.date_published.month:02}",
+            ),
+            prev_article.date_published.format("MMMM YYYY"),
         )
-        % {'num': len(articles), 'month': calendar.month_name[int(month)], 'year': year}
+        if prev_article
+        else None
+    )
+    next_article = (
+        Article.published()
+        .filter(Article.date_published > articles[0].date_published)
+        .order_by(Article.date_published.asc())
+        .first()
+    )
+    next_link = (
+        (
+            url_for(
+                ".month_archive",
+                year=next_article.date_published.year,
+                month=f"{next_article.date_published.month:02}",
+            ),
+            next_article.date_published.format("MMMM YYYY"),
+        )
+        if next_article
+        else None
     )
 
     return render_template(
-        'blog/views/article_list.html', articles=articles, page_title=page_title
+        'blog/views/article_list.html',
+        articles=articles,
+        description=f"{len(articles)} articles",
+        prev_link=prev_link,
+        next_link=next_link,
+        page_title=f"Articles from {calendar.month_name[int(month)]} {year}",
     )
 
 

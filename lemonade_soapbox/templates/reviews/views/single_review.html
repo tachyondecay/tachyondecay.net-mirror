@@ -1,5 +1,6 @@
 {% extends 'reviews/layouts/main.html' %}
-{% from 'macros.html' import pagetitle, read_more, time %}
+{% from 'macros.html' import read_more, time %}
+{% from 'reviews/macros.html' import pagetitle %}
 
 {% block open_graph %}
 <meta property="og:url" content="{{ review.get_permalink(False) }}" />
@@ -100,7 +101,7 @@
         {% endif %}
 
         {% if review.status == "published" and review.date_published < arrow.get(config.TRANS_DATE) %}
-        <p class="px-3 mt-4 text-sm">I wrote this before <a class="underline" href="/about/#trans">I came out as transgender</a>.</p>
+        <p class="px-3 mt-4 text-sm text-marble-600">I wrote this before <a class="underline" href="/about/#trans">I came out as transgender</a>.</p>
         {% endif %}
     </aside>
 

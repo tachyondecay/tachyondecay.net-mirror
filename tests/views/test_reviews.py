@@ -78,7 +78,6 @@ def test_search(client, db):
 
     # Test searching by author
     resp = client.get("http://reviews.test/search/?q=book_author%3Asummers")
-    print(resp.data.decode())
     assert b"1 review found" in resp.data
 
     # Test no results

@@ -1,5 +1,6 @@
-{% extends 'blog/layouts/master.html' %}
-{% from 'macros.html' import read_more %}
+{% extends 'blog/layouts/main.html' %}
+{% from 'macros.html' import read_more, time, time_relative %}
+{% from 'frontend/macros.html' import pagetitle %}
 
 {% block meta_tags %}
 <meta property="og:url" content="{{ article.get_permalink(False) }}" />
@@ -22,54 +23,102 @@
 
 
 {% block body_main %}
-<article id="{{ article.handle }}" data-id="{{ article.id }}" class="o-wrapper--text o-post o-post--single">
+    {{ super() }}
+
+<article id="{{ article.handle }}" data-id="{{ article.id }}">
     <header>
-        <h1 class="o-post__title c-page__title u-text-shadow">{{ article.title }}</h1>
-        {% if article.summary %}
-        <div class="o-post__summary">
-            {{ article.summary }}
-        </div>
-        {% endif %}
+        {{ pagetitle(title=article.title, description=article.summary, cover=(('/media/article/covers/' ~ article.cover) if article.cover else '')) }}
     </header>
 
-    <footer>
-        <p class="o-post__details o-post__pubinfo u-margin-horizontal-small">
+<div class="mt-12 lg:mt-8 lg:grid lg:grid-cols-[minmax(auto,_calc(50vw-28rem))_repeat(2,_35ch)_auto_auto_minmax(auto,_calc(50vw-28rem))] lg:gap-2 xl:gap-4"><!-- Grid layout begin -->
+    <footer class="px-6 text-sm sm:text-base lg:col-span-3 lg:col-start-2 lg:row-start-1 text-slate-500">
+        <p>
         {% if article.status == 'published' %}
-           <span class="pubdate"><time datetime="{{ article.date_published.isoformat() }}">{{ article.date_published.to(config.TIMEZONE).format('dddd, MMMM D, YYYY h:mm A ZZ') }}</time></span>
-
-            {% if article.show_updated and article.date_updated > article.date_published %}
-            <span class="updated">Last updated <time datetime="{{ article.date_updated.isoformat() }}">{{ article.date_updated.to(config.TIMEZONE).humanize()}}</time></span>
-            {% endif %}
+           Published {{ time(article.date_published, format='dddd, MMMM D, YYYY h:mm A ZZ') }}.
         {% endif %}
         </p>
-
-        {% if article.tags %}
-        <aside class="o-post__tags">
-            <h1 class="u-hidden">Tags</h1>
-            <ul class="o-list-inline c-taglist">
-                {% for t in article._tags|sort(attribute='handle') %}
-                <li class="o-list-inline__item"><a class="c-taglist__tag c-btn" href="{{ url_for('.show_tag', handle=t.handle) }}" rel="tag">{{ t.label }}</a></li>
-                {% endfor %}
-            </ul>
-        </aside>
+        {% if article.show_updated and article.date_updated > article.date_published %}
+        <p>Last updated {{ time(article.date_updated, format='MMMM D, YYYY') }}.</p>
         {% endif %}
 
-        {% if article.status == 'published' and article.date_published < arrow.get(config.TRANS_DATE) %}
-        <p class="o-post__note">Note: This post was written before I realized I was trans and/or before I came out online. As such, I might refer to myself as a man or use my deadname. Please read my <a href="/about#name">name policy</a> to understand how you should refer to me.</small></p>
+        {% if article.tags %}
+        <div class="mt-6">
+            Tags: 
+            <ul class="inline">
+                {% for t in article._tags|sort(attribute='handle') %}
+                <li class="inline after:content-[',_'] last:after:content-['.']"><a class="underline text-slate-500" href="{{ url_for('.show_tag', handle=t.handle) }}" rel="tag">{{ t.label }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        {% if current_user.is_authenticated %}
+            <p class="mt-6"><a class="underline" href="{{ article.get_editlink() }}">Edit post</a></p>
         {% endif %}
     </footer>
 
-    <div class="o-post__content">
+    <aside class="mt-12 lg:col-start-5 lg:col-end-7 lg:row-start-1 lg:row-span-2 lg:mt-0 xl:col-end-6">
+        <h3 class="last:hidden sidebar-heading">Heads Up</h3>
+        {% if article.status == "published" and (arrow.utcnow() - article.date_published) > timedelta(days=728) %}
+        <p class="px-3 mt-4 text-sm text-slate-500">
+            <svg xmlns="http://www.w3.org/2000/svg" class="inline-block h-4 w-4 align-top mt-[0.15rem]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <strong>This post was published {{ article.date_published.humanize() }}.</strong> Some of its information or my opinions might be out of date.
+        </p>
+        {% endif %}
+
+        {% if article.status == "published" and article.date_published < arrow.get(config.TRANS_DATE) %}
+        <p class="px-3 mt-4 text-sm text-slate-500">I wrote this before I came out as transgender. As such, I might refer to myself as a man or use my deadname. Please read my <a href="/about#name">name policy</a>.</p>
+        {% endif %}
+    </aside>
+
+    <div class="px-6 mt-16 lg:col-span-3 lg:col-start-2 lg:row-span-3 lg:row-start-2 lg:mt-8">
+        <div class="dropcap endmark prose prose-slate prose-p:indent-4 md:prose-md lg:prose-lg prose-img:mx-auto prose-img:shadow-md prose-img:shadow-slate-900/50 prose-figcaption:text-center lg:prose-img:max-h-[75vh] xl:prose-figure:-mx-16">
         {{ article.body_html }}
+        </div>
     </div>
 
-    <aside class="o-post__prevnext">
+    <aside class="py-6 mt-24 md:py-12 lg:col-span-full lg:row-start-5 bg-sky-900">
+
+    <div class="flex flex-col md:flex-row md:flex-wrap md:mx-auto md:max-w-4xl md:text-sm">
+
+    {% set padding = "md:pt-60" %}
+    {% if (article.previous_post and article.next_post) and not(article.previous_post.cover or article.next_post.cover) %}
+        {% set padding = "md:pt-0" %}
+    {%  endif %}
+
     {% if article.previous_post %}
-        <div class="o-post__prev"><h2 class="u-h4 u-margin-bottom-small">Previously</h2>&larr; <a href="{{ article.previous_post.get_permalink() }}">{{ article.previous_post.title }}</a></div>
+        <a class="pb-6 mx-3 md:flex-1 md:pb-0 group" href="{{ article.previous_post.get_permalink() }}">
+            <article class="flex flex-col items-start">
+                {% if article.previous_post.cover %}
+                    <img class="-mx-3 mb-8 w-screen max-w-none shadow-lg md:mx-3 md:w-auto md:h-52 md:opacity-90 group-hover:opacity-100 group-focus:opacity-100 shadow-slate-400/50" src="/media/article/covers/{{ article.previous_post.cover }}" alt="Cover image for {{ article.previous_post.title }}">
+                {%  endif %}
+
+                <div class="{{ padding if not article.previous_post.cover }} w-full px-3 font-bold text-sky-100">&larr; {{ time(article.previous_post.date_published, format="MMM DD") }}</div>
+
+                <h2 class="px-3 font-bold group-hover:text-fuchsia-300 group-focus:text-fuchsia-300 text-slate-100">{{ article.previous_post.title }}</h2>
+                <p class="px-3 font-light text-slate-50 group-hover:text-slate-200 group-focus:text-slate-200">{{ article.previous_post.summary or read_more(article.previous_post.body_html, length=50, link=False)|striptags }}</p>
+            </article>
+        </a>
     {% endif %}
+
     {% if article.next_post %}
-        <div class="o-post__next"><h2 class="u-h4 u-margin-bottom-small">Next</h2><a href="{{ article.next_post.get_permalink() }}">{{ article.next_post.title }}</a> &rarr;</div>
+        <a class="pt-6 mx-3 md:flex-1 md:pt-0 group" href="{{ article.next_post.get_permalink() }}">
+            <article class="flex flex-col items-end">
+                {% if article.next_post.cover %}
+                    <img class="-mx-3 mb-8 w-screen max-w-none shadow-lg md:mx-3 md:w-auto md:h-52 md:opacity-90 group-hover:opacity-100 group-focus:opacity-100 shadow-slate-400/50" src="/media/article/covers/{{ article.next_post.cover }}" alt="Cover image for {{ article.next_post.title }}">
+                {%  endif %}
+
+                <div class="{{ padding if not article.next_post.cover }} w-full px-3 font-bold text-sky-100 text-right">{{ time(article.next_post.date_published, format="MMM DD") }} &rarr;</div>
+
+                <h2 class="px-3 font-bold text-right group-hover:text-fuchsia-300 group-focus:text-fuchsia-300 text-slate-100">{{ article.next_post.title }}</h2>
+                <p class="px-3 font-light text-right text-slate-50 group-hover:text-slate-200 group-focus:text-slate-200">{{ article.next_post.summary or read_more(article.next_post.body_html, length=50, link=False)|striptags }}</p>
+            </article>
+        </a>
     {% endif %}
+    </div>
     </aside>
+</div> <!-- Grid layout end -->
 </article>
 {% endblock %}

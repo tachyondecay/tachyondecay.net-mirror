@@ -1,0 +1,63 @@
+{% extends 'frontend/layouts/main.html' %}
+{% from 'frontend/macros.html' import pagetitle %}
+
+{% block body_main %}
+    {{ super() }}
+
+{{ pagetitle(title="My Podcasts", cover=url_for('.static', filename='images/layout/header_bg/vika-strawberrika-Jbwp-Gd8GHM-unsplash.jpg'), description='I host two very different podcasts, each with an amazing co-host.')}}
+
+<p class="pb-12 mx-3 mt-12 font-serif text-lg italic leading-loose border-b md:text-xl md:leading-normal lg:mx-auto lg:max-w-2xl xl:max-w-4xl border-slate-400">If you had asked me back in 2017 whether I would ever embody the millennial stereotype of starting a podcast, I would have laughed at you. <strong>Now I’ve done it twice over!</strong> In both cases, it took the right person coming along with the right opportunity to collaborate—and the result is some of the best work I have ever produced!</p>
+
+<section class="mt-12 lg:mt-24 lg:max-w-2xl lg:mx-auto xl:max-w-none xl:grid xl:grid-cols-[calc(50vw-36rem)_25rem_auto_calc(50vw-36rem)]">
+	<a class="inline-block z-0 mx-3 shadow-sm sm:float-left sm:mr-6 md:opacity-80 xl:float-none xl:col-start-2 xl:row-span-2 xl:self-start shadow-slate-900/50 md:hover:opacity-100 md:focus:opacity-100 hover:shadow-slate-900/100 focus:shadow-slate-900/100" href="https://wejustliketotalk.com/">
+		<img class="border sm:max-h-48 xl:max-h-full border-slate-100" src="{{ url_for('static', filename="images/wejustliketotalk.jpg") }}" alt="We Just Like to Talk logo">
+	</a>
+
+	<div class="mt-6 max-w-none xl:col-start-3 xl:row-start-1 prose prose-slate md:prose-md lg:prose-lg">
+	<h2 class="sr-only">We Just Like to Talk</h2>
+
+	<p class="px-3">In 2018, my friend Rebecca moved to Montréal. We had been talking about starting a podcast together for a while, and in December 2018 we finally made it happen. I don’t think I would ever have started a podcast with anyone else—Becky and I complement each other—and <em>compliment</em> each other—so well. I love every conversation the two of us have—and you are just lucky enough that we record them sometimes.</p>
+
+	<p class="px-3"><cite>We Just Like to Talk</cite> is a general-interest podcast that explores whatever topic we want to discuss. We talk television and pop culture, friendship and dating, and books we’ve both read. Lately, we’ve begun having guests on the show too! Our conversations are always thoughtful, insightful, and compassionate.</p>
+	</div>
+
+
+	<div class="mt-12 py-12 bg-slate-200 lg:mx-[calc(50%-50vw)] xl:col-start-3 xl:col-span-2 xl:mx-0 xl:-ml-24 xl:py-6 xl:row-start-2 xl:mt-6">
+		<p class="px-3 text-lg text-center md:text-xl xl:text-lg"><a href="https://wejustliketotalk.com/">Visit our website</a> to learn more, or find us in your favourite podcast app!</p>
+
+		<div class="flex flex-wrap justify-center items-center mx-auto mt-6 sm:flex-row md:max-w-2xl xl:mt-3">
+	        <a class="m-2" href="https://open.spotify.com/show/7MOQsrYtzNWe7MgPEkstMR"><img class="mx-auto h-8" src="/assets/images/subscribe/spotify.svg" alt="Listen on Spotify"></a>
+	        <a class="m-2" href="https://itunes.apple.com/ca/podcast/we-just-like-to-talk/id1446817098"><img class="mx-auto h-8" src="/assets/images/subscribe/apple.svg" alt="Listen on Apple Podcasts"></a>
+	        <a class="m-2" href="https://www.google.com/podcasts?feed=aHR0cHM6Ly9saXN0ZW4ud2VqdXN0bGlrZXRvdGFsay5jb20vZmVlZC54bWw%3D"><img class="mx-auto h-8" src="/assets/images/subscribe/google.svg" alt="Listen on Google Podcasts"></a>
+	        <a class="m-2" href="https://listen.wejustliketotalk.com/feed.xml"><img class="mx-auto h-8" src="/assets/images/subscribe/rss.svg" alt="Subscribe via RSS"></a>
+	    </div>
+    </div>
+</section>
+
+<section class="mt-12 lg:mt-24 lg:max-w-2xl lg:mx-auto xl:max-w-none xl:grid xl:grid-cols-[calc(50vw-36rem)_auto_25rem_calc(50vw-36rem)]">
+	<a class="inline-block z-0 mx-3 shadow-sm sm:float-right sm:ml-6 md:opacity-80 xl:float-none xl:col-start-3 xl:row-span-2 xl:self-start shadow-slate-900/50 md:hover:opacity-100 md:focus:opacity-100 hover:shadow-slate-900/100 focus:shadow-slate-900/100" href="https://prophecygirls.ca/">
+		<img class="border sm:max-h-48 xl:max-h-full border-slate-100" src="{{ url_for('static', filename="images/prophecy_girls_logo.png") }}" alt="Prophecy Girls logo">
+	</a>
+
+	<div class="mt-6 max-w-none xl:col-start-2 xl:row-start-1 prose prose-slate md:prose-md lg:prose-lg">
+	<h2 class="sr-only">Prophecy Girls</h2>
+
+	<p class="px-3">In 2021, my friend Stephanie invited me to start a <cite>Buffy the Vampire Slayer</cite> rewatch podcast. She said she couldn’t think of anyone she would rather have as a co-host for this adventure, and who was I to say no to that? We release a new episode every week!</p>
+
+	<p class="px-3">We review <cite>Buffy</cite> from our perspective as longtime fans, but we try to keep the podcast spoiler-free for the benefit of those watching the show for the first time. Our critique centres marginalized perspectives, and we are not afraid to criticize the show’s legacy when it comes to feminism, gender and sexuality, and race. But we are doing it from a place of love and plenty of laughter.</p>
+	</div>
+
+
+	<div class="mt-12 py-12 bg-slate-200 lg:mx-[calc(50%-50vw)] xl:col-start-1 xl:col-span-2 xl:mx-0 xl:-mr-24 xl:py-6 xl:row-start-2 xl:mt-6">
+		<p class="px-3 text-lg text-center md:text-xl xl:text-lg"><a href="https://prophecygirls.ca/">Visit our website</a>, <a href="https://prophecygirls.ca/discord">join us on Discord</a>, or subscribe in your favourite podcast app!</p>
+
+		<div class="flex flex-wrap justify-center items-center mx-auto mt-6 sm:flex-row md:max-w-2xl xl:mt-3">
+	        <a class="m-2" href="https://open.spotify.com/show/40746K8FP2xIuO94XXUnlk"><img class="mx-auto h-8" src="/assets/images/subscribe/spotify.svg" alt="Listen on Spotify"></a>
+	        <a class="m-2" href="https://podcasts.apple.com/ca/podcast/prophecy-girls-a-buffy-rewatch-podcast/id1552809191"><img class="mx-auto h-8" src="/assets/images/subscribe/apple.svg" alt="Listen on Apple Podcasts"></a>
+	        <a class="m-2" href="https://podcasts.google.com/feed/aHR0cHM6Ly9saXN0ZW4ucHJvcGhlY3lnaXJscy5jYS9mZWVkLnhtbA"><img class="mx-auto h-8" src="/assets/images/subscribe/google.svg" alt="Listen on Google Podcasts"></a>
+	        <a class="m-2" href="https://listen.prophecygirls.ca/feed.xml"><img class="mx-auto h-8" src="/assets/images/subscribe/rss.svg" alt="Subscribe via RSS"></a>
+	    </div>
+    </div>
+</section>
+
+{% endblock body_main %}

@@ -1,0 +1,25 @@
+{% macro pagetitle(title, cover='', description='', class='', heading='h1', subheading='p') %}
+{% if cover %}
+    <div class="px-3 py-16 bg-coverimg from-slate-800/75 to-slate-800/70 lg:h-screen lg:pt-[45vh] lg:relative lg:z-20 {{ class }}" style="--cover-src: url('{{ cover }}');">
+{% else %}
+    <div class="py-16 px-6 bg-gradient-to-t to-fuchsia-900 lg:relative lg:z-20 lg:pt-32 from-slate-800">
+{% endif %}
+        <{{ heading }} class="text-2xl font-bold text-slate-100 lg:mx-auto lg:max-w-[55rem] xl:max-w-[54rem] lg:text-3xl xl:text-5xl">{{ title }}</{{ heading }}>
+        {% if description %}
+            <{{ subheading }} class="mt-6 text-lg lg:mx-auto lg:mt-3 lg:max-w-[55rem] xl:max-w-[54rem] lg:text-xl xl:text-2xl text-slate-200">{{ description|safe }}</{{subheading}}>
+        {% endif %}
+    </div>
+{% endmacro %}
+
+
+{% macro toc(links) %}
+<nav class="px-6 my-12 lg:px-0 group" aria-label="Table of Contents">
+    <h2 class="sidebar-heading">On this page…</h2>
+
+    <ol class="ml-3">
+        {% for id, text in links.items() %}
+        <li><a href="#{{id}}" class="inline-block py-2 pl-3 w-full border-l lg:py-1 border-slate-200 motion-safe:hover:border-l-2 motion-safe:hover:pl-4 motion-safe:focus:border-l-2 motion-safe:focus:pl-4 hover:border-sky-900 focus:border-sky-900">{{ text }}</a>
+        {% endfor %}
+    </ol>
+</nav>
+{% endmacro %}

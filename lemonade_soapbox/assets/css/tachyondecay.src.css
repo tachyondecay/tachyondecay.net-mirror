@@ -1,0 +1,76 @@
+/*
+ * Tailwind Source File for Tachyondecay.net
+ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    a {
+        @apply transition-all duration-500;
+        @apply text-fuchsia-900 focus:text-sky-900 hover:text-sky-900 active:text-sky-600;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+        @apply font-sans;
+    }
+
+    small {
+        @apply text-xs;
+    }
+}
+
+@layer components {
+    .pagination-links .current {
+        @apply inline-block m-1 p-1;
+        @apply border-b-2 border-sky-600;
+        @apply text-sky-600;
+    }
+
+    .pagination-links .button {
+        @apply inline-block m-1 p-1;
+        @apply border-b-2 border-fuchsia-900 hover:border-sky-900 focus:border-sky-900; 
+    }
+
+    .prose blockquote {
+        @apply xl:-ml-8 2xl:-ml-16;
+    }
+
+    .sidebar-heading {
+        @apply p-3 lg:p-2;
+        @apply text-slate-50 font-bold capitalize;
+        @apply rounded-sm shadow-sm shadow-slate-900/50;
+        @apply transition-all duration-300;
+        @apply group-hover:bg-fuchsia-900 bg-sky-900;
+    }
+
+    .twitter-timeline {
+        height: 75vh !important;
+        overflow: scroll;
+    }
+}
+
+@layer utilities {
+    .bg-coverimg {
+        background-image: 
+            linear-gradient(to bottom, var(--tw-gradient-stops)), 
+            var(--cover-src);
+
+        @apply bg-center bg-cover lg:bg-fixed bg-no-repeat;
+    }
+
+    .dropcap > p:first-child {
+        @apply indent-0;
+    }
+
+    .dropcap > p:first-child:first-letter {
+        @apply float-left p-1 pt-2 text-7xl; }
+
+    .endmark > p:last-of-type:after {
+        background-image: url('/assets/images/layout/tea-cup.svg');
+        content: '';
+        @apply inline-block ml-1 -mt-1 w-4 h-4 align-baseline;
+        @apply bg-contain bg-no-repeat bg-center;
+    }
+}

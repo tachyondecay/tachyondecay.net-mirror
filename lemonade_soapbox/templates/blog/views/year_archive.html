@@ -1,21 +1,31 @@
-{% extends 'blog/layouts/master.html' %}
+{% extends 'blog/layouts/main.html' %}
+{% from 'macros.html' import time %}
+{% from 'frontend/macros.html' import pagetitle %}
 
 {% block body_main %}
-{% block main_title %}
-<h1 class="c-page__title u-text-center u-text-shadow">{{ page_title }}</h1>
-{% endblock main_title %}
 
-<ol reversed="reversed" class="o-list-bare">
+{{ super() }}
+
+{{ pagetitle(title=page_title, description=year_summaries[year|string]) }}
+
+{% if prev_link or next_link %}
+	<div class="flex justify-between pb-3 my-12 mx-6 border-b xl:mx-auto xl:max-w-4xl border-slate-400">
+		{% if prev_link %}<a class="font-bold" href="{{ url_for('blog.year_archive', year=(year - 1)) }}">&larr; {{ year - 1 }}</a>{% endif %}
+		{% if next_link %}<a class="font-bold" href="{{ url_for('blog.year_archive', year=(year + 1)) }}">{{ year + 1 }} &rarr;</a>{% endif %}
+	</div>
+{% endif %}
+
+<ol reversed class="mt-12 lg:mx-auto lg:max-w-4xl">
 	{% for month in articles|groupby('date_published.month')|sort(True, month) %}
 	<li>
-			<h2 class="u-text-center">{{ g.full_month_name[month.grouper] }}</h2>
+			<h2 class="mx-6 mt-12"><a class="text-2xl font-bold underline text-sky-900 hover:text-sky-900 focus:text-sky-900" title="View articles from this month in more detail" href="{{ url_for('blog.month_archive', year=year, month=('%02d' % month.grouper)) }}">{{ g.full_month_name[month.grouper] }}</a></h2>
 
-			<ol reversed="reversed" class="o-list-bare o-list-split u-margin-bottom">
+			<ol reversed>
 				{% for article in month.list|sort(True, attribute='date_published.day') %}
-				<li class="o-list-split__item">
-					<span class="o-list-split__left"><time datetime="{{ article.date_published.isoformat() }}">{{article.date_published.strftime('%b %d') }}</time></span>
+				<li class="mx-6 mt-3">
+					{{ time(article.date_published, format="MMM DD", class="lg:text-sm") }}
 
-					<a class="o-list-split__right" href="{{ article.get_permalink() }}">{{ article.title }}</a>
+					<a class="ml-2" href="{{ article.get_permalink() }}">{{ article.title }}</a>
 				</li>
 				{% endfor %}
 			</ol>

@@ -1,41 +1,144 @@
-{% extends 'frontend/layouts/master.html' %}
+{% extends 'frontend/layouts/main.html' %}
+{% from 'frontend/macros.html' import pagetitle, toc %}
 
 {% block about_me %}{% endblock about_me %}
 
 {% block body_main %}
-<div class="o-wrapper--text">
-    <h1 class="c-page__title u-text-shadow">About Me</h1>
+    {{ super() }}
 
-    <img src="{{ url_for('static', filename='images/headshots/kara-babcock-2021-06-25 15.52.38.jpg') }}" class="u-flow-left u-img-circle u-box-shadow" width="250" />
+{{ pagetitle(title="About Me", cover=url_for('.static', filename='images/layout/header_bg/tachyondecay-about-me.jpg'), description='I’m a passionate teacher, avid reader, amateur coder, and so much more.')}}
 
-    <h2>The Elevator Pitch</h2>
+<div class="lg:grid lg:grid-cols-6 lg:grid-flow-col-dense lg:mx-auto lg:max-w-5xl">
+    <div class="lg:col-span-2 lg:col-start-5">
+    {{ toc({
+        'pitch': 'The Elevator Pitch',
+        'name': 'Name Policy',
+        'from': 'Where I\'m From',
+        'going': 'Where I\'m Going',
+        'knitting': 'My Knitting',
+        'site': 'About This Site'
+    }) }}
+    </div>
 
-    <p>I’m Kara (Car-uh), a 32-year-old teacher in Thunder Bay, Ontario, Canada. Currently, I teach math and English at the Lakehead Adult Education Centre, where adults can earn their Ontario Secondary School Diploma. In my spare time, I mainline books like they’re an illicit drug. I knit. I spend way too much time online. Occasionally I say something interesting. I’m aromantic, asexual, and transgender. My pronouns, incidentally, are <strong>she/her</strong>.</p>
+    <div class="mx-3 mt-12 sm:mx-auto lg:col-span-4 lg:col-start-1 prose prose-slate md:prose-md lg:prose-lg">
+        <h2 id="pitch">The Elevator Pitch</h2>
 
-    <h2 id="name">Name Policy</h2>
+        <img class="float-right my-3 ml-3 h-48 rounded-md shadow-md lg:h-60 shadow-slate-800/50" src="/media/headshots/kara-babcock-2021-12-17%2009.16.25.jpg" alt="Selfie of me in a blue denim dress and lighter blue cardigan">
 
-    <p><strong>Unless otherwise noted, you should call me Kara and use she/her pronouns, even when referring to events prior to my transition.</strong></p>
+        <p>I’m Kara (Car-uh), a 32-year-old teacher in Thunder Bay, Ontario, Canada. Currently, I teach math and English at the Lakehead Adult Education Centre, where adults can earn their Ontario Secondary School Diploma. In my spare time, I mainline books like they’re an illicit drug. I knit. I spend way too much time online. Occasionally I say something interesting. I’m aromantic, asexual, and transgender. My pronouns, incidentally, are <strong>she/her</strong>.</p>
 
-    <p>My old name (often called a “deadname”) is still fairly evident online, but that doesn’t mean you should use it.</p>
+        <h3>Other Important Details</h3>
 
-    <p>Here’s an example: <a href="https://wejustliketotalk.com/">my wonderful podcast</a> my best friend and I produce has older episodes that use my deadname. I’m not taking those down, and I want you to share them. But when you do, you could say something like, “here’s an episode of Kara and Becky’s podcast from before Kara transitioned.” That’s how you refer to me using my current name even though the item in question contains my deadname.</p>
+        <p></p>
 
-    <p>There is literally no reason you should need to <em>address</em> me by my deadname or use that name to refer to me when talking about me to someone else. Doing so will be a red flag and might result in me ignoring you (at best).</p>
+        <p><strong>More than anything, I like to be cozy.</strong> That time my bestie had me hiking to the top of the Sleeping Giant was an anomaly! I much prefer to be under a blanket, drinking tea—not coffee—and reading a book or knitting in front of the TV. My <em>other</em> best friend, who ironically likes hiking even more, joins me every Sunday—what started as a way for her to watch <cite>Doctor Who</cite> with me has turned into one of my most consistent and enjoyable routines.</p>
 
-    <h2>Where I’m From</h2>
+        <h2 id="name">Name Policy</h2>
 
-    <p>I was born and raised in Thunder Bay, a settler on the lands of the Anishinaabeg of Fort William First Nation and the Robinson–Superior Treaty of 1850. </p>
-
-    <p>I earned an Honours Bachelor of Arts in Mathematics and a Bachelor of Education degree, with a double minor in English and philosophy, from Lakehead University. After I graduated in 2012, I taught math and English in England for two years.</p>
-
-    <p>I’ve maintained a continuous online presence since March 2004, when I taught myself HTML and put my first site online at Geocities. Since then, I’ve learned a host of other skills and languages, from PHP and MySQL to, most recently, Python and the Flask framework. This has always been a hobby to me; I’m not a professional programmer or web developer by any means. But I’m proud of what I can do.</p>
-
-    <h2>Where I’m Going</h2>
-
-    <p>Three years ago, I bought a house. I thought that would be the last big, eventful thing that happened to me for a while. That was naive.</p>
-
-    <p>Since then I’ve made some wonderful friends (yay) and strengthened other friendships. I broke my elbow (ouch). And then I realized, at 30 years old, that I am transgender. So that was (is) a whole thing.</p>
-
-    <p>Hence, the next few years of growth are going to revolve around how my gender expression is changing to match my identity. It’s going to be interesting. Stay tuned.</p>
+        <p>Please always refer to me as Kara, and use she/her pronouns, even if you run into content that uses my deadname (my name prior to transitioning). As someone who has spent her entire adult life Very Online, my deadname is still around quite a bit—but that doesn’t mean you should use it. Thanks in advance!</p>
+    </div>
 </div>
+
+<div class="flex flex-col items-center pb-12 mt-12 md:mt-24 lg:flex-row lg:justify-center lg:items-stretch lg:divide-x bg-slate-200 divide-slate-400">
+    <div class="max-w-none prose prose-slate md:prose-md lg:prose-lg lg:basis-1/2">
+        <img class="w-full" src="/media/sleeping-giant.jpg" alt="Photo of the Sleeping Giant in Thunder Bay, ON as seen from Hillcrest Park">
+
+        <div class="px-3 mx-auto max-w-prose">
+            <h2 class="mt-0" id="from">Where I’m From</h2>
+
+            <p>I was born and raised in Thunder Bay, a settler on the lands of the Anishinaabeg of Fort William First Nation and the Robinson–Superior Treaty of 1850.</p>
+
+            <p>I have always loved books and learning, and I can’t remember a time when I didn’t want to be a teacher. As a wee lass, I would prop a blackboard up against the window and teach lessons to an imaginary class. Yep, I’m <em>that</em> kind of nerd.</p>
+
+            <p>I earned an Honours Bachelor of Arts in Mathematics and a Bachelor of Education degree, with a double minor in English and philosophy, from Lakehead University. After I graduated in 2012, I taught math and English in England for two years.</p>
+
+            <p>Living in England was a great experience, although teaching there was tough at times. I moved back to Thunder Bay in 2014 and shortly thereafter began teaching high school to adults.</p>
+        </div>
+    </div>
+    <div class="max-w-none prose prose-slate md:prose-md lg:prose-lg lg:basis-1/2">
+        <img class="w-full" src="/media/pride-flags.jpg" alt="Photo of my front door from inside the front porch. The door is red. On either side hangs a pride flag: the asexual pride flag on the left, and the trans pride flag on the right.">
+
+        <div class="px-3 mx-auto max-w-prose">
+            <h2 class="mt-0" id="going">Where I’m Going</h2>
+
+            <p>Four years ago, I bought a house. At the time, it seemed like the height of ambition for a millennial who otherwise doesn’t want a romantic partner or children! How was I going to top that?</p>
+
+            <p>Since then, I’ve discovered plenty of new horizons for growth. I <a href="/blog/2020/02/regeneration/">realized I’m transgender</a>. Not only has my transition brought me happiness simply by living as my true gender, but it has also given me the opportunity to experiment with my appearance, my style, my entire self! I’ve discovered a whole new aesthetic, and I feel so much more comfortable in my body and among my friends.</p>
+
+            <p>I <a href="/podcasts/">started not one but <em>two</em> podcasts</a>, and I built a separate <a href="https://kara.reviews/">website for my book reviews</a>. As my confidence in myself grows, I feel more prepared, more <em>ready</em>, to put myself out into the world in many forms.</p>
+
+            <p>At the moment, I’m bolstering my informal expertise in editing by taking courses and considering freelance copyediting work. But mostly I spend my free time reading, knitting, and spending what money doesn’t go towards my house on dresses and shoes.</p>
+        </div>
+    </div>
+</div>
+
+<div class="mx-3 mt-12 md:mx-auto prose prose-slate md:prose-md lg:prose-lg">
+    <h2 id="my-knitting">My Knitting</h2>
+
+    <p>I’ve been a knitter as long as I have been a teacher—I learned how to knit in my final year of university, in 2012, starting on the same day as a career fair that propelled me to teach in England.</p>
+
+    <p>Since then, I have gradually improved my skills with each project I took on. Here’s a small selection of some of my finest achievements. If you want to see more, <a href="https://ravelry.com/people/tachyondecay">visit my Ravelry page</a>.</p>
+
+    <p>I love that knitting has taught me patience. I love that it occupies my hands while I watch TV. But most importantly, I love making beautiful things for myself and those I love.</p>
+</div>
+
+    <figure class="flex flex-wrap justify-center py-6 mt-6 bg-slate-200">
+        <figure class="p-3">
+            <a target="_blank" href="https://www.ravelry.com/projects/tachyondecay/hue-shift-afghan">
+                <img class="max-h-24 sm:max-h-48 hover:shadow-md hover:shadow-slate-900/50" src="/media/knitting/42484815964_01a667315c_k.jpg" alt="Rainbow blanket">
+            </a>
+        </figure>
+        <figure class="p-3">
+            <a target="_blank" href="https://www.ravelry.com/projects/tachyondecay/winter-wonderland-afghan">
+                <img class="max-h-24 sm:max-h-48 hover:shadow-md hover:shadow-slate-900/50" src="/media/knitting/48594422421_f01684bb51_k.jpg" alt="Double-sided winter blanket">
+            </a>
+        </figure>
+        <figure class="p-3">
+            <a target="_blank" href="https://www.ravelry.com/projects/tachyondecay/bao-bao-the-panda">
+                <img class="max-h-24 sm:max-h-48 hover:shadow-md hover:shadow-slate-900/50" src="/media/knitting/49038647138_342eb77f83_k.jpg" alt="Stuffed panda">
+            </a>
+        </figure>
+        <figure class="p-3">
+            <a target="_blank" href="https://www.ravelry.com/projects/tachyondecay/thrummed-mittens-for-rebecca">
+                <img class="max-h-24 sm:max-h-48 hover:shadow-md hover:shadow-slate-900/50" src="/media/knitting/49259496758_528c15b16b_k.jpg" alt="Thrummed mittens">
+            </a>
+        </figure>
+        <figure class="p-3">
+            <a target="_blank" href="https://www.ravelry.com/projects/tachyondecay/silja">
+                <img class="max-h-24 sm:max-h-48 hover:shadow-md hover:shadow-slate-900/50" src="/media/knitting/50610009441_afe54a0dfa_k.jpg" alt="Red entrelac skirt">
+            </a>
+        </figure>
+    </figure>
+
+<div class="mx-3 mt-12 md:mx-auto prose prose-slate md:prose-md lg:prose-lg">
+    <h2 id="site">About This Site</h2>
+
+    <p>In March 2004, I taught myself <abbr title="hypertext markup language">HTML</abbr> and built the earliest version of this site using the now-defunct GeoCities service.</p>
+
+    <p>From the basics of web design with HTML, <abbr title="cascading style sheets">CSS</abbr>, and JavaScript I graduated to server-side programming languages—specifically, PHP. Not knowing that WordPress was a thing, I coded my own primitive blog from scratch. Eventually, I graduated from unreliable or ad-supported free web hosts to paid web hosting, with my own domain.</p>
+
+    <p>My bespoke “Very Simple News System” survived several iterations before I became frustrated with its limitations. By that point, I knew WordPress—and other blogs and <abbr title="Content Management Systems">CMSes</abbr>—existed, yet I was reluctant to abandon my claim to bespoke backends. For a time, Symphony CMS powered some of my site (but not the blog).</p>
+
+    <p>Around 2015, I switched from PHP to Python and learned Flask. At first I only used it to rebuild my blog, but over time I expanded that app into one that powers both this personal site and <a href="https://kara.reviews/">Kara.Reviews</a>. You can <a href="https://github.com/tachyondecay/tachyondecay.net-mirror">view the source on GitHub</a>. Most recently, I started using <a href="https://tailwindcss.com/">Tailwind</a> to help me lay out the design as efficiently as possible.</p>
+</div>
+
+    <figure class="flex flex-wrap justify-center py-6 mt-6 bg-slate-200 js-lightbox">
+        <h3 class="pb-3 w-full text-lg font-bold text-center lg:text-xl">Design Retrospective</h3>
+        <figure class="p-3">
+            <a target="_blank" href="/media/website_screenshots/website-circa-2008.jpg"><img class="max-w-full md:max-h-48 lg:max-h-52 hover:shadow-md hover:shadow-slate-900/50" src="/media/website_screenshots/website-circa-2008.jpg" alt="Screenshot of the homepage of my website from 2008. There is a blue celestial-themed background. The main content and sidebar are on a white background."></a>
+            <figcaption class="mt-2 text-sm text-center text-slate-600">c. 2008</figcaption>
+        </figure>
+        <figure class="p-3">
+            <a target="_blank" href="/media/website_screenshots/website-circa-2013.jpg"><img class="max-w-full md:max-h-48 lg:max-h-52 hover:shadow-md hover:shadow-slate-900/50" src="/media/website_screenshots/website-circa-2013.jpg" alt="Screenshot of the homepage of my website from 2013. Socks and sandals on a vertical rectangular banner at the top left. The text is green on a beige background. There is a cup of tea in the top right corner."></a>
+            <figcaption class="mt-2 text-sm text-center text-slate-600">c. 2013</figcaption>
+        </figure>
+        <figure class="p-3">
+            <a target="_blank" href="/media/website_screenshots/website-circa-2018.jpg"><img class="max-w-full md:max-h-48 lg:max-h-52 hover:shadow-md hover:shadow-slate-900/50" src="/media/website_screenshots/website-circa-2018.jpg" alt="Screenshot of the homepage of my website from 2018. Square banner of socks and sandals in the top left. The text is black on a graph paper background."></a>
+            <figcaption class="mt-2 text-sm text-center text-slate-600">c. 2018</figcaption>
+        </figure>
+        <figure class="p-3">
+            <a target="_blank" href="/media/website_screenshots/website-circa-2021.jpg"><img class="max-w-full md:max-h-48 lg:max-h-52 hover:shadow-md hover:shadow-slate-900/50" src="/media/website_screenshots/website-circa-2021.jpg" alt="Screenshot of the homepage of my website from 2021. The text is black on a graph paper background. My name is at the top, no banner."></a>
+            <figcaption class="mt-2 text-sm text-center text-slate-600">c. 2021</figcaption>
+        </figure>
+    </figure>
 {% endblock %}

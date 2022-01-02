@@ -1,41 +1,111 @@
-{% extends 'blog/layouts/master.html' %}
-{% from 'macros.html' import read_more %}
+{% extends 'blog/layouts/main.html' %}
+{% from 'macros.html' import time, read_more, render_pagination %}
+{% from 'frontend/macros.html' import pagetitle %}
 
 {% block body_main %}
 {{ super() }}
 
-{% block main_title %}
-<h1 class="c-page__title u-text-center u-text-shadow">{{ page_title }}</h1>
-{% endblock main_title %}
+{% if request.endpoint == 'search' %}
+    {% if request.args.get('q') %}
+        {% set description = 'You searched for <i>' ~ request.args.get('q') ~ '</i>' %}
+    {% else %}
+        {% set description = 'You haven\'t searched yet.' %}
+    {% endif %}
+
+    {{ pagetitle(title=("Search My Blog" if not articles else articles.total ~ " articles found"), cover=url_for('.static', filename='images/layout/header_bg/glenn-carstens-peters-RLw-UC03Gwc-unsplash.jpg'), description=description)}}
+{% else %}
+    {{ pagetitle(title=page_title, cover=cover, description=('No articles found' if not articles else (description or articles.total ~ " articles found")))}}
+
+    {% block open_graph %}
+        <meta property="og:url" content="{{ request.base_url }}">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="{{ self.page_title() }}">
+        {% if articles.items %}
+        <meta property="og:description" content="{{ articles.total }} articles under this tag. Latest book: {{ articles.items[0].short_title }}">
+        {% else %}
+        <meta property="og:description" content="No articles found.">
+        {% endif %}
+        <meta property="og:image" content="{{ cover }}">
+        <meta name="twitter:card" content="summary_large_image">
+    {% endblock %}
+{% endif %}
+
+{% if request.endpoint == 'show_tag' and articles %}
+{% block feeds %}
+    {{ super() }}
+
+    <link rel="alternate"  href="{{ url_for('blog.show_tag', format='rss', handle=handle) }}" title="Articles for this tag - RSS"/>
+    <link rel="alternate" href="{{ url_for('blog.show_tag', format='atom', handle=handle) }}" title="Articles for this tag - Atom"/>
+{% endblock feeds %}
+{% endif %}
 
 {% block article_list %}
-<ol class="o-list-bare c-article-archive" reversed="reversed">
-{% for article in articles %}
-    <li class="u-margin-vertical">
-        <article id="{{ article.handle }}" class="o-wrapper--text o-post o-post--excerpt">
-            <header>
-                <h2 class="o-post__title u-margin-horizontal-small u-margin-bottom-small u-text-shadow">
-                    <a class="u-no-underline" href="{{ article.get_permalink() }}">{{ article.title }}</a>
-                </h2>
+{% if articles and articles|attr('pages')|default(0) > 1 %}
+    <div class="flex flex-col items-center my-12 md:flex-row md:justify-between md:pb-3 md:mx-10 md:border-b xl:mx-auto xl:max-w-4xl md:border-slate-400">
+        <p>Showing {{ 1 + articles.per_page * (articles.page - 1) }} to {{ [articles.total, articles.per_page * articles.page]|min }} of {{ articles.total }} results</p>
+    {{ render_pagination(articles) }}
+    </div>
+{% endif %}
 
-                {% if article.summary %}
-                <div class="o-post__summary">
-                    {{ article.summary }}
+{% if prev_link or next_link %}
+    <div class="flex justify-between pb-3 my-12 mx-6 border-b xl:mx-auto xl:max-w-4xl border-slate-400">
+        {% if prev_link %}<a class="font-bold" href="{{ prev_link[0] }}">&larr; {{ prev_link[1] }}</a>{% endif %}
+        {% if next_link %}<a class="font-bold" href="{{ next_link[0] }}">{{ next_link[1] }} &rarr;</a>{% endif %}
+    </div>
+{% endif %}
+
+<main>
+
+<div class="mx-auto mt-12 max-w-4xl text-center">
+    {% if not articles %}
+    <p>No results found.</p>
+    {% endif %}
+</div>
+
+{% if articles %}
+<ol>
+    {% for article in (articles.items or articles) %}
+    <li>
+        <article id="{{ article.handle }}" class="flex flex-col md:grid md:grid-cols-[fit-content(40%)_1fr] mt-12 mx-3 md:mt-16 md:grid-rows-[repeat(2,_min-content)] md:gap-x-8 md:gap-y-2 md:mx-10 xl:mx-auto xl:max-w-4xl lg:gap-x-2 lg:shadow-md lg:shadow-slate-600/25 lg:rounded-b-lg lg:overflow-hidden lg:border-t-8 lg:border-fuchsia-900 group hover:border-sky-900 hover:shadow-slate-600/50 focus-within:border-sky-900 focus-within:shadow-slate-600/50">
+
+            <header class="contents">
+                <a href="{{ article.get_permalink() }}" class="md:row-span-full lg:p-3">
+                    {% if article.cover %}
+                    <img src="/media/article/covers/{{ article.cover }}" alt="Cover image for {{ article.title }}" class="mb-3 shadow-md md:mb-0 lg:opacity-90 shadow-slate-600/50 group-hover:lg:opacity-100 group-hover:shadow-slate-600/100 group-focus-within:lg:opacity-100 group-focus-within:shadow-slate-600/100">
+                    {% endif %}
+                </a>
+
+                <div>
+                    <h3 class="mb-2 text-xl lg:pt-3 lg:font-bold"><a class="hover:underline focus:underline group-hover:text-sky-900 group-focus-within:text-sky-900" href="{{ article.get_permalink() }}">{{ article.title }}</a></h3>
+
+                    <p class="pb-2 mb-2 font-light border-b md:mb-0 border-slate-400">
+                    {% if article.status == "published" %}
+                        Published {{ time(article.date_published, 'MMMM D, YYYY') }}
+                    {% endif %}
+                    {% if article.status != "published" or article.show_updated %}
+                        <small class="block">(Updated {{ time(article.date_updated, 'MMMM D, YYYY') }})</small> 
+                    {% endif %}
+                    </p>
                 </div>
-                {% endif %}
-
-                <p class="o-post__details o-post__pubinfo u-margin-horizontal-small">
-                    <time datetime="{{ article.date_published.isoformat() }}">{{ article.date_published.to(config.TIMEZONE).format('dddd, MMMM D, YYYY h:mm A ZZ') }}</time>
-                </p>
             </header>
 
-            <div class="o-post__content">
-                {{ read_more(article.body_html, url=article.get_permalink()) }}
-            </div>
+            <div class="sm:block sm:font-serif">
+                <div class="sm:max-w-none md:pb-3 lg:pr-3 prose prose-slate prose-sm sm:prose-h2:text-base lg:prose-base group-hover:prose-p:text-slate-900">
+                {{ article.summary or article.body_html|truncate_html(read_more_length|default(75)) }}
+                </div>
+            </div>             
         </article>
     </li>
 {% endfor %}
 </ol>
-{% endblock article_list %}
 
+{% if articles and articles|attr('pages')|default(0) > 1 %}
+    <div class="flex flex-col items-center my-12 md:flex-row md:justify-between md:pt-3 md:mx-10 md:border-t lg:mx-auto lg:max-w-4xl md:border-slate-400">
+        <p>Showing {{ 1 + articles.per_page * (articles.page - 1) }} to {{ [articles.total, articles.per_page * articles.page]|min }} of {{ articles.total }} results</p>
+    {{ render_pagination(articles) }}
+    </div>
+{% endif %}
+</main>
+{% endif %}
+{% endblock article_list %}
 {% endblock body_main %}

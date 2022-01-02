@@ -1,2 +1,22 @@
-{% extend 'blog/views/article_list.html' %}
+{% extends 'blog/views/article_list.html' %}
 
+{% block article_list %}
+	<div class="lg:grid lg:grid-cols-8 lg:grid-flow-col-dense lg:mx-auto lg:max-w-5xl">
+
+		<nav class="mt-12 lg:col-span-2 lg:col-start-1" aria-labelledby="explore">
+			<h2 class="text-lg lg:text-xl sidebar-heading" id="explore">Explore My Blog</h2>
+			<a class="block mx-6 mt-3 lg:text-lg" href="{{ url_for('.all_tags') }}">View Tags</a>
+
+			<h3 class="mx-6 mt-6 font-bold text-sky-900">View by Year</h3>
+			<ul class="flex flex-wrap mx-6 lg:grid lg:grid-cols-4">
+				{% for y in range(2021, 2003, -1) %}
+					<li class="mt-3 mr-4 lg:text-lg"><a href="{{ url_for('.year_archive', year=y) }}">{{ y }}</a></li>
+				{% endfor %}
+			</ul>
+		</nav>
+
+		<div class="lg:col-span-5 lg:col-start-4">
+			{{ super() }}
+		</div>
+	</div>
+{% endblock %}

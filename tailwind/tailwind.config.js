@@ -1,8 +1,4 @@
 module.exports = {
-  content: [
-    "./lemonade_soapbox/assets/js/*.js",
-    "./lemonade_soapbox/templates/**/*.html",
-  ],
   theme: {
     fontFamily: {
       sans: 'Oswald, Verdana, Arial, sans-serif',
@@ -30,12 +26,12 @@ module.exports = {
         DEFAULT: {
           css: {
             fontFamily: theme('fontFamily.serif'),
+            'a': {
+              textDecorationThickness: '2px',
+            },
             blockquote: {
               fontStyle: 'normal',
               fontWeight: 400,
-            },
-            'blockquote:hover': {
-              borderColor: theme('colors.amber.600')
             },
             'blockquote p:only-of-type': {
               textIndent: '0 !important',
@@ -99,8 +95,21 @@ module.exports = {
             '--tw-prose-invert-pre-bg': 'rgb(0 0 0 / 50%)',
             '--tw-prose-invert-th-borders': theme('colors.marble[600]'),
             '--tw-prose-invert-td-borders': theme('colors.marble[700]'),
+            'blockquote:hover': {
+              borderColor: theme('colors.amber.600')
+            },
           },
         },
+        slate: {
+          css: {
+            '--tw-prose-headings': theme('colors.sky[900]'),
+            '--tw-prose-links': theme('colors.fuchsia[900]'),
+            '--tw-prose-quote-borders': theme('colors.fuchsia[900]'),
+            'blockquote:hover': {
+              borderColor: theme('colors.sky.700')
+            },
+          }
+        }
       }),
     },
   },
