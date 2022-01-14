@@ -1,6 +1,6 @@
 {% macro pagetitle(title, cover='', description='', class='', heading='h1', subheading='p') %}
 <div class="px-3 py-16 bg-coverimg from-marble-900/75 to-marble-900/70 lg:h-screen lg:pt-[45vh] lg:relative lg:z-20 {{ class }}" style="--cover-src: url('{{ cover }}');">
-    <{{ heading }} class="text-2xl font-bold lg:mx-auto lg:max-w-[55rem] xl:max-w-[54rem] lg:text-3xl xl:text-5xl text-marble-100">{{ title }}</{{ heading }}>
+    <{{ heading }} class="text-2xl font-bold lg:mx-auto lg:max-w-[55rem] xl:max-w-[54rem] lg:text-3xl xl:text-5xl xl:leading-tight text-marble-100">{{ title }}</{{ heading }}>
     {% if description %}
     <{{ subheading }} class="mt-6 text-lg lg:mx-auto lg:mt-3 lg:max-w-[55rem] xl:max-w-[54rem] lg:text-xl xl:text-3xl text-marble-200">{{ description|safe }}</{{ subheading }}>
     {% endif %}

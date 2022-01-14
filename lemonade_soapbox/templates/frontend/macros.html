@@ -4,7 +4,7 @@
 {% else %}
     <div class="py-16 px-6 bg-gradient-to-t to-fuchsia-900 lg:relative lg:z-20 lg:pt-32 from-slate-800">
 {% endif %}
-        <{{ heading }} class="text-2xl font-bold text-slate-100 lg:mx-auto lg:max-w-[55rem] xl:max-w-[54rem] lg:text-3xl xl:text-5xl">{{ title }}</{{ heading }}>
+        <{{ heading }} class="text-2xl font-bold text-slate-100 lg:mx-auto lg:max-w-[55rem] xl:max-w-[54rem] lg:text-3xl xl:text-5xl xl:leading-tight">{{ title }}</{{ heading }}>
         {% if description %}
             <{{ subheading }} class="mt-6 text-lg lg:mx-auto lg:mt-3 lg:max-w-[55rem] xl:max-w-[54rem] lg:text-xl xl:text-2xl text-slate-200">{{ description|safe }}</{{subheading}}>
         {% endif %}
