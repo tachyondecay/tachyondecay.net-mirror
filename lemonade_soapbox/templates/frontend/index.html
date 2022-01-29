@@ -83,9 +83,9 @@
                 {{ time(article.date_published, format="MMM DD", class="text-sm font-light") }}
                 <h3 class="inline ml-1"><a class="hover:underline focus:underline group-hover:text-sky-900 group-focus-within:text-sky-900" href="{{ article.get_permalink() }}">{{ article.title }}</a></h3>
 
-                <p class="max-w-none prose prose-slate lg:prose-sm">
+                <div class="max-w-none prose prose-slate lg:prose-sm">
                     {{ article.summary or article.body_html|truncate_html(read_more_length|default(75)) }}
-                </p>
+                </div>
             </article>
         {% endif %}
     {% endfor %}
