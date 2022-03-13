@@ -14,25 +14,25 @@ dependencies = [
     "flask~=2.0",
     "flask-login~=0.5",
     "flask-sqlalchemy~=2.5",
-    "flask-wtf~=0.15",
+    "flask-wtf~=1.0",
     "gunicorn~=20.1",
-    "itsdangerous~=2.0",
+    "itsdangerous~=2.1",
     "jinja2~=3.0",
     "markdown~=3.3",
-    "markupsafe~=2.0",
+    "markupsafe~=2.1",
     "passlib~=1.7",
-    "python-slugify~=5.0",
+    "python-slugify~=6.1",
     "sqlalchemy~=1.4",
-    "sqlalchemy-utils~=0.37",
+    "sqlalchemy-utils~=0.38",
     "werkzeug~=2.0",
     "whoosh~=2.7",
-    "wtforms~=2.3",
-    "wtforms-alchemy~=0.17",
+    "wtforms~=3.0",
+    "wtforms-alchemy~=0.18",
     "wtforms-components~=0.10",
     "python-dotenv~=0.19",
     "psycopg2-binary~=2.9",
     "flask-migrate~=3.1",
-    "pillow~=8.4",
+    "pillow~=9.0",
 ]
 requires-python = ">=3.8"
 license = {text = "N/A"}
@@ -51,10 +51,11 @@ build-backend = "pdm.pep517.api"
 [tool.pdm]
 [tool.pdm.dev-dependencies]
 dev = [
-    "coverage~=6.1",
+    "coverage~=6.3",
     "factory-boy~=3.2",
-    "pytest~=6.2",
-    "pylint~=2.11"]
+    "pytest~=7.0",
+    "pylint~=2.12",
+]
 
 [[tool.pdm.source]]
 name = "pypi"

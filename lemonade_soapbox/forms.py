@@ -5,6 +5,7 @@ from flask_wtf.file import FileAllowed, FileField
 from wtforms import (
     BooleanField,
     DateTimeField,
+    EmailField,
     HiddenField,
     IntegerField,
     PasswordField,
@@ -14,7 +15,6 @@ from wtforms import (
     SubmitField,
     validators,
 )
-from wtforms.fields.html5 import EmailField
 from wtforms.widgets import HiddenInput, html_params, TextInput
 from wtforms_alchemy import model_form_factory, ModelFieldList, ModelFormField
 
