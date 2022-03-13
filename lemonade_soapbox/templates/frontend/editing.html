@@ -1,10 +1,22 @@
 {% extends 'frontend/layouts/main.html' %}
 {% from 'frontend/macros.html' import pagetitle %}
 
+        {% block meta_tags %}
+        <meta name="description" content="Personal blog of Kara Babcock, a Canadian, trans teacher, book reviewer, and podcaster." />
+        <meta property="og:url" content="{{ request.base_url }}" />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="Copyediting and Stylistic Editing Services" />
+        <meta property="og:description" content="Kara Babcock offers freelance editing." />
+        <meta property="og:image" content="{{ url_for('.static', filename='images/layout/header_bg/dan-counsell-zIwAchjDirM-unsplash.jpg', _external=True) }}">
+        <meta property="og:image:width" content="1458">
+        <meta property="og:image:height" content="1458">
+        <meta name="twitter:card" content="summary_large_image">
+        {% endblock %}
+
 {% block body_main %}
     {{ super() }}
 
-{{ pagetitle(title="Copyediting & Stylistic Editing", cover=url_for('.static', filename='images/layout/header_bg/dan-counsell-zIwAchjDirM-unsplash.jpg'), description='Let me help you make your writing shine.')}}
+{{ pagetitle(title="Copyediting & Stylistic Editing", cover=url_for('.static', filename='images/layout/header_bg/dan-counsell-zIwAchjDirM-unsplash.jpg'), description='Let me make your writing shine.')}}
 
 <h2 class="sr-only">Services</h2>
 
