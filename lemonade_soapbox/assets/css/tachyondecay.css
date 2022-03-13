@@ -3,7 +3,7 @@
  */
 
 /*
- ! tailwindcss v3.0.12 | MIT License | https://tailwindcss.com
+ ! tailwindcss v3.0.23 | MIT License | https://tailwindcss.com
  */
 
 /*
@@ -1424,9 +1424,6 @@ small {
   border-color: rgb(12 74 110 / var(--tw-border-opacity));
 }
 
-.pagination-links .button {
-}
-
 @media (min-width: 1280px) {
   .prose blockquote {
     margin-left: -2rem;
@@ -1622,6 +1619,10 @@ small {
   margin-top: 0.5rem;
 }
 
+.mt-3 {
+  margin-top: 0.75rem;
+}
+
 .ml-12 {
   margin-left: 3rem;
 }
@@ -1690,10 +1691,6 @@ small {
   margin-top: 2.5rem;
 }
 
-.mt-3 {
-  margin-top: 0.75rem;
-}
-
 .mt-\[0\.15rem\] {
   margin-top: 0.15rem;
 }
@@ -1736,6 +1733,10 @@ small {
 
 .h-48 {
   height: 12rem;
+}
+
+.h-6 {
+  height: 1.5rem;
 }
 
 .h-4 {
@@ -2109,6 +2110,10 @@ small {
   padding-bottom: 0.75rem;
 }
 
+.pr-3 {
+  padding-right: 0.75rem;
+}
+
 .pl-1 {
   padding-left: 0.25rem;
 }
@@ -2149,6 +2154,10 @@ small {
   font-family: "EB Garamond", Garamond, Palatino, "Times New Roman", serif;
 }
 
+.font-sans {
+  font-family: Oswald, Verdana, Arial, sans-serif;
+}
+
 .text-lg {
   font-size: 1.125rem;
   line-height: 1.75rem;
@@ -2159,14 +2168,14 @@ small {
   line-height: 1.25rem;
 }
 
-.text-2xl {
-  font-size: 1.5rem;
-  line-height: 2rem;
-}
-
 .text-xl {
   font-size: 1.25rem;
   line-height: 1.75rem;
+}
+
+.text-2xl {
+  font-size: 1.5rem;
+  line-height: 2rem;
 }
 
 .text-xs {
@@ -2203,12 +2212,12 @@ small {
   font-style: italic;
 }
 
-.leading-relaxed {
-  line-height: 1.625;
-}
-
 .leading-loose {
   line-height: 2;
+}
+
+.leading-relaxed {
+  line-height: 1.625;
 }
 
 .tracking-wide {
@@ -4197,16 +4206,16 @@ small {
     max-width: 64rem;
   }
 
-  .lg\:max-w-\[55rem\] {
-    max-width: 55rem;
-  }
-
   .lg\:max-w-2xl {
     max-width: 42rem;
   }
 
   .lg\:max-w-4xl {
     max-width: 56rem;
+  }
+
+  .lg\:max-w-\[55rem\] {
+    max-width: 55rem;
   }
 
   .lg\:shrink {
@@ -4287,6 +4296,10 @@ small {
 
   .lg\:justify-center {
     justify-content: center;
+  }
+
+  .lg\:justify-evenly {
+    justify-content: space-evenly;
   }
 
   .lg\:gap-2 {
@@ -4560,16 +4573,16 @@ small {
     width: 2rem;
   }
 
+  .xl\:max-w-4xl {
+    max-width: 56rem;
+  }
+
   .xl\:max-w-5xl {
     max-width: 64rem;
   }
 
   .xl\:max-w-\[54rem\] {
     max-width: 54rem;
-  }
-
-  .xl\:max-w-4xl {
-    max-width: 56rem;
   }
 
   .xl\:max-w-none {

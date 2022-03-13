@@ -1,0 +1,57 @@
+{% extends 'frontend/layouts/main.html' %}
+{% from 'frontend/macros.html' import pagetitle %}
+
+{% block body_main %}
+    {{ super() }}
+
+{{ pagetitle(title="Copyediting & Stylistic Editing", cover=url_for('.static', filename='images/layout/header_bg/dan-counsell-zIwAchjDirM-unsplash.jpg'), description='Let me help you make your writing shine.')}}
+
+<h2 class="sr-only">Services</h2>
+
+<p class="pb-12 mx-3 mt-12 font-serif text-lg italic leading-loose border-b md:text-xl md:leading-normal lg:mx-auto lg:max-w-2xl xl:max-w-4xl border-slate-400">I am available for hire on a freelance basis for copyediting and stylistic editing. These steps happen towards the end of the writing process. I don’t currently offer structural editing services (feedback on earlier drafts to improve the piece as a whole).</p>
+
+<div class="lg:flex lg:mx-auto lg:max-w-2xl xl:max-w-4xl">
+    <div class="mt-6 max-w-none prose prose-slate md:prose-md lg:basis-1/2 lg:prose-lg">
+        <h3 class="mx-3">Types of Editing</h3>
+
+        <dl class="mx-3">
+            <dt class="font-sans font-bold">Copyediting</dt>
+            <dd>Ensures correct grammar, consistency, accuracy, and adherence to a given style manual. This helps you avoid embarrassing typos and mistakes.</dd>
+
+            <dt class="mt-3 font-sans font-bold">Stylistic editing</dt>
+            <dd>One step up from copyediting, this improves clarity, coherence, and flow through minor changes at the sentence and paragraph level.</dd>
+        </dl>
+    </div>
+
+    <div class="mt-6 max-w-none prose prose-slate md:prose-md lg:basis-1/2 lg:prose-lg">
+        <h3 class="mx-3">What I Edit</h3>
+
+        <ul class="mx-3">
+            <li>Academic papers, manuscripts, dissertations</li>
+            <li>Book manuscripts (fiction and non-fiction)</li>
+            <li>Blog and social media posts</li>
+            <li>Social media profile pages</li>
+            <li>Web content (e.g., landing pages, about pages)</li>
+            <li>Shop listings</li>
+            <li>Marketing copy (e.g., ads, brochures, newsletters)</li>
+            <li>Reports, manuals, documentation, technical writing</li>
+        </ul>
+
+        <p class="mx-3">I’m open to other projects if you don’t see yours listed above!</p>
+    </div>
+</div>
+
+<div class="mt-12 max-w-none lg:mx-auto lg:max-w-2xl lg:max-w-4xl prose prose-slate md:prose-md lg:prose-lg">
+    <h2 class="mx-3">Rates</h2>
+
+    <p class="mx-3">I usually charge a rate per-page or per-word based on the length and type of document and scope of work required. For example, copyediting a website or a couple of blog posts is usually less intensive than an academic essay.</p>
+
+    <p class="mx-3">Contact me with more information about your project, and I will give you a quote!</p>
+
+    <div class="flex flex-col items-center lg:flex-row lg:justify-evenly">
+        <a class="font-sans text-xl font-bold" href="mailto:kara@tachyondecay.net"><img class="inline-block pr-3 h-6" src="{{ url_for('static', filename='images/icons/email.png') }}" alt="Email envelope">kara@tachyondecay.net</a>
+        <a class="font-sans text-xl font-bold" href="https://www.linkedin.com/in/karababcock/"><img class="inline-block pr-3 h-6" src="{{ url_for('static', filename='images/icons/linkedin_square.svg') }}" alt="LinkedIn logo">LinkedIn</a>
+    </div>
+</div>
+
+{% endblock %}

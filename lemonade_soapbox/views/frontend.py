@@ -76,6 +76,14 @@ def about_me():
     return render_template('frontend/about.html', page_title='About Me')
 
 
+@bp.route('/editing/')
+def editing():
+    return render_template(
+        'frontend/editing.html',
+        page_title='Freelance Editing Services',
+    )
+
+
 @bp.route('/podcasts/')
 def podcasts():
     return render_template('frontend/podcasts.html', page_title='My Podcasts')
