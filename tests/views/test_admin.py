@@ -67,7 +67,7 @@ def test_protected_routes(client):
     for route in routes:
         resp = client.get(f"http://main.test/meta{route}")
         assert resp.status_code == 302
-        assert resp.location.startswith("http://main.test/meta/signin/")
+        assert resp.location.startswith("/meta/signin/")
 
 
 @pytest.mark.parametrize(
@@ -342,7 +342,7 @@ def test_reviews(client, signin):
 def test_signin_authed(client, signin):
     resp = client.get("http://main.test/meta/signin/")
     assert resp.status_code == 302
-    assert resp.location == "http://main.test/meta/"
+    assert resp.location == "/meta/"
 
 
 def test_signin_unauthed(client, user):
@@ -361,7 +361,7 @@ def test_signin_unauthed(client, user):
         data={"email": "test1@example.com", "password": "1234"},
     )
     assert resp.status_code == 302
-    assert resp.location == url
+    assert resp.location == "/meta/signin/"
 
     # Valid email address, invalid password
     resp = client.post(
@@ -369,7 +369,7 @@ def test_signin_unauthed(client, user):
         data={"email": "test@example.com", "password": "1234"},
     )
     assert resp.status_code == 302
-    assert resp.location == url
+    assert resp.location == "/meta/signin/"
 
     # Valid email and password
     resp = client.post(
@@ -377,7 +377,7 @@ def test_signin_unauthed(client, user):
         data={"email": "test@example.com", "password": "testing"},
     )
     assert resp.status_code == 302
-    assert resp.location == "http://main.test/meta/"
+    assert resp.location == "/meta/"
 
 
 def test_signout(client, signin, user):

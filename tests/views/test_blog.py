@@ -1,6 +1,5 @@
 import arrow
 import pytest
-from flask_login import login_user
 from lemonade_soapbox.models import Tag
 from tests.factories import ArticleFactory
 
@@ -23,10 +22,7 @@ def test_default_feed(app, client):
     """Hitting /blog/feed/ should redirect to the default feed format."""
     resp = client.get("http://main.test/blog/feed/")
     assert resp.status_code == 302
-    assert (
-        resp.location
-        == f"http://main.test/blog/feed/posts.{app.config['DEFAULT_FEED_FORMAT']}"
-    )
+    assert resp.location == f"/blog/feed/posts.{app.config['DEFAULT_FEED_FORMAT']}"
 
 
 def test_error404(client):
