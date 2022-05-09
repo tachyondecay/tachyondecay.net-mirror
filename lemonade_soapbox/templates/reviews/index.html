@@ -11,7 +11,7 @@
 <div class="xl:grid xl:grid-cols-[calc(50vw-40rem)_repeat(2,_1fr)_calc(50vw-40rem)] xl:bg-coverimg xl:from-marble-900/75 xl:to-marble-900/70" style="--cover-src: url('{{ url_for('.static', filename='images/layout/header_bg/my_shelves.jpg') }}')">
 <!-- Begin grid layout -->
 
-{{ pagetitle(title=('13 years. ' ~ total_reviews ~ ' reviews.'), description='Not sure where to start? Check out my latest!', cover=url_for('.static', filename='images/layout/header_bg/my_shelves.jpg'), class='xl:bg-none xl:col-start-2 xl:h-auto xl:pt-[30vh] xl:px-6')}}
+{{ pagetitle(title=('14 years. ' ~ total_reviews ~ ' reviews.'), description='Not sure where to start? Check out my latest!', cover=url_for('.static', filename='images/layout/header_bg/my_shelves.jpg'), class='xl:bg-none xl:col-start-2 xl:h-auto xl:pt-[30vh] xl:px-6')}}
 
 <section class="mt-12 md:mx-auto md:max-w-lg xl:col-start-3 xl:row-span-2 xl:justify-self-end xl:self-center xl:mx-12 xl:mt-24">
     <h2 class="sr-only">Recent Reviews</h2>
@@ -55,7 +55,7 @@
     </div>
 
     <div class="xl:col-span-full xl:row-start-3 xl:[background:linear-gradient(180deg,_rgba(0,0,0,0)_0%,_rgba(248,247,247,0.5)_10%,_rgba(248,247,247,1)_30%,_rgba(248,247,247,1)_100%)]">
-        <h3 class="mx-3 mt-24 text-xl font-bold text-center xl:mx-auto xl:max-w-3xl">If you like my reviews, you’ll <em>love</em> my podcasts!</h3>
+        <h3 class="mx-3 mt-24 text-xl font-bold xl:mx-auto xl:max-w-3xl xl:text-center">If you like my reviews, you’ll <em>love</em> my podcasts!</h3>
 
         <div class="flex justify-center mt-3 xl:mx-auto xl:mt-6 xl:max-w-4xl">
             <a class="mx-3 flex-1 max-w-[15rem] opacity-80 hover:opacity-100 focus:opacity-100 shadow-sm shadow-marble-600/50 hover:shadow-marble-600/100 focus:shadow-marble-600/100" href="https://wejustliketotalk.com/" title="We Just Like to Talk — A general-interest show with my best friend">
@@ -66,6 +66,12 @@
                 <img src="{{ url_for('static', filename="images/prophecy_girls_logo.png") }}" alt="Prophecy Girls logo">
             </a>
         </div>
+    </div>
+
+    <div class="xl:col-span-full xl:row-start-4 xl:bg-marble-50">
+        <h3 class="mx-3 mt-24 text-xl font-bold xl:mx-auto xl:max-w-3xl xl:text-center">If you <em>love</em> my reviews, consider hiring me!</h3>
+
+        <p class="mx-3 mt-6 xl:mx-auto xl:max-w-3xl xl:text-center">I offer <a href="https://tachyondecay.net/editing/">freelance copyediting services</a> for authors, academics, and businesses.</p>
     </div>
 </section>
 </div> <!-- end grid layout -->

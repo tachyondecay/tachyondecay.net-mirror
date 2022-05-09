@@ -3,7 +3,7 @@
  */
 
 /*
- ! tailwindcss v3.0.12 | MIT License | https://tailwindcss.com
+ ! tailwindcss v3.0.24 | MIT License | https://tailwindcss.com
  */
 
 /*
@@ -1216,9 +1216,6 @@ small {
 .pagination-links .button:focus {
   --tw-border-opacity: 1;
   border-color: rgb(190 24 93 / var(--tw-border-opacity));
-}
-
-.pagination-links .button {
 }
 
 @media (min-width: 1280px) {
@@ -3963,6 +3960,10 @@ small {
     grid-row-start: 3;
   }
 
+  .xl\:row-start-4 {
+    grid-row-start: 4;
+  }
+
   .xl\:mx-12 {
     margin-left: 3rem;
     margin-right: 3rem;
@@ -4098,6 +4099,11 @@ small {
     background-color: transparent;
   }
 
+  .xl\:bg-marble-50 {
+    --tw-bg-opacity: 1;
+    background-color: rgb(248 247 247 / var(--tw-bg-opacity));
+  }
+
   .xl\:bg-none {
     background-image: none;
   }
@@ -4149,6 +4155,10 @@ small {
     text-align: left;
   }
 
+  .xl\:text-center {
+    text-align: center;
+  }
+
   .xl\:text-xl {
     font-size: 1.25rem;
     line-height: 1.75rem;
@@ -4187,17 +4197,8 @@ small {
     background-image: 
             linear-gradient(to bottom, var(--tw-gradient-stops)), 
             var(--cover-src);
-  }
-
-  .xl\:bg-coverimg {
     background-size: cover;
-  }
-
-  .xl\:bg-coverimg {
     background-position: center;
-  }
-
-  .xl\:bg-coverimg {
     background-repeat: no-repeat;
   }
 

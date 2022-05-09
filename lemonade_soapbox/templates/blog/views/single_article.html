@@ -57,7 +57,7 @@
         {% endif %}
     </footer>
 
-    <aside class="mt-12 lg:col-start-5 lg:col-end-7 lg:row-start-1 lg:row-span-2 lg:mt-0 xl:col-end-6">
+    <aside class="mt-12 lg:col-start-5 lg:col-end-7 lg:row-span-2 lg:row-start-1 lg:mt-0 xl:col-end-6">
         <h3 class="last:hidden sidebar-heading">Heads Up</h3>
         {% if article.status == "published" and (arrow.utcnow() - article.date_published) > timedelta(days=728) %}
         <p class="px-3 mt-4 text-sm text-slate-500">
