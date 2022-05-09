@@ -22,13 +22,13 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         fetch-depth: 0
     - name: mirror-repository
       # You may pin to the exact commit or the version.
       # uses: spyoungtech/mirror-action@b313a53232e77d8f7d8fcdb00f90b94100767be1
-      uses: spyoungtech/mirror-action@v0.4.3
+      uses: yesolutions/mirror-action@master
       with:
         # The remote repository e.g. https://github.com/octocat/foo.git or git@github.com:octocat/foo.git
         REMOTE: git@github.com:tachyondecay/tachyondecay.net-mirror.git
