@@ -81,12 +81,12 @@ def posts_lookup():
     if term := request.args.get('q'):
         articles = (
             Article.query.filter(Article.title.ilike(f'%{term}%'))
-            .order_by(Article.title_sort)
+            .order_by(Article.sort_title)
             .all()
         )
         reviews = (
             Review.query.filter(Review.title.ilike(f'%{term}%'))
-            .order_by(Review.title_sort)
+            .order_by(Review.sort_title)
             .all()
         )
         current_app.logger.debug(articles)

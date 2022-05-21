@@ -515,7 +515,7 @@ class Post(AuthorMixin, UniqueHandleMixin, TagMixin, Searchable, db.Model):
         return self.title.lstrip(' The').lstrip('A ').lstrip('An ')
 
     @sort_title.expression
-    def title_sort(self):
+    def sort_title(self):
         return func.ltrim(func.ltrim(func.ltrim(self.title, 'The '), 'A '), 'An ')
 
     @cached_property
