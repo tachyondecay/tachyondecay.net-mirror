@@ -144,6 +144,12 @@ def search():
             ),  # Only return published reviews
         }
 
+        if sort_by := request.args.get('sortby'):
+            search_params['sortedby'] = sort_by
+
+            if request.args.get('reverse'):
+                search_params['reverse'] = True
+
         # If query has no modifiers then search the title only
         split_q = q.split(" ")
         if split_q and ":" not in split_q[0]:
