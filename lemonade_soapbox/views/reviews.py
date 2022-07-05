@@ -15,7 +15,7 @@ from flask import (
 )
 from flask_login import current_user
 from flask_sqlalchemy import Pagination
-from sqlalchemy import or_, not_
+from sqlalchemy import desc, or_, not_
 from whoosh.query import Term as whoosh_term
 
 from lemonade_soapbox import db
@@ -147,7 +147,7 @@ def search():
         if sort_by := request.args.get('sortby'):
             search_params['sortedby'] = sort_by
 
-            if request.args.get('reverse'):
+            if reverse := request.args.get('reverse'):
                 search_params['reverse'] = True
 
         # If query has no modifiers then search the title only
@@ -158,13 +158,20 @@ def search():
 
         results = Review.search(q, **search_params)
         # current_app.logger.debug(results)
-        if results is not None and results['query'] is not None:
+        if results and (query := results['query']):
+            if sort_by:
+                query = (
+                    query.order_by(desc(sort_by))
+                    if reverse
+                    else query.order_by(sort_by)
+                )
+
             reviews = Pagination(
                 None,
                 page=page,
                 per_page=20,
                 total=results['total'],
-                items=results['query'].all(),
+                items=query,
             )
             page_title = (
                 f"{results['total']} review{'s' if results['total'] > 1 else ''} found"
