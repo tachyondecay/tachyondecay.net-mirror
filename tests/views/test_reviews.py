@@ -47,9 +47,10 @@ def test_index(client, db):
 
 
 def test_lists(client):
-    resp = client.get("http://reviews.test/lists/")
-    assert resp.status_code == 200
-    assert b"The lists feature is under construction" in resp.data
+    with client:
+        resp = client.get("http://reviews.test/lists/")
+        assert resp.status_code == 200
+        assert b"The lists feature is under construction" in resp.data
 
 
 def test_random_review(client):
@@ -90,9 +91,9 @@ def test_search(client, db):
     assert b"pagination-links" in resp.data
 
 
-def test_show_feed(client, user):
+def test_show_feed(client):
     """Test the generation of Atom and RSS feeds."""
-    reviews = ReviewFactory.create_batch(5, author=user)
+    reviews = ReviewFactory.create_batch(5)
     for format in ["atom", "rss"]:
         resp = client.get(f"http://reviews.test/feed/posts.{format}")
         assert resp.status_code == 200
@@ -114,18 +115,17 @@ def test_show_review_unauthenticated(client):
     assert resp.status_code == 404
 
 
-def test_show_review_authenticated(client, signin):
+def test_show_review_authenticated(client_authed):
     review = ReviewFactory(status="draft")
     url = f"http://reviews.test/{review.handle}/"
 
-    # Drafts and scheduled reviews should 404 if not authenticated
-    resp = client.get(url)
+    resp = client_authed.get(url)
     assert resp.status_code == 200
     assert review.title.encode() in resp.data
 
     review.status = "published"
     review.date_published = arrow.utcnow().shift(weeks=+1)
-    resp = client.get(url)
+    resp = client_authed.get(url)
     assert resp.status_code == 200
     assert review.title.encode() in resp.data
 

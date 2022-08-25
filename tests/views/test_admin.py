@@ -20,23 +20,25 @@ post_types = {
 
 
 @pytest.fixture(params=[ArticleFactory, ListFactory, ReviewFactory])
-def post(db, request, signin):
+def post(db, request, client_authed):
     """For testing various cases with the edit_post endpoint."""
     # Create the post and generate a new revision
-    post = request.param(title="Hello World", body="Test post here")
+    _post = request.param(title="Hello World", body="Test post here")
 
     # Create a new revision if the post type supports this
     if issubclass(request.param._meta.model, RevisionMixin):
-        old_body = post.body
-        post.body = "This is a replacement body text."
-        post.new_revision(old_body)
+        old_body = _post.body
+        _post.body = "This is a replacement body text."
+        _post.new_revision(old_body)
 
     # This is required to make sure the Revision objects work properly
-    db.session.add(post)
+    db.session.add(_post)
     db.session.flush()
-    db.session.refresh(post)
+    db.session.refresh(_post)
 
-    yield post
+    yield _post
+
+    db.session.rollback()
 
 
 @pytest.fixture
@@ -47,8 +49,6 @@ def cover_dir(app, post):
     _cover_dir.mkdir(parents=True)
     yield _cover_dir
     shutil.rmtree(_cover_dir)
-
-    # yield _make_dir
 
 
 def test_protected_routes(client):
@@ -72,46 +72,50 @@ def test_protected_routes(client):
 
 @pytest.mark.parametrize(
     "factory",
-    [ArticleFactory, ListFactory, ReviewFactory],
+    [ArticleFactory, ReviewFactory],
 )
-def test_posts_index(client, factory, signin):
+def test_posts_index(client_authed, factory):
     """Test the /meta/blog/ and /meta/reviews/ views."""
-    posts = factory.create_batch(51)
+    posts = factory.create_batch(5)
     posts.sort(key=lambda a: a.date_published, reverse=True)
     post_type = post_types[posts[0].__class__]
 
     # Test pagination and default sort/filter parameters
-    resp = client.get(f"http://main.test/meta/{post_type}/?page=2")
+    resp = client_authed.get(f"http://main.test/meta/{post_type}/?page=2&per_page=4")
+    # print(session)
+    # print(current_user.is_authenticated)
     assert posts[-1].title.encode() in resp.data
     assert all(a.title.encode() not in resp.data for a in posts[:-1])
 
     # Test ascending order
     posts.sort(key=lambda a: a.date_published)
-    resp = client.get(f"http://main.test/meta/{post_type}/?page=2&order=asc")
+    resp = client_authed.get(
+        f"http://main.test/meta/{post_type}/?page=2&per_page=4&order=asc"
+    )
     assert posts[-1].title.encode() in resp.data
     assert all(a.title.encode() not in resp.data for a in posts[:-1])
 
     # Test search
-    factory(title="Hello World")
-    posts[0].__class__.build_index()
-    resp = client.get(f'http://main.test/meta/{post_type}/?q=title:"hello world"')
-    assert b"Hello World" in resp.data
-    assert all(a.title.encode() not in resp.data for a in posts[:-1])
+    resp = client_authed.get(
+        f'http://main.test/meta/{post_type}/?q=title:"{posts[0].title}"'
+    )
+    assert posts[0].title.encode() in resp.data
+    assert all(a.title.encode() not in resp.data for a in posts[1:-1])
 
 
-def test_edit_post_type_not_specified(client, signin):
-    resp = client.get("http://main.test/meta/oops/write/")
+def test_edit_post_type_not_specified(client_authed):
+    resp = client_authed.get("http://main.test/meta/oops/write/")
     assert resp.status_code == 404
 
 
 @pytest.mark.parametrize("post_class", [Article, List, Review])
-def test_edit_post_new(client, db, post_class, signin):
+def test_edit_post_new(client_authed, db, post_class):
     """Test that starting a brand new article works as expectd."""
     post_type = post_types[post_class]
-    resp = client.get(f"http://main.test/meta/{post_type}/write/")
+    resp = client_authed.get(f"http://main.test/meta/{post_type}/write/")
     assert resp.status_code == 200
 
-    resp = client.post(
+    resp = client_authed.post(
         f"http://main.test/meta/{post_type}/write/",
         data={
             "body": "A new beginning.",
@@ -129,10 +133,10 @@ def test_edit_post_new(client, db, post_class, signin):
     db.session.commit()
 
 
-def test_edit_post_fetch_by_id(client, post, signin):
+def test_edit_post_fetch_by_id(client_authed, post):
     """Test displaying a post to edit by ID."""
     post_type = post_types[post.__class__]
-    resp = client.get(f"http://main.test/meta/{post_type}/write/{post.id}/")
+    resp = client_authed.get(f"http://main.test/meta/{post_type}/write/{post.id}/")
     assert resp.status_code == 200
     assert any(
         phrase in resp.data.decode()
@@ -141,27 +145,27 @@ def test_edit_post_fetch_by_id(client, post, signin):
     assert post.body in resp.data.decode()
 
 
-def test_edit_post_fetch_by_revision(client, post, signin):
+def test_edit_post_fetch_by_revision(client_authed, post):
     """Fetch by old revision ID and check that the old body is present."""
     if not issubclass(post.__class__, RevisionMixin):
         return
     post_type = post_types[post.__class__]
     old_revision = post.revisions[0].id
-    resp = client.get(f"http://main.test/meta/{post_type}/write/{old_revision}/")
+    resp = client_authed.get(f"http://main.test/meta/{post_type}/write/{old_revision}/")
     assert resp.status_code == 200
     assert b"Test post here" in resp.data
 
     # Invalid revision ID
-    resp = client.get(f"http://main.test/meta/{post_type}/write/invalid/")
+    resp = client_authed.get(f"http://main.test/meta/{post_type}/write/invalid/")
     assert resp.status_code == 404
 
 
-def test_edit_post_errors(client, post, signin):
+def test_edit_post_errors(client_authed, post):
     """Test editing an post with no errors."""
     data = {}
 
     # Submit form with no errors
-    resp = client.post(
+    resp = client_authed.post(
         f"http://main.test/meta/{post_types[post.__class__]}/write/{post.id}/",
         data=data,
     )
@@ -171,7 +175,7 @@ def test_edit_post_errors(client, post, signin):
     )
 
 
-def test_edit_post_no_errors(client, post, signin):
+def test_edit_post_no_errors(client_authed, post):
     """Test editing a post with no errors."""
     data = {
         "body": "Edited body text",
@@ -181,7 +185,7 @@ def test_edit_post_no_errors(client, post, signin):
     }
 
     # Submit form with no errors
-    resp = client.post(
+    resp = client_authed.post(
         f"http://main.test/meta/{post_types[post.__class__]}/write/{post.id}/",
         data=data,
     )
@@ -189,7 +193,7 @@ def test_edit_post_no_errors(client, post, signin):
     assert post.body == "Edited body text"
 
 
-def test_edit_post_upload_cover(client, db, post, cover_dir, signin):
+def test_edit_post_upload_cover(client_authed, db, post, cover_dir):
     """Test uploading a cover."""
     data = {
         "body": "Edited body text",
@@ -200,7 +204,6 @@ def test_edit_post_upload_cover(client, db, post, cover_dir, signin):
     }
 
     post_type = post_types[post.__class__]
-    # cover_dir(post.post_type)
     data["cover"] = (
         io.BytesIO(
             base64.b64decode(
@@ -209,7 +212,7 @@ def test_edit_post_upload_cover(client, db, post, cover_dir, signin):
         ),
         "test1.png",
     )
-    resp = client.post(
+    resp = client_authed.post(
         f"http://main.test/meta/{post_type}/write/{post.id}/",
         data=data,
         content_type="multipart/form-data",
@@ -226,7 +229,7 @@ def test_edit_post_upload_cover(client, db, post, cover_dir, signin):
         ),
         "test1.png",
     )
-    resp = client.post(
+    resp = client_authed.post(
         f"http://main.test/meta/{post_type}/write/{post.id}/",
         data=data,
         content_type="multipart/form-data",
@@ -236,7 +239,7 @@ def test_edit_post_upload_cover(client, db, post, cover_dir, signin):
     assert post.cover == ""
 
 
-def test_edit_post_remove_cover(app, cover_dir, client, db, post, signin):
+def test_edit_post_remove_cover(app, cover_dir, client_authed, db, post):
     """Test removing a cover."""
     data = {
         "body": "Edited body text",
@@ -252,7 +255,7 @@ def test_edit_post_remove_cover(app, cover_dir, client, db, post, signin):
         app.instance_path / "media" / post.post_type / "covers" / "hey.jpg", "a"
     ).close()
 
-    resp = client.post(
+    resp = client_authed.post(
         f"http://main.test/meta/{post_type}/write/{post.id}/",
         data=data,
     )
@@ -260,7 +263,7 @@ def test_edit_post_remove_cover(app, cover_dir, client, db, post, signin):
     assert post.cover == ""
 
 
-def test_edit_post_pasted_cover(client, cover_dir, db, post, signin):
+def test_edit_post_pasted_cover(client_authed, cover_dir, db, post):
     """Test uploading a cover via pasted image data."""
     data = {
         "body": "Edited body text",
@@ -270,7 +273,7 @@ def test_edit_post_pasted_cover(client, cover_dir, db, post, signin):
         "title": post.title,
     }
 
-    resp = client.post(
+    resp = client_authed.post(
         f"http://main.test/meta/{post_types[post.__class__]}/write/{post.id}/",
         data=data,
     )
@@ -279,7 +282,7 @@ def test_edit_post_pasted_cover(client, cover_dir, db, post, signin):
     assert post.cover == f"{post.id}-{post.handle}-cover.jpg"
 
 
-def test_edit_post_delete(client, db, post, signin):
+def test_edit_post_delete(client_authed, db, post):
     """Test deleting article."""
     data = {
         "body": "Edited body text",
@@ -289,18 +292,22 @@ def test_edit_post_delete(client, db, post, signin):
         "title": post.title,
     }
     post_type = post_types[post.__class__]
-    resp = client.post(f"http://main.test/meta/{post_type}/write/{post.id}/", data=data)
+    resp = client_authed.post(
+        f"http://main.test/meta/{post_type}/write/{post.id}/", data=data
+    )
     assert resp.status_code == 302
     # db.session.refresh(post)
     assert post.status == "deleted"
 
     # Now permanently delete it
-    resp = client.post(f"http://main.test/meta/{post_type}/write/{post.id}/", data=data)
+    resp = client_authed.post(
+        f"http://main.test/meta/{post_type}/write/{post.id}/", data=data
+    )
     assert resp.status_code == 302
     assert was_deleted(post)
 
 
-def test_edit_post_unpublish(client, post, signin):
+def test_edit_post_unpublish(client_authed, post):
     """Test unpublishing an article."""
     data = {
         "body": "Edited body text",
@@ -309,7 +316,7 @@ def test_edit_post_unpublish(client, post, signin):
         "drafts": "yes",
         "title": post.title,
     }
-    resp = client.post(
+    resp = client_authed.post(
         f"http://main.test/meta/{post_types[post.__class__]}/write/{post.id}/",
         data=data,
     )
@@ -317,43 +324,36 @@ def test_edit_post_unpublish(client, post, signin):
     assert post.status == "draft"
 
 
-def test_index(client, signin):
-    ArticleFactory.create_batch(23)
-    ReviewFactory.create_batch(14)
+def test_index(client_authed):
+    ArticleFactory.create_batch(5)
+    ReviewFactory.create_batch(6)
     draft = ArticleFactory(status="draft")
     scheduled = ReviewFactory(date_published=arrow.utcnow().shift(weeks=+1).datetime)
 
-    resp = client.get("http://main.test/meta/")
+    resp = client_authed.get("http://main.test/meta/")
     assert resp.status_code == 200
     print(resp.data.decode())
-    assert b"<strong>23</strong>" in resp.data
-    assert b"<strong>15</strong>" in resp.data
+    assert b"<strong>5</strong>" in resp.data
+    assert b"<strong>7</strong>" in resp.data
     assert draft.title.encode() in resp.data
     assert scheduled.short_title.encode() in resp.data
 
 
-def test_reviews(client, signin):
+def test_reviews(client_authed):
     # Most of the heavy lifting is done in test_blog
     # So we just want to make sure we hit this for coverage
-    resp = client.get("http://main.test/meta/reviews/")
+    resp = client_authed.get("http://main.test/meta/reviews/")
     assert resp.status_code == 200
 
 
-def test_signin_authed(client, signin):
-    resp = client.get("http://main.test/meta/signin/")
+def test_signin_authed(client_authed):
+    resp = client_authed.get("http://main.test/meta/signin/")
     assert resp.status_code == 302
     assert resp.location == "/meta/"
 
 
 def test_signin_unauthed(client, user):
     url = "http://main.test/meta/signin/"
-
-    # Invalid form data
-    resp = client.post(
-        url,
-        data={},
-    )
-    assert resp.status_code == 200
 
     # Invalid email address
     resp = client.post(
@@ -380,17 +380,17 @@ def test_signin_unauthed(client, user):
     assert resp.location == "/meta/"
 
 
-def test_signout(client, signin, user):
-    with client:
-        client.get("http://main.test/meta/")
-        assert current_user == user
-        resp = client.get("http://main.test/meta/signout/")
-        assert resp.status_code == 302
+def test_signout(client_authed, user):
+    with client_authed:
+        resp = client_authed.get("http://main.test/meta/")
+        assert current_user.is_authenticated
+        resp = client_authed.get("http://main.test/meta/signout/")
         assert not current_user.is_authenticated
+        assert resp.status_code == 302
 
 
-def test_tag_manager(client, db, signin):
-    tags = TagFactory.create_batch(11)
+def test_tag_manager(client_authed, db):
+    tags = TagFactory.create_batch(5)
     db.session.flush()
 
     # Sort tags alphabetically so we know which one will show up
@@ -398,13 +398,13 @@ def test_tag_manager(client, db, signin):
 
     # Create 50 articles and reviews with a random selection of tags
     ArticleFactory.create_batch(
-        50, tags=[getattr(k, "label") for k in random.choices(tags)]
+        2, tags=[getattr(k, "label") for k in random.choices(tags)]
     )
     ReviewFactory.create_batch(
-        50, tags=[getattr(k, "label") for k in random.choices(tags)]
+        2, tags=[getattr(k, "label") for k in random.choices(tags)]
     )
 
-    resp = client.get("http://main.test/meta/tags/?page=2&per_page=10")
+    resp = client_authed.get("http://main.test/meta/tags/?page=2&per_page=4")
     assert resp.status_code == 200
 
     # Test that our last tag, and only our last tag, is present (pagination)

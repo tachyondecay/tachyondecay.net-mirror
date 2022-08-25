@@ -1,4 +1,4 @@
-from lemonade_soapbox.helpers import JSONEncoder, truncate_html
+from lemonade_soapbox.helpers import truncate_html
 
 
 def test_truncate_html(app):

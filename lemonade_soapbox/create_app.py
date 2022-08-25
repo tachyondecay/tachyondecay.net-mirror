@@ -1,5 +1,6 @@
 import json
 import os
+from copy import deepcopy
 from datetime import timedelta
 from gettext import gettext, ngettext
 from logging.config import dictConfig
@@ -12,7 +13,7 @@ from werkzeug.middleware.shared_data import SharedDataMiddleware
 
 from lemonade_soapbox import csrf, db, login_manager, migrate
 from lemonade_soapbox.logging_config import logging_config
-from lemonade_soapbox.helpers import JSONEncoder, truncate_html, weight
+from lemonade_soapbox.helpers import JSONProvider, truncate_html, weight
 from lemonade_soapbox.models import (
     Article,
     List,
@@ -26,16 +27,19 @@ from lemonade_soapbox.models import (
 
 def create_app(config_name=None):
     """Factory for the application."""
-    config_name = config_name or os.getenv("FLASK_ENV", "production")
+    config_name = config_name or os.getenv("CONFIG", "production")
 
     # Configure logging before creating the app
     logging_path = Path("instance", config_name, "logs")
     logging_path.mkdir(exist_ok=True)
-    for k in logging_config.get("handlers", {}):
-        h = logging_config["handlers"][k]
+    # Create a copy of logging config in case we are calling create_app() more
+    # than once.
+    logging_config_instance = deepcopy(logging_config)
+    for k in logging_config_instance.get("handlers", {}):
+        h = logging_config_instance["handlers"][k]
         if "filename" in h:
             h["filename"] = logging_path / h["filename"]
-    dictConfig(logging_config)
+    dictConfig(logging_config_instance)
 
     app = Flask(
         "lemonade_soapbox",
@@ -52,7 +56,7 @@ def create_app(config_name=None):
 
     # Nginx handles proxying the media dir in production
     # This emulates it when developing with Flask's built-in server
-    if app.config["ENV"] == "development" or app.testing:
+    if os.getenv("CONFIG") == "development" or app.testing:
         app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 0
         app.wsgi_app = SharedDataMiddleware(
             app.wsgi_app, {"/media": str(app.instance_path / "media")}
@@ -94,10 +98,14 @@ def create_app(config_name=None):
     from lemonade_soapbox.views import admin, api, blog, frontend, lists, reviews
 
     frontend.bp.register_blueprint(
-        lists.bp, host=os.getenv('MAIN_HOST'), url_prefix='/lists'
+        lists.bp,
+        host=os.getenv('MAIN_HOST'),
+        url_prefix='/lists',
     )
     reviews.bp.register_blueprint(
-        lists.bp, host=os.getenv('REVIEW_HOST'), url_prefix='/lists'
+        lists.bp,
+        host=os.getenv('REVIEW_HOST'),
+        url_prefix='/lists',
     )
     # Register admin and API blueprints on both domains so we can log in to both
     app.register_blueprint(admin.bp, host=os.getenv('MAIN_HOST'), url_prefix='/meta')
@@ -114,7 +122,7 @@ def create_app(config_name=None):
     app.jinja_env.lstrip_blocks = True
     app.jinja_env.trim_blocks = True
 
-    # Override Flask JSON encoder with our own
-    app.json_encoder = JSONEncoder
+    # Override Flask JSON provider with our own
+    app.json = JSONProvider(app)
 
     return app

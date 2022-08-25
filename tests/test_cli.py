@@ -1,11 +1,16 @@
+import pytest
+
 from tests.factories import ArticleFactory
 
+pytestmark = pytest.mark.usefixtures("db")
 
-def test_reindex(app):
+
+def test_reindex(app, db):
     runner = app.test_cli_runner()
     ArticleFactory.create_batch(5)
+    db.session.flush()
 
-    result = runner.invoke(args=["reindex", "Article"])
+    result = runner.invoke(args=["reindex", "Article", "--per-pass=2"])
     assert "Indexing complete." in result.output
 
     result = runner.invoke(args=["reindex", "NotAModel"])

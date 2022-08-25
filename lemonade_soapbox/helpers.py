@@ -11,7 +11,7 @@ from flask.blueprints import (
     Blueprint as FlaskBlueprint,
     BlueprintSetupState as FlaskBlueprintSetupState,
 )
-from flask.json import JSONEncoder as BaseJSONEncoder
+from flask.json.provider import DefaultJSONProvider
 
 
 def truncate_html(content, max_length=None):
@@ -77,13 +77,13 @@ class Blueprint(FlaskBlueprint):
         return BlueprintSetupState(self, app, options, first_registration)
 
 
-class JSONEncoder(BaseJSONEncoder):  # pragma: no cover
-    def default(self, obj):
+class JSONProvider(DefaultJSONProvider):  # pragma: no cover
+    def dumps(self, obj, **kwargs):
         if hasattr(obj, "__json__"):
             return obj.__json__()
         if isinstance(obj, arrow.Arrow):
             return obj.isoformat()
-        return BaseJSONEncoder().default(obj)
+        return super().dumps(obj, **kwargs)
 
 
 whitespace = re.compile(r'(\S+)')

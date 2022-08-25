@@ -41,17 +41,18 @@ def posts_index(post_type, template, **kwargs):
     post_class = globals()[post_type.capitalize()]
     status = request.args.getlist('status') or ['published']
     page = request.args.get('page', 1, int)
+    per_page = request.args.get('per_page', 50, int)
     sort_by = request.args.get(
         'sort_by', ('date_published' if status == 'published' else 'date_updated')
     )
     order = 'asc' if request.args.get('order') == 'asc' else 'desc'
     q = request.args.get('q')
-    posts = Pagination(None, page=page, per_page=50, total=0, items=[])
+    posts = Pagination(None, page=page, per_page=per_page, total=0, items=[])
 
     if q:
         search_params = {
             'pagenum': page,
-            'pagelen': 50,
+            'pagelen': per_page,
             'sort_field': sort_by,
             'sort_order': order,
             'filter': whoosh_or([whoosh_term('status', x) for x in status]),
@@ -65,7 +66,7 @@ def posts_index(post_type, template, **kwargs):
         posts = (
             post_class.query.filter(post_class.status.in_(status))
             .order_by(getattr(getattr(post_class, sort_by), order)())
-            .paginate(page=int(page), per_page=50)
+            .paginate(page=int(page), per_page=per_page)
         )
 
     status_count = (

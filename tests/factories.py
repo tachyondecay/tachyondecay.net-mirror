@@ -1,10 +1,8 @@
 from datetime import datetime, timezone
 from random import randint
 from factory import (
-    BUILD_STRATEGY,
     Faker,
     LazyAttribute,
-    make_factory,
     post_generation,
     SelfAttribute,
     Sequence,
@@ -13,13 +11,30 @@ from factory import (
 from factory.alchemy import SQLAlchemyModelFactory
 from factory.fuzzy import FuzzyDateTime, FuzzyInteger
 from lemonade_soapbox import db
-from lemonade_soapbox.models import Article, List, ListItem, Review, Revision, Tag
+from lemonade_soapbox.models import Article, List, ListItem, Review, Revision, Tag, User
+
+
+class UniqueFaker(Faker):
+    def evaluate(self, instance, step, extra):
+        locale = extra.pop('locale')
+        subfaker = self._get_faker(locale)
+        unique_proxy = subfaker.unique
+        return unique_proxy.format(self.provider, **extra)
 
 
 class ModelFactory(SQLAlchemyModelFactory):
     class Meta:
         abstract = True
         sqlalchemy_session = db.session
+
+
+class UserFactory(ModelFactory):
+    class Meta:
+        model = User
+
+    email = UniqueFaker("email")
+    name = Faker("name")
+    password = Faker("password")
 
 
 class TagFactory(ModelFactory):
@@ -33,6 +48,7 @@ class PostFactory(ModelFactory):
     class Meta:
         abstract = True
 
+    author = SubFactory(UserFactory)
     title = Faker("text", max_nb_chars=20)
     body = Faker("paragraph")
     cover = Sequence(lambda n: f"cover-{n}.jpg")
@@ -51,7 +67,7 @@ class RevisionMixinFactory(ModelFactory):
         if extracted:
             self.revisions = extracted
         else:
-            r = Revision(self, new=self.body, old='')
+            r = Revision(self, new=self.body, old='', author=self.author)
             self.revisions.append(r)
             self.current_revision_id = r.id
             self.selected_revision = r

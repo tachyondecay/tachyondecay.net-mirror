@@ -1,11 +1,17 @@
 import pytest
-from flask_wtf import csrf
 from sqlalchemy.orm.util import was_deleted
 
-from lemonade_soapbox.models import Article, Review, Tag, Revision
+from lemonade_soapbox.models import Article, Review, Tag
 from tests.factories import ArticleFactory, ReviewFactory
 
 pytestmark = pytest.mark.usefixtures("db")
+
+
+@pytest.fixture(autouse=True)
+def tag_cleanup(db):
+    yield
+    db.session.execute(db.delete(Tag))
+    db.session.commit()
 
 
 def test_get_csrf(client):
@@ -14,7 +20,7 @@ def test_get_csrf(client):
 
 
 @pytest.mark.parametrize("post_type", [Article, Review])
-def test_autosave(client, db, post_type, signin):
+def test_autosave(client_authed, db, post_type):
     data = {
         "body": "This is a test post body.",
         "title": "Post title here",
@@ -25,7 +31,7 @@ def test_autosave(client, db, post_type, signin):
         data["book_author"] = "Nobody"
 
     # Test with a new post
-    resp = client.post("http://main.test/api/posts/autosave/", data=data)
+    resp = client_authed.post("http://main.test/api/posts/autosave/", data=data)
     assert resp.mimetype == "application/json"
 
     json = resp.get_json()
@@ -38,7 +44,7 @@ def test_autosave(client, db, post_type, signin):
     # Test with editing a post
     data["parent"] = post.current_revision_id
     data["body"] = "The new body of this post now."
-    resp = client.post("http://main.test/api/posts/autosave/", data=data)
+    resp = client_authed.post("http://main.test/api/posts/autosave/", data=data)
     assert resp.mimetype == "application/json"
     json = resp.get_json()
     assert post.autosave_id == json["revision_id"]
@@ -48,36 +54,38 @@ def test_autosave(client, db, post_type, signin):
 
     # Test post 404
     data["parent"] = "invalid"
-    resp = client.post("http://main.test/api/posts/autosave/", data=data)
+    resp = client_authed.post("http://main.test/api/posts/autosave/", data=data)
     assert resp.status_code == 400
 
 
-def test_goodreads_link(client, signin):
+def test_goodreads_link(client_authed):
     # Test no input
-    resp = client.get("http://main.test/api/posts/goodreads-link/")
+    resp = client_authed.get("http://main.test/api/posts/goodreads-link/")
     assert resp.status_code == 204
 
     r = ReviewFactory(handle="test-handle")
-    resp = client.get("http://main.test/api/posts/goodreads-link/?q=test-handle")
+    resp = client_authed.get("http://main.test/api/posts/goodreads-link/?q=test-handle")
     assert resp.status_code == 200
     assert resp.mimetype == "application/json"
     assert resp.get_json() == [[r.handle, str(r.goodreads_id)]]
 
 
-def test_posts_lookup(client, signin):
+def test_posts_lookup(client_authed):
     a1 = ArticleFactory(title="Hello world")
     r1 = ReviewFactory(title="Say hello world")
     r2 = ReviewFactory(title="Hello to the world")
-    resp = client.get("http://main.test/api/posts/search/?q=hello+world")
+    resp = client_authed.get("http://main.test/api/posts/search/?q=hello+world")
     assert resp.status_code == 200
     assert resp.mimetype == "application/json"
     json = resp.get_json()
     assert len(json) == 2
 
 
-def test_tags_delete(client, db, signin):
+def test_tags_delete(client_authed, db):
     # No tag found
-    resp = client.post("http://main.test/api/tags/delete/", json={"tag": "hello world"})
+    resp = client_authed.post(
+        "http://main.test/api/tags/delete/", json={"tag": "hello world"}
+    )
     assert resp.status_code == 400
     assert resp.mimetype == "application/json"
     assert resp.get_json() == {"message": "No tag found."}
@@ -87,16 +95,18 @@ def test_tags_delete(client, db, signin):
     db.session.add(tag)
     db.session.flush()
 
-    resp = client.post("http://main.test/api/tags/delete/", json={"tag": "hello world"})
+    resp = client_authed.post(
+        "http://main.test/api/tags/delete/", json={"tag": "hello world"}
+    )
     assert resp.status_code == 200
     assert resp.mimetype == "application/json"
     assert resp.get_json() == {"message": "Tag deleted."}
     assert was_deleted(tag)
 
 
-def test_tags_lookup(client, db, signin):
+def test_tags_lookup(client_authed, db):
     # No term
-    resp = client.get("http://main.test/api/tags/search/")
+    resp = client_authed.get("http://main.test/api/tags/search/")
     assert resp.status_code == 400
     assert resp.mimetype == "application/json"
     assert resp.get_json() == {"result": "No search term specified."}
@@ -106,20 +116,24 @@ def test_tags_lookup(client, db, signin):
     db.session.flush()
 
     ArticleFactory(tags=["hello world"])
-    resp = client.get("http://main.test/api/tags/search/?term=hello&type=article")
+    resp = client_authed.get(
+        "http://main.test/api/tags/search/?term=hello&type=article"
+    )
     assert resp.status_code == 200
     assert resp.mimetype == "application/json"
     assert len(resp.get_json()) == 1
 
-    resp = client.get("http://main.test/api/tags/search/?term=hello&type=review")
+    resp = client_authed.get("http://main.test/api/tags/search/?term=hello&type=review")
     assert resp.status_code == 200
     assert resp.mimetype == "application/json"
     assert len(resp.get_json()) == 0
 
 
-def test_tags_rename(client, db, signin):
+def test_tags_rename(client_authed, db):
     # No tag found
-    resp = client.post("http://main.test/api/tags/rename/", json={"old": "hello world"})
+    resp = client_authed.post(
+        "http://main.test/api/tags/rename/", json={"old": "hello world"}
+    )
     assert resp.status_code == 400
     assert resp.mimetype == "application/json"
     assert resp.get_json() == {"message": "No tag found."}
@@ -129,7 +143,7 @@ def test_tags_rename(client, db, signin):
     db.session.add(tag)
     db.session.flush()
 
-    resp = client.post(
+    resp = client_authed.post(
         "http://main.test/api/tags/rename/",
         json={"old": "hello world", "new": "goodbye world"},
     )
@@ -147,7 +161,7 @@ def test_tags_rename(client, db, signin):
     a = ArticleFactory(tags=["goodbye world"])
     r = ReviewFactory(tags=["goodbye world"])
 
-    resp = client.post(
+    resp = client_authed.post(
         "http://main.test/api/tags/rename/",
         json={"old": "goodbye world", "new": "brave new world"},
     )

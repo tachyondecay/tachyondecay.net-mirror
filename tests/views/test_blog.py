@@ -30,12 +30,12 @@ def test_error404(client):
     assert resp.status_code == 404
 
 
-def test_index(client, user):
+def test_index(client):
     """Blog index should show 10 most recent articles."""
-    articles = ArticleFactory.create_batch(10, author=user)
+    articles = ArticleFactory.create_batch(10)
     resp = client.get("http://main.test/blog/")
     assert resp.status_code == 200
-    assert all([a.title.encode() in resp.data for a in articles])
+    assert all(a.title.encode() in resp.data for a in articles)
 
 
 def test_month_archive(client):
@@ -58,25 +58,25 @@ def test_month_archive(client):
     assert article.title.encode() in resp.data
 
 
-def test_show_draft(client, user, signin):
+def test_show_draft(client_authed, user):
     # If draft doesn't exist, 404
-    resp = client.get("http://main.test/blog/drafts/oops/")
+    resp = client_authed.get("http://main.test/blog/drafts/oops/")
     assert resp.status_code == 404
 
-    draft = ArticleFactory(status="draft", author=user)
-    resp = client.get(f"http://main.test/blog/drafts/{draft.handle}/")
+    draft = ArticleFactory(status="draft")
+    resp = client_authed.get(f"http://main.test/blog/drafts/{draft.handle}/")
     assert resp.status_code == 200
     assert draft.title.encode() in resp.data
 
 
 def test_show_feed(client, user):
     """Test the generation of Atom and RSS feeds."""
-    articles = ArticleFactory.create_batch(5, author=user)
+    articles = ArticleFactory.create_batch(5)
     for format in ["atom", "rss"]:
         resp = client.get(f"http://main.test/blog/feed/posts.{format}")
         assert resp.status_code == 200
         assert resp.mimetype == f"application/{format}+xml"
-        assert all([a.title.encode() in resp.data for a in articles])
+        assert all(a.title.encode() in resp.data for a in articles)
 
 
 def test_show_tag(client, db):
@@ -89,16 +89,16 @@ def test_show_tag(client, db):
     articles = ArticleFactory.create_batch(5, tags=["hello world"])
     resp = client.get("http://main.test/blog/tags/hello-world/")
     assert resp.status_code == 200
-    assert all([a.title.encode() in resp.data for a in articles])
+    assert all(a.title.encode() in resp.data for a in articles)
 
 
-def test_show_trash(client, user, signin):
+def test_show_trash(client_authed, user):
     # If deleted article doesn't exis, 404
-    resp = client.get("http://main.test/blog/trash/oops/")
+    resp = client_authed.get("http://main.test/blog/trash/oops/")
     assert resp.status_code == 404
 
-    trashed = ArticleFactory(status="deleted", author=user)
-    resp = client.get(f"http://main.test/blog/trash/{trashed.handle}/")
+    trashed = ArticleFactory(status="deleted")
+    resp = client_authed.get(f"http://main.test/blog/trash/{trashed.handle}/")
     assert resp.status_code == 200
     assert trashed.title.encode() in resp.data
 
@@ -145,6 +145,8 @@ def test_year_archive(client):
     assert resp.status_code == 404
 
     article = ArticleFactory()
+    print(f"Hmm {article.author.id}")
+    # assert False
     year = article.date_published.year
     resp = client.get(f"http://main.test/blog/{year}/")
     assert resp.status_code == 200

@@ -132,13 +132,14 @@ def search():
     """Searching, obviously."""
     q = request.args.get('q')
     page = request.args.get('page', 1, int)
+    per_page = request.args.get('per_page', 20, int)
     page_title = 'Search'
     reviews = None
     mode = None
     if q:
         search_params = {
             'pagenum': page,
-            'pagelen': 20,
+            'pagelen': per_page,
             'filter': whoosh_term(
                 'status', 'published'
             ),  # Only return published reviews
@@ -169,7 +170,7 @@ def search():
             reviews = Pagination(
                 None,
                 page=page,
-                per_page=20,
+                per_page=per_page,
                 total=results['total'],
                 items=query,
             )
