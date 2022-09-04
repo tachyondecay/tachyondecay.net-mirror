@@ -1,0 +1,23 @@
+{% extends 'frontend/layouts/main.html' %}
+{% from 'frontend/macros.html' import pagetitle, toc %}
+
+{% block body_main %}
+{{ super() }}
+
+{{ pagetitle(title="Changelog", description='A record of what has changed and when.')}}
+
+<div class="lg:grid lg:grid-cols-6 lg:grid-flow-col-dense lg:mx-auto lg:max-w-5xl">
+    <div class="lg:col-span-2 lg:col-start-5">
+    {{ toc(toc_dict) }}
+    </div>
+
+<main class="mx-3 mt-12 sm:mx-auto lg:col-span-4 lg:col-start-1 prose prose-slate md:prose-md lg:prose-lg">
+    {% if changelog_contents %}
+        {{ changelog_contents|safe }}
+    {% else %}
+        <p>Could not load the changelog at this time.</p>
+    {% endif %}
+</main>
+</div>
+
+{% endblock body_main %}

@@ -1,0 +1,24 @@
+{% extends 'reviews/layouts/main.html' %}
+{% from 'reviews/macros.html' import pagetitle, toc %}
+
+{% block body_main %}
+{{ super() }}
+
+{{ pagetitle(title="Changelog", description='A record of what has changed and when.')}}
+
+<div class="lg:grid lg:grid-cols-[minmax(auto,_calc(50vw-28rem))_repeat(2,_35ch)_auto_auto_minmax(auto,_calc(50vw-28rem))] lg:gap-2 xl:gap-4">
+
+<div class="lg:col-start-5">
+{{ toc(toc_dict) }}
+</div>
+
+<main class="px-6 lg:col-start-2 lg:col-end-4 lg:row-start-1 lg:px-0 lg:mt-12 prose prose-marble md:prose-md lg:prose-lg">
+    {% if changelog_contents %}
+        {{ changelog_contents|safe }}
+    {% else %}
+        <p>Could not load the changelog at this time.</p>
+    {% endif %}
+</main>
+</div>
+
+{% endblock body_main %}

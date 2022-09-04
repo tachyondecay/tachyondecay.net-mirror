@@ -3,6 +3,7 @@ import time
 from decimal import Decimal
 from fractions import Fraction
 from html.parser import HTMLParser
+from pathlib import Path
 
 import arrow
 from bs4 import BeautifulSoup
@@ -12,6 +13,38 @@ from flask.blueprints import (
     BlueprintSetupState as FlaskBlueprintSetupState,
 )
 from flask.json.provider import DefaultJSONProvider
+from markdown import markdown
+from slugify import slugify
+
+
+def read_changelog(site):
+    logfile = Path(current_app.root_path).parent / f"CHANGELOG-{site}.md"
+    contents = ""
+    toc_dict = {}
+    date_expr = re.compile(r"\(.*?\)")
+    try:
+        with open(logfile, encoding="utf-8") as f:
+            contents = markdown(f.read(), extensions=["extra"], output="html5")
+
+        # Do some extra parsing to grab a TOC based on H2
+        # And wrap the release dates in <small> tags within the headings
+        contents = BeautifulSoup(contents, "html.parser")
+        contents.h1.decompose()  # Remove the "Changelog" title
+        for heading in contents.find_all("h2"):
+            text = heading.get_text()
+            handle = slugify(text)
+            toc_dict[handle] = text
+            heading["id"] = handle
+
+            if date := date_expr.search(heading.string):
+                heading.string = heading.string[: date.start()]
+                date_tag = contents.new_tag("small")
+                date_tag.string = date.group(0)
+                heading.append(date_tag)
+
+    except (FileNotFoundError, PermissionError) as e:
+        current_app.logger.error(f"Could not load changelog: {e}")
+    return contents, toc_dict
 
 
 def truncate_html(content, max_length=None):

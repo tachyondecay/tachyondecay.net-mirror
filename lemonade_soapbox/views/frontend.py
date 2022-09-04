@@ -3,7 +3,7 @@ from flask_sqlalchemy import Pagination
 from whoosh.query import Term as whoosh_term
 
 from lemonade_soapbox.models import Article, Review
-from lemonade_soapbox.helpers import Blueprint
+from lemonade_soapbox.helpers import Blueprint, read_changelog
 
 bp = Blueprint('frontend', __name__, static_folder='assets')
 
@@ -74,6 +74,18 @@ def search():
 @bp.route('/about/')
 def about_me():
     return render_template('frontend/about.html', page_title='About Me')
+
+
+@bp.route('/changelog/')
+def changelog():
+    """Display the contents of the changelog."""
+    contents, toc_dict = read_changelog("tachyondecay.net")
+    return render_template(
+        "frontend/changelog.html",
+        page_title="Changelog",
+        changelog_contents=contents,
+        toc_dict=toc_dict,
+    )
 
 
 @bp.route('/editing/')

@@ -19,7 +19,7 @@ from sqlalchemy import desc, or_, not_
 from whoosh.query import Term as whoosh_term
 
 from lemonade_soapbox import db
-from lemonade_soapbox.helpers import Blueprint
+from lemonade_soapbox.helpers import Blueprint, read_changelog
 from lemonade_soapbox.models import Post, Review, Tag
 
 bp = Blueprint('reviews', __name__)
@@ -93,6 +93,18 @@ def index():
 @bp.route('/about/')
 def about():
     return render_template('reviews/about.html', page_title='About This Site')
+
+
+@bp.route('/changelog/')
+def changelog():
+    """Display the contents of the changelog."""
+    contents, toc_dict = read_changelog("kara.reviews")
+    return render_template(
+        "reviews/changelog.html",
+        page_title="Changelog",
+        changelog_contents=contents,
+        toc_dict=toc_dict,
+    )
 
 
 @bp.route('/feed/posts.<format>')
