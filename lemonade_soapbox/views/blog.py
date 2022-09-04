@@ -6,7 +6,6 @@ import arrow
 from flask import (
     abort,
     current_app,
-    g,
     redirect,
     render_template,
     request,
@@ -167,7 +166,7 @@ def year_archive(year):
     )
 
     year_summaries = {
-        "2004": "First year of university, first real job, first year online.",
+        "2004": "First year of high school, first real job, first year online.",
         "2005": "In which I discover Doctor Who, move high schools, and get political.",
         "2006": "Learning how to drive, playing with Linux, and more politics.",
         "2007": "Pop culture, environmental awareness, and high school graduation.",
