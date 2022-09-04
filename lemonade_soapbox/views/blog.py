@@ -27,14 +27,6 @@ def error404(e):
     return render_template('blog/errors/404.html'), 404
 
 
-@bp.before_request
-def before():
-    # Grab the year/month breakdown of articles.
-    g.breakdown = Article.post_breakdown()
-    g.full_month_name = calendar.month_name
-    g.month_name = calendar.month_abbr
-
-
 @bp.route('/')
 def index():
     page = request.args.get('page', 1, int)
@@ -46,7 +38,7 @@ def index():
     return render_template(
         'blog/views/index.html',
         articles=articles,
-        description="Read my thoughts going back 17 years.",
+        description="Read my thoughts going back 18 years.",
         page_title="Kara’s Blog",
     )
 
@@ -202,6 +194,7 @@ def year_archive(year):
         page_title=f"{len(articles)} Articles from {year}",
         prev_link=prev_link,
         next_link=next_link,
+        month_name=calendar.month_name,
         year=year,
         year_summaries=year_summaries,
     )
