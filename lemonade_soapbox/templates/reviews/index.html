@@ -29,7 +29,7 @@
             {% else %}
                 {{ review.short_title }}
             {% endif %}
-            <span class="absolute -top-6 p-1 w-full text-sm text-center uppercase lg:text-xs text-marble-50 group-even:bg-red-900 group-odd:bg-pink-900">{{ time_relative(review.date_published, granularity='day') }}</span>
+            <span class="absolute -top-6 p-1 w-full text-sm text-center uppercase lg:text-xs text-marble-50 group-even:bg-red-900 group-odd:bg-pink-900">{{ time_relative(review.date_published) }}</span>
             </a>
         </div>
         {% endfor %}

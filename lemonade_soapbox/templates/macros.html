@@ -74,11 +74,14 @@
 <time datetime="{{ datetime.isoformat() }}"{{ (' class="' ~ class ~'"')|safe if class }}>{{ datetime.to(config.TIMEZONE).format(format) }}</time>
 {%- endmacro %}
 
-{% macro time_relative(datetime, granularity='') -%}
-{% set date = datetime.to(config.TIMEZONE).replace(hour=0, minute=0, second=0).humanize(granularity=granularity) %}
-<time datetime="{{ datetime.isoformat() }}">
-    {% if date == '0 days ago' %}today
-    {% elif date == 'a day ago' %}yesterday
-    {% else %}{{ date }}{% endif %}
-</time>
+{% macro time_relative(datetime) -%}
+{% set date = datetime.to(config.TIMEZONE) %}
+{% if arrow.utcnow().day == date.day %}
+    {% set date = "today" %}
+{% elif arrow.utcnow().day == date.day + 1 %}
+    {% set date = "yesterday" %}
+{% else %}
+    {% set date = date.to(config.TIMEZONE).humanize() %}
+{% endif %}
+<time datetime="{{ datetime.isoformat() }}">{{ date }}</time>
 {%- endmacro %}
