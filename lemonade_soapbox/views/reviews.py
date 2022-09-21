@@ -180,7 +180,7 @@ def search():
                 )
 
             reviews = Pagination(
-                None,
+                query=None,
                 page=page,
                 per_page=per_page,
                 total=results['total'],

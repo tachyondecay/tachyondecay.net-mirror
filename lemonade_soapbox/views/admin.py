@@ -47,7 +47,7 @@ def posts_index(post_type, template, **kwargs):
     )
     order = 'asc' if request.args.get('order') == 'asc' else 'desc'
     q = request.args.get('q')
-    posts = Pagination(None, page=page, per_page=per_page, total=0, items=[])
+    posts = Pagination(query=None, page=page, per_page=per_page, total=0, items=[])
 
     if q:
         search_params = {
