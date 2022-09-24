@@ -75,13 +75,14 @@
 {%- endmacro %}
 
 {% macro time_relative(datetime) -%}
+{% set today = arrow.utcnow().to(config.TIMEZONE) %}
 {% set date = datetime.to(config.TIMEZONE) %}
-{% if arrow.utcnow().day == date.day %}
+{% if today.month == date.month and today.day == date.day %}
     {% set date = "today" %}
-{% elif arrow.utcnow().day == date.day + 1 %}
+{% elif today.month == date.month and today.day == date.day + 1 %}
     {% set date = "yesterday" %}
 {% else %}
-    {% set date = date.to(config.TIMEZONE).humanize() %}
+    {% set date = date.humanize() %}
 {% endif %}
 <time datetime="{{ datetime.isoformat() }}">{{ date }}</time>
 {%- endmacro %}
