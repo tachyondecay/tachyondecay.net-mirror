@@ -43,17 +43,17 @@
     <div class="flex sticky top-0 z-10 justify-center items-center px-8 h-10 bg-red-900 shadow-md md:justify-between shadow-marble-600/50">
         <div class="hidden mr-4 md:block md:overflow-hidden md:flex-1 md:text-red-50 md:whitespace-nowrap md:text-ellipsis">{{ self.page_title() }}</div>
         <div>
-            <a class="text-red-50 mr-8 before:content-['⬆']" href="#top" title="Jump to top of page">Start</a>
+            <a class="mr-8 text-red-50 before:content-['⬆']" href="#top" title="Jump to top of page">Start</a>
             <a class="text-red-50 after:content-['⬇']" href="#colophon" title="Jump to footer">End</a>
         </div>
     </div>
     {% block body_main %}
         <header class="border-t-8 border-red-900 lg:flex lg:absolute lg:top-0 lg:right-0 lg:left-0 lg:z-30 lg:px-11 lg:pt-6 lg:pb-4 lg:text-lg lg:bg-neutral-50" id="top">
             {% block navigation %}
-            <nav class="flex flex-col -mt-[2.1rem] pb-3 relative z-20 bg-marble-100 md:bg-neutral-50 md:flex-row md:items-end md:pt-6 lg:p-0 lg:grow-[2] lg:shrink lg:basis-auto lg:bg-transparent" aria-label="Primary Site Navigation">
-                <div class="flex md:flex-1 md:basis-1/5 md:ml-6 border-b border-marble-500 md:border-b-0 md:rounded-md shadow-md shadow-marble-200/25 lg:grow-[3] lg:ml-6 lg:mr-3">
+            <nav class="flex relative z-20 flex-col pb-3 md:flex-row md:items-end md:pt-6 lg:p-0 lg:bg-transparent -mt-[2.1rem] bg-marble-100 md:bg-neutral-50 lg:grow-[2] lg:shrink lg:basis-auto" aria-label="Primary Site Navigation">
+                <div class="flex border-b shadow-md md:flex-1 md:ml-6 md:rounded-md md:border-b-0 lg:mr-3 lg:ml-6 border-marble-500 shadow-marble-200/25 md:basis-1/5 lg:grow-[3]">
                     <form action="/search/" class="contents">
-                        <input type="search" class="peer grow-[3] p-3 opacity-50 transition-all duration-300 focus:opacity-100 focus:ring-inset focus:ring-yellow-500 border-0 text-violet-800 md:rounded-l-lg" name="q" placeholder="Search reviews…" value="{{ request.args.get('q', '') }}">
+                        <input type="search" class="p-3 text-violet-800 border-0 opacity-50 transition-all duration-300 md:rounded-l-lg focus:ring-inset focus:ring-yellow-500 focus:opacity-100 peer grow-[3]" name="q" placeholder="Search reviews…" value="{{ request.args.get('q', '') }}">
                         <button type="submit" value="Go" title="Search" class="text-center transition-all md:rounded-r-lg duration-600 basis-20 bg-marble-50 text-marble-400 peer-focus:bg-yellow-600/20 peer-focus:text-yellow-600 md:grow-0 md:shrink md:basis-10 hover:bg-yellow-600/20">
                             <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
   <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
@@ -76,7 +76,7 @@
 
             <div class="my-6 sm:text-center lg:order-first lg:m-0 lg:flex-0 lg:grow-0 lg:shrink-0 lg:basis-auto">
                 <a href="/">
-                    <img class="max-w-full max-h-[20vmax] mx-auto lg:max-h-12" src="{{ url_for('.static', filename='images/kara.reviews-logo.png') }}" alt="Kara.Reviews">
+                    <img class="mx-auto max-w-full lg:max-h-12 max-h-[20vmax]" src="{{ url_for('.static', filename='images/kara.reviews-logo.png') }}" alt="Kara.Reviews">
                 </a>
             </div>
 
@@ -85,7 +85,7 @@
     {% endblock body_main %}
 
     {% block body_footer %}
-        <footer class="mt-24 md:mt-36 p-3 bg-marble-100 border-b-[6px] border-b-red-900 lg:bg-transparent lg:p-0" id="colophon">
+        <footer class="p-3 mt-24 md:mt-36 lg:p-0 lg:bg-transparent bg-marble-100 border-b-[6px] border-b-red-900" id="colophon">
             <h2 class="sr-only">Colophon</h2>
 
             {% block newsletter %}

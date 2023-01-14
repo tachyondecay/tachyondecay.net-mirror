@@ -61,7 +61,7 @@
         <h3 class="last:hidden sidebar-heading">Heads Up</h3>
         {% if article.status == "published" and (arrow.utcnow() - article.date_published) > timedelta(days=728) %}
         <p class="px-3 mt-4 text-sm text-slate-500">
-            <svg xmlns="http://www.w3.org/2000/svg" class="inline-block h-4 w-4 align-top mt-[0.15rem]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" class="inline-block w-4 h-4 align-top mt-[0.15rem]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <strong>This post was published {{ article.date_published.humanize() }}.</strong> Some of its information or my opinions might be out of date.
@@ -74,7 +74,7 @@
     </aside>
 
     <div class="px-6 mt-16 lg:col-span-3 lg:col-start-2 lg:row-span-3 lg:row-start-2 lg:mt-8">
-        <div class="dropcap endmark prose prose-slate prose-p:indent-4 md:prose-md lg:prose-lg prose-img:mx-auto prose-img:shadow-md prose-img:shadow-slate-900/50 prose-figcaption:text-center lg:prose-img:max-h-[75vh] xl:prose-figure:-mx-16">
+        <div class="dropcap endmark prose prose-slate prose-p:indent-4 prose-img:mx-auto prose-img:shadow-md prose-img:shadow-slate-900/50 prose-figcaption:text-center md:prose-md lg:prose-lg lg:prose-img:max-h-[75vh] xl:prose-figure:-mx-16">
         {{ article.body_html }}
         </div>
     </div>

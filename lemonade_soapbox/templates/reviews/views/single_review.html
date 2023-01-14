@@ -93,7 +93,7 @@
         <h3 class="last:hidden sidebar-heading">Heads Up</h3>
         {% if review.status == "published" and (arrow.utcnow() - review.date_published) > timedelta(days=728) %}
         <p class="px-3 mt-4 text-sm text-marble-600">
-            <svg xmlns="http://www.w3.org/2000/svg" class="inline-block h-4 w-4 align-top mt-[0.15rem]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" class="inline-block w-4 h-4 align-top mt-[0.15rem]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <strong>This review was published {{ review.date_published.humanize() }}.</strong> Some of its information or my opinions might be out of date.
@@ -190,7 +190,7 @@
             {% for r in revs %}
                 <a class="lg:mt-2" href="{{ r.get_permalink() }}" title="{{ r.short_title }} by {{ r.book_author }}">
                     {% if r.cover %}
-                    <img class="h-[150px] shadow-md shadow-marble-600/50 md:h-[300px] lg:h-[200px] xl:h-[150px]" src="/media/review/covers/{{ r.cover }}" alt="Cover for {{ r.short_title }}">
+                    <img class="shadow-md h-[150px] shadow-marble-600/50 md:h-[300px] lg:h-[200px] xl:h-[150px]" src="/media/review/covers/{{ r.cover }}" alt="Cover for {{ r.short_title }}">
                     {% else %}
                     {{ r.short_title }} by {{ r.book_author }}
                     {% endif %}
