@@ -10,10 +10,10 @@ dependencies = [
     "bcrypt~=4.0",
     "beautifulsoup4~=4.11",
     "diff-match-patch~=20200713.0",
-    "email-validator~=1.2",
+    "email-validator~=1.3",
     "flask~=2.2",
     "flask-login~=0.6",
-    "flask-sqlalchemy>=3.0.2",
+    "flask-sqlalchemy~=3.0",
     "flask-wtf~=1.0",
     "gunicorn~=20.1",
     "itsdangerous~=2.1",
@@ -21,18 +21,18 @@ dependencies = [
     "markdown~=3.4",
     "markupsafe~=2.1",
     "passlib~=1.7",
-    "python-slugify~=6.1",
+    "python-slugify~=7.0",
     "sqlalchemy~=1.4",
-    "sqlalchemy-utils~=0.38",
+    "sqlalchemy-utils~=0.39",
     "werkzeug~=2.2",
     "whoosh~=2.7",
     "wtforms~=3.0",
     "wtforms-alchemy~=0.18",
     "wtforms-components~=0.10",
-    "python-dotenv~=0.20",
+    "python-dotenv~=0.21",
     "psycopg2-binary~=2.9",
-    "flask-migrate~=3.1",
-    "pillow~=9.2",
+    "flask-migrate~=4.0",
+    "pillow~=9.4",
 ]
 requires-python = ">=3.8"
 license = {text = "N/A"}
@@ -51,10 +51,10 @@ build-backend = "pdm.pep517.api"
 [tool.pdm]
 [tool.pdm.dev-dependencies]
 dev = [
-    "coverage~=6.4",
+    "coverage~=7.0",
     "factory-boy~=3.2",
-    "pytest~=7.1",
-    "pylint~=2.14",
+    "pytest~=7.2",
+    "pylint~=2.15",
     "pylint-pytest~=1.1",
 ]
 
