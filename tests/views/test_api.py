@@ -7,20 +7,13 @@ from tests.factories import ArticleFactory, ReviewFactory
 pytestmark = pytest.mark.usefixtures("db")
 
 
-@pytest.fixture(autouse=True)
-def tag_cleanup(db):
-    yield
-    db.session.execute(db.delete(Tag))
-    db.session.commit()
-
-
 def test_get_csrf(client):
     resp = client.get("http://main.test/api/csrf/")
     assert resp.status_code == 200
 
 
 @pytest.mark.parametrize("post_type", [Article, Review])
-def test_autosave(client_authed, db, post_type):
+def test_autosave(app_ctx, client_authed, db, post_type):
     data = {
         "body": "This is a test post body.",
         "title": "Post title here",
@@ -58,7 +51,7 @@ def test_autosave(client_authed, db, post_type):
     assert resp.status_code == 400
 
 
-def test_goodreads_link(client_authed):
+def test_goodreads_link(app_ctx, client_authed):
     # Test no input
     resp = client_authed.get("http://main.test/api/posts/goodreads-link/")
     assert resp.status_code == 204
@@ -70,7 +63,7 @@ def test_goodreads_link(client_authed):
     assert resp.get_json() == [[r.handle, str(r.goodreads_id)]]
 
 
-def test_posts_lookup(client_authed):
+def test_posts_lookup(app_ctx, client_authed):
     a1 = ArticleFactory(title="Hello world")
     r1 = ReviewFactory(title="Say hello world")
     r2 = ReviewFactory(title="Hello to the world")
@@ -81,7 +74,7 @@ def test_posts_lookup(client_authed):
     assert len(json) == 2
 
 
-def test_tags_delete(client_authed, db):
+def test_tags_delete(app_ctx, client_authed, db):
     # No tag found
     resp = client_authed.post(
         "http://main.test/api/tags/delete/", json={"tag": "hello world"}
@@ -104,7 +97,7 @@ def test_tags_delete(client_authed, db):
     assert was_deleted(tag)
 
 
-def test_tags_lookup(client_authed, db):
+def test_tags_lookup(app_ctx, client_authed, db):
     # No term
     resp = client_authed.get("http://main.test/api/tags/search/")
     assert resp.status_code == 400
@@ -129,7 +122,7 @@ def test_tags_lookup(client_authed, db):
     assert len(resp.get_json()) == 0
 
 
-def test_tags_rename(client_authed, db):
+def test_tags_rename(app_ctx, client_authed, db):
     # No tag found
     resp = client_authed.post(
         "http://main.test/api/tags/rename/", json={"old": "hello world"}

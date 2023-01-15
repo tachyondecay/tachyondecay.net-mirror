@@ -13,7 +13,6 @@ from flask import (
     url_for,
 )
 from flask_login import current_user, login_user, login_required, logout_user
-from flask_sqlalchemy import Pagination
 from sqlalchemy import and_, func
 from whoosh.query import Term as whoosh_term, Or as whoosh_or
 
@@ -47,7 +46,7 @@ def posts_index(post_type, template, **kwargs):
     )
     order = 'asc' if request.args.get('order') == 'asc' else 'desc'
     q = request.args.get('q')
-    posts = Pagination(query=None, page=page, per_page=per_page, total=0, items=[])
+    posts = None
 
     if q:
         search_params = {
@@ -57,11 +56,7 @@ def posts_index(post_type, template, **kwargs):
             'sort_order': order,
             'filter': whoosh_or([whoosh_term('status', x) for x in status]),
         }
-        results = post_class.search(q, **search_params)
-        current_app.logger.debug(results)
-        if results is not None and results['query'] is not None:
-            posts.items = results['query'].all()
-            posts.total = results['total']
+        posts = post_class.search(q, **search_params)
     else:
         posts = (
             post_class.query.filter(post_class.status.in_(status))
@@ -201,21 +196,12 @@ def tag_manager():
     tags = None
 
     tags = Tag.frequency(
-        post_types=post_types, status=None, page=page, per_page=per_page
-    )
-    # if sort_by == 'label':
-    #     current_app.logger.debug('Sorting by label')
-    #     tags = tags.order_by(getattr(Tag.label, order)())
-    # elif sort_by == 'frequency':
-
-    tags = Pagination(
-        query=None,
+        post_types=post_types,
+        match=request.args.get("match"),
+        status=None,
         page=page,
         per_page=per_page,
-        total=Tag.query.count(),
-        items=tags,
     )
-    # tags.items = [dict(zip(i.keys(), i)) for i in tags.items]
 
     return render_template(
         'admin/views/tag_manager.html',

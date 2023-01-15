@@ -14,8 +14,7 @@ from flask import (
     url_for,
 )
 from flask_login import current_user
-from flask_sqlalchemy import Pagination
-from sqlalchemy import desc, or_, not_
+from sqlalchemy import or_, not_
 from whoosh.query import Term as whoosh_term
 
 from lemonade_soapbox import db
@@ -47,7 +46,10 @@ def error_404(e):
         render_template(
             'reviews/layouts/basic.html',
             page_title="Page Not Found",
-            description="Looks like the link you followed doesn’t work anymore. Maybe try searching for what you want?",
+            description="""
+Looks like the link you followed doesn’t work anymore. 
+Maybe try searching for what you want?
+""",
             cover=url_for(
                 '.static',
                 filename='images/layout/header_bg/syd-wachs-slItfWbhijc-unsplash.jpg',
@@ -155,13 +157,11 @@ def search():
             'filter': whoosh_term(
                 'status', 'published'
             ),  # Only return published reviews
+            'sort_order': request.args.get('sort', 'asc'),
         }
 
         if sort_by := request.args.get('sortby'):
-            search_params['sortedby'] = sort_by
-
-            if reverse := request.args.get('reverse'):
-                search_params['reverse'] = True
+            search_params['sort_field'] = sort_by
 
         # If query has no modifiers then search the title only
         split_q = q.split(" ")
@@ -169,25 +169,10 @@ def search():
             mode = 'title'
             search_params['fields'] = 'title'
 
-        results = Review.search(q, **search_params)
-        # current_app.logger.debug(results)
-        if results and (query := results['query']):
-            if sort_by:
-                query = (
-                    query.order_by(desc(sort_by))
-                    if reverse
-                    else query.order_by(sort_by)
-                )
-
-            reviews = Pagination(
-                query=None,
-                page=page,
-                per_page=per_page,
-                total=results['total'],
-                items=query,
-            )
+        reviews = Review.search(q, **search_params)
+        if reviews:
             page_title = (
-                f"{results['total']} review{'s' if results['total'] > 1 else ''} found"
+                f"{reviews.total} review{'s' if reviews.total > 1 else ''} found"
             )
         else:
             page_title = "No reviews found"
@@ -206,9 +191,7 @@ def search():
 @bp.route('/shelves/')
 def all_tags():
     """Display a list of all tags."""
-    shelves = [
-        t for t in Tag.frequency(post_types=['review']).all() if t["review_count"] > 0
-    ]
+    shelves = [t for t in Tag.frequency(post_types=['review']) if t["review_count"] > 0]
     sort_by = request.args.get('sort', 'alphabetical')
     return render_template(
         'reviews/views/shelves.html',

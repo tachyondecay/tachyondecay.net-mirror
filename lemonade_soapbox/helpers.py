@@ -13,6 +13,7 @@ from flask.blueprints import (
     BlueprintSetupState as FlaskBlueprintSetupState,
 )
 from flask.json.provider import DefaultJSONProvider
+from flask_sqlalchemy.pagination import Pagination
 from markdown import markdown
 from slugify import slugify
 
@@ -194,3 +195,14 @@ class Timer:
         """End the timer."""
         self.end = time.perf_counter()
         self.interval = self.end - self.start
+
+
+class GenericPagination(Pagination):
+    """Extends the Flask-SQLAlchemy Pagination class to work with Whoosh search
+    results."""
+
+    def _query_items(self):
+        return self._query_args["items"]
+
+    def _query_count(self):
+        return self._query_args["total"]

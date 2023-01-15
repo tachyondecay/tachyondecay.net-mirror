@@ -20,7 +20,7 @@ post_types = {
 
 
 @pytest.fixture(params=[ArticleFactory, ListFactory, ReviewFactory])
-def post(db, request, client_authed):
+def post(app_ctx, db, request, client_authed):
     """For testing various cases with the edit_post endpoint."""
     # Create the post and generate a new revision
     _post = request.param(title="Hello World", body="Test post here")
@@ -38,7 +38,7 @@ def post(db, request, client_authed):
 
     yield _post
 
-    db.session.rollback()
+    # db.session.rollback()
 
 
 @pytest.fixture
@@ -74,16 +74,15 @@ def test_protected_routes(client):
     "factory",
     [ArticleFactory, ReviewFactory],
 )
-def test_posts_index(client_authed, factory):
+def test_posts_index(app_ctx, client_authed, db, factory):
     """Test the /meta/blog/ and /meta/reviews/ views."""
     posts = factory.create_batch(5)
+
     posts.sort(key=lambda a: a.date_published, reverse=True)
     post_type = post_types[posts[0].__class__]
 
     # Test pagination and default sort/filter parameters
     resp = client_authed.get(f"http://main.test/meta/{post_type}/?page=2&per_page=4")
-    # print(session)
-    # print(current_user.is_authenticated)
     assert posts[-1].title.encode() in resp.data
     assert all(a.title.encode() not in resp.data for a in posts[:-1])
 
@@ -109,7 +108,7 @@ def test_edit_post_type_not_specified(client_authed):
 
 
 @pytest.mark.parametrize("post_class", [Article, List, Review])
-def test_edit_post_new(client_authed, db, post_class):
+def test_edit_post_new(app, client_authed, db, post_class):
     """Test that starting a brand new article works as expectd."""
     post_type = post_types[post_class]
     resp = client_authed.get(f"http://main.test/meta/{post_type}/write/")
@@ -127,10 +126,12 @@ def test_edit_post_new(client_authed, db, post_class):
         },
     )
     assert resp.status_code == 302
-    post = post_class.query.filter_by(title="A Fresh Article").first()
-    assert post is not None
-    db.session.delete(post)
-    db.session.commit()
+
+    with app.app_context():
+        post = post_class.query.filter_by(title="A Fresh Article").first()
+        assert post is not None
+    # db.session.delete(post)
+    # db.session.commit()
 
 
 def test_edit_post_fetch_by_id(client_authed, post):
@@ -324,7 +325,7 @@ def test_edit_post_unpublish(client_authed, post):
     assert post.status == "draft"
 
 
-def test_index(client_authed):
+def test_index(app_ctx, db, client_authed):
     ArticleFactory.create_batch(5)
     ReviewFactory.create_batch(6)
     draft = ArticleFactory(status="draft")
@@ -332,7 +333,6 @@ def test_index(client_authed):
 
     resp = client_authed.get("http://main.test/meta/")
     assert resp.status_code == 200
-    print(resp.data.decode())
     assert b"<strong>5</strong>" in resp.data
     assert b"<strong>7</strong>" in resp.data
     assert draft.title.encode() in resp.data
@@ -389,9 +389,8 @@ def test_signout(client_authed, user):
         assert resp.status_code == 302
 
 
-def test_tag_manager(client_authed, db):
+def test_tag_manager(app_ctx, client_authed, db):
     tags = TagFactory.create_batch(5)
-    db.session.flush()
 
     # Sort tags alphabetically so we know which one will show up
     tags.sort(key=lambda t: t.label)

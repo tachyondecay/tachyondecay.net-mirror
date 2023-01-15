@@ -26,15 +26,20 @@ def app(monkeypatch_session):
     _app = create_app("testing")
     _app.config["TESTING"] = True
     _app.test_client_class = FlaskLoginClient
-    with _app.app_context():
-        yield _app
+    yield _app
 
-        for directory in [
-            _app.config["INDEX_PATH"],
-            _app.instance_path / "logs",
-            _app.instance_path / "media",
-        ]:
-            shutil.rmtree(directory, ignore_errors=True)
+    for directory in [
+        _app.config["INDEX_PATH"],
+        _app.instance_path / "logs",
+        _app.instance_path / "media",
+    ]:
+        shutil.rmtree(directory, ignore_errors=True)
+
+
+@pytest.fixture
+def app_ctx(app):
+    with app.app_context():
+        yield
 
 
 @pytest.fixture
@@ -43,35 +48,35 @@ def db(app):
     This allows for automatic cleanup of temporary db objects we don't
     want to persist across tests.
     """
-    _db.create_all()
+    with app.app_context():
+        _db.create_all()
+
     yield _db
-    _db.session.remove()
-    _db.drop_all()
+
+    with app.app_context():
+        _db.drop_all()
 
 
 @pytest.fixture
-def user(db):
+def user(app, db):
     _user = User(
         email="test@example.com",
         name="Kara Babcock",
         password="testing",
         url="https://tachyondecay.net/",
     )
-    db.session.add(_user)
-    db.session.commit()
+    with app.app_context():
+        db.session.add(_user)
+        db.session.commit()
+        db.session.refresh(_user)
     yield _user
 
 
 @pytest.fixture
 def client(app):
-    app.login_manager._update_request_context_with_user()
     yield app.test_client()
 
 
 @pytest.fixture
-def client_authed(app, user):
-    c = app.test_client(user=user)
-    # This shenanigans is necessary because I'm not recreating the app per-test
-    app.login_manager._update_request_context_with_user(user)
-    yield c
-    app.login_manager._update_request_context_with_user()
+def client_authed(app, db, user):
+    yield app.test_client(user=user)

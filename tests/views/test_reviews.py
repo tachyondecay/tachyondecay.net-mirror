@@ -6,7 +6,7 @@ import pytest
 from lemonade_soapbox.models import Review, Tag
 from tests.factories import ReviewFactory
 
-pytestmark = pytest.mark.usefixtures("db")
+pytestmark = pytest.mark.usefixtures("db", "app_ctx")
 
 
 def test_about(client):
@@ -47,10 +47,9 @@ def test_index(client, db):
 
 
 def test_lists(client):
-    with client:
-        resp = client.get("http://reviews.test/lists/")
-        assert resp.status_code == 200
-        assert b"The lists feature is under construction" in resp.data
+    resp = client.get("http://reviews.test/lists/")
+    assert resp.status_code == 200
+    assert b"The lists feature is under construction" in resp.data
 
 
 def test_random_review(client):

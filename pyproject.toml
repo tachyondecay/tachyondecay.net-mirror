@@ -13,7 +13,7 @@ dependencies = [
     "email-validator~=1.2",
     "flask~=2.2",
     "flask-login~=0.6",
-    "flask-sqlalchemy~=2.5",
+    "flask-sqlalchemy>=3.0.2",
     "flask-wtf~=1.0",
     "gunicorn~=20.1",
     "itsdangerous~=2.1",
@@ -62,6 +62,9 @@ dev = [
 name = "pypi"
 url = "https://pypi.org/simple"
 verify_ssl = true
+
+[tool.black]
+skip-string-normalization = true
 
 [tool.coverage.run]
 command_line = "-m pytest tests/"

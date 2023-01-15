@@ -2,7 +2,7 @@ import pytest
 
 from tests.factories import ArticleFactory
 
-pytestmark = pytest.mark.usefixtures("db")
+pytestmark = pytest.mark.usefixtures("db", "app_ctx")
 
 
 def test_reindex(app, db):

@@ -2,7 +2,7 @@ import arrow
 import pytest
 from tests.factories import ReviewFactory
 
-pytestmark = pytest.mark.usefixtures("app", "db")
+pytestmark = pytest.mark.usefixtures("app", "db", "app_ctx")
 
 
 def test_dates_read():

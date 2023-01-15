@@ -1,4 +1,9 @@
 import arrow
+import pytest
+
+from werkzeug.datastructures import MultiDict
+from wtforms import SubmitField
+
 from lemonade_soapbox.forms import (
     ButtonWidget,
     DateTimeLocalField,
@@ -7,8 +12,8 @@ from lemonade_soapbox.forms import (
     ReviewForm,
     TagListField,
 )
-from werkzeug.datastructures import MultiDict
-from wtforms import SubmitField
+
+pytestmark = pytest.mark.usefixtures("app_ctx")
 
 
 def test_model_form(db):

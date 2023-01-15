@@ -6,13 +6,11 @@ from tests.factories import ArticleFactory
 pytestmark = pytest.mark.usefixtures("db")
 
 
-def test_all_tags(client, db):
+def test_all_tags(app_ctx, client, db):
     ArticleFactory(tags=["test", "hello world"])
-    db.session.flush()  # Avoids autoflush error because "hello world" tag isn't created yet
     ArticleFactory(tags=["hello world"])
     resp = client.get("http://main.test/blog/tags/")
     assert resp.status_code == 200
-    print(resp.data)
     assert b"/blog/tags/hello-world/" in resp.data
     assert b"/blog/tags/test/" in resp.data
     assert b"hello world" in resp.data
@@ -30,7 +28,7 @@ def test_error404(client):
     assert resp.status_code == 404
 
 
-def test_index(client):
+def test_index(app_ctx, client):
     """Blog index should show 10 most recent articles."""
     articles = ArticleFactory.create_batch(10)
     resp = client.get("http://main.test/blog/")
@@ -38,7 +36,7 @@ def test_index(client):
     assert all(a.title.encode() in resp.data for a in articles)
 
 
-def test_month_archive(client):
+def test_month_archive(app_ctx, client):
     # Non-existent months should 404
     resp = client.get("http://main.test/blog/2005/20/")
     assert resp.status_code == 404
@@ -58,7 +56,7 @@ def test_month_archive(client):
     assert article.title.encode() in resp.data
 
 
-def test_show_draft(client_authed, user):
+def test_show_draft(app_ctx, client_authed, user):
     # If draft doesn't exist, 404
     resp = client_authed.get("http://main.test/blog/drafts/oops/")
     assert resp.status_code == 404
@@ -69,7 +67,7 @@ def test_show_draft(client_authed, user):
     assert draft.title.encode() in resp.data
 
 
-def test_show_feed(client, user):
+def test_show_feed(app_ctx, client, user):
     """Test the generation of Atom and RSS feeds."""
     articles = ArticleFactory.create_batch(5)
     for format in ["atom", "rss"]:
@@ -79,7 +77,7 @@ def test_show_feed(client, user):
         assert all(a.title.encode() in resp.data for a in articles)
 
 
-def test_show_tag(client, db):
+def test_show_tag(app_ctx, client, db):
     # Create a test tag
     tag = Tag(label="hello world")
     db.session.add(tag)
@@ -92,7 +90,7 @@ def test_show_tag(client, db):
     assert all(a.title.encode() in resp.data for a in articles)
 
 
-def test_show_trash(client_authed, user):
+def test_show_trash(app_ctx, client_authed, user):
     # If deleted article doesn't exis, 404
     resp = client_authed.get("http://main.test/blog/trash/oops/")
     assert resp.status_code == 404
@@ -103,7 +101,7 @@ def test_show_trash(client_authed, user):
     assert trashed.title.encode() in resp.data
 
 
-def test_single_article(client, user):
+def test_single_article(app_ctx, client, user):
     # Non-existent handle should 404
     resp = client.get("http://main.test/blog/2005/05/hello-world/")
     assert resp.status_code == 404
@@ -139,14 +137,12 @@ def test_single_article(client, user):
     assert resp.status_code == 200
 
 
-def test_year_archive(client):
+def test_year_archive(app_ctx, client):
     # Non-existent years or years with no articles should 404
     resp = client.get("http://main.test/blog/2999/")
     assert resp.status_code == 404
 
     article = ArticleFactory()
-    print(f"Hmm {article.author.id}")
-    # assert False
     year = article.date_published.year
     resp = client.get(f"http://main.test/blog/{year}/")
     assert resp.status_code == 200

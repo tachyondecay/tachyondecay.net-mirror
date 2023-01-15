@@ -1,10 +1,11 @@
 import shutil
 import pytest
-from lemonade_soapbox.models import List
+from factory import SelfAttribute, SubFactory
 from PIL import Image
+from lemonade_soapbox.models import List, ListItem
 from tests.factories import ListFactory, ListItemFactory, ReviewFactory
 
-pytestmark = pytest.mark.usefixtures("app", "db")
+pytestmark = pytest.mark.usefixtures("app", "db", "app_ctx")
 
 
 @pytest.fixture
@@ -22,13 +23,14 @@ def cover_dir(app):
 def test_generate_cover_one_cover(app):
     """Test creating a list cover when there is only 1 item."""
     r = ReviewFactory()
-    l = ListFactory(cover="", items=[ListItemFactory(post=r)])
+    l = List(title="List", cover="")
+    l.items.append(ListItem(post=r))
     l.save()
     l.process_cover()
     assert l.cover == r.cover
 
 
-def test_generate_cover(cover_dir):
+def test_generate_cover(app, cover_dir):
     """Test generating a list cover from item covers."""
     reviews = []
     for i in range(3):
@@ -37,7 +39,8 @@ def test_generate_cover(cover_dir):
         cover.save(r.cover_path / r.cover)
         reviews.append(r)
     reviews.append(ReviewFactory())
-    l = ListFactory(cover="", items=[ListItemFactory(post=r) for r in reviews])
+    l = List(title="List", cover="")
+    l.items = [ListItem(post=r) for r in reviews]
     l.save()
     l.process_cover()
     assert l.cover == f"{l.id}-{l.handle}-cover.jpg"

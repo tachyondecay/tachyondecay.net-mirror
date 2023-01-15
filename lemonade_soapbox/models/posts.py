@@ -3,7 +3,7 @@ from uuid import uuid4
 
 import arrow
 from diff_match_patch import diff_match_patch
-from flask import current_app, flash, Markup, url_for
+from flask import current_app, Markup, url_for
 from flask_login import current_user
 from markdown import markdown
 from PIL import Image
@@ -23,7 +23,7 @@ from whoosh.qparser import GtLtPlugin, MultifieldParser, QueryParser
 from whoosh.qparser.dateparse import DateParserPlugin
 
 from lemonade_soapbox import db
-from lemonade_soapbox.helpers import Timer
+from lemonade_soapbox.helpers import GenericPagination, Timer
 
 
 class Searchable:
@@ -76,6 +76,7 @@ class Searchable:
     @classmethod
     def build_index(cls, per_pass=500):
         """Build a clean index of this model."""
+
         with Timer() as t:
             current_app.logger.info(
                 f"Beginning clean indexing operation of {cls.__name__}."
@@ -116,7 +117,6 @@ class Searchable:
         if not fields:
             fields = getattr(cls, '__searchable__', None)
 
-        current_app.logger.debug(fields)
         if isinstance(fields, list):
             qparser = MultifieldParser(fields, schema=cls.schema)
         else:
@@ -150,10 +150,12 @@ class Searchable:
             qparser = cls.get_query_parser(fields)
             parsed_query = qparser.parse(query)
             with ix.searcher() as searcher:
+                current_app.logger.debug(f"Sort order: {sort_order}")
                 if sort_field in cls.__sortable__:
                     kwargs['sortedby'] = sort_field
                     if sort_order == 'desc':
                         kwargs['reverse'] = True
+                current_app.logger.debug(kwargs)
                 if paginate:
                     raw_results = searcher.search_page(
                         parsed_query, pagenum, pagelen=pagelen, **kwargs
@@ -173,18 +175,15 @@ class Searchable:
                             query_obj = query_obj.order_by(
                                 getattr(cls, sort_field).desc()
                             )
+                    results = query_obj.all()
 
-                else:
-                    query_obj = None
-                results = {
-                    'query': query_obj,
-                    'offset': raw_results.offset,
-                    'pagecount': raw_results.pagecount,
-                    'pagelen': raw_results.pagelen,
-                    'pagenum': raw_results.pagenum,
-                    'total': raw_results.total,
-                }
-                return results
+                    return GenericPagination(
+                        page=pagenum,
+                        per_page=pagelen,
+                        items=results,
+                        total=raw_results.total,
+                    )
+                return None
         except Exception as e:
             current_app.logger.info(f"Search error: {e}")
             raise e
@@ -737,6 +736,7 @@ class Review(Post, RevisionMixin):
         'date_finished',
         'date_started',
         'book_author',
+        'book_author_sort',
     ]
     __mapper_args__ = {'polymorphic_identity': 'review'}
 
@@ -755,7 +755,8 @@ class Review(Post, RevisionMixin):
     schema = Schema(
         id=ID(stored=True, unique=True),
         book_author=TEXT(),
-        title=TEXT(field_boost=10.0, analyzer=StemmingAnalyzer()),
+        book_author_sort=TEXT(sortable=True),
+        title=TEXT(field_boost=10.0, analyzer=StemmingAnalyzer(), sortable=True),
         date_created=DATETIME(sortable=True),
         date_published=DATETIME(sortable=True),
         date_updated=DATETIME(sortable=True),
@@ -1125,9 +1126,20 @@ class Tag(db.Model):
         )
         if match:
             main_query = main_query.where(Tag.label.ilike(f"%{match}%"))
+
+        total = db.session.execute(
+            db.select(func.count()).select_from(main_query.subquery())
+        ).scalar()
+
         if per_page:
-            main_query = main_query.limit(per_page).offset((page - 1) * per_page)
-        return db.session.execute(main_query)
+            limited_query = main_query.limit(per_page).offset((page - 1) * per_page)
+            return GenericPagination(
+                page=page,
+                per_page=per_page,
+                items=list(db.session.execute(limited_query)),
+                total=total,
+            )
+        return list(db.session.execute(main_query))
 
     @classmethod
     def slugify(cls, text):

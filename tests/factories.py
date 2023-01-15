@@ -26,6 +26,7 @@ class ModelFactory(SQLAlchemyModelFactory):
     class Meta:
         abstract = True
         sqlalchemy_session = db.session
+        sqlalchemy_session_persistence = "flush"
 
 
 class UserFactory(ModelFactory):
@@ -119,9 +120,13 @@ class ListFactory(PostFactory):
 
     @post_generation
     def items(self, create, extracted, **kwargs):
+        print("ROGER ROGER")
         if not create:
+            print("NObody")
             return
         if extracted:
+            print("hello WORLD")
             self.items = extracted
         else:
-            self.items = ListItemFactory.build_batch(randint(1, 10))
+            print("Making list item")
+            self.items = ListItemFactory.build_batch(randint(1, 10), list=self)

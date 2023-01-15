@@ -3,7 +3,7 @@ import pytest
 from lemonade_soapbox.models import Article
 from tests.factories import ArticleFactory
 
-pytestmark = pytest.mark.usefixtures("app", "db")
+pytestmark = pytest.mark.usefixtures("db", "app_ctx")
 
 
 def test_format():

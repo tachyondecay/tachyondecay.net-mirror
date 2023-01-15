@@ -15,7 +15,7 @@ def clear_index(app):
     app.config["INDEX_PATH"].mkdir()
 
 
-def test__after_flush(app, clear_index, db):
+def test__after_flush(app, app_ctx, clear_index, db):
     a = ArticleFactory.build()
     db.session.add(a)
     app.testing = False
@@ -26,7 +26,7 @@ def test__after_flush(app, clear_index, db):
     app.testing = True
 
 
-def test_build_index(app, clear_index):
+def test_build_index(app, app_ctx, clear_index):
     # Test indexing by seeing if directory is non-empty
     assert not any(app.config["INDEX_PATH"].iterdir())
     ArticleFactory.create_batch(10)
@@ -43,14 +43,13 @@ def test_schema_filters_not_implemented():
         Searchable().schema_filters()
 
 
-def test_search(clear_index, db):
+def test_search(app_ctx, clear_index, db):
     ArticleFactory(title="Test article")
     ArticleFactory(title="Not a test")
     ArticleFactory(title="Hello world")
-    db.session.flush()
     Article.build_index()
     results = Article.search(query="test", sort_order="asc", sort_field="title")
-    assert results["total"] == 2
+    assert results.total == 2
 
 
 def test_search_error():

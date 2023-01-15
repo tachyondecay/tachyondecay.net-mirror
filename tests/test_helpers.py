@@ -1,7 +1,7 @@
 from lemonade_soapbox.helpers import truncate_html
 
 
-def test_truncate_html(app):
+def test_truncate_html(app_ctx):
     # Valid input
     test_html = """<p>Sed ut perspiciatis unde omnis iste natus error sit
     voluptatem accusantium doloremque laudantium, totam rem aperiam,

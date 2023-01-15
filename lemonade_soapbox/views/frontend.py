@@ -1,5 +1,4 @@
 from flask import render_template, request, url_for
-from flask_sqlalchemy import Pagination
 from whoosh.query import Term as whoosh_term
 
 from lemonade_soapbox.models import Article, Review
@@ -29,37 +28,27 @@ def search():
     """Searching, obviously."""
     q = request.args.get('q')
     page = request.args.get('page', 1, int)
+    per_page = request.args.get('per_page', 20, int)
     page_title = 'Search'
-    reviews = None
-    mode = None
+    articles = None
     if q:
         search_params = {
             'pagenum': page,
-            'pagelen': 20,
+            'pagelen': per_page,
             'filter': whoosh_term('status', 'published'),  # Only return published posts
+            'sort_order': request.args.get('sort', 'asc'),
         }
 
-        # If query has no modifiers then search the title only
-        # split_q = q.split(" ")
-        # if split_q and ":" not in split_q[0]:
-        #     mode = 'title'
-        #     search_params['fields'] = 'title'
+        if sort_by := request.args.get('sortby'):
+            search_params['sort_field'] = sort_by
 
-        results = Article.search(q, **search_params)
-        # current_app.logger.debug(results)
-        if results is not None and results['query'] is not None:
-            articles = Pagination(
-                None,
-                page=page,
-                per_page=20,
-                total=results['total'],
-                items=results['query'].all(),
-            )
+        articles = Article.search(q, **search_params)
+        if articles:
             page_title = (
-                f"{results['total']} article{'s' if results['total'] > 1 else ''} found"
+                f"{articles.total} article{'s' if articles.total > 1 else ''} found"
             )
         else:
-            page_title = "No reviews found"
+            page_title = "No articles found"
     return render_template(
         'blog/views/article_list.html',
         cover=url_for(

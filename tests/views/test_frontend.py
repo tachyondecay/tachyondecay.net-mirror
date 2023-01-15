@@ -15,7 +15,7 @@ def test_error404(client):
     assert resp.status_code == 404
 
 
-def test_index(client):
+def test_index(app_ctx, client):
     """Site index should show 5 most recent articles."""
     articles = ArticleFactory.create_batch(5)
     resp = client.get("http://main.test/")
