@@ -101,11 +101,13 @@ def test_show_trash(app_ctx, client_authed, user):
     assert trashed.title.encode() in resp.data
 
 
-def test_single_article(app_ctx, client, user):
+def test_single_article_nonexistent(client):
     # Non-existent handle should 404
     resp = client.get("http://main.test/blog/2005/05/hello-world/")
     assert resp.status_code == 404
 
+
+def test_single_article_success(app_ctx, client):
     # Existent article should be displayed
     article = ArticleFactory()
     year, month = [article.date_published.year, article.date_published.month]
@@ -113,10 +115,15 @@ def test_single_article(app_ctx, client, user):
     assert resp.status_code == 200
     assert article.title.encode() in resp.data
 
+
+def test_single_article_mismatch(app_ctx, client):
     # Article should *not* be displayed if year/month don't match
+    article = ArticleFactory()
     resp = client.get(f"http://main.test/blog/2000/01/{article.handle}/")
     assert resp.status_code == 404
 
+
+def test_single_article_future_unauthed(app_ctx, client):
     # Article in the future should only be displayed if logged in
     pubdate = arrow.utcnow().shift(weeks=+1)
     future_article = ArticleFactory(date_published=pubdate)
@@ -128,12 +135,17 @@ def test_single_article(app_ctx, client, user):
     resp = client.get(url)
     assert resp.status_code == 404
 
-    client.post(
-        "http://main.test/meta/signin/",
-        data={"email": "test@example.com", "password": "testing"},
-        follow_redirects=True,
-    )
-    resp = client.get(url)
+
+def test_single_article_future_authed(app_ctx, client_authed):
+    # Article in the future should only be displayed if logged in
+    pubdate = arrow.utcnow().shift(weeks=+1)
+    future_article = ArticleFactory(date_published=pubdate)
+    year, month = [
+        future_article.date_published.year,
+        future_article.date_published.month,
+    ]
+    url = f"http://main.test/blog/{year}/{month}/{future_article.handle}/"
+    resp = client_authed.get(url)
     assert resp.status_code == 200
 
 

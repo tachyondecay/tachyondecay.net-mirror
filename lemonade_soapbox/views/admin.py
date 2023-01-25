@@ -13,6 +13,7 @@ from flask import (
     url_for,
 )
 from flask_login import current_user, login_user, login_required, logout_user
+from itsdangerous import URLSafeTimedSerializer
 from sqlalchemy import and_, func
 from whoosh.query import Term as whoosh_term, Or as whoosh_or
 
@@ -159,12 +160,21 @@ def signin():
 
     form = SignInForm(request.form)
     if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
+        user = db.session.execute(
+            db.select(User).filter_by(email=form.email.data)
+        ).scalar_one_or_none()
         if not user or user.password != form.password.data:
             flash('Incorrect email address or password.', 'error')
             return redirect(url_for('.signin'))
         login_user(user)
-        return redirect(url_for('.index'))
+        current_app.logger.info(f"{user.name} signed in to tachyondecay.net")
+
+        # Sign an auth token for the reviews blueprint
+        gateway = URLSafeTimedSerializer(current_app.secret_key)
+        token = gateway.dumps(user.id)
+
+        # Send the user to the reviews blueprint to be signed in there too
+        return redirect(url_for("reviews.auth", action="signin", token=token))
 
     return render_template(
         'admin/views/signin.html',
@@ -179,9 +189,18 @@ def signin():
 def signout():
     if current_user.is_authenticated:
         name = current_user.name
+
+        # Sign an auth token for the reviews blueprint
+        gateway = URLSafeTimedSerializer(current_app.secret_key)
+        token = gateway.dumps(current_user.id)
+
         logout_user()
-        flash('Goodbye, {}. You have been signed out.'.format(name), 'success')
-    return redirect(url_for('.signin'))
+        flash(f'Goodbye, {name}. You have been signed out.', 'success')
+        current_app.logger.info(f"{name} signed out from tachyondecay.net")
+
+        # Send the user to the reviews blueprint to be signed out there too
+        return redirect(url_for("reviews.auth", action="signout", token=token))
+    return redirect(url_for(".signin"))
 
 
 @bp.route('/tags/')

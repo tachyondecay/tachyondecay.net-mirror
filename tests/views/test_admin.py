@@ -377,7 +377,7 @@ def test_signin_unauthed(client, user):
         data={"email": "test@example.com", "password": "testing"},
     )
     assert resp.status_code == 302
-    assert resp.location == "/meta/"
+    assert resp.location.startswith("http://reviews.test/")
 
 
 def test_signout(client_authed, user):

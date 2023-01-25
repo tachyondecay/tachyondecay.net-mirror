@@ -13,13 +13,14 @@ from flask import (
     request,
     url_for,
 )
-from flask_login import current_user
+from flask_login import current_user, login_user, logout_user
+from itsdangerous import BadSignature, SignatureExpired, URLSafeTimedSerializer
 from sqlalchemy import or_, not_
 from whoosh.query import Term as whoosh_term
 
 from lemonade_soapbox import db
 from lemonade_soapbox.helpers import Blueprint, read_changelog
-from lemonade_soapbox.models import Post, Review, Tag
+from lemonade_soapbox.models import Post, Review, Tag, User
 
 bp = Blueprint('reviews', __name__)
 
@@ -95,6 +96,36 @@ def index():
 @bp.route('/about/')
 def about():
     return render_template('reviews/about.html', page_title='About This Site')
+
+
+@bp.route('/auth/', defaults={"action": "signin"})
+@bp.route('/auth/<action>/')
+def auth(action):
+    """
+    Authenticate on the reviews blueprint after signing in to the admin
+    blueprint. Or, if signing out, remove the user's cookie on this blueprint
+    as well.
+    """
+    if current_user.is_authenticated and action == "signin":
+        return redirect(url_for("admin.index"))
+    try:
+        token = request.args["token"]
+        gateway = URLSafeTimedSerializer(current_app.secret_key)
+        decoded_token = gateway.loads(token, max_age=60)
+        if user := db.session.get(User, decoded_token):
+            if action == "signin":
+                login_user(user)
+                current_app.logger.info(f"{user.name} signed in to Kara.Reviews.")
+                return redirect(url_for("admin.index"))
+            else:
+                logout_user()
+                current_app.logger.info(f"{user.name} signed out from Kara.Reviews.")
+                return redirect(url_for("admin.signin"))
+    except (BadSignature, SignatureExpired) as e:
+        current_app.logger.info(f"Authorization token rejected: {e.message}")
+    except KeyError:
+        abort(400)
+    return abort(401)
 
 
 @bp.route('/changelog/')
