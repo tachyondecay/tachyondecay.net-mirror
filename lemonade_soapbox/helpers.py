@@ -7,7 +7,7 @@ from pathlib import Path
 
 import arrow
 from bs4 import BeautifulSoup
-from flask import current_app, Markup
+from flask import current_app
 from flask.blueprints import (
     Blueprint as FlaskBlueprint,
     BlueprintSetupState as FlaskBlueprintSetupState,
@@ -15,6 +15,7 @@ from flask.blueprints import (
 from flask.json.provider import DefaultJSONProvider
 from flask_sqlalchemy.pagination import Pagination
 from markdown import markdown
+from markupsafe import Markup
 from slugify import slugify
 
 

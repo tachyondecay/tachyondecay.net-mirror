@@ -114,17 +114,17 @@ def test_show_review_unauthenticated(client):
     assert resp.status_code == 404
 
 
-def test_show_review_authenticated(client_authed):
+def test_show_review_authenticated(client_authed_reviews):
     review = ReviewFactory(status="draft")
     url = f"http://reviews.test/{review.handle}/"
 
-    resp = client_authed.get(url)
+    resp = client_authed_reviews.get(url)
     assert resp.status_code == 200
     assert review.title.encode() in resp.data
 
     review.status = "published"
     review.date_published = arrow.utcnow().shift(weeks=+1)
-    resp = client_authed.get(url)
+    resp = client_authed_reviews.get(url)
     assert resp.status_code == 200
     assert review.title.encode() in resp.data
 

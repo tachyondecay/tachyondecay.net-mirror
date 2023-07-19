@@ -80,7 +80,7 @@ def show_feed(format):
 
 @bp.route('/tags/')
 def all_tags():
-    tags = [t for t in Tag.frequency(post_types=['article']) if t["article_count"] > 0]
+    tags = [t for t in Tag.frequency(post_types=['article']) if t[1] > 0]
     sort_by = request.args.get('sort', 'frequency')
     page_title = ngettext('%(num)d Tag', 'All %(num)d Tags', len(tags)) % {
         'num': len(tags)

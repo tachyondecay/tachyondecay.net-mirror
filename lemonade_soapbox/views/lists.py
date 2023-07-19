@@ -1,9 +1,11 @@
 import arrow
+import os
 from flask import abort, render_template, request, url_for
 from flask_login import current_user
 
 from lemonade_soapbox.helpers import Blueprint
 from lemonade_soapbox.models import List
+from lemonade_soapbox.views import frontend, reviews
 
 bp = Blueprint('lists', __name__)
 
@@ -40,3 +42,16 @@ def show_list(handle):
 @bp.route('/categories/<handle>/')
 def show_tag(handle):
     return ""
+
+
+frontend.bp.register_blueprint(
+    bp,
+    host=os.getenv('MAIN_HOST'),
+    url_prefix='/lists',
+)
+print("registered frontend")
+reviews.bp.register_blueprint(
+    bp,
+    host=os.getenv('REVIEW_HOST'),
+    url_prefix='/lists',
+)

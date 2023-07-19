@@ -1,7 +1,8 @@
 import arrow
-from flask import current_app, Markup
+from flask import current_app
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileAllowed, FileField
+from markupsafe import Markup
 from wtforms import (
     BooleanField,
     DateTimeField,

@@ -69,6 +69,7 @@ class RevisionMixinFactory(ModelFactory):
             self.revisions = extracted
         else:
             r = Revision(self, new=self.body, old='', author=self.author)
+            db.session.add(r)
             self.revisions.append(r)
             self.current_revision_id = r.id
             self.selected_revision = r
@@ -120,13 +121,9 @@ class ListFactory(PostFactory):
 
     @post_generation
     def items(self, create, extracted, **kwargs):
-        print("ROGER ROGER")
         if not create:
-            print("NObody")
             return
         if extracted:
-            print("hello WORLD")
             self.items = extracted
         else:
-            print("Making list item")
-            self.items = ListItemFactory.build_batch(randint(1, 10), list=self)
+            self.items = ListItemFactory.create_batch(randint(1, 10), list=self)

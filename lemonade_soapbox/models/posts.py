@@ -3,9 +3,10 @@ from uuid import uuid4
 
 import arrow
 from diff_match_patch import diff_match_patch
-from flask import current_app, Markup, url_for
+from flask import current_app, url_for
 from flask_login import current_user
 from markdown import markdown
+from markupsafe import Markup
 from PIL import Image
 from slugify import slugify
 from sqlalchemy import asc, desc, event, func, orm
@@ -705,7 +706,7 @@ class Article(Post, RevisionMixin):
             .all()
         )
         breakdown = {}
-        for (y, m, c) in q:
+        for y, m, c in q:
             year = breakdown.setdefault(int(y), {})
             year[int(m)] = c
         return breakdown
@@ -1120,7 +1121,7 @@ class Tag(db.Model):
             subqueries.append(q.scalar_subquery().label(f'{p}_count'))
         # Build the main query, adding on sorting and filtering on label
         main_query = (
-            db.select(subqueries)
+            db.select(*subqueries)
             .group_by(cls.id)
             .order_by(getattr(db, "desc" if order_desc else "asc")(sort_by))
         )

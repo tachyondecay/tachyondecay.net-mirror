@@ -222,7 +222,7 @@ def search():
 @bp.route('/shelves/')
 def all_tags():
     """Display a list of all tags."""
-    shelves = [t for t in Tag.frequency(post_types=['review']) if t["review_count"] > 0]
+    shelves = [t for t in Tag.frequency(post_types=['review']) if t[1] > 0]
     sort_by = request.args.get('sort', 'alphabetical')
     return render_template(
         'reviews/views/shelves.html',

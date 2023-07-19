@@ -95,18 +95,9 @@ def create_app(config_name=None):
             model.build_index(per_pass=per_pass)
             click.echo("Indexing complete.")
 
+    # Lists blueprint must be imported here so that it registers on admin and frontend
     from lemonade_soapbox.views import admin, api, blog, frontend, lists, reviews
 
-    frontend.bp.register_blueprint(
-        lists.bp,
-        host=os.getenv('MAIN_HOST'),
-        url_prefix='/lists',
-    )
-    reviews.bp.register_blueprint(
-        lists.bp,
-        host=os.getenv('REVIEW_HOST'),
-        url_prefix='/lists',
-    )
     # Register admin and API blueprints on both domains so we can log in to both
     app.register_blueprint(admin.bp, host=os.getenv('MAIN_HOST'), url_prefix='/meta')
     app.register_blueprint(api.bp, host=os.getenv('MAIN_HOST'), url_prefix='/api')
