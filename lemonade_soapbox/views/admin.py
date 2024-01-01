@@ -268,7 +268,7 @@ def edit_post(post_type, id, revision_id):
 
     # Load a post either by ID or a specific revision
     if id:
-        post = post_class.query.get_or_404(id)
+        post = db.get_or_404(post_class, id)
         revision_id = getattr(post, "current_revision_id", None)
     elif revision_id and issubclass(post_class, RevisionMixin):
         post = post_class.from_revision(revision_id)
