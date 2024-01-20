@@ -522,7 +522,7 @@ var PostForm = function(form) {
                     });
 
                     const handle = document.getElementById('handle').value;
-                    const site_link = 'Originally posted on <a href="https://kara.reviews/' + handle + '/">Kara.Reviews</a>, where you can easily browse all my reviews and subscribe to my newsletter.';
+                    const site_link = 'Originally posted on <a href="https://kara.reviews/' + handle + '/">Kara.Reviews</a>.';
                     text += '\n\n<a rel="license" href="https://creativecommons.org/licenses/by-nc/4.0/"><img alt="Creative Commons BY-NC License" width="88" height="31" src="http://i.creativecommons.org/l/by-nc/4.0/88x31.png" /></a>';
 
                     // Get anything that might be a link to another review
