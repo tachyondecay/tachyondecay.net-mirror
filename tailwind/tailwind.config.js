@@ -117,4 +117,7 @@ module.exports = {
     require('@tailwindcss/forms'),
     require('@tailwindcss/typography'),
   ],
+  safelist: [
+    'aspect-video',
+  ],
 }
