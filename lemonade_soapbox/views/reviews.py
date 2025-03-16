@@ -279,6 +279,34 @@ def show_tag(handle, format=None):
     )
 
 
+@bp.route('/on-this-day/')
+def today():
+    try:
+        this_day = arrow.get(request.args.get('date'))
+    except arrow.parser.ParserError:
+        this_day = arrow.utcnow()
+
+    try:
+        reviews = db.session.execute(
+            db.select(Review)
+            .where(
+                db.func.extract('month', Review.date_published) == this_day.month,
+                db.func.extract('day', Review.date_published) == this_day.day,
+            )
+            .order_by(Review.date_published.desc())
+        ).scalars()
+
+        return render_template(
+            'reviews/views/review_list.html',
+            reviews=reviews,
+            page_title=f'On This Day: Reviews Published {this_day.format("MMMM D")}',
+        )
+    except Exception as e:
+        current_app.logger.debug(e)
+        db.session.rollback()
+    return "Error"
+
+
 @bp.route('/<handle>/')
 def show_review(handle):
     """Display a review."""

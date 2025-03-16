@@ -14,7 +14,7 @@
 
     {{ pagetitle(title=("Search My Reviews" if not reviews else reviews.total ~ " reviews found"), cover=cover, description=description)}}
 {% else %}
-    {{ pagetitle(title=page_title, cover=cover, description=('No reviews found' if not reviews else reviews.total ~ " reviews found"))}}
+    {{ pagetitle(title=page_title, cover=cover, description=('No reviews found' if not reviews else ((reviews.total ~ " reviews found") if reviews.total)))}}
 
     {% block open_graph %}
         <meta property="og:url" content="{{ request.base_url }}">
@@ -39,7 +39,7 @@
 {% endblock feeds %}
 {% endif %}
 
-{% if reviews and reviews.pages > 1 %}
+{% if reviews and reviews.pages and reviews.pages > 1 %}
     <div class="flex flex-col items-center my-12 md:flex-row md:justify-between md:pb-3 md:mx-10 md:border-b lg:mx-auto lg:max-w-4xl md:border-marble-200">
         <p>Showing {{ 1 + reviews.per_page * (reviews.page - 1) }} to {{ [reviews.total, reviews.per_page * reviews.page]|min }} of {{ reviews.total }} results</p>
     {{ render_pagination(reviews) }}
@@ -60,7 +60,7 @@
 
 {% if reviews %}
 <ol>
-    {% for review in reviews.items %}
+    {% for review in (reviews.items or reviews) %}
     <li>
         <article data-review-id="{{ review.id }}" data-short-title="{{ review.short_title }}" data-title="{{ review.title }}" class="grid grid-cols-[fit-content(25%)_1fr] grid-rows-2 gap-x-4 mt-8 mx-3 sm:mt-16 sm:grid-rows-[repeat(3,_min-content)] sm:gap-x-8 sm:gap-y-2 md:mx-10 xl:mx-auto xl:max-w-4xl lg:grid-cols-[fit-content(25%)_1fr_auto)] lg:gap-y-8 lg:gap-x-2 lg:shadow-md lg:shadow-marble-600/25 lg:rounded-b-lg lg:overflow-hidden lg:border-t-8 lg:border-red-900 group hover:border-pink-600 hover:shadow-marble-600/50 focus-within:border-pink-600 focus-within:shadow-marble-600/50">
 
@@ -117,7 +117,7 @@
     {% endfor %}
 </ol>
 
-{% if reviews and reviews.pages > 1 %}
+{% if reviews and reviews.pages and reviews.pages > 1 %}
     <div class="flex flex-col items-center my-12 md:flex-row md:justify-between md:pt-3 md:mx-10 md:border-t lg:mx-auto lg:max-w-4xl md:border-marble-200">
         <p>Showing {{ 1 + reviews.per_page * (reviews.page - 1) }} to {{ [reviews.total, reviews.per_page * reviews.page]|min }} of {{ reviews.total }} results</p>
     {{ render_pagination(reviews) }}
