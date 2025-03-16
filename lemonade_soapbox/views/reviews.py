@@ -283,10 +283,7 @@ def show_tag(handle, format=None):
 def today():
     try:
         this_day = arrow.get(request.args.get('date'))
-    except (TypeError, arrow.parser.ParserError):
-        this_day = arrow.utcnow()
 
-    try:
         reviews = db.session.execute(
             db.select(Review)
             .where(
@@ -301,10 +298,8 @@ def today():
             reviews=reviews,
             page_title=f'On This Day: Reviews Published {this_day.format("MMMM D")}',
         )
-    except Exception as e:
-        current_app.logger.debug(e)
-        db.session.rollback()
-    return "Error"
+    except (TypeError, arrow.parser.ParserError):
+        return redirect(url_for('.today', date=arrow.utcnow().format("YYYY-MM-DD")))
 
 
 @bp.route('/<handle>/')
