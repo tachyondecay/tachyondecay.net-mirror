@@ -283,7 +283,7 @@ def show_tag(handle, format=None):
 def today():
     try:
         this_day = arrow.get(request.args.get('date'))
-    except arrow.parser.ParserError:
+    except (TypeError, arrow.parser.ParserError):
         this_day = arrow.utcnow()
 
     try:
