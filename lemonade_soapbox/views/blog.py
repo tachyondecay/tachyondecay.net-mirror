@@ -37,7 +37,7 @@ def index():
     return render_template(
         'blog/views/index.html',
         articles=articles,
-        description="Read my thoughts going back 18 years.",
+        description="Read my thoughts going back 21 years.",
         page_title="Kara’s Blog",
     )
 

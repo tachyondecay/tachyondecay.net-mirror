@@ -64,8 +64,8 @@ if(audio) {
 const podcasts = document.getElementById("latest-episodes");
 if(podcasts) {
 	const feeds = [
-		"https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Flisten.wejustliketotalk.com%2Ffeed.xml&api_key=vyvifcf1fmbxjbeka6f8bwslbfuzosdjnv7lqwdz&count=1",
-		"https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Flisten.prophecygirls.ca%2Ffeed.xml&api_key=vyvifcf1fmbxjbeka6f8bwslbfuzosdjnv7lqwdz&count=1"
+		// "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Flisten.wejustliketotalk.com%2Ffeed.xml&api_key=vyvifcf1fmbxjbeka6f8bwslbfuzosdjnv7lqwdz&count=1",
+		"https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Flisten.prophecygirls.ca%2Ffeed.xml&api_key=vyvifcf1fmbxjbeka6f8bwslbfuzosdjnv7lqwdz&count=3"
 	];
 	const fmt = new Intl.DateTimeFormat('en', { month: 'long', day: '2-digit', year: 'numeric' });
     const template = document.getElementById('ep-template').innerHTML;

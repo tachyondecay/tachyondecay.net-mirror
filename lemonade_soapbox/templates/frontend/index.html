@@ -5,6 +5,10 @@
 
 {% block page_title %}Kara Babcock{% endblock page_title %}
 
+{% block scripts %}
+<script type="module" src="https://cdn.jsdelivr.net/npm/bsky-embed/dist/bsky-embed.es.js" async></script>
+{% endblock scripts %}
+
 {% block body_main %}
 
 {{ super() }}
@@ -34,7 +38,7 @@
             </div>
         </div>
 
-        <p class="px-3 mt-12 font-serif text-lg leading-relaxed sm:px-6">Welcome to my personal site, including my blog of 17 years and links to my book reviews, podcasts, and other projects around the web.</p>
+        <p class="px-3 mt-12 font-serif text-lg leading-relaxed sm:px-6">Welcome to my personal site, including my <a href="#blog-posts">blog of 21 years</a> and links to my <a href="#book-reviews">book reviews</a>, <a href="#podcast-eps">podcast</a>, and other projects around the web.</p>
 
         <p class="px-3 mt-12 font-serif text-lg font-bold leading-relaxed sm:px-6">Now offering <a href="/editing/">freelance copyediting services</a>!</p>
 
@@ -42,7 +46,7 @@
         <div class="py-6 mt-12 md:mr-8 md:rounded-r bg-slate-200 xl:-ml-[32rem] xl:pl-[32rem]">
         <h2 class="mx-3 text-xl font-bold sm:mx-6 text-sky-900">Find Me Elsewhere</h2>
         <ul class="flex flex-wrap justify-around mt-4 xl:justify-start xl:pl-6 xl:space-x-12">
-            <li><a target="_blank" href="https://twitter.com/tachyondecay"><img class="w-12 md:w-10 xl:w-8" src="{{ url_for('.static', filename='images/icons/twitter.png') }}" alt="Twitter"></a></li>
+            <li><a target="_blank" href="https://bsky.app/profile/tachyondecay.net"><img class="w-12 md:w-10 xl:w-8" src="{{ url_for('.static', filename='images/icons/bluesky.png') }}" alt="Bluesky"></a></li>
             <li><a target="_blank" href="https://app.storygraph.com/profile/tachyondecay"><img class="w-12 md:w-10 xl:w-8" src="{{ url_for('.static', filename='images/icons/storygraph.png') }}" alt="The StoryGraph"></a></li>
             <li><a target="_blank" href="https://goodreads.com/tachyondecay"><img class="w-12 md:w-10 xl:w-8" src="{{ url_for('.static', filename='images/icons/goodreads.png') }}" alt="Goodreads"></a></li>
             <li><a target="_blank" href="https://ravelry.com/people/tachyondecay"><img class="w-12 md:w-10 xl:w-8" src="{{ url_for('.static', filename='images/icons/ravelry.png') }}" alt="Ravelry"></a></li>
@@ -52,15 +56,23 @@
         </div>
     </div>
 
-    <div class="mt-12 md:h-full md:basis-2/5 lg:basis-1/3">
-       <h2 class="sr-only">Recent Tweets</h2>
+    <div class="mt-12 md:basis-2/5 lg:basis-1/3 h-[70vh] text-xs overflow-x-hidden">
+       <h2 class="sr-only">Bluesky Posts</h2>
 
-        <a class="twitter-timeline" data-height="1000" data-dnt="true" data-chrome="transparent" data-link-color="#ffffff" href="https://twitter.com/tachyondecay?ref_src=twsrc%5Etfw">Tweets by tachyondecay</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> 
+          <bsky-embed
+    username="tachyondecay.net"
+    limit="5"
+    link-target="_blank"
+    link-image="true"
+    load-more="true"
+    custom-styles="img.w-14 { width: 2rem; height: 2rem; }"
+  >
+  </bsky-embed>
     </div>
 </div>
 
 <section class="mt-24 xl:mx-auto xl:max-w-5xl">
-    <h2 class="mx-3 mb-6 text-2xl font-bold sm:mx-6 xl:text-3xl text-sky-900">Recent Blog Posts</h2>
+    <h2 id="blog-posts" class="mx-3 mb-6 text-2xl font-bold sm:mx-6 xl:text-3xl text-sky-900">Recent Blog Posts</h2>
 
     <div class="md:grid md:grid-cols-2 md:gap-4 lg:gap-y-4 lg:gap-x-8">
     {% for article in articles %}
@@ -97,7 +109,7 @@
 </section>
 
 <section class="mt-24 xl:mx-auto xl:max-w-5xl">
-    <h2 class="mx-3 mb-6 text-2xl font-bold sm:mx-6 xl:text-3xl text-sky-900">Recent Book Reviews</h2>
+    <h2 id="book-reviews" class="mx-3 mb-6 text-2xl font-bold sm:mx-6 xl:text-3xl text-sky-900">Recent Book Reviews</h2>
 
     <div class="sm:grid sm:grid-cols-2 lg:grid-cols-4">
     {% for review in reviews %}
@@ -148,7 +160,8 @@
 </section>
 
 <section class="hidden mt-24 xl:mx-auto xl:max-w-5xl">
-    <h2 class="mx-3 text-2xl font-bold sm:mx-6 xl:text-3xl text-sky-900">Recent Podcast Episodes</h2>
+    <h2 id="podcast-eps" class="mx-3 text-2xl font-bold sm:mx-6 xl:text-3xl text-sky-900">Recent Podcast Episodes</h2>
+    <p class="px-3 font-serif text-lg leading-relaxed sm:px-6">I cohost a <cite>Prophecy Girls: A Buffy Rewatch Podcast</cite>, now rewatching the spinoff series, <cite>Angel</cite>.
 
     <div class="flex flex-col lg:flex-row" id="latest-episodes">
 
@@ -160,7 +173,7 @@
                 <a href="[{ link }]">
                     <img src="[{ thumbnail }]" alt="[{ title }]" class="sm:shadow-md lg:mx-auto lg:w-64 sm:shadow-slate-900/50">
                 </a>
-                <audio id="episode-[{ id }]" class="w-full sm:shadow-md lg:mx-auto lg:w-64 sm:shadow-slate-900/50" controls preload="none">
+                <audio id="episode-[{ id }]" class="w-full lg:mx-auto lg:w-64" controls preload="none">
                     <source type="[{ type }]" src="[{ src }]"/>
                 </audio>
             </div>
@@ -171,9 +184,6 @@
                     Published <time datetime="[{ dateTime }]">[{ pubDate }]</time>
                 </p>
                 <p class="mx-3 sm:mx-6 sm:max-w-none md:pb-3 lg:pr-3 prose prose-slate sm:prose-sm group-hover:prose-p:text-slate-900">[{ description }]</p>
-                <p class="mx-3 text-xs text-right sm:mx-6">
-                    <a href="[{ podcastSite }]" target="_blank">More from <cite>[{ podcastTitle }]</cite> &rarr;</a>
-                </p>
             </div>
         </article>
     </template>

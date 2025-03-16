@@ -9,7 +9,7 @@
 
 			<h3 class="mx-6 mt-6 font-bold text-sky-900">View by Year</h3>
 			<ul class="flex flex-wrap mx-6 lg:grid lg:grid-cols-4">
-				{% for y in range(2022, 2003, -1) %}
+				{% for y in range(arrow.now().year, 2003, -1) %}
 					<li class="mt-3 mr-4 lg:text-lg"><a href="{{ url_for('.year_archive', year=y) }}">{{ y }}</a></li>
 				{% endfor %}
 			</ul>
